@@ -48,6 +48,8 @@ func _objekt_klasse_fuer(element_id: String) -> Objekt_Basis:
 			return Objekt_Haus.new()
 		"haus_gross":
 			return Objekt_Hausgross.new()
+		"kadaver":
+			return Objekt_Kadaver.new()
 		"boden", "wiese":
 			return Objekt_Kachel.new()
 	return Objekt_Basis.new()

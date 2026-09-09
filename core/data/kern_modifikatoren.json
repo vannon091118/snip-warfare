@@ -1,22 +1,79 @@
 {
   "normal": {
     "name": "Normal",
+    "typ": "GESCHWINDIGKEIT",
     "faktor": 1.0,
-    "beschreibung": "1.0 = 10 Sekunden Takt, neutral."
+    "beschreibung": "1.0 = 10 Sekunden Takt, neutral.",
+    "job_einschraenkungen": [],
+    "attribute_modifikation": {},
+    "dauer_ticks": 0,
+    "heilbar": true,
+    "icon_pfad": ""
   },
   "aggressiv": {
     "name": "Aggressiv",
+    "typ": "GESCHWINDIGKEIT",
     "faktor": 1.2,
-    "beschreibung": "Schneller oder aggressiver, 20 Prozent über Normal."
+    "beschreibung": "Schneller oder aggressiver, 20 Prozent über Normal.",
+    "job_einschraenkungen": [],
+    "attribute_modifikation": {},
+    "dauer_ticks": 0,
+    "heilbar": true,
+    "icon_pfad": ""
   },
   "langsam": {
     "name": "Langsam",
+    "typ": "GESCHWINDIGKEIT",
     "faktor": 0.7,
-    "beschreibung": "Träger, 30 Prozent unter Normal."
+    "beschreibung": "Träger, 30 Prozent unter Normal.",
+    "job_einschraenkungen": [],
+    "attribute_modifikation": {},
+    "dauer_ticks": 0,
+    "heilbar": true,
+    "icon_pfad": ""
   },
   "schnell": {
     "name": "Schnell",
+    "typ": "GESCHWINDIGKEIT",
     "faktor": 1.5,
-    "beschreibung": "Deutlich schneller, 50 Prozent über Normal."
+    "beschreibung": "Deutlich schneller, 50 Prozent über Normal.",
+    "job_einschraenkungen": [],
+    "attribute_modifikation": {},
+    "dauer_ticks": 0,
+    "heilbar": true,
+    "icon_pfad": ""
+  },
+  "verletzung_bein": {
+    "typ": "VERLETZUNG",
+    "name": "gebrochenes_bein",
+    "beschreibung": "Bewegung und schwere Arbeit unmöglich",
+    "faktor": 0.5,
+    "job_einschraenkungen": ["holzfaeller", "steinmetz", "jaeger"],
+    "attribute_modifikation": {"geschwindigkeit": -0.5},
+    "dauer_ticks": 240,
+    "heilbar": true,
+    "icon_pfad": "res://assets/ui/icons/injury_leg.png"
+  },
+  "verletzung_arm": {
+    "typ": "VERLETZUNG",
+    "name": "verletzter_arm",
+    "beschreibung": "Tragen und Werkzeug-Nutzung eingeschränkt",
+    "faktor": 0.7,
+    "job_einschraenkungen": ["steinmetz"],
+    "attribute_modifikation": {"tragekraft": -5},
+    "dauer_ticks": 120,
+    "heilbar": true,
+    "icon_pfad": "res://assets/ui/icons/injury_arm.png"
+  },
+  "verblutung": {
+    "typ": "VERLETZUNG",
+    "name": "verblutung",
+    "beschreibung": "Verliert HP pro Tick",
+    "faktor": 1.0,
+    "job_einschraenkungen": [],
+    "attribute_modifikation": {"hp_pro_tick": -1},
+    "dauer_ticks": 60,
+    "heilbar": true,
+    "icon_pfad": "res://assets/ui/icons/bleeding.png"
   }
 }

@@ -1,0 +1,50 @@
+{
+  "holzsammler_zone": {
+    "orchestrator_id": "holzsammler_zone",
+    "position_x": 500.0,
+    "position_y": 300.0,
+    "radius": 150.0,
+    "biom_id": "temperate",
+    "farbe_r": 0.2,
+    "farbe_g": 0.6,
+    "farbe_b": 0.2,
+    "bedarfsliste": [
+      {
+        "ressource": "holz",
+        "menge": 100,
+        "prioritaet": 1,
+        "job_id": "holzfaeller"
+      },
+      {
+        "ressource": "holz",
+        "menge": 50,
+        "prioritaet": 2,
+        "job_id": "holzfaeller_stumpf"
+      }
+    ]
+  },
+  "jaeger_zone": {
+    "orchestrator_id": "jaeger_zone",
+    "position_x": 300.0,
+    "position_y": 500.0,
+    "radius": 200.0,
+    "biom_id": "tundra",
+    "farbe_r": 0.6,
+    "farbe_g": 0.3,
+    "farbe_b": 0.2,
+    "bedarfsliste": [
+      {
+        "ressource": "fleisch",
+        "menge": 30,
+        "prioritaet": 1,
+        "job_id": "jaeger"
+      },
+      {
+        "ressource": "fleisch",
+        "menge": 20,
+        "prioritaet": 2,
+        "job_id": "jaeger_kadaver"
+      }
+    ]
+  }
+}

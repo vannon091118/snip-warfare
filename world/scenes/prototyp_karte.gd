@@ -11,6 +11,7 @@ const KAMERA_ZOOM_SCHRITT := 1.1
 const KAMERA_ZOOM_MIN := 0.2
 const KAMERA_ZOOM_MAX := 2.5
 const SCHNELLWAHL_MAX := 9
+const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
 
 ## Kategorie logik: Laden, Verdrahtung und Eingabe-Übersetzung der Spitzen.
 
@@ -26,6 +27,9 @@ var _auswahl := Ui_AuswahlManager.new()
 var _schnellwahl: Array[int] = []
 var _job_kette: Array[Dictionary] = []
 var _kette_laeuft: bool = false
+var _orchestrator_registry := Orchestrator_Registry.new()
+var _orchestrator_manager := Orchestrator_Manager.new()
+var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
@@ -52,6 +56,10 @@ func _ready() -> void:
 	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
 	add_child(_stockmaenner)
 	_stockmaenner.einheit_hinzufuegen(_spieler_position)
+	_orchestrator_registry.laden([ORCHESTRATOR_PFAD])
+	_orchestrator_manager.referenzen_setzen(_stockmaenner, _model, _registry, _job_registry)
+	add_child(_orchestrator_manager)
+	_orchestratoren_verdrahten()
 	_hud.einrichten(_ressourcen)
 	_kontext.einrichten(_steuerung)
 	_kontext.aktion_gewaehlt.connect(_auf_kontext_aktion)
@@ -232,6 +240,17 @@ func _auf_kontext_aktion(aktion: Dictionary) -> void:
 func _biom_anzeigen() -> void:
 	var zustand := _model.biom_zustand()
 	_hud.biom_anzeigen(str(zustand.get("biom_id", _model.biom_id)), float(zustand.get("biom_faktor", 1.0)))
+
+func _orchestratoren_verdrahten() -> void:
+	for konfig in _orchestrator_registry.konfigurationen():
+		konfig.zustand = Orchestrator_Status.Zustand.AKTIV
+		var idx := _orchestrator_manager.orchestrator_platzieren(konfig)
+		var darsteller := Orchestrator_Darsteller.new()
+		darsteller.einrichten(konfig)
+		add_child(darsteller)
+		_orchestrator_darsteller.append(darsteller)
+		var status := _orchestrator_manager._orchestratoren[idx]["status"]
+		status.zustand_geaendert.connect(darsteller.status_geaendert)
 
 func _zoom(faktor: float) -> void:
 	var neuer_zoom: float = clampf(_kamera.zoom.x * faktor, KAMERA_ZOOM_MIN, KAMERA_ZOOM_MAX)
