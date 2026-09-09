@@ -2,6 +2,15 @@ extends SceneTree
 ## Lauf-Prüfung zur Weltkette: Determinismus, Regionen, Persistenz und
 ## Reihenfolge-Unabhängigkeit der Generierung.
 
+## Test-Zeuge für das Queue-Signal: fängt den nächsten Auftrag auf, den die
+## Einheit nach dem aktiven Job meldet, ohne auf Lambda-Erfassung zu setzen.
+class Einheit_QueueZeuge:
+	extends RefCounted
+	var empfangen: bool = false
+
+	func auf_naechster(_job_id: String, _ziel_typ: int, _ziel_index: int, _ressource: String) -> void:
+		empfangen = true
+
 func _init() -> void:
 	# Autoload-Ersatz: Der Testlauf startet ohne Hauptszene, deshalb wird die
 	# zentrale Weltuhr hier als Wurzelkind nachgebaut, damit Manager-Module,
@@ -214,6 +223,32 @@ func _init() -> void:
 			fehler += 1
 		else:
 			print("OK: Baukosten wirklich entnommen (holz 35, stein 22) und Werkstatt im Modell")
+	# 12) Job-Queue je Stickman: Beschäftigt bekommt die Einheit eine eigene
+	#     Vormerkung, die nach dem aktiven Job automatisch startet.
+	var queue_status := Einheit_Status.new()
+	var queue_job_registry := Job_Registry.new()
+	var heiler_job := queue_job_registry.job_erzeugen("heiler")
+	var stein_job := queue_job_registry.job_erzeugen("steinmetz")
+	if heiler_job == null or stein_job == null:
+		print("FEHLER: Job-Queue-Beweis kann keine Jobs erzeugen")
+		fehler += 1
+	else:
+		queue_status.job_vergeben(heiler_job, Job_Basis.ZielTyp.OBJEKT, 0, "")
+		var war_beschaeftigt := queue_status.ist_beschaeftigt()
+		queue_status.job_vormerken(stein_job.job_id, Job_Basis.ZielTyp.OBJEKT, 3, "stein")
+		var queue_zahl := queue_status.queue_laenge()
+		var naechster := queue_status.queue_naechster()
+		var gestartet := false
+		var empfaenger := Einheit_QueueZeuge.new()
+		queue_status.naechster_job_aus_queue.connect(empfaenger.auf_naechster)
+		queue_status.job.job_beendet.emit()
+		gestartet = empfaenger.empfangen
+		if not war_beschaeftigt or queue_zahl != 1 or str(naechster.get("job_id", "")) != "steinmetz" or not gestartet:
+			print("FEHLER: Job-Queue läuft nicht (beschäftigt %s, queue %d, naechster %s, gestartet %s)" % [
+				str(war_beschaeftigt), queue_zahl, str(naechster.get("job_id", "")), str(gestartet)])
+			fehler += 1
+		else:
+			print("OK: Stickman hat eigene Job-Queue, naechster Auftrag startet nach dem aktiven Job")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

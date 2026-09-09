@@ -13,6 +13,7 @@ signal arbeitsschritt_erledigt(ressource: String, menge: int)
 signal job_beendet()
 signal job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int)
 signal job_vergeben_fehlgeschlagen(grund: String)
+signal naechster_job_aus_queue(job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ressource: String)
 signal gestorben(welt_position: Vector2)
 
 enum Zustand {
@@ -20,7 +21,7 @@ enum Zustand {
 	ARBEITEN,
 }
 
-## Kategorie daten: Job-Zustand und die eigene Vital-Maschine.
+## Kategorie daten: Job-Zustand, eigene Warteschlange und die Vital-Maschine.
 var zustand: Zustand = Zustand.IDLE
 var job: Job_Basis = null
 var aktuelles_ziel_typ: Job_Basis.ZielTyp = Job_Basis.ZielTyp.OBJEKT
@@ -29,6 +30,11 @@ var ziel_ressource: String = ""
 var _blick_rechts: bool = true
 var _loop_fortgesetzt: bool = false
 var vital: Einheit_VitalStatus = Einheit_VitalStatus.new()
+
+## Eigene Job-Queue: Jeder Stickman sammelt seine Aufträge selbst und führt
+## sie nacheinander aus. Ein Eintrag ist eine Vormerkung, der Job selbst wird
+## erst beim Start über die Registry erzeugt.
+var _job_queue: Array[Dictionary] = []
 
 ## Kategorie logik: Jobvergabe mit Vitalprüfung, Arbeitsloop und Vitaltick.
 
@@ -63,6 +69,11 @@ func job_vergeben(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, ziel_index:
 	if not neuer_job.kann_ausgefuehrt_werden_von(vital):
 		job_vergeben_fehlgeschlagen.emit("Physische Voraussetzungen nicht erfüllt für: " + neuer_job.name())
 		return false
+	if zustand == Zustand.ARBEITEN:
+		# Einheit beschäftigt: Auftrag wird hinten an die eigene Queue gehängt
+		# und erst nach dem aktiven Job gestartet.
+		job_vormerken(neuer_job.job_id, ziel_typ, ziel_index, ressource)
+		return true
 	job = neuer_job
 	aktuelles_ziel_typ = ziel_typ
 	aktuelles_ziel_index = ziel_index
@@ -72,6 +83,37 @@ func job_vergeben(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, ziel_index:
 	job.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
 	job.job_beendet.connect(_auf_job_beendet)
 	return true
+
+func job_vormerken(job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ressource: String) -> void:
+	# Nur eine Vormerkung pro Auftrag: Wer denselben Job und dasselbe Ziel
+	# schon in der Queue hat, bekommt keinen doppelten Eintrag.
+	for eintrag: Dictionary in _job_queue:
+		if str(eintrag.get("job_id", "")) == job_id \
+				and int(eintrag.get("ziel_typ", -1)) == int(ziel_typ) \
+				and int(eintrag.get("ziel_index", -1)) == ziel_index:
+			return
+	_job_queue.append({
+		"job_id": job_id,
+		"ziel_typ": int(ziel_typ),
+		"ziel_index": ziel_index,
+		"ressource": ressource,
+	})
+
+func queue_laenge() -> int:
+	return _job_queue.size()
+
+func queue_naechster() -> Dictionary:
+	# Holt die älteste Vormerkung, ohne sie zu entfernen; der Aufrufer
+	# (Manager) erzeugt den Job und startet ihn über job_vergeben.
+	if _job_queue.is_empty():
+		return {}
+	return _job_queue[0].duplicate(true)
+
+func queue_vorne_entfernen() -> void:
+	# Entfernt die älteste Vormerkung, nachdem der Manager den Job erzeugt
+	# und gestartet hat. Die Queue ist Eigentum der Einheit.
+	if not _job_queue.is_empty():
+		_job_queue.remove_at(0)
 
 func job_loopy_fortsetzen(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ressource: String) -> void:
 	if job != neuer_job:
@@ -119,6 +161,14 @@ func _auf_job_beendet() -> void:
 			return
 	job_beendet.emit()
 	job_abbrechen()
+	# Eigene Queue: Der nächste vorgemerkte Auftrag wird dem Manager gemeldet
+	# und startet, sobald er ihn erzeugt hat. Leere Queue heißt Idle.
+	if not _job_queue.is_empty():
+		var naechster := queue_naechster()
+		naechster_job_aus_queue.emit(str(naechster.get("job_id", "")),
+			int(naechster.get("ziel_typ", 0)),
+			int(naechster.get("ziel_index", -1)),
+			str(naechster.get("ressource", "")))
 
 func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
 	if zustand == neuer_zustand:

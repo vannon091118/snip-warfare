@@ -1,5 +1,6 @@
-1. Du wolltest, dass kein Stickman mehr als zentrales Kamera-Objekt erscheint, weil jede Einheit ihren eigenen Job und ihren eigenen Zustand trägt, und Shinon hat den letzten Kamera-Anker restlos entfernt.
-2. Die Szene in welt.tscn besitzt keinen Spieler-Knoten mehr mit Stickman-Sprite, das bisher als Kamera-Anker an der Kameraposition klebte und den Eindruck einer zentralen Spielfigur erzeugte.
-3. Die Welt in welt.gd hält keine Spieler-Referenz mehr, setzt pro Frame keine Einheitenposition an die Kamera und versorgt die Tier-Trigger über den reinen Kamerapunkt als Interaktionsreferenz statt über eine Spielfigur.
-4. In welt_generator.gd wird die Chunk-Zahl je Region jetzt über explizite Gleitkomma-Umrechnung berechnet, damit die letzte Integer-Division-Warnung des Editors verschwindet.
-5. Der Headless-Lauf meldet keine Fehler oder Warnungen, der Warnungs-Scan ist grün, und der volle Preflight bleibt ohne Befunde.
+1. Du wolltest, dass jeder Stickman eine eigene Job-Warteschlange besitzt, in der neue Aufträge gesammelt und nacheinander abgearbeitet werden, und Shinon hat die Queue in die Zustandsmaschine jeder Einheit gebaut.
+2. Die Einheiten-Maschine in einheit_status.gd führt jetzt eine eigene Vormerkliste: Solange eine Einheit arbeitet, werden neue Aufträge hinten angereiht, doppelte Vormerkungen desselben Ziels bleiben außen vor, und nach dem aktiven Job meldet die Einheit den nächsten Auftrag an den Manager.
+3. Der Einheiten-Manager in einheit_manager.gd verbindet dieses Queue-Signal, erzeugt den nächsten Job erst beim Start frisch über die Registry und entfernt die Vormerkung erst nach erfolgreicher Erzeugung, sodass keine toten Job-Instanzen in der Warteschlange liegen.
+4. Der Lauf-Beweis in lauf_pruefung_welt.gd prüft die Kette: Eine beschäftigte Einheit merkt den zweiten Auftrag vor, und sobald der aktive Job endet, wird der nächste Auftrag gemeldet und gestartet, und alle Prüfungen sind grün.
+5. In welt_generator.gd wurden zwei zusammengeklebte Zeilen wieder getrennt und die Chunk-Division bleibt über explizite Gleitkomma-Umrechnung warnfrei, damit der Parser und der Editor ruhig bleiben.
+6. Der volle Preflight inklusive Warnungs-Scan und Godot-Lauf ist grün, und der Arbeitsbaum enthält nur die Änderungen dieses Schritts.

@@ -68,6 +68,7 @@ func einheit_hinzufuegen(welt_position: Vector2) -> void:
 	status.zustand_geaendert.connect(_auf_zustand_geaendert.bind(status, mood))
 	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
 	status.job_loop_gefragt.connect(_auf_job_loop_gefragt)
+	status.naechster_job_aus_queue.connect(_auf_naechster_job_aus_queue.bind(status))
 	_einheiten.append({
 		"status": status,
 		"darsteller": darsteller,
@@ -99,11 +100,16 @@ func einheit_position_setzen(index: int, welt_position: Vector2) -> void:
 func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ziel_position: Vector2) -> bool:
 	if einheit_index < 0 or einheit_index >= _einheiten.size():
 		return false
+	var status: Einheit_Status = _einheiten[einheit_index]["status"]
 	var job := _job_registry.job_erzeugen(job_id)
 	if job == null:
 		return false
-	var status: Einheit_Status = _einheiten[einheit_index]["status"]
 	var ressource := job.ressource()
+	if status.zustand == Einheit_Status.Zustand.ARBEITEN:
+		# Beschäftigt: Auftrag wird an die eigene Queue der Einheit gehängt;
+		# der Job wird erst beim Start über die Registry erzeugt.
+		status.job_vormerken(job_id, ziel_typ, ziel_index, ressource)
+		return true
 	status.job_vergeben(job, ziel_typ, ziel_index, ressource)
 	# Die Blickrichtung zeigt zum gewählten Job-Objekt.
 	status.blick_richtung_setzen(ziel_position.x >= einheit_position(einheit_index).x)
@@ -208,6 +214,22 @@ func versuche_wachstum(haus_welt_position: Vector2) -> bool:
 		return false
 	einheit_hinzufuegen(haus_welt_position + Vector2(0, 20))
 	return true
+
+func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp, _ziel_index: int, _ressource: String, status: Einheit_Status) -> void:
+	# Die eigene Queue der Einheit startet den nächsten Auftrag: Der Manager
+	# erzeugt den Job frisch über die Registry und entfernt die Vormerkung.
+	if status.zustand != Einheit_Status.Zustand.IDLE:
+		return
+	var eintrag := status.queue_naechster()
+	if eintrag.is_empty():
+		return
+	var job := _job_registry.job_erzeugen(str(eintrag.get("job_id", "")))
+	if job == null:
+		status.queue_vorne_entfernen()
+		return
+	status.queue_vorne_entfernen()
+	status.job_vergeben(job, Job_Basis.ZielTyp(int(eintrag.get("ziel_typ", 0))),
+		int(eintrag.get("ziel_index", -1)), str(eintrag.get("ressource", "")))
 
 func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int) -> void:
 	# Die Schleife des Users (USER_JOB) endet nie hart im Idle: Der Manager
