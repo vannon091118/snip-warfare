@@ -8,6 +8,7 @@ class_name Welt_Renderer
 
 var _model: Welt_Model
 var _registry: Welt_Registry
+var _biome: Welt_BiomRegistry = null
 var _fliesen_knoten: Node2D
 var _objekte_knoten: Node2D
 
@@ -19,9 +20,10 @@ func _ready() -> void:
 	add_child(_fliesen_knoten)
 	add_child(_objekte_knoten)
 
-func darstellen(model: Welt_Model, registry: Welt_Registry) -> void:
+func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegistry = null) -> void:
 	_model = model
 	_registry = registry
+	_biome = biome if biome != null else Welt_BiomRegistry.new()
 	_fliesen_erneuern()
 	_objekte_erneuern()
 
@@ -36,6 +38,11 @@ func kachel_ersetzen(x: int, y: int) -> void:
 
 func objekt_knoten_anhaengen(index: int) -> Sprite2D:
 	if _model == null:
+		return null
+	# Tiere (typ bewegt) zeichnet der Tier_Manager selbst mit Status und
+	# Bewegung; der Renderer darf sie nicht doppelt malen.
+	var eintrag := _registry.finde_objekt(_model.objekt_element_id(index)) if _registry != null else null
+	if eintrag != null and eintrag.typ == &"bewegt":
 		return null
 	var sprite := Sprite2D.new()
 	sprite.texture = _textur_fuer(_model.objekt_element_id(index))
@@ -75,6 +82,16 @@ func _textur_fuer(element_id: String) -> Texture2D:
 		return atlas
 	return textur
 
+func _biom_farbe_fuer_kachel(x: int, y: int) -> Color:
+	# Biom-Tönung aus der Biom-Registry: Jede Kachel trägt die Farbe ihres
+	# Region-Bioms. Keine zweite Biomlogik, nur das gefrorene farbe-Feld.
+	if _biome == null or _model == null:
+		return Color.WHITE
+	var biom := _biome.biom_fuer(_model.biom_an_kachel(x, y))
+	if biom == null:
+		return Color.WHITE
+	return Color.from_string(biom.farbe, Color.WHITE)
+
 func _fliesen_erneuern() -> void:
 	for kind: Node in _fliesen_knoten.get_children():
 		kind.queue_free()
@@ -86,6 +103,7 @@ func _fliesen_erneuern() -> void:
 			sprite.texture = _textur_fuer(_model.fliese(x, y))
 			sprite.centered = false
 			sprite.position = Vector2(x, y) * Welt_Model.KACHEL_GROESSE
+			sprite.self_modulate = _biom_farbe_fuer_kachel(x, y)
 			_fliesen_knoten.add_child(sprite)
 
 func _objekte_erneuern() -> void:

@@ -12,6 +12,13 @@ const RASTER_HOEHE := 24
 const RASTER_MIN := 4
 const RASTER_MAX := 64
 
+## Kategorie daten: Regionen als räumliche Makrostruktur der Welt.
+## Jede Region trägt Biom, Seed-Beitrag und Chunk-Anzahl; Chunks sind die
+## technische Partition (Generator-Groesse), Objekte die konkreten Inhalte.
+var regionen: Array[Dictionary] = []
+var region_kante: int = 4
+var welt_seed: int = 0
+
 ## Kategorie logik: Aufbau, Änderung und Ein-/Auslesen der Welt-Daten.
 var raster_breite: int = RASTER_BREITE
 var raster_hoehe: int = RASTER_HOEHE
@@ -140,15 +147,52 @@ func biom_zustand() -> Dictionary:
 func objekte_leeren() -> void:
 	objekte.clear()
 
+func regionen_leeren() -> void:
+	regionen.clear()
+
+func region_ergaenzen(region_x: int, region_y: int, biom: String, seed_beitrag: int, chunk_kante: int) -> void:
+	regionen.append({
+		"region_x": region_x,
+		"region_y": region_y,
+		"biom_id": biom,
+		"seed_beitrag": seed_beitrag,
+		"chunk_kante": chunk_kante,
+	})
+
+func region_an(position: Vector2) -> Dictionary:
+	# Liefert die Region der Kachel unter der Welt-Position; sonst leer.
+	var kachel_x := int(position.x / Welt_Model.KACHEL_GROESSE)
+	var kachel_y := int(position.y / Welt_Model.KACHEL_GROESSE)
+	return region_an_kachel(kachel_x, kachel_y)
+
+func region_an_kachel(kachel_x: int, kachel_y: int) -> Dictionary:
+	for region: Dictionary in regionen:
+		var start_x := int(region.get("region_x", 0)) * region_kante
+		var start_y := int(region.get("region_y", 0)) * region_kante
+		if kachel_x >= start_x and kachel_x < start_x + region_kante and kachel_y >= start_y and kachel_y < start_y + region_kante:
+			return region
+	return {}
+
+func biom_an_kachel(kachel_x: int, kachel_y: int) -> String:
+	# Einziger Ort der die Biom-Zugehörigkeit einer Kachel ableitet:
+	# Region zuerst, sonst das globale Welt-Biom.
+	var region := region_an_kachel(kachel_x, kachel_y)
+	if not region.is_empty():
+		return str(region.get("biom_id", biom_id))
+	return biom_id
+
 func nach_woerterbuch() -> Dictionary:
 	return {
-		"version": 3,
+		"version": 4,
 		"kachel_groesse": KACHEL_GROESSE,
 		"raster_breite": raster_breite,
 		"raster_hoehe": raster_hoehe,
 		"raster": raster,
 		"objekte": objekte,
 		"biom_id": biom_id,
+		"region_kante": region_kante,
+		"regionen": regionen,
+		"welt_seed": welt_seed,
 	}
 
 func aus_woerterbuch(daten: Dictionary) -> bool:
@@ -175,4 +219,19 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 			if typeof(eintrag) == TYPE_DICTIONARY and eintrag.has("element_id") and eintrag.has("position"):
 				var position_werte: Array = eintrag["position"]
 				objekt_hinzufuegen(str(eintrag["element_id"]), Vector2(position_werte[0], position_werte[1]))
+	regionen.clear()
+	region_kante = maxi(int(daten.get("region_kante", 4)), 1)
+	welt_seed = int(daten.get("welt_seed", 0))
+	var neue_regionen: Variant = daten.get("regionen", [])
+	if typeof(neue_regionen) == TYPE_ARRAY:
+		for region: Variant in neue_regionen:
+			if typeof(region) == TYPE_DICTIONARY and (region as Dictionary).has("region_x") and (region as Dictionary).has("region_y"):
+				var wort := region as Dictionary
+				regionen.append({
+					"region_x": int(wort.get("region_x", 0)),
+					"region_y": int(wort.get("region_y", 0)),
+					"biom_id": str(wort.get("biom_id", biom_id)),
+					"seed_beitrag": int(wort.get("seed_beitrag", 0)),
+					"chunk_kante": int(wort.get("chunk_kante", 2)),
+				})
 	return true

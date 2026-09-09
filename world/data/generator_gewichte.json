@@ -13,6 +13,11 @@
     "vogel": {"kategorie": "tiere", "element_id": "vogel", "gewicht": 2.0, "biome": ["gemaaessigt", "steppe", "tundra"]},
     "vogelgruppe": {"kategorie": "tiere", "element_id": "vogelgruppe", "gewicht": 0.5, "biome": ["steppe"]}
   },
+  "biome": {
+    "biom_gemaaessigt": {"kategorie": "biome", "element_id": "gemaaessigt", "gewicht": 4.0},
+    "biom_tundra": {"kategorie": "biome", "element_id": "tundra", "gewicht": 1.5},
+    "biom_steppe": {"kategorie": "biome", "element_id": "steppe", "gewicht": 1.5}
+  },
   "gebaeude": {},
   "fraktionen": {},
   "grenzen": {

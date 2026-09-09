@@ -12,6 +12,7 @@ const KAMERA_ZOOM_MIN := 0.2
 const KAMERA_ZOOM_MAX := 2.5
 const SCHNELLWAHL_MAX := 9
 const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
+const GENERATOR_NAME := "Welt_Generator"
 const _AuswahlManagerSkript := preload("res://ui/scenes/selection/auswahl_manager.gd")
 
 ## Kategorie logik: Laden, Verdrahtung und Eingabe-Übersetzung der Spitzen.
@@ -32,6 +33,12 @@ var _schnellwahl: Array[int] = []
 var _orchestrator_registry := Orchestrator_Registry.new()
 var _orchestrator_manager := Orchestrator_Manager.new()
 var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
+var _biome := Welt_BiomRegistry.new()
+var _generator := Welt_Generator.new()
+var _karten_ebene: CanvasLayer = null
+var _karten_viewer: Ui_KartenViewer = null
+var _karten_oeffnen := false
+var _karten_info: Ui_WeltInfo = null
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
@@ -47,6 +54,10 @@ func _ready() -> void:
 		var speicher := Welt_Speicher.new()
 		geladen = _model.aus_woerterbuch(speicher.laden(WeltSitzung.welt_name))
 	if not geladen:
+		# Produktionsweg: Der Generator erzeugt die Welt aus Seed und Registry.
+		geladen = _welt_generieren()
+	if not geladen:
+		# Legacy-Fallback: die statische Standardwelt, falls sie noch liegt.
 		geladen = _model.aus_woerterbuch(_standard_welt_laden())
 	if not geladen:
 		push_warning("Keine Welt ladbar, benutze leeres Raster")
@@ -55,7 +66,8 @@ func _ready() -> void:
 	(_tages_overlay as CanvasLayer).layer = 20
 	add_child(_tages_overlay)
 	(_tages_overlay as Object).call("einrichten", _tageszyklus)
-	_karte.darstellen(_model, _registry)
+	_karte.darstellen(_model, _registry, _biome)
+	_karten_ebene_bauen()
 	_tiere_platzieren()
 	_spieler_position = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
 	_spieler.position = _spieler_position
@@ -80,7 +92,19 @@ func _ready() -> void:
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
 
-func _auf_verteilung(nahrung_je_takt: float) -> void:
+func _karte_beobachten() -> void:
+	# Observer-Pass: Karte und Info lesen Zustände, sie ändern nichts.
+	if _karten_viewer != null and _karten_ebene.visible:
+		var blick := _kamera.get_viewport_rect().size / _kamera.zoom.x
+		_karten_viewer.beobachten_setzen(_spieler_position, _kamera.position, blick)
+	if _karten_info != null:
+		_karten_info.zustand_zeigen(_model, _tiere.tier_zahl(), _spieler_position, GENERATOR_NAME, _generator.verworfene_chunks)
+
+func _karte_umschalten() -> void:
+	_karten_oeffnen = not _karten_oeffnen
+	_karten_ebene.visible = _karten_oeffnen
+	if _karten_oeffnen:
+		_karten_viewer.fokus_auf_spieler()
 	_stockmaenner.verteilung_setzen(nahrung_je_takt)
 	_hud.meldung_setzen("Verteilung: %.1f Nahrung je Einheit je Takt" % nahrung_je_takt)
 
@@ -122,6 +146,63 @@ func _standard_welt_laden() -> Dictionary:
 		return daten
 	return {}
 
+func _welt_generieren() -> bool:
+	# Produktionskette: Seed aus der Sitzung oder aus dem zentralen Kern_Zufall,
+	# dann der Generator über Registry, Verteilung und Chunk-Prüfer.
+	# Vor-Simulation: Kandidaten werden nacheinander durchprobiert, bis die
+	# Boundary-Simulation keinen Chunk mehr verwirft (gedeckelt, damit der
+	# Start nie hängt). Alles deterministisch über Kern_Zufall.
+	var basis_seed := WeltSitzung.seed_wunsch
+	if basis_seed == 0:
+		# Neuer Weltwunsch ohne Vorgabe: Die Seed-Wahl nutzt die Uhrzeit als
+		# Startzustand des zentralen Kern_Zufall; die Welt selbst bleibt danach
+		# voll deterministisch aus diesem Seed reproduzierbar.
+		var wahl_zufall := Kern_Zufall.new()
+		wahl_zufall.start_zustand_setzen(int(Time.get_unix_time_from_system() * 1000.0) + Time.get_ticks_msec())
+		basis_seed = int(wahl_zufall.naechste_zahl() % 1000000000)
+	var kandidat_zufall := Kern_Zufall.new()
+	kandidat_zufall.start_zustand_setzen(basis_seed)
+	var seed_wert := basis_seed
+	for versuch in 20:
+		if _generator.welt_erzeugen(_model, seed_wert, _model.biom_id) and _generator.verworfene_chunks == 0:
+			break
+		seed_wert = kandidat_zufall.naechste_zahl() % 1000000000
+	if not _generator.welt_erzeugen(_model, seed_wert, _model.biom_id):
+		return false
+	# Die erzeugte Welt wird sofort persistiert, damit Laden sie ohne
+	# erneute Generierung findet und dieselbe Welt reproduzierbar bleibt.
+	var welt_name := WeltSitzung.welt_name
+	if welt_name == "":
+		welt_name = "generiert_" + str(seed_wert)
+	var speicher := Welt_Speicher.new()
+	speicher.speichern(welt_name, _model.nach_woerterbuch())
+	WeltSitzung.welt_name = welt_name
+	return true
+
+func _karten_ebene_bauen() -> void:
+	# UI-Karte als eigene Spitze: CanvasLayer mit Viewer und Welt-Info,
+	# beides reine Observer über den autoritativen Weltzustand.
+	_karten_ebene = CanvasLayer.new()
+	_karten_ebene.layer = 30
+	_karten_ebene.visible = false
+	var hintergrund := ColorRect.new()
+	hintergrund.color = Color(0, 0, 0, 0.55)
+	hintergrund.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_karten_ebene.add_child(hintergrund)
+	_karten_viewer = Ui_KartenViewer.new()
+	_karten_viewer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_karten_viewer.offset_left = 80.0
+	_karten_viewer.offset_top = 60.0
+	_karten_viewer.offset_right = -80.0
+	_karten_viewer.offset_bottom = -120.0
+	_karten_ebene.add_child(_karten_viewer)
+	var info := Ui_WeltInfo.new()
+	info.position = Vector2(90, 20)
+	_karten_ebene.add_child(info)
+	_karten_viewer.einrichten(_model, _registry, _biome)
+	add_child(_karten_ebene)
+	_karten_info := info
+
 func _input(ereignis: InputEvent) -> void:
 	if ereignis is InputEventKey and ereignis.pressed and ereignis.keycode == KEY_V and ereignis.ctrl_pressed:
 		var dlg := preload("res://population/scenes/verteilung_dialog.gd").new()
@@ -136,6 +217,7 @@ func _process(delta: float) -> void:
 	_kamera.position = _spieler_position
 	_tiere.spieler_position_setzen(_spieler_position)
 	_stockmaenner.einheit_position_setzen(_auswahl.aktiver_einheit_index, _spieler_position)
+	_karte_beobachten()
 
 func _kamera_bewegen(delta: float) -> void:
 	var richtung := _lese_kamera_richtung()
@@ -160,7 +242,11 @@ func _unhandled_input(ereignis: InputEvent) -> void:
 	elif ereignis is InputEventMouseMotion and _auswahl.ziehen_aktiv:
 		_rechteck_pflegen()
 	elif ereignis is InputEventKey and ereignis.pressed:
-		_hotkey_verarbeiten(ereignis)
+		if ereignis.keycode == KEY_M:
+			_karte_umschalten()
+			get_viewport().set_input_as_handled()
+		else:
+			_hotkey_verarbeiten(ereignis)
 	elif ereignis.is_action_pressed("ui_cancel"):
 		get_tree().change_scene_to_file("res://ui/scenes/hauptmenue.tscn")
 

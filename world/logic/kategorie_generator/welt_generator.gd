@@ -6,14 +6,18 @@ class_name Welt_Generator
 ## über Welt_Model Mutationen und liefert die fertige Welt als Zustand.
 ## Neue Objekte, Tiere, Fraktionen oder Biome kommen nur per Registry-Eintrag
 ## hinzu; dieser Generator ändert sich dabei nicht.
+## Welt-Aufbau: WORLD -> REGION -> CHUNK -> OBJECT. Regionen werden aus dem
+## Seed geplant (Biom-Makrostruktur), Chunks werden je Region-Biom gefüllt.
 
 const CHUNK_GROESSE := 8
+const REGION_KANTE := 4
 
 ## Kategorie daten: die drei kombinierten Maschinen und das Protokoll.
 var registry: Welt_GeneratorRegistry = null
 var verteilung: Welt_GeneratorVerteilung = null
 var chunk_pruefer: Welt_GeneratorChunkPruefer = null
 var verworfene_chunks: int = 0
+var regionen_geplant: int = 0
 
 ## Kategorie logik: Welt aufbauen aus Seed und Registry.
 
@@ -28,11 +32,39 @@ func welt_erzeugen(model: Welt_Model, seed_wert: int, biom_id: String) -> bool:
 		return false
 	verteilung.start_zustand_setzen(seed_wert)
 	model.karte_erzeugen(model.RASTER_BREITE, model.RASTER_HOEHE, "boden")
+	model.welt_seed = seed_wert
+	model.region_kante = REGION_KANTE
+	_regionen_planen(model, biom_id)
 	var kacheln := CHUNK_GROESSE * CHUNK_GROESSE
 	for chunk_y in ceili(float(model.raster_hoehe) / float(CHUNK_GROESSE)):
 		for chunk_x in ceili(float(model.raster_breite) / float(CHUNK_GROESSE)):
-			_chunk_fuellen(model, Vector2i(chunk_x, chunk_y), kacheln, biom_id)
+			var region := model.region_an_kachel(chunk_x * CHUNK_GROESSE, chunk_y * CHUNK_GROESSE)
+			var region_biom := str(region.get("biom_id", biom_id)) if not region.is_empty() else biom_id
+			_chunk_fuellen(model, Vector2i(chunk_x, chunk_y), kacheln, region_biom)
 	return true
+
+func _regionen_planen(model: Welt_Model, weltraum_biom: String) -> void:
+	# REGION-Ebene: Aus dem Seed deterministisch Biome zu Region-Blöcken ziehen.
+	# Die Biom-Liste kommt aus der Gewichte-Registry, damit die Erweiterung
+	# weiterhin nur über den Pool läuft; die Basis-Biom-ID ist Fallback.
+	model.regionen_leeren()
+	model.region_kante = REGION_KANTE
+	var biome_pool: Array[String] = [weltraum_biom]
+	for eintrag_id: String in registry.ids_mit_gewicht("biome"):
+		var wort := registry.eintrag_wort_fuer(eintrag_id)
+		var biom_id_aus_pool := str(wort.get("element_id", eintrag_id))
+		if not biome_pool.has(biom_id_aus_pool):
+			biome_pool.append(biom_id_aus_pool)
+	var regionen_x := ceili(float(model.raster_breite) / float(REGION_KANTE))
+	var regionen_y := ceili(float(model.raster_hoehe) / float(REGION_KANTE))
+	for region_y in regionen_y:
+		for region_x in regionen_x:
+			var ziehung := verteilung.ziehe_eintrag(registry, "biome", weltraum_biom)
+			var biom_wahl := weltraum_biom
+			if ziehung != "":
+				biom_wahl = str(registry.eintrag_wort_fuer(ziehung).get("element_id", ziehung))
+			model.region_ergaenzen(region_x, region_y, biom_wahl, verteilung.zufall.naechste_zahl(), CHUNK_GROESSE)
+	regionen_geplant = regionen_x * regionen_y
 
 func _chunk_fuellen(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_id: String) -> void:
 	# Ein Chunk wird vorsimuliert: Objekte und Tiere werden gezählt, die

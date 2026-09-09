@@ -25,12 +25,36 @@ func _eintraege_uebernehmen(gelesen: Variant) -> bool:
 	_gewichte_nach_id.clear()
 	eintraege.clear()
 	eintraege_nach_id.clear()
-	for eintrag_id: String in (gelesen as Dictionary).keys():
-		var wert: Variant = (gelesen as Dictionary)[eintrag_id]
-		if eintrag_id.begins_with("_") or typeof(wert) != TYPE_DICTIONARY:
+	for schluessel: String in (gelesen as Dictionary).keys():
+		var wert: Variant = (gelesen as Dictionary)[schluessel]
+		if schluessel.begins_with("_") or typeof(wert) != TYPE_DICTIONARY:
 			continue
-		_gewichte_nach_id[eintrag_id] = (wert as Dictionary).duplicate(true)
-		registrieren(eintrag_id, null)
+		if _ist_kategorie_block(wert as Dictionary):
+			# Kategorie-Block (objekte, tiere, biome, ...): die verschachtelten
+			# Einträge werden eine Ebene hoch geholt, damit ids_mit_gewicht sie
+			# sieht. Der Block selbst ist kein Eintrag.
+			for eintrag_id: String in (wert as Dictionary).keys():
+				var eintrag_wert: Variant = (wert as Dictionary)[eintrag_id]
+				if eintrag_id.begins_with("_") or typeof(eintrag_wert) != TYPE_DICTIONARY:
+					continue
+				_gewichte_nach_id[eintrag_id] = (eintrag_wert as Dictionary).duplicate(true)
+				registrieren(eintrag_id, null)
+		else:
+			# Direkter Eintrag wie "grenzen": bleibt als Ganzes registriert.
+			_gewichte_nach_id[schluessel] = (wert as Dictionary).duplicate(true)
+			registrieren(schluessel, null)
+	return true
+
+func _ist_kategorie_block(block: Dictionary) -> bool:
+	# Ein Kategorie-Block ist erkannt, wenn seine Kinder alle selbst
+	# Wörterbücher mit kategorie-Feld sind (zum Beispiel objekte, tiere).
+	var kinder := block.keys()
+	if kinder.is_empty():
+		return false
+	for kind_id: String in kinder:
+		var kind: Variant = block[kind_id]
+		if typeof(kind) != TYPE_DICTIONARY or not (kind as Dictionary).has("kategorie"):
+			return false
 	return true
 
 func ids_mit_gewicht(kategorie: String) -> Array[String]:
@@ -57,6 +81,11 @@ func biom_vorliebe_fuer(eintrag_id: String) -> Array[String]:
 
 func element_pfad_fuer(eintrag_id: String) -> String:
 	return str((_gewichte_nach_id.get(eintrag_id, {}) as Dictionary).get("element_id", eintrag_id))
+
+func eintrag_wort_fuer(eintrag_id: String) -> Dictionary:
+	# Öffentliche Schnittstelle: Liefert das Roh-Wörterbuch eines Eintrags
+	# (zum Beispiel "grenzen") als Kopie; fremde Maschinen lesen nie privat.
+	return (_gewichte_nach_id.get(eintrag_id, {}) as Dictionary).duplicate(true)
 
 func datenfeld_arten() -> Dictionary:
 	var arten := super()

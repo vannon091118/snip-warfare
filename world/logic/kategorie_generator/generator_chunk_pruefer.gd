@@ -13,7 +13,10 @@ var grenzen: Dictionary = {}
 ## Kategorie logik: Prüfung eines Chunks als Zustand.
 
 func einrichten(registry: Welt_GeneratorRegistry) -> void:
-	grenzen = (registry._gewichte_nach_id.get("grenzen", {}) as Dictionary).duplicate(true)
+	# Der Prüfer greift nicht in private Felder der Registry: Er fragt die
+	# öffentliche Schnittstelle der Registry, denn die Grenzen sind ein
+	# Eintrag wie jeder andere und die Registry bleibt ihre einzige Quelle.
+	grenzen = registry.eintrag_wort_fuer("grenzen")
 
 func chunk_pruefen(objekt_zahl: int, tier_zahl: int, freie_kacheln: int, kacheln_gesamt: int) -> Dictionary:
 	# Liefert den Prüfzustand: angenommen true oder false plus Grund.
