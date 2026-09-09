@@ -286,9 +286,10 @@ func _auf_zustand_geaendert(_neu: int, status: Einheit_Status, mood: Pop_MoodMas
 	var job_id := status.job.job_id if status.job != null else ""
 	mood.auf_jobwechsel(von_str, nach_str, job_id)
 
-func transport_fuer_idle(einheit_index: int, _lager: Lager_Manager) -> bool:
+func transport_fuer_idle(einheit_index: int, _freies_lager: Lager_Manager) -> bool:
 	# Das Lager wird in der Transportkette des Status gezogen; der Manager
-	# braucht es hier nicht, der Parameter bleibt als Vertrag erhalten.
+	# braucht es hier nicht, der Parameter bleibt als Vertrag erhalten und
+	# trägt einen eigenen Namen, damit das Klassenfeld _lager nicht verschattet wird.
 	if einheit_index < 0 or einheit_index >= _einheiten.size():
 		return false
 	var mood: Pop_MoodMaschine = _einheiten[einheit_index]["mood"]
