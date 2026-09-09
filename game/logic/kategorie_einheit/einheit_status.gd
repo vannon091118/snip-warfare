@@ -8,6 +8,7 @@ class_name Einheit_Status
 signal zustand_geaendert(neuer_zustand: Zustand)
 signal arbeitsschritt_erledigt(ressource: String, menge: int)
 signal job_beendet()
+signal job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int)
 
 enum Zustand {
 	IDLE,
@@ -20,6 +21,7 @@ var aktuelles_ziel_typ: Job_Basis.ZielTyp = Job_Basis.ZielTyp.OBJEKT
 var aktuelles_ziel_index: int = -1
 var ziel_ressource: String = ""
 var _blick_rechts: bool = true
+var _loop_fortgesetzt: bool = false
 
 func ist_beschaeftigt() -> bool:
 	return zustand == Zustand.ARBEITEN
@@ -52,7 +54,16 @@ func job_vergeben(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, ziel_index:
 	job.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
 	job.job_beendet.connect(_auf_job_beendet)
 
-func job_abbrechen() -> void:
+func job_loopy_fortsetzen(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ressource: String) -> void:
+	# Antwort der Manager-Ebene auf job_loop_gefragt: derselbe Job laeuft
+	# mit frischem Ziel weiter, ohne den Zustand zurueckzugeben.
+	if job != neuer_job:
+		return
+	aktuelles_ziel_typ = ziel_typ
+	aktuelles_ziel_index = ziel_index
+	ziel_ressource = ressource
+	_loop_fortgesetzt = true
+	job.startet_neu()
 	job = null
 	aktuelles_ziel_index = -1
 	ziel_ressource = ""
@@ -77,6 +88,14 @@ func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 	arbeitsschritt_erledigt.emit(ressource, menge)
 
 func _auf_job_beendet() -> void:
+	# Kein logischer Kreislauf nach unten: Das Job-Ende wird einmal nach oben
+	# konsumiert. Ein Loop-Job fragt als neuer Zustandsschritt nach dem
+	# naechsten Ziel; antwortet der Manager nicht, faellt die Einheit in den Idle.
+	if job != null and job.ist_loop():
+		_loop_fortgesetzt = false
+		job_loop_gefragt.emit(job, aktuelles_ziel_typ, aktuelles_ziel_index)
+		if _loop_fortgesetzt:
+			return
 	job_beendet.emit()
 	job_abbrechen()
 

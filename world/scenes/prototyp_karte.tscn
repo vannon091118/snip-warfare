@@ -1,9 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://cprotokarte01"]
+[gd_scene load_steps=11 format=3 uid="uid://cprotokarte01"]
 
 [ext_resource type="Script" path="res://world/scenes/prototyp_karte.gd" id="1_karte"]
 [ext_resource type="Script" path="res://world/logic/kategorie_welt/welt_renderer.gd" id="2_renderer"]
 [ext_resource type="Script" path="res://world/logic/kategorie_tier/tier_manager.gd" id="3_tiere"]
 [ext_resource type="Texture2D" path="res://world/assets/ui/strichmaennchen_stehend.svg" id="4_spieler"]
+[ext_resource type="Script" path="res://ui/scenes/hud/hud_leiste.gd" id="5_hudleiste"]
+[ext_resource type="Script" path="res://ui/scenes/hud/hud_ressourcen_leiste.gd" id="6_ressourcen"]
+[ext_resource type="Script" path="res://ui/scenes/hud/hud_job_anzeige.gd" id="7_jobanzeige"]
+[ext_resource type="Script" path="res://ui/scenes/hud/hud_status_anzeige.gd" id="8_statusanzeige"]
+[ext_resource type="Script" path="res://ui/scenes/selection/auswahl_rechteck.gd" id="9_rechteck"]
+[ext_resource type="Script" path="res://ui/scenes/panels/kontext_menue.gd" id="10_kontext"]
 
 [node name="PrototypKarte" type="Node2D"]
 script = ExtResource("1_karte")
@@ -29,30 +35,35 @@ unique_name_in_owner = true
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="HUD" type="VBoxContainer" parent="CanvasLayer"]
+unique_name_in_owner = true
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 480.0
 offset_bottom = 120.0
 theme_override_constants/separation = 8
+script = ExtResource("5_hudleiste")
 
-[node name="RessourcenReihe" type="HBoxContainer" parent="CanvasLayer/HUD"]
+[node name="RessourcenLeiste" type="HBoxContainer" parent="CanvasLayer/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 16
+script = ExtResource("6_ressourcen")
 
-[node name="JobLabel" type="Label" parent="CanvasLayer/HUD"]
+[node name="JobAnzeige" type="Label" parent="CanvasLayer/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Job: keiner (Objekt anklicken)"
+script = ExtResource("7_jobanzeige")
 
-[node name="StatusLabel" type="Label" parent="CanvasLayer/HUD"]
+[node name="StatusAnzeige" type="Label" parent="CanvasLayer/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
 text = ""
+script = ExtResource("8_statusanzeige")
 
 [node name="HilfeLabel" type="Label" parent="CanvasLayer/HUD"]
 layout_mode = 2
-text = "WASD bewegen, Klick vergibt den Job, Rechtsklick bricht ab"
+text = "WASD Kamera, 1..9 Schnellwahl, Strg+1..9 merken, Shift+Klick ketten, Rechtsklick Menue/Move"
 
 [node name="ZurueckKnopf" type="Button" parent="CanvasLayer"]
 unique_name_in_owner = true
@@ -61,3 +72,14 @@ offset_top = 130.0
 offset_right = 136.0
 offset_bottom = 170.0
 text = "Hauptmenü"
+
+[node name="AuswahlRechteckEbene" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="AuswahlRechteck" type="ColorRect" parent="AuswahlRechteckEbene"]
+unique_name_in_owner = true
+script = ExtResource("9_rechteck")
+
+[node name="KontextMenue" type="PopupMenu" parent="."]
+unique_name_in_owner = true
+script = ExtResource("10_kontext")

@@ -32,6 +32,8 @@ Fehlercodes:
   E020  Registry-Gruppe ohne Member-Registry, oder IDs kollidieren
   E021  Registry-Klassenname folgt nicht dem Schema Prefix_Registry
   E022  Registry-Eintrag zeigt auf kein gültiges Asset (res://*.svg/.png) und ist damit im Generator ungültig
+  E023  RT Pyramide verletzt: Logik wird an zwei Orten gleich berechnet oder ein System faehrt zwei verschiedene Dinge
+  E024  Biom Pflicht: Biome wirken nicht als Mutation und umgehen die Zustands Pyramide
   E030  Shinon Gate: Banner Verbot verletzt (Tralal oder dekorativer Sonderzeichen Rahmen)
   E031  Shinon Gate: Bullet Listen Verbot verletzt (Zeile beginnt mit - * + oder Mittelpunkt)
   E032  Shinon Gate: Nummerierungspflicht verletzt (jede inhaltstragende Zeile muss 1. Satz. sein)
@@ -109,6 +111,9 @@ PRUEFKATEGORIEN = {
     "godot": ("E016", "E017", "E018"),
     "shinon": ("E030", "E031", "E032", "E033", "E034", "E035", "E036"),
     "assets": ("E022",),
+    "pyramide": ("E023", "E024"),
+    "biome": ("E024",),
+    "einheitlich": ("E023", "E024"),
 }
 
 GODOT_FEHLER_MUSTER = ("ERROR", "WARNING", "Parse Error", "SCRIPT ERROR")
@@ -582,6 +587,52 @@ def pruefe_registries(dateien):
 
 
 # --------------------------------------------------------------------------
+# Prüfkategorie pyramide + biome: Einheitlichkeit der RT Pyramide
+# --------------------------------------------------------------------------
+
+def pruefe_pyramide(dateien):
+    # E023: Keine doppelte faktor -> ticks Berechnung.
+    # Erlaubt ist nur Kern_Weltuhr.ticks_aus_faktor oder Delegation dorthin.
+    # Jede andere Formel mit TICK_RATE_HZ und 10.0 gilt als Duplikat.
+    tainted: list[tuple] = []
+    for pfad, code in dateien:
+        rel = pfad.relative_to(PROJEKT_STAMM)
+        normalisiert = str(rel).replace("\\", "/")
+        if normalisiert == "core/weltuhr.gd":
+            continue
+        if "ticks_aus_faktor" in code and "Kern_Weltuhr.ticks_aus_faktor" in code:
+            # Reine Delegation ist erlaubt, keine eigene Formel daneben.
+            if re.search(r"TICK_RATE_HZ\s*\*|\*\s*10\.0|clampf\s*\(\s*faktor", code) and "Kern_Weltuhr" not in re.search(r".*TICK_RATE_HZ.*", code).group(0) if re.search(r"TICK_RATE_HZ", code) else False:
+                pass
+        # Hart: Eigene Formel mit TICK_RATE_HZ und Faktor Skalierung außerhalb der Weltuhr.
+        if re.search(r"Kern_Weltuhr\.TICK_RATE_HZ", code) and "Kern_Weltuhr.ticks_aus_faktor" not in code:
+            for treffer in re.finditer(r"Kern_Weltuhr\.TICK_RATE_HZ", code):
+                zeile = code[max(0, treffer.start() - 80):treffer.end() + 40]
+                if "ticks_aus_faktor" not in zeile:
+                    tainted.append((rel, zeile_bei(code, treffer.start())))
+    for rel, zeile in tainted:
+        fehler("E023", rel, zeile,
+               "RT Pyramide: Eigene ticks Berechnung mit TICK_RATE_HZ ausserhalb von Kern_Weltuhr.ticks_aus_faktor. Nur die Weltuhr rechnet zentral, alle anderen delegieren.")
+    # E024: Biome muessen als Mutation wirken.
+    hat_biom_registry = any("Welt_BiomRegistry" in c for _, c in dateien)
+    hat_biom_mutation = any("Welt_BiomMutation" in c for _, c in dateien)
+    if not hat_biom_registry or not hat_biom_mutation:
+        fehler("E024", "world/data/biome.json", 1,
+               "Biom Pflicht: Biome muessen als Welt_BiomRegistry und Welt_BiomMutation als Mutationsmaschine existieren und nur als Zustand wirken.")
+    else:
+        biom_json = PROJEKT_STAMM / "world" / "data" / "biome.json"
+        if not biom_json.is_file():
+            fehler("E024", "world/data/biome.json", 1, "Biom Pflicht: Datei world/data/biome.json fehlt.")
+    # E023: System Trennung — Tier_Status darf keine hart codierte Tier-ID Weiche enthalten.
+    for pfad, code in dateien:
+        rel = pfad.relative_to(PROJEKT_STAMM)
+        if "tier_status" in str(rel).lower() and '"baer"' in code and "match" in code.lower():
+            if 'tier_id == "baer"' in code or "tier_id == 'baer'" in code:
+                fehler("E023", rel, zeile_von(code, '"baer"'),
+                       "RT Pyramide: Tier_Status enthaelt hart codierte Tier-ID Weiche. Trigger und Folgezustand muessen rein aus Registry ausloeser und logik_id kommen.")
+
+
+# --------------------------------------------------------------------------
 # Prüfkategorie shinon: Root Gate shinon/commit_msg.txt mechanisch
 # --------------------------------------------------------------------------
 
@@ -716,6 +767,8 @@ def hauptprogramm():
         pruefe_registries(dateien)
     if "shinon" in gewaehlt:
         pruefe_shinon()
+    if "pyramide" in gewaehlt or "biome" in gewaehlt or "einheitlich" in gewaehlt:
+        pruefe_pyramide(dateien)
     if godot_aktiv:
         godot_lauf(argumente.godot_befehl)
 

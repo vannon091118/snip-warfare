@@ -31,7 +31,7 @@ func laden() -> bool:
 	var gelesen: Variant = JSON.parse_string(datei.get_as_text())
 	return _eintraege_uebernehmen(gelesen)
 
-func _eintraege_uebernehmen(gelesen: Variant) -> bool:
+func _eintraege_uebernehmen(_gelesen: Variant) -> bool:
 	# Unterklassen übersetzen die Rohdaten in ihre exakten Datenklassen.
 	return false
 

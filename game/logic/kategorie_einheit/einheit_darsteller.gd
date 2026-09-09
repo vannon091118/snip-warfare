@@ -47,14 +47,14 @@ func _baue_frames() -> void:
 	sprite_frames = frames
 	_frames_fertig = true
 
-func animation_setzen(name: String) -> void:
+func animation_setzen(animations_name: String) -> void:
 	if not _frames_fertig:
 		return
-	if sprite_frames != null and sprite_frames.has_animation(name):
-		animation = name
+	if sprite_frames != null and sprite_frames.has_animation(animations_name):
+		animation = animations_name
 		play()
 	else:
-		push_warning("Unbekannte Animation: %s" % name)
+		push_warning("Unbekannte Animation: %s" % animations_name)
 
 func _wende_richtung(rechts: bool) -> void:
 	flip_h = not rechts

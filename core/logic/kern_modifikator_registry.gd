@@ -43,18 +43,16 @@ func modifikator_fuer(modifikator_id: String) -> Kern_ModifikatorBasis:
 func hat_modifikator(modifikator_id: String) -> bool:
 	return _modifikatoren_nach_id.has(modifikator_id)
 
-## Liefert die Ticks für die gegebene Faktor-Angabe.
-## 1.0 bedeutet zehn Sekunden; die Ticks ergeben sich aus der Weltuhr.
+## Liefert die Ticks für die gegebene Faktor-Angabe. Delegiert an Weltuhr.
 func ticks_fuer_faktor(faktor: float) -> int:
-	var geklemmt := clampf(faktor, 0.1, 10.0)
-	return maxi(int(round(geklemmt * 10.0 * Kern_Weltuhr.TICK_RATE_HZ)), 1)
+	return Kern_Weltuhr.ticks_aus_faktor(faktor)
 
 ## Liefert die Ticks für einen benannten Modifikator aus der Registry.
 func ticks_fuer_modifikator(modifikator_id: String) -> int:
 	var modifikator := modifikator_fuer(modifikator_id)
 	if modifikator == null:
-		return ticks_fuer_faktor(1.0)
-	return ticks_fuer_faktor(modifikator.faktor)
+		return Kern_Weltuhr.ticks_aus_faktor(1.0)
+	return Kern_Weltuhr.ticks_aus_faktor(modifikator.faktor)
 
 func datenfeld_arten() -> Dictionary:
 	var arten := super()

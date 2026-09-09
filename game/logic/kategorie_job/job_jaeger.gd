@@ -7,7 +7,7 @@ class_name Job_Jaeger
 func ziel_typ() -> ZielTyp:
 	return ZielTyp.TIER
 
-func passt_zu_objekt(element_id: String) -> bool:
+func passt_zu_objekt(_element_id: String) -> bool:
 	return false
 
 func passt_zu_tier(tier_id: String) -> bool:

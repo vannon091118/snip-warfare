@@ -29,14 +29,14 @@ func _exit_tree() -> void:
 	if Weltuhr.tick.is_connected(_auf_tick):
 		Weltuhr.tick.disconnect(_auf_tick)
 
-func tier_platzieren(tier_id: String, position: Vector2) -> int:
+func tier_platzieren(tier_id: String, welt_position: Vector2) -> int:
 	if not _verhalten.hat_eintrag(tier_id):
 		push_warning("Unbekanntes Tier: %s" % tier_id)
 		return -1
 	var status := Tier_Status.new(tier_id, _verhalten)
 	var darsteller := Tier_Darsteller.new()
 	darsteller.einrichten(tier_id, _verhalten, status)
-	darsteller.position = position
+	darsteller.position = welt_position
 	_darsteller_ebene.add_child(darsteller)
 	var tier_nummer := _naechste_tier_nummer
 	_naechste_tier_nummer += 1
@@ -45,12 +45,12 @@ func tier_platzieren(tier_id: String, position: Vector2) -> int:
 		"tier_id": tier_id,
 		"status": status,
 		"darsteller": darsteller,
-		"position": position,
+		"position": welt_position,
 	})
 	return tier_nummer
 
-func spieler_position_setzen(position: Vector2) -> void:
-	_spieler_position = position
+func spieler_position_setzen(neue_position: Vector2) -> void:
+	_spieler_position = neue_position
 
 func tier_id_bei(ziel: Vector2, radius: float) -> int:
 	# Liefert die stabile ID des Tieres nahe dem Punkt, sonst -1.

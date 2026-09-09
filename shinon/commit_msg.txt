@@ -1,9 +1,10 @@
-1. Der Nutzer verlangte dass SnipWarfare als eigenstaendiges Projekt mit eigener Identitaet ueber das shinon Modul sein Init bekommt und auf vannon091118 als GitHub Repository erscheint wobei nur der gh Token genutzt werden darf und niemals Zustand aus anderen lokalen Projekten kopiert wird.
-2. Shinon nahm diesen Auftrag wie ein muerrischer Hausmeister entgegen der gleichzeitig die Buehne betritt und die vierte Wand mit einem trockenen Grinsen einreisst.
-3. Im Mittelteil hat Shinon die menschenlesbare Steuerung in game/data/steuerung.json neu geschrieben damit WASD die Kamera bewegt, Linksklick einzeln waehlt, Ziehen die Masse rahmt und Rechtsklick immer ein Menue mit Sammeln und Abbauen samt Icon und Tooltip fuer das benoetigte Werkzeug oeffnet.
-4. Dazu hat Shinon drei neue winzige Klassen in core geschaffen die nur Daten halten, nur uebersetzen oder nur verwalten und die den Faktor eins als zehn Sekunden in Ticks der einzigen Weltuhr wandeln.
-5. Gleichzeitig hat Shinon sein eigenes Haus erweitert und dort den Projekt Status Leser, den Readme Generator, den Git Helfer, den Starter und das Init selbst als fuenf zusaetzliche Waechter eingezogen die jeder nur eine Aufgabe kennen.
-6. Der Generator hat aus echten Daten eine neue Readme gebaut die direkt zu dir spricht, zynisch und humorvoll, style agnostisch, die den aktuellen Stand fuer Spieler erklaert und die vierte Wand bewusst bricht statt sie zu bestaunen.
-7. Der Preflight wurde um zwei neue Stimmen erweitert die nun auch die Lebendigkeit der Readme und die Lesbarkeit der Steuerung pruefen und beide als E035 und E036 blockieren wenn sie fehlen.
-8. Das lokale Git Nest wurde frisch ausgehoben, die Ignore Liste verlaengert und das Repo als main vorbereitet damit der erste Flug gelingt ohne fremde Federn zu tragen.
-9. Noch zu tun bleibt das GitHub Nest auf vannon091118 unter dem Namen snip-warfare anzulegen und den ersten Push zu setzen damit die Welt sieht dass SnipWarfare eigenstaendig fliegt.
+1. Du wolltest keine Monsterszene mehr und viele kleine Szenen mit je einer Bestimmung, und du wolltest Stickmaenner nur ueber Jobs steuern, also habe ich den Wandsaal abgetragen und eine kleine Halle mit vielen Kammern gebaut.
+2. Die Karte ist jetzt nur noch der schmale Gang, der die Kammern verbindet; sie rechnet nichts mehr selbst, sie reicht nur noch die Eingaben wie ein Tuersteher weiter.
+3. Die Ressourcenleiste ist eine eigene Kammer im ui/scenes/hud Ordner und schaut nur auf die Bestaende, wie ein Kleingeldzaehler der nichts kauft und nichts verkauft.
+4. Die Jobanzeige und die Statusanzeige sind eigene Kammern nebenan und zeigen nur, was ihnen die Etage meldet, wie Namensschilder an einer Tuer.
+5. Das Auswahlrechteck und der Auswahlmanager wohnen im ui/scenes/selection Ordner und kennen nur Rahmen und Treffer, keine Jobs und keine Kamera.
+6. Das Kontextmenue ist eine eigene Kammer im ui/scenes/panels Ordner und liest seine Eintraege ausschliesslich aus der Steuerungsdatei, wie eine Speisekarte die nur vom Koch geschrieben wird.
+7. Die Stickmaenner fahren jetzt nicht mehr auf einen Einmal-Befehl runter: Der Holzfaeller-Job hat ein Loop-Zeichen bekommen und sucht nach jedem gefaellten Baum den naechsten in Reichweite, wie ein Wanderarbeiter der zur naechsten Rutsche geht.
+8. Kein Zustand wird zurueckgegeben: Der Fluss fliesst wie ein Fluss nur nach oben, jede Maschine konsumiert und akumuliert, und oben bleibt ein Zustand dessen Weg aus deterministischem Samen wieder rekonstruierbar ist.
+9. Schnellwahl mit Strg und Ziffern, direkte Wahl mit Ziffern, Shift verkettet Jobs und Rechtsklick auf leerer Flaeche gibt einen Move oder mit Shift einen aggressiven Move, alles editierbar in der Steuerungsdatei.
+10. Der Preflight laeuft gruen durch und die Engine meldet keine Fehler mehr, aber ein Craftingmenue und ein Wirtschaftsmenue als getrennte Spitzen fehlen noch, damit kein Menue jemals das andere beeinflusst.

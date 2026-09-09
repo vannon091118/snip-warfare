@@ -1,38 +1,38 @@
-extends RefCounted
+extends Welt_RegistryBasis
 class_name Objekt_RegistryBasis
 ## Gemeinsame Basis aller Katalog-Registries der Kategorie Objekt.
-## Sie lädt den Element-Katalog, behält alle Einträge und verteilt sie in
-## einem zweiten Durchgang an die Registries der Fachkategorien:
-## Objekt_Registry (Terrain), Natur_Registry (Natur), Gebaeude_Registry
-## (Gebäude). State Machines und Renderer lesen ihre Werte ausschließlich
-## aus diesen Instanzen; nichts wird hart codiert.
+## RT-Pyramide: Diese Basis ist eine echte Registry Erweiterung, kein
+## Schattenläufer. Sie lädt den Element-Katalog einmalig, hält die
+## exakten Datenklassen zentral und reicht gefilterte Sichten als
+## Welt_RegistryBasis Instanzen weiter. Keine doppelte JSON Ladung.
+## State Machines und Renderer lesen ausschließlich aus Instanzen.
 
-## Kategorie daten: der komplette Katalog und die Fach-Registries.
-var eintraege: Array[Objekt_Basis] = []
+## Kategorie daten: Fach-Registries als gefilterte Sicht über die zentrale Katalog Tabelle.
 var _registries_nach_kategorie: Dictionary = {}
+var _objekte_nach_kategorie_cache: Dictionary = {}
 
 ## Kategorie logik: Laden, Verteilen und Zuordnung der exakten Klassen.
 
 const KATALOG_PFAD := "res://world/data/element_katalog.json"
 
-func _init() -> void:
-	laden()
+func _init(quelle_pfad: String = KATALOG_PFAD) -> void:
+	super(quelle_pfad)
 
-func laden() -> bool:
-	eintraege.clear()
-	_registries_nach_kategorie.clear()
-	registries_vorbereiten()
-	if not FileAccess.file_exists(KATALOG_PFAD):
-		push_warning("Element-Katalog nicht gefunden: %s" % KATALOG_PFAD)
-		return false
-	var datei := FileAccess.open(KATALOG_PFAD, FileAccess.READ)
-	var gelesen: Variant = JSON.parse_string(datei.get_as_text())
+func schema_name() -> String:
+	return "Objekt_RegistryBasis"
+
+func _eintraege_uebernehmen(gelesen: Variant) -> bool:
 	if typeof(gelesen) != TYPE_ARRAY:
-		push_warning("Element-Katalog hat ein ungültiges Format: %s" % KATALOG_PFAD)
+		push_warning("Element-Katalog hat ein ungültiges Format: %s" % _quelle_pfad)
 		return false
 	var warnungen := Kern_AssetPruefer.validiere_katalog_eintraege(gelesen as Array)
 	for warnung: Dictionary in warnungen:
 		push_warning("Katalog-Eintrag '%s': kein gültiges Asset; Platzhalter wird verwendet" % str(warnung.get("id", "?")))
+	eintraege.clear()
+	eintraege_nach_id.clear()
+	_registries_nach_kategorie.clear()
+	_objekte_nach_kategorie_cache.clear()
+	registries_vorbereiten()
 	for eintrag: Variant in gelesen:
 		if typeof(eintrag) != TYPE_DICTIONARY or not (eintrag as Dictionary).has("id"):
 			continue
@@ -44,7 +44,7 @@ func laden() -> bool:
 			wort["textur_pfad"] = platzhalter
 		var objekt := _objekt_klasse_fuer(element_id)
 		objekt.aus_katalog_eintrag(wort)
-		eintraege.append(objekt)
+		registrieren(element_id, objekt)
 		_registrieren_in_kategorie(kategorie, element_id, objekt)
 	return true
 
@@ -61,6 +61,9 @@ func _registrieren_in_kategorie(kategorie: String, element_id: String, objekt: O
 	if registry == null:
 		return
 	registry.registrieren(element_id, objekt)
+	if not _objekte_nach_kategorie_cache.has(kategorie):
+		_objekte_nach_kategorie_cache[kategorie] = []
+	(_objekte_nach_kategorie_cache[kategorie] as Array).append(objekt)
 
 func registry_nach_kategorie(kategorie: String) -> Welt_RegistryBasis:
 	var registry: Welt_RegistryBasis = _registries_nach_kategorie.get(kategorie)
@@ -74,17 +77,18 @@ func registries_namen() -> Array[String]:
 	return namen
 
 func finde_objekt(id: String) -> Objekt_Basis:
-	for objekt: Objekt_Basis in eintraege:
-		if objekt.id == id:
-			return objekt
-	return null
+	var treffer := finde_eintrag(id)
+	return treffer as Objekt_Basis if treffer != null else null
 
 func hat_objekt(id: String) -> bool:
-	return finde_objekt(id) != null
+	return hat_eintrag(id)
 
 func kategorien() -> Array[String]:
 	var gefundene: Array[String] = []
-	for objekt: Objekt_Basis in eintraege:
+	for objekt_ref: RefCounted in eintraege:
+		var objekt := objekt_ref as Objekt_Basis
+		if objekt == null:
+			continue
 		var kategorie := str(objekt.kategorie)
 		if not gefundene.has(kategorie):
 			gefundene.append(kategorie)
@@ -92,11 +96,20 @@ func kategorien() -> Array[String]:
 	return gefundene
 
 func objekte_der_kategorie(kategorie: String) -> Array[Objekt_Basis]:
+	if _objekte_nach_kategorie_cache.has(kategorie):
+		var cache: Array = _objekte_nach_kategorie_cache[kategorie]
+		var typisiert: Array[Objekt_Basis] = []
+		for eintrag in cache:
+			typisiert.append(eintrag as Objekt_Basis)
+		return typisiert
 	var gefundene: Array[Objekt_Basis] = []
-	for objekt: Objekt_Basis in eintraege:
-		if str(objekt.kategorie) == kategorie:
+	for objekt_ref: RefCounted in eintraege:
+		var objekt := objekt_ref as Objekt_Basis
+		if objekt != null and str(objekt.kategorie) == kategorie:
 			gefundene.append(objekt)
 	return gefundene
 
 func datenfeld_arten() -> Dictionary:
-	return {"eintraege": "Array[Objekt_Basis]"}
+	var arten := super()
+	arten["eintraege"] = "Array[Objekt_Basis]"
+	return arten

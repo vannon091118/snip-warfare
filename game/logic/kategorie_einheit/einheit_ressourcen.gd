@@ -83,11 +83,11 @@ func hinzufuegen(ressource: String, menge: int) -> void:
 	if menge <= 0:
 		return
 	var start := {"erntebuchung": {"ressource": ressource, "menge": menge}}
-	var schema_zustand := start
-	schema_zustand["bestaende"] = _bestaende_lesen().duplicate(true)
-	schema_zustand["letzter_zufallswurf"] = aktueller_zustand.get("letzter_zufallswurf", 0)
+	var ergebnis_zustand := start
+	ergebnis_zustand["bestaende"] = _bestaende_lesen().duplicate(true)
+	ergebnis_zustand["letzter_zufallswurf"] = aktueller_zustand.get("letzter_zufallswurf", 0)
 	# Die Schema-Startzustände stehen dem Zustand als Referenz zur Verfügung.
-	var zustand := _schema.ausfuehren(schema_zustand)
+	var zustand := _schema.ausfuehren(ergebnis_zustand)
 	_zustand_uebernehmen(zustand)
 
 func _zustand_uebernehmen(zustand: Dictionary) -> void:

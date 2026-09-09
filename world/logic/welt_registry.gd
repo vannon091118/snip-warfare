@@ -1,25 +1,38 @@
 extends Objekt_RegistryBasis
 class_name Welt_Registry
 ## Fassade über die Fach-Registries Terrain, Natur und Gebäude.
-## Sie behält alle Katalog-Einträge und delegiert nach Kategorie; Aufrufer
-## erhalten immer dieselben Objekt-Instanzen, egal ob sie über die Fassade
-## oder die Fach-Registry gehen. Zentrale Erzeugung der Datenklassen in
-## _objekt_klasse_fuer; neue Objektarten werden nur hier registriert.
+## RT-Pyramide: Spitze fasst alle Untersysteme zusammen ohne deren
+## Logik zu verdoppeln. Fachregistries sind nur gefilterte Sichten.
+## Sie behält alle Katalog-Einträge zentral und delegiert nur die Sicht
+## nach Kategorie; Aufrufer erhalten immer dieselben Objekt-Instanzen.
+## Zentrale Erzeugung der Datenklassen in _objekt_klasse_fuer.
 
-## Kategorie daten: die Fach-Registries dieser Fassade.
-var _natur: Natur_Registry
-var _gebaeude: Gebaeude_Registry
-var _terrain: Objekt_Registry
+## Kategorie daten: getypte Fach-Sicht Caches fuer die Fassade.
+var _natur_sicht: Array[Objekt_Basis] = []
+var _gebaeude_sicht: Array[Objekt_Basis] = []
+var _terrain_sicht: Array[Objekt_Basis] = []
 
-## Kategorie logik: Aufbau und delegierende Zugriffe.
+## Kategorie logik: Aufbau und delegierende Zugriffe. Fach-Sichten sind
+## keine eigenen Registry Instanzen, sondern nur getypte Filter über
+## die zentrale Katalog Tabelle. Kein eigener Ladezyklus.
 
 func registries_vorbereiten() -> void:
-	_terrain = Objekt_Registry.new()
-	_natur = Natur_Registry.new()
-	_gebaeude = Gebaeude_Registry.new()
-	_registries_nach_kategorie["Terrain"] = _terrain
-	_registries_nach_kategorie["Natur"] = _natur
-	_registries_nach_kategorie["Gebäude"] = _gebaeude
+	# Fach-Sichten werden erst nach dem Laden gefüllt, hier nur leeren.
+	_natur_sicht.clear()
+	_gebaeude_sicht.clear()
+	_terrain_sicht.clear()
+
+func _registrieren_in_kategorie(kategorie: String, element_id: String, objekt: Objekt_Basis) -> void:
+	var basis_registry: Welt_RegistryBasis = _registries_nach_kategorie.get(kategorie)
+	if basis_registry != null:
+		basis_registry.registrieren(element_id, objekt)
+	match kategorie:
+		"Terrain":
+			_terrain_sicht.append(objekt)
+		"Natur":
+			_natur_sicht.append(objekt)
+		"Gebäude":
+			_gebaeude_sicht.append(objekt)
 
 func _objekt_klasse_fuer(element_id: String) -> Objekt_Basis:
 	match element_id:
@@ -39,23 +52,28 @@ func _objekt_klasse_fuer(element_id: String) -> Objekt_Basis:
 			return Objekt_Kachel.new()
 	return Objekt_Basis.new()
 
-func natur() -> Natur_Registry:
-	return _natur
+func natur_sicht() -> Array[Objekt_Basis]:
+	return _natur_sicht
 
-func gebaeude() -> Gebaeude_Registry:
-	return _gebaeude
+func gebaeude_sicht() -> Array[Objekt_Basis]:
+	return _gebaeude_sicht
 
-func terrain() -> Objekt_Registry:
-	return _terrain
+func terrain_sicht() -> Array[Objekt_Basis]:
+	return _terrain_sicht
 
-func registry_nach_schema_name(schema_name: String) -> Welt_RegistryBasis:
-	match schema_name:
-		"Objekt_Registry":
-			return _terrain
-		"Natur_Registry":
-			return _natur
-		"Gebaeude_Registry":
-			return _gebaeude
+func natur() -> Welt_RegistryBasis:
+	return _registries_nach_kategorie.get("Natur", null)
+
+func gebaeude() -> Welt_RegistryBasis:
+	return _registries_nach_kategorie.get("Gebäude", null)
+
+func terrain() -> Welt_RegistryBasis:
+	return _registries_nach_kategorie.get("Terrain", null)
+
+func registry_nach_schema_name(schema_id: String) -> Welt_RegistryBasis:
+	match schema_id:
+		"Objekt_Registry", "Natur_Registry", "Gebaeude_Registry":
+			return self
 	return null
 
 func datenfeld_arten() -> Dictionary:

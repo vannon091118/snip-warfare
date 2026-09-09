@@ -60,11 +60,13 @@ Jedes Datenobjekt hat eine eigene Klasse mit exaktem, eindeutigem Namen. Die Reg
 | `Resources_Stone` | `game/data/ressourcen.json` (stein) |
 | `Resources_Meat` | `game/data/ressourcen.json` (fleisch) |
 | `Tier_Baer` | `world/data/tier_verhalten.json` (baer) |
+| `Tier_Eisbaer` | `world/data/tier_verhalten.json` (eisbaer, Kombi baer_verfolgen + aggressiv x1.2) |
 | `Tier_Hase` | `world/data/tier_verhalten.json` (hase) |
 | `Tier_Vogel` | `world/data/tier_verhalten.json` (vogel) |
 | `Tier_Vogelgruppe` | `world/data/tier_verhalten.json` (vogelgruppe) |
+| `Welt_BiomBasis` | `world/data/biome.json` (gemaessigt, tundra, steppe) |
 
-Erzeugungsorte: `Welt_Registry._objekt_klasse_fuer()`, `Einheit_Ressourcen._ressourcen_klasse_fuer()`, `Tier_Verhalten._tier_klasse_fuer()`. Neue Datenklassen werden nur an diesen drei Stellen registriert.
+Erzeugungsorte: `Welt_Registry._objekt_klasse_fuer()`, `Einheit_Ressourcen._ressourcen_klasse_fuer()`, `Tier_Registry._tier_klasse_fuer()`, `Welt_BiomRegistry` (biome). Neue Datenklassen werden nur an diesen Stellen registriert.
 
 ## 4. Commit Gate Shinon im Root
 
@@ -106,12 +108,27 @@ Regeln des Gates und des Inits:
 | `game/data/steuerung.json` | Menschenlesbare Steuerung WASD Kamera, Linksklick einzeln, Drag Masse, Rechtsklick Kontext sammeln abbauen mit Tooltip Werkzeug, faktor 1=10s | `Kern_SteuerungRegistry` + `Kern_SteuerungUebersetzer` |
 | `world/data/element_katalog.json` | Platzierbare Objekte mit Kategorie | `Welt_Registry` |
 | `world/data/tier_verhalten.json` | Tierwerte (Trigger, Geschwindigkeit, Ertrag, HP) | `Tier_Verhalten` |
-| `world/data/standard_welt.json` | Standard-Prototypkarte | `Welt_Model` über die Szenen |
+| `world/data/biome.json` | Biome als Mutationen je Biom mit logik_id, modifikator, faktor | `Welt_BiomRegistry` + `Welt_BiomMutation` + `Welt_BiomManager` |
+| `world/data/standard_welt.json` | Standard-Prototypkarte mit biom_id | `Welt_Model` über die Szenen |
 | `core/data/kern_logik.json` | Generische Logiken wiederverwendbar | `Kern_LogikRegistry` |
 | `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s | `Kern_ModifikatorRegistry` |
 | `shinon/shinon_init.py --readme` | Lebendige README als Pitch von Shinon, gamer orientiert, vierte Wand | `ShinonReadmeGenerator` |
 
-## 6. Globale Zeit
+## 6. RT Pyramide
+
+Die Architektur ist eine echte Pyramide mit modularer Spitze. Basis: `Welt_Model` haelt nur Daten. Darueber: Registries halten alle exakten Datenklassen zentral und zeigen je Eintrag auf ein sichtbares Asset, Logiken und Modifikatoren sind generisch wiederverwendbar. Darueber: State Maschinen und Mutationsmaschinen mit je genau einer Verantwortung. Spitze: Endszene `world/scenes/prototyp_karte.tscn` komponiert alle Untersysteme, besitzt aber selbst keine Logik und wird durch die Untersysteme modular bestimmt.
+
+Regeln der Pyramide:
+
+1. Objekte sind Basis: `Welt_Model` wirkt nur ueber Mutationen auf Zustand, nie direkt.
+2. Registries sind getypte Tabellen: jede Datenklasse entsteht nur in ihrer Registry, nirgends doppelt.
+3. State Maschinen aendern Zustaende, Mutationsmaschinen mutieren Zustaende, nie umgekehrt und nie gemischt.
+4. Biome wirken nur als `Welt_BiomMutation` ueber `Welt_BiomManager` auf den Zustand, ein Biom ist nur eine Kombi aus logik_id, modifikator und faktor.
+5. Logiken werden wiederverwendet, nie geteilt: dieselbe Logik laeuft fuer Eisbär und Bär, aber nie zwei verschiedene Dinge durch dasselbe System.
+6. Zeit ist zentral: nur `Kern_Weltuhr.ticks_aus_faktor()` rechnet faktor -> ticks, alle anderen delegieren dorthin. Faktor 1.0 bedeutet 10 Sekunden auf 24 Hz.
+7. Darstellung liest nur Daten, nie Logik direkt.
+
+## 6b. Globale Zeit
 
 Es gibt genau einen globalen Tick: das Autoload `Weltuhr` (Klasse `Kern_Weltuhr`, 24 Ticks/Sekunde, klassischer RTS-Standard). Jede State Machine abonniert `Weltuhr.tick`; keine Domäne besitzt eine eigene Weltzeit. Darstellung läuft über die Frames der Sprite-Sheets, deren Geschwindigkeit an die 24 Ticks gekoppelt ist.
 
@@ -150,6 +167,8 @@ Die Ausgabe listet zuerst alle Datenobjekt-Erzeugungen mit Datei, Klasse und Zei
 | E032 | Shinon Nummerierung verletzt | Jede inhaltstragende Zeile als 1. Satz. 2. Satz. lückenlos nummerieren und mit Punkt enden |
 | E033 | Shinon Bildsprache verletzt | Technische Pfad Litanei durch bildliche Erzählung in ganzen Sätzen ersetzen, mindestens fünf Wörter je Satz |
 | E034 | Shinon commit_msg fehlt oder leer | Datei shinon/commit_msg.txt in nummerierten bildlichen Sätzen erstellen |
+| E023 | RT Pyramide: doppelte Berechnung oder System faehrt zwei Dinge | Berechnung nur in Kern_Weltuhr zentral, System nur eine Verantwortung, hart codierte Tier Weichen entfernen |
+| E024 | Biom Pflicht: wirkt nicht als Mutation | Biome nur als Welt_BiomMutation ueber Welt_BiomManager an Welt_Model, world/data/biome.json pflegen |
 | E035 | Shinon README Pflicht verletzt | README via python shinon/shinon_init.py --readme neu erzeugen, Pitch aus Shinon Sicht mit Zustand Vision und vierter Wand |
 | E036 | Steuerung Pflicht verletzt | game/data/steuerung.json menschlich mit WASD Linksklick Drag Rechtsklick sammeln abbauen Icon Tooltip Werkzeug fuellen |
 

@@ -13,6 +13,9 @@ func anwendbar(zustand: Dictionary) -> bool:
 
 func anwenden(zustand: Dictionary, _zufall: Kern_Zufall) -> Dictionary:
 	var ergebnis := zustand.duplicate(true)
-	var start := ergebnis.get(Kern_Mutationsschema.START_ZUSTANDS_KEY, {})
-	ergebnis["bestaende"] = (start.get("bestaende", {}) as Dictionary).duplicate(true)
+	var start_variant: Variant = ergebnis.get(Kern_Mutationsschema.START_ZUSTANDS_KEY, {})
+	var start: Dictionary = start_variant as Dictionary if typeof(start_variant) == TYPE_DICTIONARY else {}
+	var bestaende_variant: Variant = start.get("bestaende", {})
+	var bestaende: Dictionary = (bestaende_variant as Dictionary) if typeof(bestaende_variant) == TYPE_DICTIONARY else {}
+	ergebnis["bestaende"] = bestaende.duplicate(true)
 	return ergebnis

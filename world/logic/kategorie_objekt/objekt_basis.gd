@@ -34,8 +34,7 @@ func aus_katalog_eintrag(eintrag: Dictionary) -> void:
 	schluessel_daten = eintrag.duplicate()
 
 func ticks_fuer_faktor() -> int:
-	# 1.0 bedeutet zehn Sekunden; die Weltuhr übersetzt in Ticks.
-	return maxi(int(round(clampf(faktor, 0.1, 10.0) * 10.0 * Kern_Weltuhr.TICK_RATE_HZ)), 1)
+	return Kern_Weltuhr.ticks_aus_faktor(faktor)
 
 func effektive_logik() -> String:
 	return logik_id

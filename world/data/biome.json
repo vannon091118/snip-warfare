@@ -1,0 +1,39 @@
+{
+  "_kommentar": "Menschenlesbar: Biome mutieren Zustaende, nicht Logiken. Ein Biom wirkt nur ueber seine Mutation auf dem Schema, die Logik bleibt wiederverwendbar. faktor 1.0 bedeutet 10 Sekunden auf der Weltuhr.",
+  "biome": [
+    {
+      "id": "gemaaessigt",
+      "name": "Gemäßigt",
+      "beschreibung": "Ausgangslage ohne Eingriffe, alles laeuft neutral.",
+      "logik_id": "",
+      "modifikator_id": "normal",
+      "faktor": 1.0,
+      "mutationen": [],
+      "farbe": "#6FA86F"
+    },
+    {
+      "id": "tundra",
+      "name": "Tundra",
+      "beschreibung": "Kaelte verlangsammt Ernten und macht Tiere zaeher. Wirkt per Mutation auf Ressourcen und Tiere.",
+      "logik_id": "biom_tundra",
+      "modifikator_id": "langsam",
+      "faktor": 0.85,
+      "mutationen": [
+        {"name": "TundraHaerte", "quelle": "biom", "faktor": 0.85, "beschreibung": "Ernte dauert laenger, Fleisch Ausbeute sinkt leicht."}
+      ],
+      "farbe": "#B9D6E8"
+    },
+    {
+      "id": "steppe",
+      "name": "Steppe",
+      "beschreibung": "Offenes Land, schnelle Bewegungen, Tiere fliehen weiter.",
+      "logik_id": "biom_steppe",
+      "modifikator_id": "schnell",
+      "faktor": 1.15,
+      "mutationen": [
+        {"name": "SteppeWeite", "quelle": "biom", "faktor": 1.15, "beschreibung": "Flucht und Verfolgen gewinnen Reichweite."}
+      ],
+      "farbe": "#D8C28A"
+    }
+  ]
+}

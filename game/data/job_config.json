@@ -10,7 +10,8 @@
     "harvest_zeit_ticks": 24,
     "harvest_menge": 10,
     "reichweite": 140.0,
-    "sammel_auf_flaeche": true
+    "sammel_auf_flaeche": true,
+    "loop": true
   },
   "steinmetz": {
     "name": "Steinmetz",

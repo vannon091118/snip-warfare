@@ -6,14 +6,10 @@ class_name Kern_SteuerungUebersetzer
 ## das Uebersetzte und kennt keine hart codierten Tasten mehr.
 
 static func ticks_aus_faktor(faktor: float) -> int:
-	var geklemmt := clampf(faktor, 0.1, 10.0)
-	var sekunden := geklemmt * 10.0
-	return maxi(int(round(sekunden * Kern_Weltuhr.TICK_RATE_HZ)), 1)
+	return Kern_Weltuhr.ticks_aus_faktor(faktor)
 
 static func faktor_aus_ticks(ticks: int) -> float:
-	if ticks <= 0:
-		return 0.1
-	return clampf(float(ticks) / (10.0 * Kern_Weltuhr.TICK_RATE_HZ), 0.1, 10.0)
+	return Kern_Weltuhr.faktor_aus_ticks(ticks)
 
 static func ist_gueltige_steuerung(steuerung: Kern_SteuerungBasis) -> bool:
 	if steuerung == null:

@@ -28,7 +28,7 @@ static func eintrag_hat_asset(eintrag: Dictionary) -> bool:
 			return true
 	return false
 
-static func sichere_textur_pfad(eintrag: Dictionary, fallback_id: String) -> String:
+static func sichere_textur_pfad(eintrag: Dictionary, _fallback_id: String) -> String:
 	for schluessel in ["textur_pfad", "sheet_pfad", "icon_pfad"]:
 		var pfad := str(eintrag.get(schluessel, ""))
 		if pfad != "" and textur_pfad_gueltig(pfad):
@@ -66,5 +66,5 @@ static func validiere_katalog_eintraege(katalog: Array) -> Array[Dictionary]:
 	return warnungen
 
 static func ticks_aus_faktor(faktor: float) -> int:
-	# 1.0 entspricht zehn Sekunden; Übersetzung über die Weltuhr.
-	return maxi(int(round(clampf(faktor, 0.1, 10.0) * 10.0 * Kern_Weltuhr.TICK_RATE_HZ)), 1)
+	# Einzige Wahrheit: Weltuhr uebersetzt faktor -> ticks, hier nur delegiert.
+	return Kern_Weltuhr.ticks_aus_faktor(faktor)

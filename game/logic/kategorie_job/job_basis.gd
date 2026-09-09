@@ -22,6 +22,7 @@ var fortlaufende_ticks: int = 0
 var _logik_id: String = ""
 var _modifikator_id: String = "normal"
 var _faktor: float = 1.0
+var _loop: bool = false
 
 func einrichten(neue_job_id: String, neue_konfiguration: Dictionary) -> void:
 	job_id = neue_job_id
@@ -29,6 +30,7 @@ func einrichten(neue_job_id: String, neue_konfiguration: Dictionary) -> void:
 	_logik_id = str(konfiguration.get("logik_id", ""))
 	_modifikator_id = str(konfiguration.get("modifikator_id", "normal"))
 	_faktor = float(konfiguration.get("faktor", 1.0))
+	_loop = bool(konfiguration.get("loop", false))
 
 func name() -> String:
 	return str(konfiguration.get("name", job_id.capitalize()))
@@ -37,11 +39,16 @@ func ziel_typ() -> ZielTyp:
 	# Unterklassen geben an, ob sie ein Weltobjekt oder ein Tier bearbeiten.
 	return ZielTyp.OBJEKT
 
-func passt_zu_objekt(element_id: String) -> bool:
+func ist_loop() -> bool:
+	# Ein Loop-Job ist eine automatische Folge: Der Status sucht nach jedem
+	# Abschluss das naechste gueltige Ziel desselben Typs, kein Einmal-Job.
+	return _loop
+
+func passt_zu_objekt(_element_id: String) -> bool:
 	# Unterklassen prüfen, ob das Weltobjekt zu diesem Job passt.
 	return false
 
-func passt_zu_tier(tier_id: String) -> bool:
+func passt_zu_tier(_tier_id: String) -> bool:
 	# Unterklassen prüfen, ob das Tier zu diesem Job passt.
 	return false
 
@@ -61,8 +68,7 @@ func faktor() -> float:
 	return clampf(_faktor, 0.1, 10.0)
 
 func ticks_fuer_faktor() -> int:
-	# 1.0 bedeutet zehn Sekunden; die Weltuhr übersetzt in Ticks.
-	return maxi(int(round(faktor() * 10.0 * Kern_Weltuhr.TICK_RATE_HZ)), 1)
+	return Kern_Weltuhr.ticks_aus_faktor(faktor())
 
 func harvest_zeit_ticks() -> int:
 	# Falls faktor gesetzt ist und keine feste harvest_zeit_ticks gewünscht wird,

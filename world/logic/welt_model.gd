@@ -1,8 +1,9 @@
 extends RefCounted
 class_name Welt_Model
 ## Datenhaltung einer Welt: Fliesenraster plus Liste platzierter Objekte.
-## Enthält keine Darstellung und keine Godot-Knoten.
-## Karten sind relativ groß: Standard 32x24 Kacheln à 512 Pixel.
+## RT-Pyramide: Basisobjekt der Pyramide. Darauf stehen Registries und
+## Mutationen. Das aktive Biom wirkt über die Mutationsmaschine auf den
+## Zustand, nie direkt auf die Daten. Karten sind relativ groß: 32x24 Kacheln à 512 Pixel.
 
 ## Kategorie daten: Raster und Objektliste, ausschließlich durch eigene Funktionen geändert.
 const KACHEL_GROESSE := 512
@@ -16,7 +17,9 @@ var raster_breite: int = RASTER_BREITE
 var raster_hoehe: int = RASTER_HOEHE
 var raster: Array[String] = []
 var objekte: Array[Dictionary] = []
+var biom_id: String = "gemaaessigt"
 var _naechste_objekt_nummer: int = 1
+var _biom_manager: Welt_BiomManager = null
 
 func _init() -> void:
 	ueberziehe_fliesen("boden")
@@ -92,17 +95,38 @@ func objekt_bei(ziel: Vector2, such_radius: float) -> int:
 				bester_index = index
 	return bester_index
 
+func biom_setzen(neues_biom_id: String) -> bool:
+	if _biom_manager == null:
+		_biom_manager = Welt_BiomManager.new()
+	if not _biom_manager.biom_wechseln(neues_biom_id):
+		return false
+	biom_id = neues_biom_id
+	return true
+
+func biom_manager() -> Welt_BiomManager:
+	if _biom_manager == null:
+		_biom_manager = Welt_BiomManager.new()
+		_biom_manager.biom_wechseln(biom_id)
+	return _biom_manager
+
+func biom_zustand() -> Dictionary:
+	# Einziger Ort der die Biom Mutation als Zustand ausfuehrt.
+	var manager := biom_manager()
+	var basis := {"biom_id": biom_id, "raster_breite": raster_breite, "raster_hoehe": raster_hoehe}
+	return manager.zustand_fuer_tick(basis)
+
 func objekte_leeren() -> void:
 	objekte.clear()
 
 func nach_woerterbuch() -> Dictionary:
 	return {
-		"version": 2,
+		"version": 3,
 		"kachel_groesse": KACHEL_GROESSE,
 		"raster_breite": raster_breite,
 		"raster_hoehe": raster_hoehe,
 		"raster": raster,
 		"objekte": objekte,
+		"biom_id": biom_id,
 	}
 
 func aus_woerterbuch(daten: Dictionary) -> bool:
@@ -110,6 +134,8 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 		return false
 	raster_breite = clampi(int(daten.get("raster_breite", RASTER_BREITE)), RASTER_MIN, RASTER_MAX)
 	raster_hoehe = clampi(int(daten.get("raster_hoehe", RASTER_HOEHE)), RASTER_MIN, RASTER_MAX)
+	biom_id = str(daten.get("biom_id", "gemaaessigt"))
+	biom_manager().biom_wechseln(biom_id)
 	_raster_anlegen("boden")
 	var neues_raster: Variant = daten.get("raster", [])
 	if typeof(neues_raster) == TYPE_ARRAY:

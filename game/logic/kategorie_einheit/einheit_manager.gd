@@ -26,18 +26,19 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_tiere = tiere
 	_ressourcen = ressourcen
 
-func einheit_hinzufuegen(position: Vector2) -> void:
+func einheit_hinzufuegen(welt_position: Vector2) -> void:
 	var status := Einheit_Status.new()
 	var darsteller := Einheit_Darsteller.new()
 	darsteller.einrichten(status)
-	darsteller.position = position
+	darsteller.position = welt_position
 	darsteller.animation_setzen(status.animation())
 	add_child(darsteller)
 	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
+	status.job_loop_gefragt.connect(_auf_job_loop_gefragt)
 	_einheiten.append({
 		"status": status,
 		"darsteller": darsteller,
-		"position": position,
+		"position": welt_position,
 	})
 
 func einheit_zahl() -> int:
@@ -48,13 +49,13 @@ func einheit_position(index: int) -> Vector2:
 		return Vector2.ZERO
 	return _einheiten[index]["position"]
 
-func einheit_position_setzen(index: int, position: Vector2) -> void:
+func einheit_position_setzen(index: int, welt_position: Vector2) -> void:
 	# Bewegung kommt ausschließlich vom Spieler, nie aus einer State Machine.
 	if index < 0 or index >= _einheiten.size():
 		return
-	_einheiten[index]["position"] = position
+	_einheiten[index]["position"] = welt_position
 	var darsteller: Einheit_Darsteller = _einheiten[index]["darsteller"]
-	darsteller.position = position
+	darsteller.position = welt_position
 
 func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ziel_position: Vector2) -> bool:
 	if einheit_index < 0 or einheit_index >= _einheiten.size():
@@ -113,6 +114,29 @@ func _ziel_existiert(status: Einheit_Status) -> bool:
 				return false
 			return _tiere.tier_position(status.aktuelles_ziel_index) != Vector2.INF
 	return false
+
+func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int) -> void:
+	# Die Schleife des Users (USER_JOB) endet nie hart im Idle: Der Manager
+	# sucht das naechste gueltige Ziel desselben Typs und setzt den Job neu.
+	if status.job == null or _ressourcen == null:
+		return
+	var such_index := -1
+	match ziel_typ:
+		Job_Basis.ZielTyp.OBJEKT:
+			if _model != null:
+				such_index = _naechstes_objekt(status, alter_ziel_index)
+		Job_Basis.ZielTyp.TIER:
+			if _tiere != null:
+				such_index = _naechstes_tier(status, alter_ziel_index)
+	if such_index < 0:
+		return
+	var ziel_typ_neu := ziel_typ
+	var ziel_position := Vector2.ZERO
+	if ziel_typ_neu == Job_Basis.ZielTyp.OBJEKT and _model != null:
+		ziel_position = _model.objekt_position(such_index)
+	elif ziel_typ_neu == Job_Basis.ZielTyp.TIER and _tiere != null:
+		ziel_position = _tiere.tier_position(such_index)
+	status.job_loopy_fortsetzen(status.job, ziel_typ_neu, such_index, status.job.ressource())
 
 func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 	# Ein Arbeitsschritt ist fertig; je nach Job-Typ wird geerntet.

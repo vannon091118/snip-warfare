@@ -39,8 +39,10 @@ func _init(tier: String, verhaltens_daten: Tier_Registry) -> void:
 		_logik_id = daten.logik_id
 
 func ist_vogel() -> bool:
-	# Vögel fliegen weg und steigern; der Hase rennt nur am Boden.
-	return verhalten.hat_schluessel(tier_id, "flug_geschwindigkeit")
+	var daten := verhalten.tier_daten(tier_id)
+	if daten == null:
+		return false
+	return daten.ausloeser == "wegfliegen" or daten.logik_id.begins_with("vogel")
 
 func trigger_radius() -> float:
 	return verhalten.wert(tier_id, "trigger_radius", 400.0)
@@ -97,24 +99,26 @@ func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
 	zustand_geaendert.emit(neuer_zustand)
 
 func ticks_fuer_faktor() -> int:
-	# 1.0 bedeutet zehn Sekunden; Übersetzung über die Weltuhr.
-	return maxi(int(round(effektiver_faktor() * 10.0 * Kern_Weltuhr.TICK_RATE_HZ)), 1)
+	return Kern_Weltuhr.ticks_aus_faktor(effektiver_faktor())
 
 func tick(delta: float, eigene_position: Vector2, spieler_position: Vector2) -> Vector2:
 	# Liefert die Bewegung dieses Ticks; der Aufrufer schreibt die Position.
+	# Trigger wird rein aus Registry gelesen: ausloeser bestimmt den Folgezustand.
 	tick_in_zustand += 1
 	var bewegung := Vector2.ZERO
 	match zustand:
 		Zustand.RUHE:
-			# Trigger-Zone: Spieler im Umkreis löst das tier-spezifische Verhalten aus.
 			if spieler_position.distance_to(eigene_position) <= trigger_radius():
-				if tier_id == "baer":
-					ziel_position = spieler_position
-					_zu_zustand_wechseln(Zustand.VERFOLGEN)
-				else:
-					flucht_richtung = (eigene_position - spieler_position).normalized()
-					ziel_position = spieler_position
-					_zu_zustand_wechseln(Zustand.WEGFLIEGEN)
+				var daten := verhalten.tier_daten(tier_id)
+				var ausloeser := "" if daten == null else daten.ausloeser
+				match ausloeser:
+					"verfolgen":
+						ziel_position = spieler_position
+						_zu_zustand_wechseln(Zustand.VERFOLGEN)
+					_:
+						flucht_richtung = (eigene_position - spieler_position).normalized()
+						ziel_position = spieler_position
+						_zu_zustand_wechseln(Zustand.WEGFLIEGEN)
 		Zustand.TOT:
 			# Tote Tiere warten auf das Ernten; sie bewegen sich nicht mehr.
 			bewegung = Vector2.ZERO
