@@ -50,7 +50,11 @@ func _welt_laden() -> void:
 	if not geladen:
 		geladen = _model.aus_woerterbuch(_standard_welt_laden())
 	if not geladen:
-		_model.karte_erzeugen(Welt_Model.RASTER_BREITE, Welt_Model.RASTER_HOEHE, "boden")
+		# Kartengröße kommt aus der zentralen Weltdefinition, nie aus Code-Konstanten.
+		var def_reg := Welt_DefinitionRegistry.new()
+		def_reg.laden()
+		var max_groesse := def_reg.max_karten_groesse()
+		_model.karte_erzeugen(max_groesse.x, max_groesse.y, "boden")
 	_kamera.position = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
 
 func _standard_welt_laden() -> Dictionary:

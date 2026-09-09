@@ -1,4 +1,7 @@
-1. Die beiden letzten Restdateien aus demselben Lauf werden jetzt mitgenommen, damit der Arbeitsstand vollständig auf main landet und nichts Fremdes zurückbleibt.
-2. Die Logik-Sammlung in kern_logik.json wurde nur geglättet, indem Einrückungen vereinheitlicht wurden, ohne dass sich ein einziger Wert oder ein Verhalten verändert hat.
-3. Die Job-Basis in job_basis.gd bekam am Ende der Datei nur die fehlende Abschlusszeile, sodass die Datei sauber endet und keine Warnung mehr erzeugt.
-4. Damit ist der Welt-Konsolidierungsauftrag inklusive aller Begleitdateien aus diesem Lauf vollständig eingefroren und gepusht.
+1. Der Welt-Konsolidierungsauftrag verlangt, dass die Legacy-Standardwelt niemals die Produktionswelt bestimmt, und Shinon hat die letzte Kopplung im Ladevorgang gefunden und gelöst.
+2. In welt_ladevorgang.gd wurde der Fallback auf die Standardwelt entfernt, sodass die Produktionswelt ausschließlich aus gespeichertem Stand oder frischem Generator entsteht und bei Fehlschlag nur ein leeres Raster mit Warnung bleibt.
+3. Die Standardwelt in standard_welt.json bleibt als reine Editor-Demo erhalten und wird jetzt nur noch vom Karten-Editor im Kreativmodus geladen, damit ihr Zweck klar dokumentiert und fachlich sauber getrennt ist.
+4. In karten_editor.gd kommt die leere Editor-Karte jetzt aus der zentralen Weltdefinition statt aus den alten Code-Konstanten, sodass keine zweite Kartengrößenquelle mehr im Editor liegt.
+5. Die Architektur in Architektur.md beschreibt die Standardwelt jetzt ehrlich als Editor-Demo und hält fest, dass der Produktionspfad sie nie berührt.
+6. Der volle Preflight inklusive Headless-Godot-Lauf ist grün und der Lauf-Beweis in lauf_pruefung_welt bestätigt weiterhin Determinismus, Persistenz, Region-Reproduzierbarkeit und die Registry-Variante Busch.
+7. Damit ist die Welt-Konsolidierung vollständig eingefroren: Seed, Region, Lokalkarte, Chunk und Objekt kommen aus einer Kette, und keine Legacy-Datei kann sich als Wahrheit einschleichen.

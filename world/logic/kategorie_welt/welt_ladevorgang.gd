@@ -1,11 +1,11 @@
 extends RefCounted
 class_name Welt_Ladevorgang
-## Spitze: Welt laden oder erzeugen. Einzige Stelle, die Speicher,
-## Generator und Legacy-Standardwelt kennt. Sie schreibt ausschließlich
-## über Welt_Model und persistiert die erzeugte Welt. Keine Darstellung,
-## keine Eingabe, keine Lager- oder Tier-Logik.
-
-const STANDARD_WELT_PFAD := "res://world/data/standard_welt.json"
+## Spitze: Welt laden oder erzeugen. Einzige Stelle, die Speicher und
+## Generator kennt. Die Produktionswelt kommt ausschließlich aus Save oder
+## Generator; die Legacy-Standardwelt ist kein Fallback und nie Generator-
+## oder Produktionswahrheit. Sie schreibt ausschließlich über Welt_Model
+## und persistiert die erzeugte Welt. Keine Darstellung, keine Eingabe,
+## keine Lager- oder Tier-Logik.
 
 var _model: Welt_Model = null
 var _generator: Welt_Generator = null
@@ -24,20 +24,9 @@ func ausfuehren(welt_name: String, seed_wunsch: int, biom_id: String) -> bool:
 	if not geladen:
 		geladen = _welt_generieren(welt_name, seed_wunsch, biom_id)
 	if not geladen:
-		geladen = _model.aus_woerterbuch(_standard_welt_laden())
-	if not geladen:
 		push_warning("Keine Welt ladbar, benutze leeres Raster")
 		return false
 	return true
-
-func _standard_welt_laden() -> Dictionary:
-	if not FileAccess.file_exists(STANDARD_WELT_PFAD):
-		return {}
-	var datei := FileAccess.open(STANDARD_WELT_PFAD, FileAccess.READ)
-	var daten: Variant = JSON.parse_string(datei.get_as_text())
-	if typeof(daten) == TYPE_DICTIONARY:
-		return daten
-	return {}
 
 func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> bool:
 	var basis_seed := seed_wunsch

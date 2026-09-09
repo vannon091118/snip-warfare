@@ -123,7 +123,7 @@ Regeln des Gates und des Inits:
 | `world/data/element_katalog.json` | Platzierbare Objekte mit Kategorie | `Welt_Registry` |
 | `world/data/tier_verhalten.json` | Tierwerte (Trigger, Geschwindigkeit, Ertrag, HP) | `Tier_Verhalten` |
 | `world/data/biome.json` | Biome als Mutationen je Biom mit logik_id, modifikator, faktor | `Welt_BiomRegistry` + `Welt_BiomMutation` + `Welt_BiomManager` |
-| `world/data/standard_welt.json` | Nur Legacy-Editor-/Demo-Raster; niemals Generatorwahrheit, wird nur als letzter Fallback geladen | `Welt_Ladevorgang` (nur wenn weder Save noch Generator liefern) |
+| `world/data/standard_welt.json` | Nur Legacy-Editor-/Demo-Raster; niemals Generator- oder Produktionswahrheit, wird ausschließlich vom Karten-Editor im Kreativmodus geladen | `karten_editor.gd` (Editor-Demo) |
 | `world/data/welt_definition.json` | Zentrale Weltdefinition: max/min Kartengröße, Kachelgröße, Chunkgröße, Regionkante als Daten | `Welt_DefinitionRegistry` -> `Welt_Generator` (Kartengröße aus Seed deterministisch) |
 | `core/data/kern_logik.json` | Generische Logiken wiederverwendbar | `Kern_LogikRegistry` |
 | `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s (Verletzungen sperren Jobs) | `Kern_ModifikatorRegistry` + `Einheit_VitalStatus` |
