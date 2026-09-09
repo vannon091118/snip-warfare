@@ -105,6 +105,8 @@ func _karte_umschalten() -> void:
 	_karten_ebene.visible = _karten_oeffnen
 	if _karten_oeffnen:
 		_karten_viewer.fokus_auf_spieler()
+
+func _auf_verteilung(nahrung_je_takt: float) -> void:
 	_stockmaenner.verteilung_setzen(nahrung_je_takt)
 	_hud.meldung_setzen("Verteilung: %.1f Nahrung je Einheit je Takt" % nahrung_je_takt)
 

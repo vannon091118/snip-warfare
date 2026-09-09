@@ -1,3 +1,3 @@
-1. Du brachtest zwei Parse-Fehler mit, weil in world/scenes/prototyp_karte.gd eine Schleife schrieb for versuch in 20: und der Compiler dort ein Doppelpunkt-Scheitern meldete.
-2. In world/scenes/prototyp_karte.gd wurde die Zeile nachgezogen auf for _versuch in range(20):, damit GDScript die Zählreihe versteht und der Headless-Lauf schweigt.
-3. Nur world/scenes/prototyp_karte.gd und shinon/commit_msg.txt wurden berührt, alles andere blieb unverändert, und der Preflight meldet wieder grün.
+1. Du meldetest Fehler bei Zeile 204 in world/scenes/prototyp_karte.gd, weil zwei Zeilen der Verteilungslogik noch eingerückt unter _karte_umschalten hingen und der Parser am Doppelpunkt stolperte.
+2. In world/scenes/prototyp_karte.gd wurde die Trennung nachgezogen, sodass _auf_verteilung wieder eine eigene Spitze bildet und der Headless-Lauf schweigt.
+3. Nur world/scenes/prototyp_karte.gd und shinon/commit_msg.txt wurden berührt, alles andere blieb unangetastet, und der Preflight meldet erneut grün.
