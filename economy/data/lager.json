@@ -1,0 +1,14 @@
+{
+  "kleines_lager": {
+    "name": "Kleines Lager",
+    "kapazitaet": 100,
+    "icon_pfad": "res://world/assets/terrain/haus.svg",
+    "welt_objekt_id": "haus"
+  },
+  "grosses_lager": {
+    "name": "Großes Lager",
+    "kapazitaet": 250,
+    "icon_pfad": "res://world/assets/terrain/haus_gross.svg",
+    "welt_objekt_id": "haus_gross"
+  }
+}

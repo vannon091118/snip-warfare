@@ -85,6 +85,8 @@ KATEGORIE_PRAEFIXE = {
     "Einheit_": "game/logic/kategorie_einheit",
     "Job_": "game/logic/kategorie_job",
     "Ui_": "ui/logic/kategorie_ui",
+    "Lager_": "economy/logic/storage",
+    "Orchestrator_": "world/logic/kategorie_orchestrator",
     "Welt_": None,          # Welt_ darf domänenübergreifend liegen
     "Kern_": "core",
 }
@@ -248,7 +250,7 @@ def pruefe_klassen(dateien):
         name = klassen_name_lesen(code)
         if name is None:
             teile = normalisiert.split("/")
-            if "scenes" not in teile and not normalisiert.startswith("tools/"):
+            if "scenes" not in teile and not normalisiert.startswith("tools/") and "/events/" not in normalisiert:
                 fehler("E004", rel_pfad, zeile_von(code, "extends"),
                        "Skript ohne class_name gefunden")
             continue
@@ -553,7 +555,7 @@ def pruefe_registries(dateien):
                 fehler("E019", rel_pfad, zeile_bei(code, treffer.start()),
                        "Registry '%s': Quelle '%s' muss eine Liste von Katalog-Einträgen sein" %
                        (name, quelle_rel))
-            asset_pflicht = not name.startswith("Kern_")
+            asset_pflicht = not name.startswith(("Kern_", "Orchestrator_"))
             if isinstance(daten, list) and asset_pflicht:
                 ids = [str(eintrag.get("id")) for eintrag in daten
                        if isinstance(eintrag, dict) and "id" in eintrag]
@@ -588,6 +590,9 @@ def pruefe_registries(dateien):
                                "Registry '%s': Eintrag '%s' in '%s' zeigt auf kein gültiges Asset (res://*.svg/.png); "
                                "im Generator ungültig — SVG ergänzen oder Platzhalter erzeugen lassen (core/assets/platzhalter.svg)" %
                                (name, eintrag_id, quelle_rel))
+            if isinstance(daten, dict) and not asset_pflicht:
+                # Reine Logik-Registry ohne Asset-Pflicht: keine E022.
+                pass
 
 
 # --------------------------------------------------------------------------

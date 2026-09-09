@@ -8,7 +8,9 @@ Jede Klasse trägt ihre Kategorie als Präfix im Klassennamen und liegt im passe
 
 | Präfix | Kategorie | Ordner | Inhalt |
 | --- | --- | --- | --- |
-| `Kern_` | Zentrale Engine-Dienste | `core/` | Weltuhr (einziger globaler Tick), Asset Pflicht Gate |
+| `Kern_` | Zentrale Engine-Dienste | `core/` | Weltuhr (einziger globaler Tick), Asset Pflicht Gate, Zufall (Kern_Zufall), Modifikatoren, Signalbus (Kern_SignalBus) |
+| `Lager_` | Lokale Speicher | `economy/logic/storage/` | Basis (Typ), Registry (Templates), Manager (Instanzen je Ort), Mutationen (Einlagern, Entnehmen) |
+| `Orchestrator_` | Zonen-Orchestrator | `world/logic/kategorie_orchestrator/` | Konfiguration, Status, Manager (Bedarf -> Jobvergabe), Registry |
 | `Shinon_` | Commit Gate | `shinon/` | Banner Banner Pruefer, Bullet Pruefer, Nummerierung Pruefer, Bildsprache Pruefer, Gate Orchestrator |
 | `Objekt_` | Weltobjekt-Datenklassen | `world/logic/kategorie_objekt/` | Kachel, Baum, Baumstumpf, Stein, Steingruppe, Haus, Hausgross, Basis |
 | `Resources_` / `Resource_` | Ressourcen-Datenklassen | `game/logic/kategorie_ressourcen/` | Wood, Stone, Meat, Basis |
@@ -59,6 +61,8 @@ Jedes Datenobjekt hat eine eigene Klasse mit exaktem, eindeutigem Namen. Die Reg
 | `Resources_Wood` | `game/data/ressourcen.json` (holz) |
 | `Resources_Stone` | `game/data/ressourcen.json` (stein) |
 | `Resources_Meat` | `game/data/ressourcen.json` (fleisch) |
+| `Lager_Basis` | `economy/data/lager.json` (kleines_lager, grosses_lager) |
+| `Orchestrator_Konfiguration` | `game/data/orchestrator_config.json` (holzsammler_zone, jaeger_zone) |
 | `Tier_Baer` | `world/data/tier_verhalten.json` (baer) |
 | `Tier_Eisbaer` | `world/data/tier_verhalten.json` (eisbaer, Kombi baer_verfolgen + aggressiv x1.2) |
 | `Tier_Hase` | `world/data/tier_verhalten.json` (hase) |
@@ -66,7 +70,7 @@ Jedes Datenobjekt hat eine eigene Klasse mit exaktem, eindeutigem Namen. Die Reg
 | `Tier_Vogelgruppe` | `world/data/tier_verhalten.json` (vogelgruppe) |
 | `Welt_BiomBasis` | `world/data/biome.json` (gemaessigt, tundra, steppe) |
 
-Erzeugungsorte: `Welt_Registry._objekt_klasse_fuer()`, `Einheit_Ressourcen._ressourcen_klasse_fuer()`, `Tier_Registry._tier_klasse_fuer()`, `Welt_BiomRegistry` (biome). Neue Datenklassen werden nur an diesen Stellen registriert.
+Erzeugungsorte: `Welt_Registry._objekt_klasse_fuer()`, `Einheit_Ressourcen._ressourcen_klasse_fuer()`, `Tier_Registry._tier_klasse_fuer()`, `Welt_BiomRegistry` (biome), `Lager_Registry` (lager), `Orchestrator_Registry` (orchestrator_config), `Kern_ModifikatorRegistry` (kern_modifikatoren). Neue Datenklassen werden nur an diesen Stellen registriert.
 
 ## 4. Commit Gate Shinon im Root
 
@@ -114,7 +118,9 @@ Regeln des Gates und des Inits:
 | `world/data/biome.json` | Biome als Mutationen je Biom mit logik_id, modifikator, faktor | `Welt_BiomRegistry` + `Welt_BiomMutation` + `Welt_BiomManager` |
 | `world/data/standard_welt.json` | Standard-Prototypkarte mit biom_id | `Welt_Model` über die Szenen |
 | `core/data/kern_logik.json` | Generische Logiken wiederverwendbar | `Kern_LogikRegistry` |
-| `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s | `Kern_ModifikatorRegistry` |
+| `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s (Verletzungen sperren Jobs) | `Kern_ModifikatorRegistry` + `Einheit_VitalStatus` |
+| `economy/data/lager.json` | Lager-Templates mit Kapazität und welt_objekt_id | `Lager_Registry` -> `Lager_Manager` (lokale Instanzen, Mutationen) |
+| `game/data/orchestrator_config.json` | Zonen mit Bedarf je Ressource und Job | `Orchestrator_Registry` -> `Orchestrator_Manager` |
 | `shinon/shinon_init.py --readme` | Lebendige README als Pitch von Shinon, gamer orientiert, vierte Wand | `ShinonReadmeGenerator` |
 
 ## 6. RT Pyramide
@@ -138,8 +144,10 @@ Es gibt genau einen globalen Tick: das Autoload `Weltuhr` (Klasse `Kern_Weltuhr`
 ## 7. Domänengrenzen
 
 1. **UI-Domäne** (`ui/`): Menüführung, Weltauswahl, Sitzungszustand. Sie ruft Szenen auf und schreibt `WeltSitzung`; sie ändert keine Welt-Daten.
-2. **Welt-Domäne** (`world/`): Modell, Speicher, Registry, Renderer, Editor, Tiere. Der Renderer liest nur `Objekt_Basis`-Felder; der Editor schreibt nur über `Welt_Model`-Funktionen.
-3. **Game-Domäne** (`game/`): Jobs, Einheiten, Ressourcenbestände. `Einheit_Manager` verbindet Welt (Ziele), Tiere (Jagd) und Ressourcen (Erträge), kennt aber keine Darstellungsdetails.
+2. **Welt-Domäne** (`world/`): Modell, Speicher, Registry, Renderer, Editor, Tiere, Orchestrator-Zonen. Der Renderer liest nur `Objekt_Basis`-Felder; der Editor schreibt nur über `Welt_Model`-Funktionen. Zonen lesen Bedarf und vergeben Jobs nur über `Einheit_Manager`.
+3. **Game-Domäne** (`game/`): Jobs, Einheiten, Ressourcenbestände, Vitalstatus. `Einheit_Manager` verbindet Welt (Ziele), Tiere (Jagd), Lager (verortete Bestände) und Vitalstatus (Verletzungen sperren Jobs), kennt aber keine Darstellungsdetails. Jobs offfenbaren ihre Job-bedingungen ("mindest_tragekraft", "benötigtes_werkzeug") nur als Signale; die kritische Arbeit bleibt\
+4. **Economy-Domäne** (`economy/`): Lokale Lager (Lager_Basis je Typ in `economy/data/lager.json`, verortete Instanzen im `Lager_Manager`). Einheiten lagern Ernte im nächsten Lager ein; globale Bestände sind nur die Summe für das HUD. Wachstum (Haus + 3 Nahrung -> neuer Stickman) entnimmt aus dem nächsten Lager.
+5. **Core-Domäne** (`core/`): Weltuhr (einziger Tick), Zufall (`Kern_Zufall` als einzige Quelle), Mutationen, Modifikatoren (`Kern_ModifikatorBasis` mit Dauer und Heilbarkeit) und Signalbus (`Kern_SignalBus` als `Node`-Autoload). Zufall fließt nur in Mutationen und Vitalstatus über `Kern_Zufall.zahl_bereich()`.
 
 Szenen (`*/scenes/`) sind Ansichten: Eingabe und Darstellung, keine Simulationslogik.
 

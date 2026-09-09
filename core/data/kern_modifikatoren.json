@@ -52,7 +52,7 @@
     "attribute_modifikation": {"geschwindigkeit": -0.5},
     "dauer_ticks": 240,
     "heilbar": true,
-    "icon_pfad": "res://assets/ui/icons/injury_leg.png"
+    "icon_pfad": ""
   },
   "verletzung_arm": {
     "typ": "VERLETZUNG",
@@ -63,7 +63,7 @@
     "attribute_modifikation": {"tragekraft": -5},
     "dauer_ticks": 120,
     "heilbar": true,
-    "icon_pfad": "res://assets/ui/icons/injury_arm.png"
+    "icon_pfad": ""
   },
   "verblutung": {
     "typ": "VERLETZUNG",
@@ -74,6 +74,6 @@
     "attribute_modifikation": {"hp_pro_tick": -1},
     "dauer_ticks": 60,
     "heilbar": true,
-    "icon_pfad": "res://assets/ui/icons/bleeding.png"
+    "icon_pfad": ""
   }
 }

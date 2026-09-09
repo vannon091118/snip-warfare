@@ -8,6 +8,9 @@ class_name Job_Basis
 ## Erweiterbar: Neue Jobs erben von Job_Basis, überschreiben ziel_typ() und
 ## melden sich in der Job_Registry an. Diese Klasse ändert sich dabei nicht.
 ##
+## Physische Fähigkeit: Jeder Job liest seine Anforderungen aus der zentralen
+## Konfiguration und prüft sie gegen die Aussagen der Vital-Maschine.
+##
 ## Phase 3.3: Validierung ob Einheit physisch fähig ist, Job auszuführen.
 
 signal arbeitsschritt_erledigt(ressource: String, menge: int)
@@ -104,6 +107,16 @@ func arbeitsschritt(ziel_ressource: String) -> void:
 	# das Ergebnis und ein Signal gibt es an die Domäne weiter.
 	var menge := int(konfiguration.get("harvest_menge", 1))
 	arbeitsschritt_erledigt.emit(ziel_ressource, menge)
+
+func kann_ausgefuehrt_werden_von(vital: Einheit_VitalStatus) -> bool:
+	# Prüft die physischen Voraussetzungen gegen die Vital-Maschine;
+	# alle Grenzwerte stehen zentral in der Job-Konfiguration.
+	if vital == null:
+		return false
+	var mindest_tragekraft := int(konfiguration.get("mindest_tragekraft", 0))
+	if vital.effektive_tragekraft(int(konfiguration.get("basis_tragekraft", 10))) < mindest_tragekraft:
+		return false
+	return true
 
 ## Phase 3.3: Validierung der physischen Fähigkeit
 func kann_ausgefuehrt_werden_von(einheit_status: Einheit_Status) -> bool:

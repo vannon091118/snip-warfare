@@ -1,0 +1,105 @@
+extends RefCounted
+class_name Einheit_VitalStatus
+## Vitalzustandsmaschine einer Einheit: Lebenspunkte und physische
+## Modifikatoren (Verletzungen, Buffs, Debuffs). Sie hat genau eine
+## Verantwortung und reagiert nur auf den globalen Tick und Schaden.
+## Job-Prüfung und Arbeitsloop bleiben in der Einheit_Status-Maschine;
+## diese Maschine meldet ihren Zustand ausschließlich über Signale.
+
+signal modifikator_geandert(modifikator_id: String, hinzugefuegt: bool)
+signal hp_veraendert(aktuell: int, maximal: int)
+signal gestorben(welt_position: Vector2)
+
+## Kategorie daten: Vitalwerte und getragene Modifikatoren.
+var hp: int = 100
+var max_hp: int = 100
+var _welt_position: Vector2 = Vector2.ZERO
+var aktive_modifikatoren: Array[Kern_ModifikatorBasis] = []
+
+## Kategorie logik: Modifikatoren verwalten und Werte ableiten.
+
+func welt_position_setzen(pos: Vector2) -> void:
+	_welt_position = pos
+
+func modifikator_hinzufuegen(mod_id: String) -> void:
+	if hat_modifikator(mod_id):
+		return
+	var mod := Kern_ModifikatorRegistry.modifikator_erzeugen(mod_id)
+	if mod != null:
+		aktive_modifikatoren.append(mod)
+		modifikator_geandert.emit(mod_id, true)
+
+func modifikator_entfernen(mod_id: String) -> void:
+	var verblieben: Array[Kern_ModifikatorBasis] = []
+	for mod in aktive_modifikatoren:
+		if mod.modifikator_id != mod_id:
+			verblieben.append(mod)
+	aktive_modifikatoren = verblieben
+	modifikator_geandert.emit(mod_id, false)
+
+func hat_modifikator(mod_id: String) -> bool:
+	for mod in aktive_modifikatoren:
+		if mod.modifikator_id == mod_id:
+			return true
+	return false
+
+func blockiert_job(job_id: String) -> String:
+	# Liefert den Namen der ersten Verletzung, die diesen Job sperrt; sonst leer.
+	for mod in aktive_modifikatoren:
+		if mod.blockiert_job(job_id):
+			return mod.angezeigter_name
+	return ""
+
+func effektive_geschwindigkeit(basis_geschwindigkeit: float) -> float:
+	var wert := basis_geschwindigkeit
+	for mod in aktive_modifikatoren:
+		wert *= mod.faktor
+		if mod.attribute_modifikation.has("geschwindigkeit"):
+			wert += float(mod.attribute_modifikation["geschwindigkeit"])
+	return maxf(wert, 0.1)
+
+func effektive_tragekraft(basis_tragekraft: int) -> int:
+	var wert := basis_tragekraft
+	for mod in aktive_modifikatoren:
+		if mod.attribute_modifikation.has("tragekraft"):
+			wert += int(mod.attribute_modifikation["tragekraft"])
+	return maxi(wert, 0)
+
+func schaden_nehmen(schaden: int, zufall: Kern_Zufall, art: String = "physisch") -> int:
+	# Zieht Lebenspunkte ab, meldet Schaden über den Kern-Bus und würfelt
+	# physische Folgen ausschließlich über den zentralen Zufallszustand.
+	if hp <= 0:
+		return 0
+	var verbraucht := mini(schaden, hp)
+	hp -= verbraucht
+	Kern_SignalBus.bus().schaden_erhalten.emit(_welt_position, verbraucht, art)
+	hp_veraendert.emit(hp, max_hp)
+	_folgen_würfeln(schaden, art, zufall)
+	if hp <= 0:
+		sterben()
+	return verbraucht
+
+func heilung_versuchen() -> void:
+	# Tick der Weltuhr: heilbare Modifikatoren laufen ab und fallen ab.
+	var zu_entfernen: Array[String] = []
+	for mod in aktive_modifikatoren:
+		if mod.heilbar:
+			mod.tick_zaehlen()
+			if mod.abgelaufen():
+				zu_entfernen.append(mod.modifikator_id)
+	for mod_id in zu_entfernen:
+		modifikator_entfernen(mod_id)
+
+func sterben() -> void:
+	gestorben.emit(_welt_position)
+
+func _folgen_würfeln(schaden: int, art: String, zufall: Kern_Zufall) -> void:
+	# Folgen als Zustandsschritt: Jede Würfelreihe wird aus dem zentralen
+	# Zufallszustand gezogen und bleibt damit vorhersagbar.
+	var wurf := zufall.naechste_zahl() % 100
+	if art == "sturz" and wurf < 30:
+		modifikator_hinzufuegen("verletzung_bein")
+	elif art == "kampf" and wurf < 20:
+		modifikator_hinzufuegen("verletzung_arm")
+	elif schaden > max_hp / 2 and wurf < 40:
+		modifikator_hinzufuegen("verblutung")

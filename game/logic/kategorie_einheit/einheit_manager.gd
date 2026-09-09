@@ -115,6 +115,49 @@ func _ziel_existiert(status: Einheit_Status) -> bool:
 			return _tiere.tier_position(status.aktuelles_ziel_index) != Vector2.INF
 	return false
 
+func _naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:
+	if _model == null or status.job == null:
+		return -1
+	var anzahl := _model.objekte.size()
+	if anzahl == 0:
+		return -1
+	for schritt in anzahl:
+		var pruef_index := (alter_ziel_index + 1 + schritt) % anzahl
+		if pruef_index == alter_ziel_index:
+			continue
+		var element_id := str(_model.objekte[pruef_index].get("element_id", ""))
+		if status.job.passt_zu_objekt(element_id):
+			return pruef_index
+	return -1
+
+func _naechstes_tier(status: Einheit_Status, alter_ziel_index: int) -> int:
+	if _tiere == null or status.job == null:
+		return -1
+	var anzahl := _tiere.tier_zahl()
+	if anzahl == 0:
+		return -1
+	for schritt in anzahl:
+		var pruef_index := (alter_ziel_index + 1 + schritt) % anzahl
+		if pruef_index == alter_ziel_index:
+			continue
+		if _tiere.tier_position(pruef_index) == Vector2.INF:
+			continue
+		var tier_art := _tiere.tier_art(pruef_index)
+		if status.job.passt_zu_tier(tier_art):
+			return pruef_index
+	return -1
+
+## Leerlauf und Wachstum: ein Haus aus 3 Nahrung erzeugt einen neuen Stickman.
+
+func versuche_wachstum(haus_welt_position: Vector2) -> bool:
+	if _ressourcen == null:
+		return false
+	_ressourcen.ernte_position_setzen(haus_welt_position)
+	if not _ressourcen.entnehmen("fleisch", 3):
+		return false
+	einheit_hinzufuegen(haus_welt_position + Vector2(0, 20))
+	return true
+
 func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int) -> void:
 	# Die Schleife des Users (USER_JOB) endet nie hart im Idle: Der Manager
 	# sucht das naechste gueltige Ziel desselben Typs und setzt den Job neu.
@@ -144,9 +187,19 @@ func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 		var status: Einheit_Status = einheit["status"]
 		if status.zustand != Einheit_Status.Zustand.ARBEITEN or status.ziel_ressource != ressource:
 			continue
+		var ernte_position := Vector2.ZERO
 		match status.aktuelles_ziel_typ:
 			Job_Basis.ZielTyp.OBJEKT:
-				# Bäume und Steine liefern ihre Ernte direkt.
+				if _model != null and status.aktuelles_ziel_index >= 0 and status.aktuelles_ziel_index < _model.objekte.size():
+					ernte_position = _model.objekt_position(status.aktuelles_ziel_index)
+			Job_Basis.ZielTyp.TIER:
+				if _tiere != null:
+					ernte_position = _tiere.tier_position(status.aktuelles_ziel_index)
+		if _ressourcen != null:
+			_ressourcen.ernte_position_setzen(ernte_position)
+		match status.aktuelles_ziel_typ:
+			Job_Basis.ZielTyp.OBJEKT:
+				# Bäume und Steine liefern ihre Ernte ins naechste lokale Lager.
 				_ressourcen.hinzufuegen(ressource, menge)
 			Job_Basis.ZielTyp.TIER:
 				# Jagen: erst mit jedem Schlag verletzen, ernten, wenn das Tier tot ist.
@@ -164,6 +217,10 @@ func _tier_ernten(status: Einheit_Status) -> void:
 		return
 	var fleisch := _tiere.tier_ernten(status.aktuelles_ziel_index)
 	if fleisch > 0:
+		var ernte_position := Vector2.ZERO
+		if _tiere != null:
+			ernte_position = _tiere.tier_position(status.aktuelles_ziel_index)
+		_ressourcen.ernte_position_setzen(ernte_position)
 		_ressourcen.hinzufuegen("fleisch", fleisch)
 	# Erlegte Beute ist verbraucht: der Job endet.
 	status.job_abbrechen()

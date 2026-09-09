@@ -1,72 +1,57 @@
 extends RefCounted
 class_name Orchestrator_Registry
-## Kategorie logik: Registry für Orchestrator-Konfigurationen
-var _konfigurationen: Dictionary = {}  # [orchestrator_id: Orchestrator_Konfiguration]
-var _basis_pfade: Array[String] = ["res://game/data/orchestrator_config.json"]
+## Registry der Orchestrator-Zonen. Die Quelle ist zentral die
+## game/data/orchestrator_config.json; jede Zone entsteht nur hier
+## als exakte Datenklasse Orchestrator_Konfiguration.
 
-## Kategorie logik: Laden & Erstellen
-func laden(pfade: Array[String] = []) -> void:
-	var pfade_zu_laden := pfade if pfade.size() > 0 else _basis_pfade
-	for pfad in pfade_zu_laden:
-		_laden_von_json(pfad)
+const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
 
-func _laden_von_json(pfad: String) -> void:
+## Kategorie daten: zentrale Zuordnung und getypte Zonenliste.
+var zonen_nach_id: Dictionary = {}
+var zonen: Array[Orchestrator_Konfiguration] = []
+
+## Kategorie logik: Laden, Erzeugen und Zugriff.
+
+func laden(pfad: String = ORCHESTRATOR_PFAD) -> void:
+	zonen_nach_id.clear()
+	zonen.clear()
 	if not FileAccess.file_exists(pfad):
+		push_warning("Orchestrator-Konfiguration nicht gefunden: %s" % pfad)
 		return
 	var datei := FileAccess.open(pfad, FileAccess.READ)
-	var daten: Variant = JSON.parse_string(datei.get_as_text())
-	if typeof(daten) != TYPE_DICTIONARY:
+	var gelesen: Variant = JSON.parse_string(datei.get_as_text())
+	if typeof(gelesen) != TYPE_DICTIONARY:
+		push_warning("Orchestrator-Daten haben ein ungültiges Format: %s" % pfad)
 		return
-
-	# FIXED: Properly iterate dictionary values (not keys)
-	for key in daten:
-		var eintrag = daten[key]
-		if typeof(eintrag) != TYPE_DICTIONARY:
-			continue
+	for eintrag_id: String in (gelesen as Dictionary).keys():
+		var eintrag: Dictionary = gelesen[eintrag_id]
 		var konfig := Orchestrator_Konfiguration.new()
-		konfig.orchestrator_id = str(eintrag.get("orchestrator_id", key))  # fallback to key if missing
-		konfig.position = Vector2(
-			float(eintrag.get("position_x", 0)),
-			float(eintrag.get("position_y", 0))
-		)
-		konfig.radius = float(eintrag.get("radius", 100.0))
-		konfig.biom_id = str(eintrag.get("biom_id", ""))
-		var bedarf := eintrag.get("bedarfsliste", [])
-		if typeof(bedarf) == TYPE_ARRAY:
-			konfig.bedarfsliste = bedarf as Array[Dictionary]
-		else:
-			konfig.bedarfsliste = []
-		konfig.farbe = Color(
-			float(eintrag.get("farbe_r", 0.2)),
-			float(eintrag.get("farbe_g", 0.6)),
-			float(eintrag.get("farbe_b", 0.2)),
-			1.0
-		)
-		_konfigurationen[konfig.orchestrator_id] = konfig
-
-func konfiguration_erstellen(orchestrator_id: String, overrides: Dictionary = {}) -> Orchestrator_Konfiguration:
-	var basis := _konfigurationen.get(orchestrator_id, null)
-	if not basis:
-		return null
-
-	var erstellt := Orchestrator_Konfiguration.new()
-	erstellt.orchestrator_id = orchestrator_id
-	erstellt.position = overrides.get("position", basis.position)
-	erstellt.radius = overrides.get("radius", basis.radius)
-	erstellt.biom_id = overrides.get("biom_id", basis.biom_id)
-	erstellt.bedarfsliste = overrides.get("bedarfsliste", basis.bedarfsliste)
-	erstellt.farbe = overrides.get("farbe", basis.farbe)
-	erstellt.zustand = Orchestrator_Status.Zustand.KONFIGURIERT
-	return erstellt
+		konfig.aus_eintrag(eintrag_id, eintrag)
+		zonen_nach_id[eintrag_id] = konfig
+		zonen.append(konfig)
 
 func konfiguration_fuer(orchestrator_id: String) -> Orchestrator_Konfiguration:
-	return _konfigurationen.get(orchestrator_id, null)
+	if zonen_nach_id.has(orchestrator_id):
+		return zonen_nach_id[orchestrator_id]
+	return null
 
-func konfigurationen() -> Array[Orchestrator_Konfiguration]:
-	var listen: Array[Orchestrator_Konfiguration] = []
-	for konfig in _konfigurationen.values():
-		listen.append(konfig)
-	return listen
+func konfiguration_erstellen(orchestrator_id: String, overrides: Dictionary = {}) -> Orchestrator_Konfiguration:
+	# Neue Zone aus Vorlage: Overrides ergänzen die Werte, sonst gilt die Basis.
+	var basis := konfiguration_fuer(orchestrator_id)
+	if basis == null:
+		return null
+	var erstellt := Orchestrator_Konfiguration.new()
+	erstellt.aus_eintrag(orchestrator_id, {
+		"position_x": overrides.get("position_x", basis.position.x),
+		"position_y": overrides.get("position_y", basis.position.y),
+		"radius": overrides.get("radius", basis.radius),
+		"biom_id": overrides.get("biom_id", basis.biom_id),
+		"bedarfsliste": overrides.get("bedarfsliste", basis.bedarfsliste),
+		"farbe_r": overrides.get("farbe_r", basis.farbe.r),
+		"farbe_g": overrides.get("farbe_g", basis.farbe.g),
+		"farbe_b": overrides.get("farbe_b", basis.farbe.b),
+	})
+	return erstellt
 
 func gibt_es(orchestrator_id: String) -> bool:
-	return _konfigurationen.has(orchestrator_id)
+	return zonen_nach_id.has(orchestrator_id)

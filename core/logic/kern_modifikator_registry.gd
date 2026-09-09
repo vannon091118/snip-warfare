@@ -43,6 +43,25 @@ func modifikator_fuer(modifikator_id: String) -> Kern_ModifikatorBasis:
 func hat_modifikator(modifikator_id: String) -> bool:
 	return _modifikatoren_nach_id.has(modifikator_id)
 
+## Erzeugt eine frische Kopie des Modifikators (damit dauer_ticks je Einheit tickt).
+static func modifikator_erzeugen(modifikator_id: String) -> Kern_ModifikatorBasis:
+	var registry := Kern_ModifikatorRegistry.new()
+	var basis := registry.modifikator_fuer(modifikator_id)
+	if basis == null:
+		return null
+	var kopie := Kern_ModifikatorBasis.new()
+	kopie.modifikator_id = basis.modifikator_id
+	kopie.angezeigter_name = basis.angezeigter_name
+	kopie.typ = basis.typ
+	kopie.beschreibung = basis.beschreibung
+	kopie.faktor = basis.faktor
+	kopie.job_einschraenkungen = basis.job_einschraenkungen.duplicate()
+	kopie.attribute_modifikation = basis.attribute_modifikation.duplicate()
+	kopie.dauer_ticks = basis.dauer_ticks
+	kopie.heilbar = basis.heilbar
+	kopie.icon_pfad = basis.icon_pfad
+	return kopie
+
 ## Liefert die Ticks für die gegebene Faktor-Angabe. Delegiert an Weltuhr.
 func ticks_fuer_faktor(faktor: float) -> int:
 	return Kern_Weltuhr.ticks_aus_faktor(faktor)
