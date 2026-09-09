@@ -38,7 +38,7 @@ var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 @onready var _spieler: Node2D = %Spieler
 @onready var _tiere: Tier_Manager = %Tiere
 @onready var _hud: VBoxContainer = %HUD
-@onready var _rechteck: ColorRect = %AuswahlRechteck
+@onready var _rechteck: Control = %AuswahlRechteck
 @onready var _kontext: PopupMenu = %KontextMenue
 
 func _ready() -> void:

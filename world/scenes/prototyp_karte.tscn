@@ -76,7 +76,7 @@ text = "Hauptmenü"
 [node name="AuswahlRechteckEbene" type="CanvasLayer" parent="."]
 layer = 10
 
-[node name="AuswahlRechteck" type="ColorRect" parent="AuswahlRechteckEbene"]
+[node name="AuswahlRechteck" type="Control" parent="AuswahlRechteckEbene"]
 unique_name_in_owner = true
 script = ExtResource("9_rechteck")
 
