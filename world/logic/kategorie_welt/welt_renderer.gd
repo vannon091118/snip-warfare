@@ -38,7 +38,7 @@ func objekt_knoten_anhaengen(index: int) -> Sprite2D:
 	if _model == null:
 		return null
 	var sprite := Sprite2D.new()
-	sprite.texture = _textur_fuer(str(_model.objekte[index]["element_id"]))
+	sprite.texture = _textur_fuer(_model.objekt_element_id(index))
 	sprite.position = _model.objekt_position(index)
 	_objekte_knoten.add_child(sprite)
 	return sprite
@@ -93,5 +93,5 @@ func _objekte_erneuern() -> void:
 		kind.queue_free()
 	if _model == null:
 		return
-	for index in _model.objekte.size():
+	for index in _model.objekt_anzahl():
 		objekt_knoten_anhaengen(index)

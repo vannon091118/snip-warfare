@@ -1,5 +1,21 @@
-# Godot 4+ specific ignores
+# Godot
 .godot/
+.import/
+export.cfg
+export_presets.cfg
+
+# Lokale Godot Artefakte
 /android/
 
+# FreieBuff interne Daten: niemals auf GitHub
+.freebuff/
 .tmp/
+
+# Lokale Editor- und OS-Artefakte
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# Headless-Bin relativer Referenzpfad bleibt im Repo, Cache nicht
+tools/godot/.cache/

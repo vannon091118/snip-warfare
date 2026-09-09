@@ -1,0 +1,33 @@
+{
+  "_kommentar": "Mood-Modifikatoren sind Progression-Gates für die Stimmung. Jeder Eintrag hat eine need_id, Schwelle, Emoji, Sprechblase, Verhalten und HP-Folge. Neue Gates nur hier eintragen, keine Maschinenänderung.",
+  "kaelte": {
+    "need_id": "waerme",
+    "name": "Kälte",
+    "emoji": "❄️",
+    "sprechblase_text": "Mir ist kalt… zum Feuer!",
+    "schwellwert": -0.4,
+    "hp_abzug_je_tick": 1,
+    "verhalten": "in_sicherheit_bringen",
+    "farbe": "#6FA8D6"
+  },
+  "hitze": {
+    "need_id": "waerme",
+    "name": "Hitze",
+    "emoji": "🥵",
+    "sprechblase_text": "Zu heiß! Weg vom Feuer!",
+    "schwellwert": 0.6,
+    "hp_abzug_je_tick": 2,
+    "verhalten": "in_sicherheit_bringen",
+    "farbe": "#E07A2E"
+  },
+  "hunger": {
+    "need_id": "nahrung",
+    "name": "Hunger",
+    "emoji": "🍗",
+    "sprechblase_text": "Magen knurrt… brauche Nahrung",
+    "schwellwert": 0.5,
+    "hp_abzug_je_tick": 0,
+    "verhalten": "nahrung_suchen",
+    "farbe": "#C75B39"
+  }
+}

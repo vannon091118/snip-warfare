@@ -1,4 +1,5 @@
 extends RefCounted
+class_name Ui_AuswahlManager
 ## Selection-Spitze: Auswahl-Zustandsmaschine. Sie hält nur, was gerade
 ## ausgewählt ist: der aktive Einheit-Index, das Auswahl-Rechteck als Start-
 ## und Endpunkt und ob ein Zug läuft. Sie entscheidet nichts über Jobs und

@@ -19,7 +19,7 @@ config/icon="res://icon.svg"
 
 Weltuhr="*res://core/weltuhr.gd"
 WeltSitzung="*res://ui/logic/kategorie_ui/ui_welt_sitzung.gd"
-Kern_SignalBus="*res://core/logic/events/kern_signal_bus.gd"
+KernSignalBusAutoload="*res://core/logic/events/kern_signal_bus.gd"
 
 [display]
 

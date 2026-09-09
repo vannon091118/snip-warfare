@@ -6,5 +6,5 @@ class_name Job_Steinmetz
 func ziel_typ() -> ZielTyp:
 	return ZielTyp.OBJEKT
 
-func passt_zu_objekt(element_id: String) -> bool:
+func _passt_zu_objekt_fallback(element_id: String) -> bool:
 	return element_id == "stein" or element_id == "steine_gruppe"

@@ -17,11 +17,11 @@ var _welt_registry: Welt_Registry = null
 var _job_registry: Job_Registry = null
 
 func _ready() -> void:
-	Kern_Weltuhr.tick.connect(_auf_tick)
+	Weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	if Kern_Weltuhr.tick.is_connected(_auf_tick):
-		Kern_Weltuhr.tick.disconnect(_auf_tick)
+	if Weltuhr.tick.is_connected(_auf_tick):
+		Weltuhr.tick.disconnect(_auf_tick)
 
 func referenzen_setzen(einheit_manager: Einheit_Manager, welt_modell: Welt_Model, welt_registry: Welt_Registry, job_registry: Job_Registry) -> void:
 	_einheit_manager = einheit_manager
@@ -94,9 +94,8 @@ func _naechstes_objekt_fuer_ressource(ressource: String, zentrum: Vector2, radiu
 		return -1
 	var bester_index := -1
 	var beste_distanz := INF
-	for index in _welt_modell.objekte.size():
-		var eintrag: Dictionary = _welt_modell.objekte[index]
-		var element_id := str(eintrag.get("element_id", ""))
+	for index in _welt_modell.objekt_anzahl():
+		var element_id := _welt_modell.objekt_element_id(index)
 		if element_id == "":
 			continue
 		var objekt := _welt_registry.finde_objekt(element_id)

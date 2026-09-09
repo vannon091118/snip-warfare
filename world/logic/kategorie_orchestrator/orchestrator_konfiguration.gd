@@ -23,7 +23,7 @@ func aus_eintrag(eintrag_id: String, eintrag: Dictionary) -> void:
 	)
 	radius = float(eintrag.get("radius", 100.0))
 	biom_id = str(eintrag.get("biom_id", ""))
-	var bedarf := eintrag.get("bedarfsliste", [])
+	var bedarf: Variant = eintrag.get("bedarfsliste", [])
 	bedarfsliste.clear()
 	if typeof(bedarf) == TYPE_ARRAY:
 		for eintrag_bedarf: Dictionary in bedarf:

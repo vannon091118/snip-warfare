@@ -12,6 +12,7 @@ const KAMERA_ZOOM_MIN := 0.2
 const KAMERA_ZOOM_MAX := 2.5
 const SCHNELLWAHL_MAX := 9
 const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
+const _AuswahlManagerSkript := preload("res://ui/scenes/selection/auswahl_manager.gd")
 
 ## Kategorie logik: Laden, Verdrahtung und Eingabe-Übersetzung der Spitzen.
 
@@ -24,7 +25,9 @@ var _lager := Lager_Manager.new()
 var _ressourcen := Einheit_Ressourcen.new()
 var _job_registry := Job_Registry.new()
 var _stockmaenner := Einheit_Manager.new()
-var _auswahl := Ui_AuswahlManager.new()
+var _tageszyklus := Welt_TageszyklusMaschine.new()
+var _tages_overlay: CanvasLayer = null
+var _auswahl := _AuswahlManagerSkript.new()
 var _schnellwahl: Array[int] = []
 var _job_kette: Array[Dictionary] = []
 var _kette_laeuft: bool = false
@@ -49,6 +52,11 @@ func _ready() -> void:
 		geladen = _model.aus_woerterbuch(_standard_welt_laden())
 	if not geladen:
 		push_warning("Keine Welt ladbar, benutze leeres Raster")
+	_tageszyklus.einrichten(6.0, 4.0, 2.0)
+	_tages_overlay = preload("res://world/scenes/tageszyklus_overlay.gd").new()
+	(_tages_overlay as CanvasLayer).layer = 20
+	add_child(_tages_overlay)
+	(_tages_overlay as Object).call("einrichten", _tageszyklus)
 	_karte.darstellen(_model, _registry)
 	_tiere_platzieren()
 	_spieler_position = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
@@ -57,6 +65,9 @@ func _ready() -> void:
 	_lager_anlegen_aus_welt()
 	_ressourcen.lager_setzen(_lager)
 	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
+	_stockmaenner.lager_setzen(_lager)
+	_stockmaenner.tageszyklus_setzen(_tageszyklus)
+	_waerme_quellen_sammeln()
 	add_child(_stockmaenner)
 	_stockmaenner.einheit_hinzufuegen(_spieler_position)
 	_orchestrator_registry.laden(ORCHESTRATOR_PFAD)
@@ -71,28 +82,38 @@ func _ready() -> void:
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
 
+func _auf_verteilung(nahrung_je_takt: float) -> void:
+	_stockmaenner.verteilung_setzen(nahrung_je_takt)
+	_hud.meldung_setzen("Verteilung: %.1f Nahrung je Einheit je Takt" % nahrung_je_takt)
+
+func _waerme_quellen_sammeln() -> void:
+	var feuer: Array[Vector2] = []
+	for index in _model.objekt_anzahl():
+		if _model.objekt_element_id(index) == "lagerfeuer":
+			feuer.append(_model.objekt_position(index))
+	_stockmaenner.waerme_quellen_aktualisieren(feuer)
+
 func _lager_anlegen_aus_welt() -> void:
 	# Jedes Haus-Objekt in der Welt ist ein lokales Lager. Liegt keines da,
 	# bekommt die Startposition ein kleines Lager, damit Arbeit nicht ins Leere faellt.
-	for objekt: Dictionary in _model.objekte:
-		var element_id := str(objekt.get("element_id", ""))
+	for index in _model.objekt_anzahl():
+		var element_id := _model.objekt_element_id(index)
+		var welt_pos := _model.objekt_position(index)
 		if element_id == "haus":
-			var pos: Array = objekt["position"]
-			_lager.lager_anlegen("kleines_lager", Vector2(pos[0], pos[1]))
+			_lager.lager_anlegen("kleines_lager", welt_pos)
 		elif element_id == "haus_gross":
-			var pos2: Array = objekt["position"]
-			_lager.lager_anlegen("grosses_lager", Vector2(pos2[0], pos2[1]))
+			_lager.lager_anlegen("grosses_lager", welt_pos)
 	if _lager.lager_zahl() == 0:
 		_lager.lager_anlegen("kleines_lager", _spieler_position)
 
 func _tiere_platzieren() -> void:
 	# Objekte mit Typ "bewegt" sind Tiere und werden dem Tier_Manager übergeben.
-	for objekt: Dictionary in _model.objekte:
-		var eintrag := _registry.finde_objekt(str(objekt["element_id"]))
+	for index in _model.objekt_anzahl():
+		var element_id := _model.objekt_element_id(index)
+		var eintrag := _registry.finde_objekt(element_id)
 		if eintrag == null or eintrag.typ != &"bewegt":
 			continue
-		var position_werte: Array = objekt["position"]
-		_tiere.tier_platzieren(str(objekt["element_id"]), Vector2(position_werte[0], position_werte[1]))
+		_tiere.tier_platzieren(element_id, _model.objekt_position(index))
 
 func _standard_welt_laden() -> Dictionary:
 	if not FileAccess.file_exists(STANDARD_WELT_PFAD):
@@ -102,6 +123,14 @@ func _standard_welt_laden() -> Dictionary:
 	if typeof(daten) == TYPE_DICTIONARY:
 		return daten
 	return {}
+
+func _input(ereignis: InputEvent) -> void:
+	if ereignis is InputEventKey and ereignis.pressed and ereignis.keycode == KEY_V and ereignis.ctrl_pressed:
+		var dlg := preload("res://population/scenes/verteilung_dialog.gd").new()
+		add_child(dlg)
+		(dlg as Window).popup_centered()
+		dlg.verteilung_gesetzt.connect(_auf_verteilung)
+		get_viewport().set_input_as_handled()
 
 func _process(delta: float) -> void:
 	_kamera_bewegen(delta)
@@ -144,7 +173,7 @@ func _klick_position(ereignis: InputEventMouseButton) -> Vector2:
 
 func _linksklick_ende(ende: Vector2) -> void:
 	_rechteck.rechteck_verbergen()
-	var treffer := _auswahl.ziehen_ende(ende, _stockmaenner.einheit_zahl(), _stockmaenner.einheit_position)
+	var treffer: Array[int] = _auswahl.ziehen_ende(ende, _stockmaenner.einheit_zahl(), _stockmaenner.einheit_position)
 	if treffer.is_empty():
 		_klick_verarbeiten(ende)
 	else:
@@ -190,7 +219,7 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 		return
 	var objekt_index := _model.objekt_bei(klick, radius)
 	if objekt_index >= 0:
-		var element_id := str(_model.objekte[objekt_index]["element_id"])
+		var element_id := _model.objekt_element_id(objekt_index)
 		var eintrag := _registry.finde_objekt(element_id)
 		if eintrag != null and eintrag.typ == &"objekt":
 			_job_vergeben_fuer_objekt(objekt_index, _model.objekt_position(objekt_index), element_id, ketten_nachfrage)
@@ -244,9 +273,9 @@ func _lese_kamera_richtung() -> Vector2:
 func _rechteck_pflegen() -> void:
 	if not _auswahl.ziehen_aktiv:
 		return
-	var maus := get_global_mouse_position()
-	var start_bild := get_viewport().get_canvas_transform() * _auswahl.ziehen_start
-	var end_bild := get_viewport().get_canvas_transform() * maus
+	var maus: Vector2 = get_global_mouse_position()
+	var start_bild: Vector2 = get_viewport().get_canvas_transform() * _auswahl.ziehen_start
+	var end_bild: Vector2 = get_viewport().get_canvas_transform() * maus
 	_rechteck.rechteck_setzen(start_bild, end_bild)
 
 func _auf_kontext_aktion(aktion: Dictionary) -> void:

@@ -19,12 +19,18 @@ func _ready() -> void:
 	_ebene.name = "FeedbackEbene"
 	_ebene.z_index = 100
 	add_child(_ebene)
-	Kern_SignalBus.schaden_erhalten.connect(_auf_schaden_erhalten)
-	Kern_SignalBus.gestorben.connect(_auf_gestorben)
+	var bus := Kern_SignalBus.bus()
+	if bus != null:
+		bus.schaden_erhalten.connect(_auf_schaden_erhalten)
+		bus.gestorben.connect(_auf_gestorben)
 
 func _exit_tree() -> void:
-	Kern_SignalBus.schaden_erhalten.disconnect(_auf_schaden_erhalten)
-	Kern_SignalBus.gestorben.disconnect(_auf_gestorben)
+	var bus2 := Kern_SignalBus.bus()
+	if bus2 != null:
+		if bus2.schaden_erhalten.is_connected(_auf_schaden_erhalten):
+			bus2.schaden_erhalten.disconnect(_auf_schaden_erhalten)
+		if bus2.gestorben.is_connected(_auf_gestorben):
+			bus2.gestorben.disconnect(_auf_gestorben)
 
 func zeige_ernte(welt_position: Vector2, ressource: String, menge: int) -> void:
 	if menge <= 0:

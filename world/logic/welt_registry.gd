@@ -2,37 +2,37 @@ extends Objekt_RegistryBasis
 class_name Welt_Registry
 ## Fassade über die Fach-Registries Terrain, Natur und Gebäude.
 ## RT-Pyramide: Spitze fasst alle Untersysteme zusammen ohne deren
-## Logik zu verdoppeln. Fachregistries sind nur gefilterte Sichten.
-## Sie behält alle Katalog-Einträge zentral und delegiert nur die Sicht
-## nach Kategorie; Aufrufer erhalten immer dieselben Objekt-Instanzen.
+## Logik zu verdoppeln. Fachregistries sind gefilterte Sichten über
+## denselben Katalog: Welt_Registry lädt den Element-Katalog einmalig
+## als eigene Instanz und reicht dieselben Objekt-Instanzen an die drei
+## Fach-Registries weiter; Aufrufer erhalten immer dieselben Objekte.
 ## Zentrale Erzeugung der Datenklassen in _objekt_klasse_fuer.
 
-## Kategorie daten: getypte Fach-Sicht Caches fuer die Fassade.
-var _natur_sicht: Array[Objekt_Basis] = []
-var _gebaeude_sicht: Array[Objekt_Basis] = []
-var _terrain_sicht: Array[Objekt_Basis] = []
+## Kategorie daten: die drei Fach-Registries als gefilterte Sichten.
+var _terrain: Objekt_Registry = null
+var _natur: Natur_Registry = null
+var _gebaeude: Gebaeude_Registry = null
 
-## Kategorie logik: Aufbau und delegierende Zugriffe. Fach-Sichten sind
-## keine eigenen Registry Instanzen, sondern nur getypte Filter über
-## die zentrale Katalog Tabelle. Kein eigener Ladezyklus.
+## Kategorie logik: Aufbau und delegierende Zugriffe. Die Fach-Registries
+## werden ohne eigenen Katalog-Lauf aus derselben Katalog-Tabelle befüllt;
+## es gibt keine zweite JSON-Ladung und keine zweite Klassen-Erzeugung.
 
 func registries_vorbereiten() -> void:
-	# Fach-Sichten werden erst nach dem Laden gefüllt, hier nur leeren.
-	_natur_sicht.clear()
-	_gebaeude_sicht.clear()
-	_terrain_sicht.clear()
+	_terrain = Objekt_Registry.new()
+	_natur = Natur_Registry.new()
+	_gebaeude = Gebaeude_Registry.new()
+	_registries_nach_kategorie["Terrain"] = _terrain
+	_registries_nach_kategorie["Natur"] = _natur
+	_registries_nach_kategorie["Gebäude"] = _gebaeude
+	_terrain.eintraege_nach_id.clear()
+	_terrain.eintraege.clear()
+	_natur.eintraege_nach_id.clear()
+	_natur.eintraege.clear()
+	_gebaeude.eintraege_nach_id.clear()
+	_gebaeude.eintraege.clear()
 
 func _registrieren_in_kategorie(kategorie: String, element_id: String, objekt: Objekt_Basis) -> void:
-	var basis_registry: Welt_RegistryBasis = _registries_nach_kategorie.get(kategorie)
-	if basis_registry != null:
-		basis_registry.registrieren(element_id, objekt)
-	match kategorie:
-		"Terrain":
-			_terrain_sicht.append(objekt)
-		"Natur":
-			_natur_sicht.append(objekt)
-		"Gebäude":
-			_gebaeude_sicht.append(objekt)
+	super._registrieren_in_kategorie(kategorie, element_id, objekt)
 
 func _objekt_klasse_fuer(element_id: String) -> Objekt_Basis:
 	match element_id:
@@ -50,32 +50,38 @@ func _objekt_klasse_fuer(element_id: String) -> Objekt_Basis:
 			return Objekt_Hausgross.new()
 		"kadaver":
 			return Objekt_Kadaver.new()
+		"lagerfeuer":
+			return Objekt_Lagerfeuer.new()
 		"boden", "wiese":
 			return Objekt_Kachel.new()
 	return Objekt_Basis.new()
 
 func natur_sicht() -> Array[Objekt_Basis]:
-	return _natur_sicht
+	return objekte_der_kategorie("Natur")
 
 func gebaeude_sicht() -> Array[Objekt_Basis]:
-	return _gebaeude_sicht
+	return objekte_der_kategorie("Gebäude")
 
 func terrain_sicht() -> Array[Objekt_Basis]:
-	return _terrain_sicht
+	return objekte_der_kategorie("Terrain")
 
 func natur() -> Welt_RegistryBasis:
-	return _registries_nach_kategorie.get("Natur", null)
+	return _natur
 
 func gebaeude() -> Welt_RegistryBasis:
-	return _registries_nach_kategorie.get("Gebäude", null)
+	return _gebaeude
 
 func terrain() -> Welt_RegistryBasis:
-	return _registries_nach_kategorie.get("Terrain", null)
+	return _terrain
 
 func registry_nach_schema_name(schema_id: String) -> Welt_RegistryBasis:
 	match schema_id:
-		"Objekt_Registry", "Natur_Registry", "Gebaeude_Registry":
-			return self
+		"Objekt_Registry":
+			return _terrain
+		"Natur_Registry":
+			return _natur
+		"Gebaeude_Registry":
+			return _gebaeude
 	return null
 
 func datenfeld_arten() -> Dictionary:

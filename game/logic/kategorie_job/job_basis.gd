@@ -21,6 +21,7 @@ enum ZielTyp {
 	TIER,
 }
 
+## Kategorie daten: Job-Konfiguration und Ziel-Listen aus der Registry.
 var job_id: String = ""
 var konfiguration: Dictionary = {}
 var fortlaufende_ticks: int = 0
@@ -28,7 +29,10 @@ var _logik_id: String = ""
 var _modifikator_id: String = "normal"
 var _faktor: float = 1.0
 var _loop: bool = false
+var _ziel_objekte: Array[String] = []
+var _ziel_tiere: Array[String] = []
 
+## Kategorie logik: Einrichten, Ziel-Prüfung und Zeit-Umrechnung.
 func einrichten(neue_job_id: String, neue_konfiguration: Dictionary) -> void:
 	job_id = neue_job_id
 	konfiguration = neue_konfiguration
@@ -36,6 +40,16 @@ func einrichten(neue_job_id: String, neue_konfiguration: Dictionary) -> void:
 	_modifikator_id = str(konfiguration.get("modifikator_id", "normal"))
 	_faktor = float(konfiguration.get("faktor", 1.0))
 	_loop = bool(konfiguration.get("loop", false))
+	_ziel_objekte = _lese_ziel_array("ziel_objekte", "ziel_element_ids")
+	_ziel_tiere = _lese_ziel_array("ziel_tiere", "ziel_tier_ids")
+
+func _lese_ziel_array(haupt: String, fallback: String) -> Array[String]:
+	var roh: Variant = konfiguration.get(haupt, konfiguration.get(fallback, []))
+	var typisiert: Array[String] = []
+	if typeof(roh) == TYPE_ARRAY:
+		for wert: Variant in roh as Array:
+			typisiert.append(str(wert))
+	return typisiert
 
 func name() -> String:
 	return str(konfiguration.get("name", job_id.capitalize()))
@@ -49,12 +63,20 @@ func ist_loop() -> bool:
 	# Abschluss das naechste gueltige Ziel desselben Typs, kein Einmal-Job.
 	return _loop
 
-func passt_zu_objekt(_element_id: String) -> bool:
-	# Unterklassen prüfen, ob das Weltobjekt zu diesem Job passt.
+func passt_zu_objekt(element_id: String) -> bool:
+	if not _ziel_objekte.is_empty():
+		return _ziel_objekte.has(element_id)
+	return _passt_zu_objekt_fallback(element_id)
+
+func _passt_zu_objekt_fallback(_element_id: String) -> bool:
 	return false
 
-func passt_zu_tier(_tier_id: String) -> bool:
-	# Unterklassen prüfen, ob das Tier zu diesem Job passt.
+func passt_zu_tier(tier_id: String) -> bool:
+	if not _ziel_tiere.is_empty():
+		return _ziel_tiere.has(tier_id)
+	return _passt_zu_tier_fallback(tier_id)
+
+func _passt_zu_tier_fallback(_tier_id: String) -> bool:
 	return false
 
 func ressource() -> String:
@@ -110,32 +132,14 @@ func arbeitsschritt(ziel_ressource: String) -> void:
 
 func kann_ausgefuehrt_werden_von(vital: Einheit_VitalStatus) -> bool:
 	# Prüft die physischen Voraussetzungen gegen die Vital-Maschine;
-	# alle Grenzwerte stehen zentral in der Job-Konfiguration.
+	# Verletzungen blockieren den Job, alle Grenzwerte stehen zentral
+	# in der Job-Konfiguration.
 	if vital == null:
 		return false
+	for mod in vital.aktive_modifikatoren:
+		if mod.blockiert_job(job_id):
+			return false
 	var mindest_tragekraft := int(konfiguration.get("mindest_tragekraft", 0))
 	if vital.effektive_tragekraft(int(konfiguration.get("basis_tragekraft", 10))) < mindest_tragekraft:
 		return false
-	return true
-
-## Phase 3.3: Validierung der physischen Fähigkeit
-func kann_ausgefuehrt_werden_von(einheit_status: Einheit_Status) -> bool:
-	# Prüft ob Einheit physische Voraussetzungen erfüllt
-	# 1. Verletzungen die diesen Job blockieren
-	for mod in einheit_status.aktive_modifikatoren:
-		if mod.typ == Kern_ModifikatorBasis.ModifikatorTyp.VERLETZUNG:
-			if job_id in mod.job_einschraenkungen:
-				return false
-
-	# 2. Mindest-Tragekraft prüfen
-	var mindest_tragekraft := int(konfiguration.get("mindest_tragekraft", 0))
-	if einheit_status.effektive_tragekraft < mindest_tragekraft:
-		return false
-
-	# 3. Benötigtes Werkzeug prüfen (Platzhalter für spätere Inventar-Integration)
-	var benoetigt_werkzeug := str(konfiguration.get("benoetigt_werkzeug", ""))
-	if benoetigt_werkzeug != "":
-		# TODO: Inventar-Prüfung hier einbauen
-		pass
-
 	return true

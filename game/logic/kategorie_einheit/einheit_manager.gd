@@ -10,9 +10,16 @@ var _einheiten: Array[Dictionary] = []
 
 ## Kategorie logik: Registries und Verbindungen zu anderen Domänen.
 var _job_registry := Job_Registry.new()
+var _need_registry := Pop_NeedRegistry.new()
+var _mood_mod_registry := Pop_MoodModifikatorRegistry.new()
+var _waerme_feld: Welt_WaermeFeld = Welt_WaermeFeld.new()
+var _tageszyklus: Welt_TageszyklusMaschine = Welt_TageszyklusMaschine.new()
+var _zufall := Kern_Zufall.new()
+var _nahrung_je_einheit_je_takt: float = 0.8
 var _model: Welt_Model = null
 var _tiere: Tier_Manager = null
 var _ressourcen: Einheit_Ressourcen = null
+var _lager: Lager_Manager = null
 
 func _enter_tree() -> void:
 	Weltuhr.tick.connect(_auf_tick)
@@ -26,19 +33,48 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_tiere = tiere
 	_ressourcen = ressourcen
 
+func lager_setzen(lager: Lager_Manager) -> void:
+	_lager = lager
+	for einheit: Dictionary in _einheiten:
+		var m: Pop_MoodMaschine = einheit["mood"]
+		m.einrichten(_need_registry, _lager)
+		m.waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
+
+func waerme_quellen_aktualisieren(feuer_positionen: Array[Vector2]) -> void:
+	_waerme_feld.quellen_setzen(feuer_positionen, 5, 1.0)
+
+func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
+	_tageszyklus = zyklus
+	for einheit: Dictionary in _einheiten:
+		(einheit["mood"] as Pop_MoodMaschine).waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
+
+func verteilung_setzen(nahrung_je_takt: float) -> void:
+	_nahrung_je_einheit_je_takt = clampf(nahrung_je_takt, 0.1, 5.0)
+
 func einheit_hinzufuegen(welt_position: Vector2) -> void:
 	var status := Einheit_Status.new()
 	var darsteller := Einheit_Darsteller.new()
 	darsteller.einrichten(status)
 	darsteller.position = welt_position
 	darsteller.animation_setzen(status.animation())
+	var mood := Pop_MoodMaschine.new()
+	mood.einrichten(_need_registry, _lager)
+	mood.waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
+	mood.welt_position_setzen(welt_position)
+	var denkblase := Pop_Denkblase.new()
+	denkblase.einrichten(mood)
+	darsteller.add_child(denkblase)
 	add_child(darsteller)
+	status.zustand_geaendert.connect(_auf_zustand_geaendert.bind(status, mood))
 	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
 	status.job_loop_gefragt.connect(_auf_job_loop_gefragt)
 	_einheiten.append({
 		"status": status,
 		"darsteller": darsteller,
+		"mood": mood,
+		"denkblase": denkblase,
 		"position": welt_position,
+		"_letzter_zustand": status.zustand,
 	})
 
 func einheit_zahl() -> int:
@@ -56,6 +92,9 @@ func einheit_position_setzen(index: int, welt_position: Vector2) -> void:
 	_einheiten[index]["position"] = welt_position
 	var darsteller: Einheit_Darsteller = _einheiten[index]["darsteller"]
 	darsteller.position = welt_position
+	var mood_pos: Pop_MoodMaschine = _einheiten[index]["mood"]
+	mood_pos.welt_position_setzen(welt_position)
+	(_einheiten[index]["status"] as Einheit_Status).welt_position_setzen(welt_position)
 
 func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ziel_position: Vector2) -> bool:
 	if einheit_index < 0 or einheit_index >= _einheiten.size():
@@ -90,9 +129,16 @@ func einheit_job_abbrechen(einheit_index: int) -> void:
 	var darsteller: Einheit_Darsteller = _einheiten[einheit_index]["darsteller"]
 	darsteller.animation_setzen(status.animation())
 
-func _auf_tick(_nummer: int, delta: float) -> void:
+func _auf_tick(nummer: int, delta: float) -> void:
+	if _tageszyklus != null:
+		_tageszyklus.tick()
+	var takt_ticks := Kern_Weltuhr.ticks_aus_faktor(6.0 * 60.0 / 10.0)
+	var verbrauch_faellig := takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0
+	if verbrauch_faellig:
+		_nahrung_verteilen()
 	for einheit: Dictionary in _einheiten:
 		var status: Einheit_Status = einheit["status"]
+		var mood: Pop_MoodMaschine = einheit["mood"]
 		if status.zustand == Einheit_Status.Zustand.ARBEITEN and not _ziel_existiert(status):
 			# Ziel wurde in der Zwischenzeit entfernt: Job endet.
 			status.job_abbrechen()
@@ -100,6 +146,11 @@ func _auf_tick(_nummer: int, delta: float) -> void:
 			darsteller.animation_setzen(status.animation())
 			continue
 		status.tick(delta)
+		var ziel := mood.auf_tick(nummer, delta)
+		var w := mood.waerme_wert()
+		(status.vital as Einheit_VitalStatus).umgebungsschaden_anwenden(w, _mood_mod_registry, _zufall)
+		if ziel != Vector2.INF and status.zustand == Einheit_Status.Zustand.IDLE:
+			_in_sicherheit_bringen(einheit, ziel)
 
 func _ziel_existiert(status: Einheit_Status) -> bool:
 	if status.job == null:
@@ -108,7 +159,7 @@ func _ziel_existiert(status: Einheit_Status) -> bool:
 		Job_Basis.ZielTyp.OBJEKT:
 			if _model == null:
 				return false
-			return status.aktuelles_ziel_index < _model.objekte.size()
+			return status.aktuelles_ziel_index < _model.objekt_anzahl()
 		Job_Basis.ZielTyp.TIER:
 			if _tiere == null:
 				return false
@@ -118,14 +169,14 @@ func _ziel_existiert(status: Einheit_Status) -> bool:
 func _naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:
 	if _model == null or status.job == null:
 		return -1
-	var anzahl := _model.objekte.size()
+	var anzahl := _model.objekt_anzahl()
 	if anzahl == 0:
 		return -1
 	for schritt in anzahl:
 		var pruef_index := (alter_ziel_index + 1 + schritt) % anzahl
 		if pruef_index == alter_ziel_index:
 			continue
-		var element_id := str(_model.objekte[pruef_index].get("element_id", ""))
+		var element_id := _model.objekt_element_id(pruef_index)
 		if status.job.passt_zu_objekt(element_id):
 			return pruef_index
 	return -1
@@ -190,7 +241,7 @@ func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 		var ernte_position := Vector2.ZERO
 		match status.aktuelles_ziel_typ:
 			Job_Basis.ZielTyp.OBJEKT:
-				if _model != null and status.aktuelles_ziel_index >= 0 and status.aktuelles_ziel_index < _model.objekte.size():
+				if _model != null and status.aktuelles_ziel_index >= 0 and status.aktuelles_ziel_index < _model.objekt_anzahl():
 					ernte_position = _model.objekt_position(status.aktuelles_ziel_index)
 			Job_Basis.ZielTyp.TIER:
 				if _tiere != null:
@@ -227,3 +278,40 @@ func _tier_ernten(status: Einheit_Status) -> void:
 	for einheit: Dictionary in _einheiten:
 		if einheit["status"] == status:
 			(einheit["darsteller"] as Einheit_Darsteller).animation_setzen(status.animation())
+
+func _auf_zustand_geaendert(_neu: int, status: Einheit_Status, mood: Pop_MoodMaschine) -> void:
+	var vorher: int = 0
+	for einheit: Dictionary in _einheiten:
+		if einheit["status"] == status:
+			vorher = int(einheit.get("_letzter_zustand", 0))
+			einheit["_letzter_zustand"] = status.zustand
+			break
+	var von_str := "idle" if vorher == Einheit_Status.Zustand.IDLE else "arbeiten"
+	var nach_str := "idle" if status.zustand == Einheit_Status.Zustand.IDLE else "arbeiten"
+	var job_id := status.job.job_id if status.job != null else ""
+	mood.auf_jobwechsel(von_str, nach_str, job_id)
+
+func transport_fuer_idle(einheit_index: int, lager: Lager_Manager) -> bool:
+	if einheit_index < 0 or einheit_index >= _einheiten.size():
+		return false
+	var mood: Pop_MoodMaschine = _einheiten[einheit_index]["mood"]
+	mood.auf_jobwechsel("idle", "transport", "transport")
+	return true
+
+func _in_sicherheit_bringen(einheit: Dictionary, ziel: Vector2) -> void:
+	# Progression-Gate: Wärme triggert in_sicherheit_bringen am Gate.
+	einheit["position"] = ziel
+	(einheit["darsteller"] as Einheit_Darsteller).position = ziel
+	(einheit["mood"] as Pop_MoodMaschine).welt_position_setzen(ziel)
+	(einheit["status"] as Einheit_Status).welt_position_setzen(ziel)
+
+func _nahrung_verteilen() -> void:
+	if _ressourcen == null or _lager == null:
+		return
+	var gesamt := int(ceil(_nahrung_je_einheit_je_takt * float(_einheiten.size())))
+	if gesamt <= 0:
+		return
+	if not _ressourcen.entnehmen("fleisch", gesamt):
+		for einheit: Dictionary in _einheiten:
+			var st: Einheit_Status = einheit["status"]
+			st.vital.schaden_nehmen(5, _zufall, "hunger")

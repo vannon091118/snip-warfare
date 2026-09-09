@@ -131,6 +131,8 @@ func _init() -> void:
 	vital.gestorben.connect(_auf_eigenen_tod)
 
 func _auf_eigenen_tod(welt_position: Vector2) -> void:
-	Kern_SignalBus.bus().gestorben.emit(welt_position, "einheit", true)
+	var bus := Kern_SignalBus.bus()
+	if bus != null:
+		bus.gestorben.emit(welt_position, "einheit", true)
 	gestorben.emit(welt_position)
 	job_abbrechen()

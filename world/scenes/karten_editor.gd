@@ -131,7 +131,7 @@ func _status_aktualisieren() -> void:
 		werkzeug_name = "Verschieben"
 	_status_label.text = "Kreativmodus | Werkzeug: %s | %d Objekte | %dx%d Kacheln" % [
 		werkzeug_name,
-		_model.objekte.size(),
+		_model.objekt_anzahl(),
 		_model.raster_breite,
 		_model.raster_hoehe,
 	]
@@ -160,7 +160,7 @@ func _maus_gedrueckt() -> void:
 	var objekt_index := _model.objekt_bei(_maus_welt_position, 60.0)
 	if objekt_index >= 0 and _werkzeug.aktives_werkzeug != Welt_EditorWerkzeug.Werkzeug.ENTFERNEN:
 		_werkzeug.objekt_greifen(objekt_index)
-		_vorschau.texture = _textur_fuer(str(_model.objekte[objekt_index]["element_id"]))
+		_vorschau.texture = _textur_fuer(_model.objekt_element_id(objekt_index))
 		_vorschau.position = _maus_welt_position
 		_vorschau.visible = true
 		_status_aktualisieren()
@@ -175,7 +175,7 @@ func _maus_losgelassen() -> void:
 	if not _werkzeug.zieht_gerade():
 		return
 	var index := _werkzeug.gezogenes_objekt
-	if index >= 0 and index < _model.objekte.size() and _maus_welt_position_in_karte():
+	if index >= 0 and index < _model.objekt_anzahl() and _maus_welt_position_in_karte():
 		# Abgelegt: neue Position ins Modell und in den Renderer-Knoten schreiben.
 		_model.objekt_verschieben(index, _maus_welt_position)
 		_karte.objekt_knoten_verschieben(index, _maus_welt_position)
@@ -190,7 +190,7 @@ func _maus_welt_position_in_karte() -> bool:
 
 func _objekt_platzieren(ziel: Vector2) -> void:
 	_model.objekt_hinzufuegen(_werkzeug.gewaehltes_element, ziel)
-	_karte.objekt_knoten_anhaengen(_model.objekte.size() - 1)
+	_karte.objekt_knoten_anhaengen(_model.objekt_anzahl() - 1)
 	_status_aktualisieren()
 
 func _objekt_entfernen(ziel: Vector2) -> void:

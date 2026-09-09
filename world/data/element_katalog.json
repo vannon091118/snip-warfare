@@ -8,6 +8,7 @@
   {"id": "steine_gruppe", "name": "Steingruppe", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/terrain/steine_gruppe.svg", "arbeits_ressource": "stein"},
   {"id": "haus", "name": "Haus", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/haus.svg"},
   {"id": "haus_gross", "name": "Großes Haus", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/haus_gross.svg"},
+  {"id": "lagerfeuer", "name": "Lagerfeuer", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/lagerfeuer.svg", "waerme_radius_kacheln": 5, "waerme_staerke": 1.0, "logik_id": "waerme_quelle", "modifikator_id": "normal", "faktor": 1.0},
   {"id": "baer", "name": "Bär", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/baer.svg", "frame_breite": 48, "frame_hoehe": 72},
   {"id": "hase", "name": "Hase", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/hase.svg", "frame_breite": 32, "frame_hoehe": 72},
   {"id": "vogel", "name": "Vogel", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/vogel.svg", "frame_breite": 32, "frame_hoehe": 64},

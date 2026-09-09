@@ -8,16 +8,17 @@ Jede Klasse trägt ihre Kategorie als Präfix im Klassennamen und liegt im passe
 
 | Präfix | Kategorie | Ordner | Inhalt |
 | --- | --- | --- | --- |
+| `Pop_` | Bevölkerung Bedürfnisse und Stimmungen | `population/` | Needs (Pop_NeedBasis/Nahrung/Waerme + Pop_NeedRegistry aus needs.json), Mood (Pop_Mood + Pop_MoodMaschine + Pop_MoodModifikator/Registry aus mood_modifikatoren.json), Denkblase (Pop_Denkblase als Observer) |
 | `Kern_` | Zentrale Engine-Dienste | `core/` | Weltuhr (einziger globaler Tick), Asset Pflicht Gate, Zufall (Kern_Zufall), Modifikatoren, Signalbus (Autoload `Kern_SignalBus`, Klasse in `core/logic/events/`) |
 | `Lager_` | Lokale Speicher | `economy/logic/storage/` | Basis (Typ), Registry (Templates), Manager (Instanzen je Ort), Mutationen (Einlagern, Entnehmen) |
 | `Orchestrator_` | Zonen-Orchestrator | `world/logic/kategorie_orchestrator/` | Basis, Konfiguration, Status, Manager (Bedarf -> Jobvergabe), Registry, Darsteller |
 | `Shinon_` | Commit Gate | `shinon/` | Banner Banner Pruefer, Bullet Pruefer, Nummerierung Pruefer, Bildsprache Pruefer, Gate Orchestrator |
-| `Objekt_` | Weltobjekt-Datenklassen | `world/logic/kategorie_objekt/` | Kachel, Baum, Baumstumpf, Stein, Steingruppe, Haus, Hausgross, Kadaver, Basis |
+| `Objekt_` | Weltobjekt-Datenklassen | `world/logic/kategorie_objekt/` | Kachel, Baum, Baumstumpf, Stein, Steingruppe, Haus, Hausgross, Kadaver, Lagerfeuer, Basis |
 | `Resources_` / `Resource_` | Ressourcen-Datenklassen | `game/logic/kategorie_ressourcen/` | Wood, Stone, Meat, Basis |
 | `Tier_` | Tier-Datenklassen und Tier-Verhalten | `world/logic/kategorie_tier/` | Baer, Hase, Vogel, Vogelgruppe, Basis, Verhalten, Status, Darsteller, Manager |
 | `Job_` | Job-Zustandsmaschinen | `game/logic/kategorie_job/` | Holzfaeller, Steinmetz, Jaeger, HolzfaellerStumpf, JaegerKadaver, Heiler, Basis, Registry |
 | `Einheit_` | Spielfiguren-Domäne | `game/logic/kategorie_einheit/` | Status, VitalStatus (Leben und Modifikatoren), Darsteller, Manager, Ressourcen |
-| `Welt_` | Welt-Zustandsmaschinen und Dienste | `world/logic/` | Model, Registry, Speicher, Renderer (kategorie_welt), EditorWerkzeug (kategorie_welt) |
+| `Welt_` | Welt-Zustandsmaschinen und Dienste | `world/logic/` | Model, Registry, Speicher, Renderer (kategorie_welt), EditorWerkzeug (kategorie_welt), WaermeFeld (kategorie_waerme), TageszyklusMaschine (kategorie_tageszyklus) |
 | `Ui_` | Benutzeroberfläche | `ui/logic/kategorie_ui/` | MenueZustaende, WeltAuswahlDialog, WeltSitzung (Autoload) |
 
 Regeln:
@@ -58,9 +59,15 @@ Jedes Datenobjekt hat eine eigene Klasse mit exaktem, eindeutigem Namen. Die Reg
 | `Objekt_Steingruppe` | `world/data/element_katalog.json` (steine_gruppe) |
 | `Objekt_Haus` | `world/data/element_katalog.json` (haus) |
 | `Objekt_Hausgross` | `world/data/element_katalog.json` (haus_gross) |
+| `Objekt_Lagerfeuer` | `world/data/element_katalog.json` (lagerfeuer, waerme_quelle wie Hausgross aber Feuer) |
 | `Resources_Wood` | `game/data/ressourcen.json` (holz) |
 | `Resources_Stone` | `game/data/ressourcen.json` (stein) |
 | `Resources_Meat` | `game/data/ressourcen.json` (fleisch) |
+| `Pop_NeedNahrung` | `population/data/needs.json` (nahrung) |
+| `Pop_NeedWaerme` | `population/data/needs.json` (waerme) |
+| `Pop_MoodModifikator` | `population/data/mood_modifikatoren.json` (kaelte/hitze/hunger, Gate kaelte/hitze triggert in_sicherheit_bringen) |
+| `Welt_WaermeFeld` | `world/data/element_katalog.json` (lagerfeuer Quellen, Radius 5) + Tageszyklus |
+| `Welt_TageszyklusMaschine` | `population/data/needs.json` (6 Min Takt 4 Tag/2 Nacht) + `Welt_WaermeFeld` |
 | `Lager_Basis` | `economy/data/lager.json` (kleines_lager, grosses_lager) |
 | `Orchestrator_Konfiguration` | `game/data/orchestrator_config.json` (holzsammler_zone, jaeger_zone) |
 | `Tier_Baer` | `world/data/tier_verhalten.json` (baer) |
@@ -70,7 +77,7 @@ Jedes Datenobjekt hat eine eigene Klasse mit exaktem, eindeutigem Namen. Die Reg
 | `Tier_Vogelgruppe` | `world/data/tier_verhalten.json` (vogelgruppe) |
 | `Welt_BiomBasis` | `world/data/biome.json` (gemaessigt, tundra, steppe) |
 
-Erzeugungsorte: `Welt_Registry._objekt_klasse_fuer()`, `Einheit_Ressourcen._ressourcen_klasse_fuer()`, `Tier_Registry._tier_klasse_fuer()`, `Welt_BiomRegistry` (biome), `Lager_Registry` (lager), `Orchestrator_Registry` (orchestrator_config), `Kern_ModifikatorRegistry` (kern_modifikatoren). Neue Datenklassen werden nur an diesen Stellen registriert.
+Erzeugungsorte: `Welt_Registry._objekt_klasse_fuer()` (inkl. Lagerfeuer), `Einheit_Ressourcen._ressourcen_klasse_fuer()`, `Tier_Registry._tier_klasse_fuer()`, `Welt_BiomRegistry` (biome), `Lager_Registry` (lager), `Orchestrator_Registry` (orchestrator_config), `Kern_ModifikatorRegistry` (kern_modifikatoren), `Pop_NeedRegistry._need_klasse_fuer()` (needs waerme), `Pop_MoodModifikatorRegistry` (mood_modifikatoren). Neue Datenklassen werden nur an diesen Stellen registriert.
 
 ## 4. Commit Gate Shinon im Root
 
@@ -119,6 +126,11 @@ Regeln des Gates und des Inits:
 | `world/data/standard_welt.json` | Standard-Prototypkarte mit biom_id | `Welt_Model` über die Szenen |
 | `core/data/kern_logik.json` | Generische Logiken wiederverwendbar | `Kern_LogikRegistry` |
 | `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s (Verletzungen sperren Jobs) | `Kern_ModifikatorRegistry` + `Einheit_VitalStatus` |
+| `population/data/needs.json` | Bedürfnisse mit Ressource, Schwellwert, Emoji und Sprechblase je Need (nahrung 0.8 je Takt, waerme als Vektor-Feld via Feuer) | `Pop_NeedRegistry` (inkl. Waerme) -> `Pop_MoodMaschine` (Need sammeln + Waerme je Kachel + Tageszyklus) -> `Pop_Denkblase` (Beobachter) |
+| `population/data/mood_modifikatoren.json` | Mood-Modifikatoren als Progression-Gates (kaelte/hitze/hunger, in_sicherheit_bringen, HP-Abzug) | `Pop_MoodModifikatorRegistry` -> `Pop_MoodMaschine` (Gate-Prüfung waerme/Hitze) -> `Einheit_VitalStatus.umgebungsschaden_anwenden()` + `_in_sicherheit_bringen()` |
+| `world/data/element_katalog.json` (lagerfeuer) | Wärmequelle je Feuer, Radius 5 Kacheln abfallend | `Welt_WaermeFeld` (quellen_setzen, waerme_an je Weltposition deterministisch) |
+| `world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd` | Tageszyklus 6-Minuten-Takt 4 Tag/2 Nacht an Weltuhr, Helligkeit, Schablonen-Alpha wie Pappe-Schieber | `Welt_TageszyklusMaschine` (tick an Weltuhr, phase_geaendert) -> `tageszyklus_overlay.gd` (CanvasLayer färbt Welt) + `Welt_WaermeFeld` (Grundkälte nachts) |
+| `population/scenes/verteilung_dialog.gd` | Isolierte Window-Szene zur Verteilung (0.8 Nahrung je Einheit je Takt konfigurierbar) | `Einheit_Manager.verteilung_setzen()` via Strg+V, Einblend als eigenes Window |
 | `economy/data/lager.json` | Lager-Templates mit Kapazität und welt_objekt_id | `Lager_Registry` -> `Lager_Manager` (lokale Instanzen, Mutationen) |
 | `game/data/orchestrator_config.json` | Zonen mit Bedarf je Ressource und Job | `Orchestrator_Registry` -> `Orchestrator_Manager` |
 | `shinon/shinon_init.py --readme` | Lebendige README als Pitch von Shinon, gamer orientiert, vierte Wand | `ShinonReadmeGenerator` |
@@ -145,7 +157,8 @@ Es gibt genau einen globalen Tick: das Autoload `Weltuhr` (Klasse `Kern_Weltuhr`
 
 1. **UI-Domäne** (`ui/`): Menüführung, Weltauswahl, Sitzungszustand. Sie ruft Szenen auf und schreibt `WeltSitzung`; sie ändert keine Welt-Daten.
 2. **Welt-Domäne** (`world/`): Modell, Speicher, Registry, Renderer, Editor, Tiere, Orchestrator-Zonen. Der Renderer liest nur `Objekt_Basis`-Felder; der Editor schreibt nur über `Welt_Model`-Funktionen. Zonen lesen Bedarf und vergeben Jobs nur über `Einheit_Manager`.
-3. **Game-Domäne** (`game/`): Jobs, Einheiten, Ressourcenbestände, Vitalstatus. `Einheit_Manager` verbindet Welt (Ziele), Tiere (Jagd), Lager (verortete Bestände) und Vitalstatus (Verletzungen sperren Jobs), kennt aber keine Darstellungsdetails. Die Einheit trennt zwei Maschinen: `Einheit_Status` führt nur den Arbeitsloop, `Einheit_VitalStatus` hält Leben und physische Modifikatoren und meldet Schaden und Tod über den Signalbus.4. **Economy-Domäne** (`economy/`): Lokale Lager (Lager_Basis je Typ in `economy/data/lager.json`, verortete Instanzen im `Lager_Manager`). Einheiten lagern Ernte im nächsten Lager ein; globale Bestände sind nur die Summe für das HUD. Wachstum (Haus + 3 Nahrung -> neuer Stickman) entnimmt aus dem nächsten Lager.
+3. **Game-Domäne** (`game/`): Jobs, Einheiten, Ressourcenbestände, Vitalstatus. `Einheit_Manager` verbindet Welt (Ziele), Tiere (Jagd), Lager (verortete Bestände), Tageszyklus (Tick), Wärmefeld (Feuer-Quellen) und Vitalstatus (Verletzungen + Umgebung sperren/ziehen HP), kennt aber keine Darstellungsdetails. Die Einheit trennt zwei Maschinen: `Einheit_Status` führt nur den Arbeitsloop, `Einheit_VitalStatus` hält Leben und physische Modifikatoren und meldet Schaden und Tod über den Signalbus (plus Umgebungsschaden aus Waerme-Gates). Pro Einheit hängt eine `Pop_MoodMaschine` (Tick + Zustand-Übergänge Job->Idle->Transport + Waerme je Kachel + Mood-Modifikatoren) und eine `Pop_Denkblase` daran – eine reine Beobachter-Spitze, die nur zeichnet. Der Manager verbraucht alle 6-Minuten-Takte 0.8 Nahrung je Einheit (verteilt konfigurierbar), bei Mangel HP-Abzug.
+3b. **Population-Domäne** (`population/`): Bedürfnisse und Stimmung. `Pop_NeedRegistry` liefert die Typen (nahrung + waerme aus Feuer-Helligkeit), `Pop_MoodMaschine` sammelt Needs je Tick, liest das Wärmefeld je Stickman-Position und Tageshelligkeit, wertet Mood-Modifikatoren (kaelte/hitze als Progression-Gates mit in_sicherheit_bringen + HP-Abzug) und leitet daraus eine `Pop_Mood` (Emoji + Sprechblase) ab; `Pop_Denkblase` liest nur diese Mood und schwebt über dem Stickman. `Pop_MoodModifikatorRegistry` liefert die Gates aus `mood_modifikatoren.json`, Erweiterung nur über Pool+Registry.4. **Economy-Domäne** (`economy/`): Lokale Lager (Lager_Basis je Typ in `economy/data/lager.json`, verortete Instanzen im `Lager_Manager`). Einheiten lagern Ernte im nächsten Lager ein; globale Bestände sind nur die Summe für das HUD. Wachstum (Haus + 3 Nahrung -> neuer Stickman) entnimmt aus dem nächsten Lager.
 5. **Core-Domäne** (`core/`): Weltuhr (einziger Tick), Zufall (`Kern_Zufall` als einzige Quelle), Mutationen, Modifikatoren (`Kern_ModifikatorBasis` mit Dauer und Heilbarkeit) und Signalbus (`Kern_SignalBus` als `Node`-Autoload). Zufall fließt nur in Mutationen und Vitalstatus über `Kern_Zufall.zahl_bereich()`.
 
 Szenen (`*/scenes/`) sind Ansichten: Eingabe und Darstellung, keine Simulationslogik.

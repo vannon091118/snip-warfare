@@ -74,6 +74,25 @@ func objekt_verschieben(index: int, neue_position: Vector2) -> void:
 func objekt_entfernen(index: int) -> void:
 	objekte.remove_at(index)
 
+func objekt_anzahl() -> int:
+	return objekte.size()
+
+func objekt_element_id(index: int) -> String:
+	if index < 0 or index >= objekte.size():
+		return ""
+	return str(objekte[index].get("element_id", ""))
+
+func objekt_daten(index: int) -> Dictionary:
+	if index < 0 or index >= objekte.size():
+		return {}
+	return objekte[index]
+
+func objekt_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for eintrag in objekte:
+		ids.append(str(eintrag.get("element_id", "")))
+	return ids
+
 func objekt_bei(ziel: Vector2, such_radius: float) -> int:
 	# Gibt den Index des Objekts zurück, das den Punkt (nahe) abdeckt; sonst -1.
 	# Für die Trefferprüfung wird nur die Datenklasse Objekt_Basis gelesen;

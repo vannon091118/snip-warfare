@@ -88,7 +88,9 @@ func schaden_nehmen(schaden: int) -> int:
 		return 0
 	var verbraucht := mini(schaden, hp)
 	hp -= verbraucht
-	Kern_SignalBus.schaden_erhalten.emit(_welt_position, verbraucht, "physisch")
+	var b := Kern_SignalBus.bus()
+	if b != null:
+		b.schaden_erhalten.emit(_welt_position, verbraucht, "physisch")
 	if hp <= 0:
 		_zu_zustand_wechseln(Zustand.TOT)
 	return verbraucht
@@ -102,10 +104,13 @@ func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
 	steigt = false
 	zustand_geaendert.emit(neuer_zustand)
 	if neuer_zustand == Zustand.TOT and alter_zustand != Zustand.TOT:
-		Kern_SignalBus.gestorben.emit(_welt_position, tier_id, false)
+		var b2 := Kern_SignalBus.bus()
+		if b2 != null:
+			b2.gestorben.emit(_welt_position, tier_id, false)
 
 func ticks_fuer_faktor() -> int:
 	return Kern_Weltuhr.ticks_aus_faktor(effektiver_faktor())
+	# Hinweis: Nur Weltuhr rechnet zentral; diese Methode delegiert ausschliesslich.
 
 func tick(delta: float, eigene_position: Vector2, spieler_position: Vector2) -> Vector2:
 	_welt_position = eigene_position

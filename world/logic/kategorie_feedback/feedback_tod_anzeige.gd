@@ -57,11 +57,11 @@ func _ready() -> void:
 	move_child(schatten, 0)
 
 func _enter_tree() -> void:
-	Kern_Weltuhr.tick.connect(_auf_tick)
+	Weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	if Kern_Weltuhr.tick.is_connected(_auf_tick):
-		Kern_Weltuhr.tick.disconnect(_auf_tick)
+	if Weltuhr.tick.is_connected(_auf_tick):
+		Weltuhr.tick.disconnect(_auf_tick)
 
 func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 	_verbleibende_ticks -= 1

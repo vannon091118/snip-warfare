@@ -1,0 +1,34 @@
+{
+  "nahrung": {
+    "name": "Hunger",
+    "beschreibung": "Der Magen knurrt und fordert Nachschub aus dem nächsten Lager. 0.8 Nahrung je Einheit je 6-Minuten-Takt.",
+    "ressource": "fleisch",
+    "schwellwert": 3,
+    "dringlichkeit_pro_tick": 0.02,
+    "abfall_pro_tick": 0.04,
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
+    "emoji": "🍗",
+    "sprechblase_text": "Magen knurrt…",
+    "farbe": "#C75B39",
+    "verbrauch_je_takt": 0.8,
+    "takt_minuten": 6,
+    "tag_minuten": 4,
+    "nacht_minuten": 2
+  },
+  "waerme": {
+    "name": "Wärme",
+    "beschreibung": "Kälte frisst nachts, Hitze brennt am Feuer. Nähe zum Feuer bestimmt die Wärme je Kachel als abfallender Vektor.",
+    "ressource": "waerme",
+    "schwellwert": 0,
+    "dringlichkeit_pro_tick": 0.01,
+    "abfall_pro_tick": 0.02,
+    "icon_pfad": "res://world/assets/terrain/lagerfeuer.svg",
+    "emoji": "🔥",
+    "sprechblase_text": "Mir ist kalt…",
+    "farbe": "#E07A2E",
+    "kaelte_schwellwert": -0.4,
+    "hitze_schwellwert": 0.6,
+    "hp_abzug_je_tick_kaelte": 1,
+    "hp_abzug_je_tick_hitze": 2
+  }
+}

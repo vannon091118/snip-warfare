@@ -61,10 +61,10 @@ func _ready() -> void:
 	move_child(schatten, 0)
 
 func _enter_tree() -> void:
-	Kern_Weltuhr.tick.connect(_auf_tick)
+	Weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	Kern_Weltuhr.tick.disconnect(_auf_tick)
+	Weltuhr.tick.disconnect(_auf_tick)
 
 func _auf_tick(tick_nummer: int, delta: float) -> void:
 	_tick_nummer = tick_nummer

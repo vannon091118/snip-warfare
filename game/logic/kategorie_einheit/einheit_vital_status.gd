@@ -72,12 +72,27 @@ func schaden_nehmen(schaden: int, zufall: Kern_Zufall, art: String = "physisch")
 		return 0
 	var verbraucht := mini(schaden, hp)
 	hp -= verbraucht
-	Kern_SignalBus.bus().schaden_erhalten.emit(_welt_position, verbraucht, art)
+	var bus := Kern_SignalBus.bus()
+	if bus != null:
+		bus.schaden_erhalten.emit(_welt_position, verbraucht, art)
 	hp_veraendert.emit(hp, max_hp)
 	_folgen_würfeln(schaden, art, zufall)
 	if hp <= 0:
 		sterben()
 	return verbraucht
+
+func umgebungsschaden_anwenden(waerme: float, mood_mods: Pop_MoodModifikatorRegistry, zufall: Kern_Zufall) -> void:
+	# Progression-Gate: Kälte und Hitze ziehen HP über Mood-Modifikatoren.
+	if mood_mods == null:
+		return
+	var mod: Pop_MoodModifikator = null
+	if waerme < -0.35:
+		mod = mood_mods.mod_fuer("kaelte")
+	elif waerme > 0.55:
+		mod = mood_mods.mod_fuer("hitze")
+	if mod == null or mod.hp_abzug_je_tick <= 0:
+		return
+	schaden_nehmen(mod.hp_abzug_je_tick, zufall, "umgebung")
 
 func heilung_versuchen() -> void:
 	# Tick der Weltuhr: heilbare Modifikatoren laufen ab und fallen ab.

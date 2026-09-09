@@ -84,9 +84,10 @@ KATEGORIE_PRAEFIXE = {
     "Tier_": "world/logic/kategorie_tier",
     "Einheit_": "game/logic/kategorie_einheit",
     "Job_": "game/logic/kategorie_job",
-    "Ui_": "ui/logic/kategorie_ui",
+    "Ui_": "ui",
     "Lager_": "economy/logic/storage",
     "Orchestrator_": "world/logic/kategorie_orchestrator",
+    "Pop_": "population",
     "Welt_": None,          # Welt_ darf domänenübergreifend liegen
     "Kern_": "core",
 }
