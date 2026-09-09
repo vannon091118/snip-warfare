@@ -225,11 +225,6 @@ func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, 
 	if such_index < 0:
 		return
 	var ziel_typ_neu := ziel_typ
-	var ziel_position := Vector2.ZERO
-	if ziel_typ_neu == Job_Basis.ZielTyp.OBJEKT and _model != null:
-		ziel_position = _model.objekt_position(such_index)
-	elif ziel_typ_neu == Job_Basis.ZielTyp.TIER and _tiere != null:
-		ziel_position = _tiere.tier_position(such_index)
 	status.job_loopy_fortsetzen(status.job, ziel_typ_neu, such_index, status.job.ressource())
 
 func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
@@ -291,7 +286,9 @@ func _auf_zustand_geaendert(_neu: int, status: Einheit_Status, mood: Pop_MoodMas
 	var job_id := status.job.job_id if status.job != null else ""
 	mood.auf_jobwechsel(von_str, nach_str, job_id)
 
-func transport_fuer_idle(einheit_index: int, lager: Lager_Manager) -> bool:
+func transport_fuer_idle(einheit_index: int, _lager: Lager_Manager) -> bool:
+	# Das Lager wird in der Transportkette des Status gezogen; der Manager
+	# braucht es hier nicht, der Parameter bleibt als Vertrag erhalten.
 	if einheit_index < 0 or einheit_index >= _einheiten.size():
 		return false
 	var mood: Pop_MoodMaschine = _einheiten[einheit_index]["mood"]

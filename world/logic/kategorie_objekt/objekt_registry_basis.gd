@@ -15,7 +15,11 @@ var _objekte_nach_kategorie_cache: Dictionary = {}
 
 const KATALOG_PFAD := "res://world/data/element_katalog.json"
 
-func _init(quelle_pfad: String = KATALOG_PFAD) -> void:
+func _init(quelle_pfad: String = "") -> void:
+	# Eine Fach-Registry ist eine gefilterte Sicht und laedt den Katalog
+	# nicht selbst: Nur die Fassade Welt_Registry übergibt den KATALOG_PFAD
+	# und verteilt die Objekt-Instanzen über _registrieren_in_kategorie.
+	# Ohne Pfad bleibt die Sicht leer und wird von der Fassade befüllt.
 	super(quelle_pfad)
 
 func schema_name() -> String:

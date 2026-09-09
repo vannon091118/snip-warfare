@@ -17,19 +17,22 @@ var _gebaeude: Gebaeude_Registry = null
 ## werden ohne eigenen Katalog-Lauf aus derselben Katalog-Tabelle befüllt;
 ## es gibt keine zweite JSON-Ladung und keine zweite Klassen-Erzeugung.
 
+func _init(quelle_pfad: String = KATALOG_PFAD) -> void:
+	# Die Fassade ist die einzige Ladestelle des Element-Katalogs: Sie
+	# übergibt den Pfad explizit an die Basis und verteilt die Instanzen
+	# über _registrieren_in_kategorie an ihre Fach-Sichten.
+	super(quelle_pfad)
+
 func registries_vorbereiten() -> void:
+	# Fach-Registries sind gefilterte Sichten: Sie laden den Katalog nicht
+	# selbst (Default-Pfad leer), sondern werden ausschließlich hier befüllt.
+	# Ein Aufruf, eine Ladung, keine doppelten IDs mehr.
 	_terrain = Objekt_Registry.new()
 	_natur = Natur_Registry.new()
 	_gebaeude = Gebaeude_Registry.new()
 	_registries_nach_kategorie["Terrain"] = _terrain
 	_registries_nach_kategorie["Natur"] = _natur
 	_registries_nach_kategorie["Gebäude"] = _gebaeude
-	_terrain.eintraege_nach_id.clear()
-	_terrain.eintraege.clear()
-	_natur.eintraege_nach_id.clear()
-	_natur.eintraege.clear()
-	_gebaeude.eintraege_nach_id.clear()
-	_gebaeude.eintraege.clear()
 
 func _registrieren_in_kategorie(kategorie: String, element_id: String, objekt: Objekt_Basis) -> void:
 	super._registrieren_in_kategorie(kategorie, element_id, objekt)

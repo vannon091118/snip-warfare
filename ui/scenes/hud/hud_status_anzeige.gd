@@ -9,9 +9,9 @@ var letzte_meldung: String = ""
 
 ## Kategorie logik: Anzeigen von Meldungen.
 
-func meldung_setzen(text: String) -> void:
-	letzte_meldung = text
-	this_text_setzen(text)
+func meldung_setzen(neu: String) -> void:
+	letzte_meldung = neu
+	this_text_setzen(neu)
 
 func biom_anzeigen(biom_id: String, biom_faktor: float) -> void:
 	meldung_setzen("Biom: %s Faktor %s" % [biom_id, str(biom_faktor)])
