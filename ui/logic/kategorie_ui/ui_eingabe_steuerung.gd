@@ -232,32 +232,24 @@ func _job_vergeben_fuer_tier(tier_nummer: int, ziel_position: Vector2, _kette: b
 	var tier_art := _tiere.tier_art(tier_nummer)
 	if tier_art == "":
 		return
-	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
 	for job_id: String in _job_registry.job_ids():
 		var probe := _job_registry.job_erzeugen(job_id)
 		if probe == null or not probe.passt_zu_tier(tier_art):
 			continue
-		var einheit_pos := _stockmaenner.einheit_position(_auswahl.aktiver_einheit_index) if _stockmaenner != null and _auswahl != null else Vector2.ZERO
-		if einheit_pos.distance_to(ziel_position) > probe.reichweite() + radius:
-			if _hud != null:
-				(_hud as Variant).meldung_setzen("Zu weit entfernt: erst hinbewegen")
-			return
+		# Direkte Auswirkung: Die Einheit läuft zum Ziel; zu weit entfernte
+		# Ziele werden nicht mehr abgelehnt, sondern erst angelaufen.
 		if _stockmaenner.job_vergeben(_auswahl.aktiver_einheit_index, job_id, Job_Basis.ZielTyp.TIER, tier_nummer, ziel_position):
 			if _hud != null:
 				(_hud as Variant).job_anzeigen(_job_registry.job_name(job_id))
 			return
 
 func _job_vergeben_fuer_objekt(objekt_index: int, ziel_position: Vector2, element_id: String, _kette: bool) -> void:
-	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
 	for job_id: String in _job_registry.job_ids():
 		var probe := _job_registry.job_erzeugen(job_id)
 		if probe == null or not probe.passt_zu_objekt(element_id):
 			continue
-		var einheit_pos2 := _stockmaenner.einheit_position(_auswahl.aktiver_einheit_index) if _stockmaenner != null and _auswahl != null else Vector2.ZERO
-		if einheit_pos2.distance_to(ziel_position) > probe.reichweite() + radius:
-			if _hud != null:
-				(_hud as Variant).meldung_setzen("Zu weit entfernt: erst hinbewegen")
-			return
+		# Direkte Auswirkung: Die Einheit läuft zum Zielobjekt und beginnt
+		# dort mit der Arbeit; der Sammelradius bleibt die Job-Reichweite.
 		if _stockmaenner.job_vergeben(_auswahl.aktiver_einheit_index, job_id, Job_Basis.ZielTyp.OBJEKT, objekt_index, ziel_position):
 			if _hud != null:
 				(_hud as Variant).job_anzeigen(_job_registry.job_name(job_id))

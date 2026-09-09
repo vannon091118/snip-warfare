@@ -297,6 +297,46 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Map-Fabrik erzeugt Expansion, neue Karte ist Basis (2 Maps in der World)")
+	# 15) Klick-Befehl hat direkte Auswirkung: Die Einheit läuft zum Ziel
+	#     (GEHEN-Zustand), statt den Befehl als zu weit abzulehnen.
+	var geh_status := Einheit_Status.new()
+	geh_status.welt_position_setzen(Vector2(100, 100))
+	geh_status.geh_ziel_setzen(Vector2(400, 100))
+	var geh_job := queue_job_registry.job_erzeugen("heiler")
+	geh_status.job_vergeben(geh_job, Job_Basis.ZielTyp.OBJEKT, 0, "")
+	var ging_los := geh_status.zustand == Einheit_Status.Zustand.GEHEN
+	var start_pos := geh_status.welt_position
+	for _schritt in 160:
+		geh_status.tick(1.0 / 24.0)
+	var kam_an := geh_status.zustand == Einheit_Status.Zustand.ARBEITEN
+	var bewegung := geh_status.welt_position.x - start_pos.x > 200.0
+	if not ging_los or not kam_an or not bewegung:
+		print("FEHLER: Klick-Befehl bewegt nicht (los %s, an %s, bewegung %s)" % [str(ging_los), str(kam_an), str(bewegung)])
+		fehler += 1
+	else:
+		print("OK: Einheit läuft zum Ziel (%d px) und beginnt nach Ankunft die Arbeit" % int(geh_status.welt_position.x - start_pos.x))
+	# 16) Manager-Kette: job_vergeben setzt das Geh-Ziel, der Tick übernimmt
+	#     die bewegte Position in die Einheiten-Liste (direkte Auswirkung).
+	var geh_modell := Welt_Model.new()
+	var geh_generator := Welt_Generator.new()
+	geh_generator.welt_erzeugen(geh_modell, 9876, "gemaaessigt")
+	var geh_manager := Einheit_Manager.new()
+	geh_manager.einrichten(geh_modell, null, null)
+	if geh_modell.objekt_anzahl() > 0:
+		var ziel_pos := geh_modell.objekt_position(0)
+		geh_manager.einheit_hinzufuegen(ziel_pos + Vector2(-200, 0))
+		geh_manager.job_vergeben(0, "heiler", Job_Basis.ZielTyp.OBJEKT, 0, ziel_pos)
+		var start_pos_manager := geh_manager.einheit_position(0)
+		for _schritt in 400:
+			geh_manager._auf_tick(1, 1.0 / 24.0)
+		var end_pos := geh_manager.einheit_position(0)
+		var manager_bewegt := end_pos.distance_to(start_pos_manager) > 20.0
+		var manager_am_ziel := end_pos.distance_to(ziel_pos) <= 30.0
+		if not manager_bewegt or not manager_am_ziel:
+			print("FEHLER: Manager-Kette bewegt die Einheit nicht (bewegt %s, am Ziel %s)" % [str(manager_bewegt), str(manager_am_ziel)])
+			fehler += 1
+		else:
+			print("OK: Manager übernimmt die bewegte Position, Einheit steht am Job-Ziel")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

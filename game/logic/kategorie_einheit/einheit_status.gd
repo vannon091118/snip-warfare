@@ -18,6 +18,7 @@ signal gestorben(welt_position: Vector2)
 
 enum Zustand {
 	IDLE,
+	GEHEN,
 	ARBEITEN,
 }
 
@@ -36,15 +37,24 @@ var vital: Einheit_VitalStatus = Einheit_VitalStatus.new()
 ## erst beim Start über die Registry erzeugt.
 var _job_queue: Array[Dictionary] = []
 
+## Bewegung: Der GEHEN-Zustand bewegt die Einheit in der Welt (kein Teleport),
+## die Geschwindigkeit kommt aus der zentralen Steuerungskonfiguration.
+var welt_position := Vector2.ZERO
+var _geh_ziel := Vector2.ZERO
+var _geh_geschwindigkeit := 70.0
+var _geh_reichweite := 24.0
+
 ## Kategorie logik: Jobvergabe mit Vitalprüfung, Arbeitsloop und Vitaltick.
 
 func ist_beschaeftigt() -> bool:
-	return zustand == Zustand.ARBEITEN
+	return zustand == Zustand.ARBEITEN or zustand == Zustand.GEHEN
 
 func animation() -> String:
 	match zustand:
 		Zustand.IDLE:
 			return "idle"
+		Zustand.GEHEN:
+			return "laufen"
 		Zustand.ARBEITEN:
 			if job != null:
 				return job.animation()
@@ -69,7 +79,7 @@ func job_vergeben(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, ziel_index:
 	if not neuer_job.kann_ausgefuehrt_werden_von(vital):
 		job_vergeben_fehlgeschlagen.emit("Physische Voraussetzungen nicht erfüllt für: " + neuer_job.name())
 		return false
-	if zustand == Zustand.ARBEITEN:
+	if zustand == Zustand.ARBEITEN or zustand == Zustand.GEHEN:
 		# Einheit beschäftigt: Auftrag wird hinten an die eigene Queue gehängt
 		# und erst nach dem aktiven Job gestartet.
 		job_vormerken(neuer_job.job_id, ziel_typ, ziel_index, ressource)
@@ -78,10 +88,10 @@ func job_vergeben(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, ziel_index:
 	aktuelles_ziel_typ = ziel_typ
 	aktuelles_ziel_index = ziel_index
 	ziel_ressource = ressource
-	_zu_zustand_wechseln(Zustand.ARBEITEN)
-	job.startet_neu()
 	job.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
 	job.job_beendet.connect(_auf_job_beendet)
+	job.startet_neu()
+	_arbeit_oder_gehen()
 	return true
 
 func job_vormerken(job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ressource: String) -> void:
@@ -133,15 +143,46 @@ func job_abbrechen() -> void:
 	_zu_zustand_wechseln(Zustand.IDLE)
 
 func welt_position_setzen(pos: Vector2) -> void:
+	welt_position = pos
 	vital.welt_position_setzen(pos)
+
+func geh_ziel_setzen(ziel: Vector2) -> void:
+	_geh_ziel = ziel
 
 func tick(delta: float) -> void:
 	vital.heilung_versuchen()
 	match zustand:
 		Zustand.IDLE:
 			pass
+		Zustand.GEHEN:
+			_geh_tick(delta)
 		Zustand.ARBEITEN:
 			_arbeit_tick(delta)
+
+func ziel_welt_position() -> Vector2:
+	# Zielposition für die Bewegung: Objekt oder Tier; ohne Modellzugriff
+	# bleibt der zuletzt gesetzte Punkt.
+	return _geh_ziel
+
+func _arbeit_oder_gehen() -> void:
+	# Direkte Auswirkung des Befehls: Zu weit entfernte Ziele laufen die
+	# Einheiten an, statt den Befehl mit einer Meldung abzulehnen.
+	if job == null:
+		return
+	if welt_position.distance_to(_geh_ziel) > _geh_reichweite:
+		_zu_zustand_wechseln(Zustand.GEHEN)
+	else:
+		_zu_zustand_wechseln(Zustand.ARBEITEN)
+
+func _geh_tick(delta: float) -> void:
+	# Bewegung in der Welt: Schritt Richtung Ziel, dann Zustandsübergang.
+	var richtung := _geh_ziel - welt_position
+	var distanz := richtung.length()
+	if distanz <= _geh_reichweite or distanz <= 0.001:
+		_zu_zustand_wechseln(Zustand.ARBEITEN)
+		return
+	welt_position += richtung.normalized() * _geh_geschwindigkeit * delta
+	_blick_rechts = richtung.x >= 0.0
 
 func _arbeit_tick(_delta: float) -> void:
 	if job == null:

@@ -23,11 +23,17 @@ func _ready() -> void:
 	add_child(_darsteller_ebene)
 
 func _enter_tree() -> void:
-	Weltuhr.tick.connect(_auf_tick)
+	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
+	# damit der Manager auch in Headless-Testläufen ohne Autoloads ladbar
+	# bleibt. Im Spiel ist es dieselbe zentrale Uhr aus project.godot.
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_auf_tick):
+		weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	if Weltuhr.tick.is_connected(_auf_tick):
-		Weltuhr.tick.disconnect(_auf_tick)
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick") and weltuhr.tick.is_connected(_auf_tick):
+		weltuhr.tick.disconnect(_auf_tick)
 
 func tier_platzieren(tier_id: String, welt_position: Vector2) -> int:
 	if not _verhalten.hat_eintrag(tier_id):

@@ -22,11 +22,17 @@ var _ressourcen: Einheit_Ressourcen = null
 var _lager: Lager_Manager = null
 
 func _enter_tree() -> void:
-	Weltuhr.tick.connect(_auf_tick)
+	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
+	# damit der Manager auch in Headless-Testläufen ohne Autoloads ladbar
+	# bleibt. Im Spiel ist es dieselbe zentrale Uhr aus project.godot.
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_auf_tick):
+		weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	if Weltuhr.tick.is_connected(_auf_tick):
-		Weltuhr.tick.disconnect(_auf_tick)
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick") and weltuhr.tick.is_connected(_auf_tick):
+		weltuhr.tick.disconnect(_auf_tick)
 
 func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ressourcen) -> void:
 	_model = model
@@ -53,6 +59,7 @@ func verteilung_setzen(nahrung_je_takt: float) -> void:
 
 func einheit_hinzufuegen(welt_position: Vector2) -> void:
 	var status := Einheit_Status.new()
+	status.welt_position_setzen(welt_position)
 	var darsteller := Einheit_Darsteller.new()
 	darsteller.einrichten(status)
 	darsteller.position = welt_position
@@ -84,18 +91,24 @@ func einheit_zahl() -> int:
 func einheit_position(index: int) -> Vector2:
 	if index < 0 or index >= _einheiten.size():
 		return Vector2.ZERO
+	var status: Einheit_Status = _einheiten[index]["status"]
+	if status != null:
+		return status.welt_position
 	return _einheiten[index]["position"]
 
 func einheit_position_setzen(index: int, welt_position: Vector2) -> void:
-	# Bewegung kommt ausschließlich vom Spieler, nie aus einer State Machine.
+	# Bewegung kommt vom Spieler oder aus dem GEHEN-Zustand der Maschine;
+	# beide Wege schreiben über dieselbe Schnittstelle.
 	if index < 0 or index >= _einheiten.size():
 		return
 	_einheiten[index]["position"] = welt_position
+	var status_pos: Einheit_Status = _einheiten[index]["status"]
+	if status_pos != null:
+		status_pos.welt_position_setzen(welt_position)
 	var darsteller: Einheit_Darsteller = _einheiten[index]["darsteller"]
 	darsteller.position = welt_position
 	var mood_pos: Pop_MoodMaschine = _einheiten[index]["mood"]
 	mood_pos.welt_position_setzen(welt_position)
-	(_einheiten[index]["status"] as Einheit_Status).welt_position_setzen(welt_position)
 
 func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ziel_position: Vector2) -> bool:
 	if einheit_index < 0 or einheit_index >= _einheiten.size():
@@ -105,11 +118,12 @@ func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTy
 	if job == null:
 		return false
 	var ressource := job.ressource()
-	if status.zustand == Einheit_Status.Zustand.ARBEITEN:
+	if status.zustand == Einheit_Status.Zustand.ARBEITEN or status.zustand == Einheit_Status.Zustand.GEHEN:
 		# Beschäftigt: Auftrag wird an die eigene Queue der Einheit gehängt;
 		# der Job wird erst beim Start über die Registry erzeugt.
 		status.job_vormerken(job_id, ziel_typ, ziel_index, ressource)
 		return true
+	status.geh_ziel_setzen(ziel_position)
 	status.job_vergeben(job, ziel_typ, ziel_index, ressource)
 	# Die Blickrichtung zeigt zum gewählten Job-Objekt.
 	status.blick_richtung_setzen(ziel_position.x >= einheit_position(einheit_index).x)
@@ -145,18 +159,41 @@ func _auf_tick(nummer: int, delta: float) -> void:
 	for einheit: Dictionary in _einheiten:
 		var status: Einheit_Status = einheit["status"]
 		var mood: Pop_MoodMaschine = einheit["mood"]
-		if status.zustand == Einheit_Status.Zustand.ARBEITEN and not _ziel_existiert(status):
+		if (status.zustand == Einheit_Status.Zustand.ARBEITEN or status.zustand == Einheit_Status.Zustand.GEHEN) and not _ziel_existiert(status):
 			# Ziel wurde in der Zwischenzeit entfernt: Job endet.
 			status.job_abbrechen()
 			var darsteller: Einheit_Darsteller = einheit["darsteller"]
 			darsteller.animation_setzen(status.animation())
 			continue
 		status.tick(delta)
+		if status.welt_position != einheit["position"]:
+			# Bewegung hat direkte Auswirkung: Position, Darsteller und Mood
+			# folgen auch im Ankunfts-Tick, wenn der Zustand schon wechselt.
+			einheit["position"] = status.welt_position
+			var darsteller_g: Einheit_Darsteller = einheit["darsteller"]
+			darsteller_g.position = status.welt_position
+			darsteller_g.animation_setzen(status.animation())
+			darsteller_g.flip_h = not status.blick_richtung_rechts()
+			mood.welt_position_setzen(status.welt_position)
 		var ziel := mood.auf_tick(nummer, delta)
 		var w := mood.waerme_wert()
 		(status.vital as Einheit_VitalStatus).umgebungsschaden_anwenden(w, _mood_mod_registry, _zufall)
 		if ziel != Vector2.INF and status.zustand == Einheit_Status.Zustand.IDLE:
 			_in_sicherheit_bringen(einheit, ziel)
+
+func _ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2:
+	# Zielposition für die Bewegung: Objekte liegen im Modell, Tiere im
+	# Tier-Manager. Ohne Treffer bleibt der Punkt unverändert.
+	match ziel_typ:
+		Job_Basis.ZielTyp.OBJEKT:
+			if _model != null and ziel_index >= 0 and ziel_index < _model.objekt_anzahl():
+				return _model.objekt_position(ziel_index)
+		Job_Basis.ZielTyp.TIER:
+			if _tiere != null:
+				var tier_pos := _tiere.tier_position(ziel_index)
+				if tier_pos != Vector2.INF:
+					return tier_pos
+	return Vector2.ZERO
 
 func _ziel_existiert(status: Einheit_Status) -> bool:
 	if status.job == null:
@@ -228,6 +265,7 @@ func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp,
 		status.queue_vorne_entfernen()
 		return
 	status.queue_vorne_entfernen()
+	status.geh_ziel_setzen(_ziel_position_fuer(int(eintrag.get("ziel_typ", 0)), int(eintrag.get("ziel_index", -1))))
 	status.job_vergeben(job, int(eintrag.get("ziel_typ", 0)),
 		int(eintrag.get("ziel_index", -1)), str(eintrag.get("ressource", "")))
 
@@ -247,10 +285,13 @@ func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, 
 	if such_index < 0:
 		return
 	var ziel_typ_neu := ziel_typ
+	status.geh_ziel_setzen(_ziel_position_fuer(ziel_typ_neu, such_index))
 	status.job_loopy_fortsetzen(status.job, ziel_typ_neu, such_index, status.job.ressource())
 
 func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 	# Ein Arbeitsschritt ist fertig; je nach Job-Typ wird geerntet.
+	if _ressourcen == null:
+		return
 	for einheit: Dictionary in _einheiten:
 		var status: Einheit_Status = einheit["status"]
 		if status.zustand != Einheit_Status.Zustand.ARBEITEN or status.ziel_ressource != ressource:
@@ -263,8 +304,7 @@ func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 			Job_Basis.ZielTyp.TIER:
 				if _tiere != null:
 					ernte_position = _tiere.tier_position(status.aktuelles_ziel_index)
-		if _ressourcen != null:
-			_ressourcen.ernte_position_setzen(ernte_position)
+		_ressourcen.ernte_position_setzen(ernte_position)
 		match status.aktuelles_ziel_typ:
 			Job_Basis.ZielTyp.OBJEKT:
 				# Bäume und Steine liefern ihre Ernte ins naechste lokale Lager.
