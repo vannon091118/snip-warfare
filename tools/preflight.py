@@ -135,6 +135,19 @@ GODOT_LOKAL_KANDIDATEN = [
 FEHLER = []
 
 
+def _lade_lauf_log():
+    """Lädt das Lauf-Log-Modul granular; Fehlschlag ist E000 fail-closed."""
+    import importlib.util as _ilu_l
+    import sys as _sys_l
+    _log_pfad = PROJEKT_STAMM / "tools" / "lauf_log.py"
+    _log_spez = _ilu_l.spec_from_file_location("_lauf_log_lauf", str(_log_pfad))
+    _log_mod = _ilu_l.module_from_spec(_log_spez)
+    _sys_l.modules[_log_spez.name] = _log_mod
+    assert _log_spez.loader is not None
+    _log_spez.loader.exec_module(_log_mod)
+    return _log_mod.LaufLog()
+
+
 def fehler(code, datei, zeile, text):
     eintrag = (code, str(datei), zeile, text)
     if eintrag not in FEHLER:
@@ -701,6 +714,18 @@ def pruefe_shinon():
 # Prüfkategorie godot
 # --------------------------------------------------------------------------
 
+def _log_zeile_fuer(zeile: str) -> int:
+    """Findet die Zeilennummer einer Godot-Zeile im Log des letzten Laufs."""
+    try:
+        lauf_log = _lade_lauf_log()
+        for index, roh in enumerate(lauf_log.lese_alle("godot_letzter_lauf"), start=1):
+            if roh.strip() == zeile.strip():
+                return index
+    except Exception:
+        pass
+    return 1
+
+
 def _aufloese_godot_befehl(befehl_arg: str) -> str | None:
     umgebung = os.environ.get("GODOT_BIN", "").strip()
     if umgebung != "":
@@ -749,8 +774,22 @@ def godot_lauf(godot_befehl: str) -> None:
         fehler("E018", "godot", 0, "Godot-Lauf hat das Zeitlimit von 300 Sekunden ueberschritten (fail-closed, Prozess gekillt)")
         return
     ausgabe = (ergebnis.stdout or "") + (ergebnis.stderr or "")
+    roh_zeilen = ausgabe.splitlines()
+    # Lauf-Log: Der rohe Headless-Stream landet überschrieben in
+    # tools/logs/godot_letzter_lauf.log — immer nur der letzte Lauf gilt.
+    # Ein nicht schreibbares Log ist selbst ein Befund (fail-closed), damit
+    # kein stilles Grün über einem verlorenen Stream liegen kann.
+    try:
+        lauf_log = _lade_lauf_log()
+        lauf_log.schreibe("godot_letzter_lauf",
+                          "Godot Headless-Rohlauf (%s)" % aufgeloest,
+                          roh_zeilen)
+    except Exception as log_fehler:
+        fehler("E018", "godot", 0,
+               "Lauf-Log nicht schreibbar (fail-closed): %s" % log_fehler)
+        return
     fundzeilen: list[str] = []
-    for zeile in ausgabe.splitlines():
+    for zeile in roh_zeilen:
         zugehoerig = zeile.strip()
         if any(muster in zugehoerig for muster in GODOT_FEHLER_MUSTER):
             if zugehoerig not in fundzeilen:
@@ -777,7 +816,10 @@ def godot_lauf(godot_befehl: str) -> None:
             # Wenn res:// Pfad erkannt, als relative Datei melden, sonst godot.
             ziel_datei = datei if datei != "godot" else "godot"
             ziel_zeile = zeilen_nr if zeilen_nr != 0 else 0
-            fehler(uebers.code, ziel_datei, ziel_zeile, uebers.text)
+            # Jeder Befund referenziert die Zeile im Log des letzten Laufs.
+            log_ref = lauf_log.referenz("godot_letzter_lauf", _log_zeile_fuer(zeile))
+            fehler(uebers.code, ziel_datei, ziel_zeile,
+                   "%s | Log: %s" % (uebers.text, log_ref))
         else:
             if "Parse Error" in zeile or "SCRIPT ERROR" in zeile:
                 fehler("E016", "godot", 0, zeile)
@@ -875,6 +917,25 @@ def hauptprogramm():
     if "shinon" in gewaehlt and any(eintrag[0].startswith("E03") for eintrag in gefiltert):
         print("SHINON GATE: blockiert — shinon/commit_msg.txt verletzt E030 bis E034.")
         print("Regel: Ganze nummerierte bildliche Saetze ohne Banner und ohne Bullet. Siehe AGENTS.md Regel 5.")
+    # Scope-Log: Jede Kategorien-Auswahl schreibt ihr eigenes Log des letzten
+    # Laufs. Der Befund-Text referenziert die Log-Zeile, damit jede Meldung
+    # aus dem letzten Lauf nachvollziehbar bleibt.
+    try:
+        _lauf_log = _lade_lauf_log()
+        scope_name = "+".join(sorted(gewaehlt)) if argumente.kategorie else "voll"
+        ergebnis_zeilen = [
+            "Pruefkategorien: %s" % ", ".join(sorted(gewaehlt)),
+            "Klassen gesamt: %d; GDScript-Dateien: %d" % (len(ALLE_KLASSEN), len(dateien)),
+            "Befunde: %d" % len(gefiltert),
+        ]
+        for code, datei, zeile, text in sorted(gefiltert):
+            ergebnis_zeilen.append("%s | %s:%s | %s" % (code, datei, zeile, text))
+        log_pfad = _lauf_log.schreibe("preflight_letzter_lauf", "Scope %s" % scope_name, ergebnis_zeilen)
+        print("Lauf-Log: %s" % log_pfad.relative_to(PROJEKT_STAMM))
+    except Exception as log_fehler:
+        # Fail-closed: Ein nicht schreibbares Log ist selbst ein Befund.
+        fehler("E018", "tools/logs", 0, "Scope-Log nicht schreibbar: %s" % log_fehler)
+        gefiltert = [eintrag for eintrag in FEHLER if eintrag[0] in aktive_codes]
     if gefiltert:
         print("BEFUNDE (%d):" % len(gefiltert))
         for code, datei, zeile, text in sorted(gefiltert):

@@ -20,6 +20,9 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Lauf-Logs: immer nur der letzte Lauf, niemals auf GitHub
+tools/logs/
+
 # Lokale Editor- und OS-Artefakte
 *.tmp
 *.log
