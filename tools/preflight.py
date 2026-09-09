@@ -100,6 +100,12 @@ ERLAUBTE_ZUFALLS_KLASSEN = ("Kern_Zufall",)
 ZUFALLS_MUSTER = re.compile(
     r"\b(randi|randf|randi_range|randf_range|randfn|randomize)\s*\(")
 
+ZEIT_SEED_MUSTER = re.compile(
+    r"Time\.get_unix_time_from_system|Time\.get_ticks_msec|OS\.get_unix_time|OS\.get_ticks_msec")
+
+ZWEITER_RNG_MUSTER = re.compile(
+    r"\bRandomNumberGenerator\b|\.seed\s*=|randomize\s*\(")
+
 ARRAY_BASISTYPEN = {
     "String", "int", "float", "bool", "Vector2", "Vector2i", "Vector3",
     "Dictionary", "Node", "Node2D", "Texture2D", "Color", "StringName",
@@ -120,6 +126,7 @@ PRUEFKATEGORIEN = {
     "pyramide": ("E023", "E024"),
     "biome": ("E024",),
     "einheitlich": ("E023", "E024"),
+    "welt": ("E012", "E019", "E023"),
 }
 
 GODOT_FEHLER_MUSTER = ("ERROR", "WARNING", "Parse Error", "SCRIPT ERROR")
@@ -409,12 +416,25 @@ def gib_dateninventar_aus(dateien):
 def pruefe_determinismus(dateien):
     for pfad, code in dateien:
         rel_pfad = pfad.relative_to(PROJEKT_STAMM)
+        normalisiert = str(rel_pfad).replace("\\", "/")
         name = klassen_name_lesen(code) or ""
         for treffer in _sammle_zufallsfundstellen(code, name):
             fehler("E012", rel_pfad, zeile_bei(code, treffer.start()),
                    "Verbotener Zufallsaufruf '%s' in '%s'; Zufall läuft nur in "
                    "Kern_Zufall innerhalb einer Mutation und wird als Zustand "
                    "festgehalten" % (treffer.group(0).strip(), name or rel_pfad))
+        for treffer in ZEIT_SEED_MUSTER.finditer(code):
+            fehler("E012", rel_pfad, zeile_bei(code, treffer.start()),
+                   "Zeitbasierte Seedquelle '%s' in '%s'; Seed kommt ausschließlich aus Weltzustand und Kern_Zufall, keine Zeitquelle" %
+                   (treffer.group(0).strip(), name or rel_pfad))
+        for treffer in ZWEITER_RNG_MUSTER.finditer(code):
+            if name in ERLAUBTE_ZUFALLS_KLASSEN:
+                continue
+            # RandomNumberGenerator ist immer eine zweite Zufallswelt.
+            if "RandomNumberGenerator" in treffer.group(0):
+                fehler("E012", rel_pfad, zeile_bei(code, treffer.start()),
+                       "Zweite Zufallsquelle '%s' in '%s'; nur Kern_Zufall ist erlaubt" %
+                       (treffer.group(0).strip(), name or rel_pfad))
         if "extends Kern_Mutationsschema" in code:
             if "start_zustand" not in code:
                 fehler("E014", rel_pfad, zeile_von(code, "class_name"),

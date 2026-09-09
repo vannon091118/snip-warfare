@@ -18,7 +18,7 @@ Jede Klasse trägt ihre Kategorie als Präfix im Klassennamen und liegt im passe
 | `Tier_` | Tier-Datenklassen und Tier-Verhalten | `world/logic/kategorie_tier/` | Baer, Hase, Vogel, Vogelgruppe, Basis, Verhalten, Status, Darsteller, Manager |
 | `Job_` | Job-Zustandsmaschinen | `game/logic/kategorie_job/` | Holzfaeller, Steinmetz, Jaeger, HolzfaellerStumpf, JaegerKadaver, Heiler, Basis, Registry |
 | `Einheit_` | Spielfiguren-Domäne | `game/logic/kategorie_einheit/` | Status, VitalStatus (Leben und Modifikatoren), Darsteller, Manager, Ressourcen |
-| `Welt_` | Welt-Zustandsmaschinen und Dienste | `world/logic/` | Model, Registry, Speicher, Renderer (kategorie_welt), EditorWerkzeug (kategorie_welt), WaermeFeld (kategorie_waerme), TageszyklusMaschine (kategorie_tageszyklus) |
+| `Welt_` | Welt-Zustandsmaschinen und Dienste | `world/logic/` | Model, Registry, Speicher, Renderer (kategorie_welt), EditorWerkzeug (kategorie_welt), WaermeFeld (kategorie_waerme), TageszyklusMaschine (kategorie_tageszyklus), DefinitionRegistry + GrenzProfil (kategorie_welt) |
 | `Ui_` | Benutzeroberfläche | `ui/logic/kategorie_ui/` | MenueZustaende, WeltAuswahlDialog, WeltSitzung (Autoload) |
 
 Regeln:
@@ -123,7 +123,8 @@ Regeln des Gates und des Inits:
 | `world/data/element_katalog.json` | Platzierbare Objekte mit Kategorie | `Welt_Registry` |
 | `world/data/tier_verhalten.json` | Tierwerte (Trigger, Geschwindigkeit, Ertrag, HP) | `Tier_Verhalten` |
 | `world/data/biome.json` | Biome als Mutationen je Biom mit logik_id, modifikator, faktor | `Welt_BiomRegistry` + `Welt_BiomMutation` + `Welt_BiomManager` |
-| `world/data/standard_welt.json` | Standard-Prototypkarte mit biom_id | `Welt_Model` über die Szenen |
+| `world/data/standard_welt.json` | Nur Legacy-Editor-/Demo-Raster; niemals Generatorwahrheit, wird nur als letzter Fallback geladen | `Welt_Ladevorgang` (nur wenn weder Save noch Generator liefern) |
+| `world/data/welt_definition.json` | Zentrale Weltdefinition: max/min Kartengröße, Kachelgröße, Chunkgröße, Regionkante als Daten | `Welt_DefinitionRegistry` -> `Welt_Generator` (Kartengröße aus Seed deterministisch) |
 | `core/data/kern_logik.json` | Generische Logiken wiederverwendbar | `Kern_LogikRegistry` |
 | `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s (Verletzungen sperren Jobs) | `Kern_ModifikatorRegistry` + `Einheit_VitalStatus` |
 | `population/data/needs.json` | Bedürfnisse mit Ressource, Schwellwert, Emoji und Sprechblase je Need (nahrung 0.8 je Takt, waerme als Vektor-Feld via Feuer) | `Pop_NeedRegistry` (inkl. Waerme) -> `Pop_MoodMaschine` (Need sammeln + Waerme je Kachel + Tageszyklus) -> `Pop_Denkblase` (Beobachter) |
@@ -134,6 +135,16 @@ Regeln des Gates und des Inits:
 | `economy/data/lager.json` | Lager-Templates mit Kapazität und welt_objekt_id | `Lager_Registry` -> `Lager_Manager` (lokale Instanzen, Mutationen) |
 | `game/data/orchestrator_config.json` | Zonen mit Bedarf je Ressource und Job | `Orchestrator_Registry` -> `Orchestrator_Manager` |
 | `shinon/shinon_init.py --readme` | Lebendige README als Pitch von Shinon, gamer orientiert, vierte Wand | `ShinonReadmeGenerator` |
+
+## 5b. Welt-Hierarchie und Determinismus
+
+Die Welt ist ein Makromodell. Der autoritative Weltseed liegt ausschließlich im `Welt_Model` (`welt_seed`) und wird mit dem Weltzustand persistiert (Speicherversion 5). Keine Szene, keine Region und keine Lokalkarte besitzt eine eigene Seedquelle; die aktuelle Zeit erzeugt keinen Seed. Der Seed-Wunsch einer Neuen Welt wird über `Kern_Zufall.abgeleitet_fuer` deterministisch aus bestehendem Weltbestand und Namen abgeleitet, niemals aus der Uhrzeit.
+
+Hierarchie: `WORLD SEED -> WORLD STATE -> REGION -> REGION PROFILE (Biom) -> LOCAL MAP (Kartengröße aus Daten) -> CHUNK -> OBJECT`.
+
+Jede Region wird aus `Kern_Zufall.abgeleitet_fuer(welt_seed, region_identitaet)` gezogen, jeder Chunk aus `Kern_Zufall.abgeleitet_fuer_chunk(welt_seed, chunk_x, chunk_y)`. Gleicher Seed plus gleiche Koordinate ergibt damit immer denselben Zustand, unabhängig von der Erzeugungsreihenfolge. `Welt_GrenzProfil` leitet Nachbarschaften aus der Koordinatenstruktur ab und liefert das Randprofil (Biom-Paarung, Abstand) ohne manuelles Nachbarschafts-Array.
+
+Kartengrößen (max/min, Kachel, Chunk, Regionkante) kommen aus `world/data/welt_definition.json` über `Welt_DefinitionRegistry`; der Generator hat keine Sonderfälle für 25/50/75/100 Prozent, sondern leitet den Flächenanteil deterministisch aus dem Seed ab. `region_materialisieren()` und `chunk_materialisieren()` erlauben einzelne Regionen/Chunks ohne Materialisierungspflicht der ganzen Welt.
 
 ## 6. RT Pyramide
 

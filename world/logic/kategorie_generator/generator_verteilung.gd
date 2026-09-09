@@ -16,8 +16,13 @@ func start_zustand_setzen(seed_wert: int) -> void:
 	gezogen.clear()
 
 func ziehe_eintrag(registry: Welt_GeneratorRegistry, kategorie: String, biom_id: String) -> String:
-	# Gewichtetes Los: Einträge mit Biom-Vorliebe bekommen einen Faktor,
-	# die Summe entscheidet; die Ziehung selbst ist ein Zustandsschritt.
+	return ziehe_eintrag_mit(registry, kategorie, biom_id, zufall)
+
+func ziehe_eintrag_mit(registry: Welt_GeneratorRegistry, kategorie: String, biom_id: String, quelle: Kern_Zufall) -> String:
+	# Gewichtetes Los mit expliziter Zufallsquelle: Gleiche Quelle plus
+	# gleiche Registry liefert immer dasselbe Los. Ohne Quelle keine Ziehung.
+	if quelle == null:
+		return ""
 	var kandidaten := registry.ids_mit_gewicht(kategorie)
 	if kandidaten.is_empty():
 		return ""
@@ -31,7 +36,7 @@ func ziehe_eintrag(registry: Welt_GeneratorRegistry, kategorie: String, biom_id:
 		summe += gewicht
 	if summe <= 0.0:
 		return ""
-	var wurf := zufall.naechste_zahl() % 1000000
+	var wurf := quelle.naechste_zahl() % 1000000
 	var schwelle := float(wurf) / 1000000.0 * summe
 	var lauf := 0.0
 	for eintrag_id: String in effektive.keys():

@@ -1,5 +1,13 @@
-1. Du stelltest klar dass SnipWarfare ein Survival Village City Builder mit RTS Prinzip ist und die Kamera mit WASD nichts mit dem Schieben einer Spielfigur zu tun hat.
-2. In ui/logic/kategorie_ui/ui_kamera_steuerung.gd wurde die Kamera aus der Figur gelöst, damit WASD nur noch den Blick verschiebt und die alten spieler_position Wege als Brücke erhalten blieben.
-3. In world/scenes/welt.gd wurde die enge Koppelung entfernt, damit Einheiten nicht mehr pro Frame an die Kamera geklebt werden und nur noch Jobs und das Rathaus über ihre eigenen Maschinen bewegen.
-4. In ui/logic/kategorie_ui/ui_eingabe_steuerung.gd wurde die Reichweitenprüfung vom Kamerapunkt auf den Standort der gewählten Einheit gelegt und world/scenes/welt.tscn trägt nun den ehrlichen RTS Hilfetext mit Rathaus Automatisierung.
-5. Noch zu prüfen bleibt ob die Auswahl im Rudel hält und das Rathaus die Müßigen dort abholt wo sie wirklich stehen.
+1. Du wolltest, dass der vorhandene Welt- und Generatorbestand zu einer hierarchischen deterministischen Weltstruktur zusammengeführt wird, und Shinon hat zuerst den laufenden Pfad gescannt statt nach einem neuen Generator zu rufen.
+2. Die Welt besitzt jetzt genau einen autoritativen Seed im welt_model, der zusammen mit dem Zustand gespeichert wird, und keine Szene und keine Region darf sich eine eigene zweite Wahrheit ausdenken.
+3. Der Ladevorgang in welt_ladevorgang zieht den Zufalls-Seed nicht mehr aus der Uhrzeit, sondern leitet ihn deterministisch aus dem bestehenden Weltbestand und dem Namen ab, damit gleiche Eingaben immer dieselbe Welt ergeben.
+4. Die Zufallszuständigkeit in kern_zufall wurde um ortsfeste Ableitungen für Regionen und Chunks erweitert, sodass gleicher Seed plus gleiche Koordinate immer denselben Teilzustand liefert.
+5. Der Generator in welt_generator plant jede Region aus ihrer eigenen ortsfesten Ableitung und füllt jeden Chunk aus seiner eigenen Chunk-Ableitung, wodurch die Erzeugungsreihenfolge das Ergebnis nicht mehr verändern kann.
+6. Die Verteilungsmaschine in generator_verteilung zieht Einträge jetzt mit expliziter Zufallsquelle, damit die Regionen und Chunks reproduzierbar dieselben Lose erhalten wie in der vollständigen Welt.
+7. Eine neue Weltdefinition in welt_definition.json hält maximale und minimale Kartengröße, Kachelgröße, Chunkgröße und Regionkante als reine Daten, und die neue welt_definition_registry leitet daraus die Lokalkartengröße deterministisch aus dem Seed ab.
+8. Eine neue Grenzprofil-Maschine in welt_grenz_profil leitet Nachbarschaften ausschließlich aus der Koordinatenstruktur ab und liefert das Randprofil zwischen Regionen ohne manuelles Nachbarschafts-Array.
+9. Die Variante Busch wurde über den Datenpool in element_katalog und generator_gewichte sowie als neue Busch-SVG eingebracht und erscheint im Generator, ohne dass eine bestehende Maschine dafür erweitert wurde.
+10. Der Preflight in preflight.py wacht jetzt mit eigenen Mustern über zeitbasierte Seedquellen und zweite Zufallswelten und führt eine eigene Welt-Kategorie für diese Driftprüfungen.
+11. Der Lauf-Beweis in lauf_pruefung_welt prüft nun zusätzlich die Kartengröße aus Daten, die Einzelreproduzierbarkeit einer Region und die Registry-Variante Busch, und alle Prüfungen sind im Headless-Lauf grün.
+12. Die Architekturdokumentation beschreibt jetzt die echte Welt-Hierarchie, den Seedbesitzer, die Datenquelle der Größen und die Erweiterungsgrenzen, sodass niemand mehr aus der Doku eine Wunschwelt liest.
+13. Übrig bleibt, die Kartenansicht und den Editor auf die neue Weltdefinition umzustellen und die Lokalkarten nach Bedarf über die Materialisierungsfunktionen nachzuziehen, ohne die gehärtete Generator-Kette anzufassen.

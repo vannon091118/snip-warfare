@@ -47,3 +47,18 @@ func zustaende_uebernehmen(wort: String) -> void:
 		return
 	zufallsstaende = PackedInt64Array([int(teile[0]), int(teile[1])])
 	gezogene_zahlen = int(teile[2])
+
+static func abgeleitet_fuer(welt_seed: int, region_identitaet: int) -> Kern_Zufall:
+	# Deterministische Ableitung: gleiche Welt + gleiche Region-Identität
+	# ergibt immer denselben Teil-Zufall, unabhängig von Erzeugungsreihenfolge.
+	# Verwendet dieselbe PCG-Mischung wie start_zustand_setzen.
+	var gemischt := (int(welt_seed) * 6364136223846793005 + int(region_identitaet) * 1442695040888963407) & 0x7FFFFFFFFFFFFFFF
+	var abgeleitet := Kern_Zufall.new()
+	abgeleitet.start_zustand_setzen(gemischt)
+	return abgeleitet
+
+static func abgeleitet_fuer_chunk(welt_seed: int, chunk_x: int, chunk_y: int) -> Kern_Zufall:
+	# Chunk-Identität ist ein 64-Bit-Mix aus den beiden Koordinaten.
+	var identitaet := ((int(chunk_x) & 0xFFFF) << 16) | (int(chunk_y) & 0xFFFF)
+	identitaet = (identitaet * 0x9E3779B1) & 0x7FFFFFFFFFFFFFFF
+	return abgeleitet_fuer(welt_seed, identitaet)

@@ -42,9 +42,16 @@ func _standard_welt_laden() -> Dictionary:
 func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> bool:
 	var basis_seed := seed_wunsch
 	if basis_seed == 0:
-		var wahl_zufall := Kern_Zufall.new()
-		wahl_zufall.start_zustand_setzen(int(Time.get_unix_time_from_system() * 1000.0) + Time.get_ticks_msec())
-		basis_seed = int(wahl_zufall.naechste_zahl() % 1000000000)
+		# Autoritativer Seed ohne Uhrzeit: deterministisch aus bestehendem
+		# Weltbestand und Namen abgeleitet, damit gleiche Eingabe immer die
+		# gleiche Welt liefert und keine zweite Zeitquelle entsteht.
+		var speicher := Welt_Speicher.new()
+		var anzahl := speicher.welt_namen().size()
+		var namens_hash := int(hash(welt_name) & 0x7FFFFFFF) if welt_name != "" else 841745713
+		var ableitung := Kern_Zufall.abgeleitet_fuer(namens_hash, anzahl + 1)
+		basis_seed = int(ableitung.naechste_zahl() % 1000000000)
+		if basis_seed == 0:
+			basis_seed = 13371337
 	var kandidat_zufall := Kern_Zufall.new()
 	kandidat_zufall.start_zustand_setzen(basis_seed)
 	var seed_wert := basis_seed

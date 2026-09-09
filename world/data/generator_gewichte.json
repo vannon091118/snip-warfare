@@ -4,7 +4,8 @@
     "baum": {"kategorie": "objekte", "element_id": "baum", "gewicht": 5.0, "biome": ["gemaaessigt"]},
     "stein": {"kategorie": "objekte", "element_id": "stein", "gewicht": 2.0, "biome": ["gemaaessigt", "tundra", "steppe"]},
     "steine_gruppe": {"kategorie": "objekte", "element_id": "steine_gruppe", "gewicht": 1.0, "biome": ["tundra", "steppe"]},
-    "haus": {"kategorie": "objekte", "element_id": "haus", "gewicht": 0.0, "biome": []}
+    "haus": {"kategorie": "objekte", "element_id": "haus", "gewicht": 0.0, "biome": []},
+    "busch": {"kategorie": "objekte", "element_id": "busch", "gewicht": 1.5, "biome": ["gemaaessigt", "steppe"]}
   },
   "tiere": {
     "baer": {"kategorie": "tiere", "element_id": "baer", "gewicht": 1.0, "biome": ["gemaaessigt", "tundra"]},
