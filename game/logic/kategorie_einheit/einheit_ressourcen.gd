@@ -50,6 +50,8 @@ func _ressourcen_klasse_fuer(ressourcen_id: String) -> Resource_Basis:
 			return Resources_Stone.new()
 		"fleisch":
 			return Resources_Meat.new()
+		"werkzeug":
+			return Resources_Werkzeug.new()
 	return Resource_Basis.new()
 
 func _startzustand_fahren() -> void:

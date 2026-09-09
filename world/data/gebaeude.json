@@ -1,0 +1,26 @@
+[
+  {
+    "id": "werkstatt",
+    "name": "Werkstatt",
+    "kategorie": "Produktion",
+    "icon_pfad": "res://world/assets/terrain/werkstatt.svg",
+    "welt_objekt_id": "werkstatt",
+    "baukosten": {"holz": 15, "stein": 8},
+    "bauzeit_ticks": 480,
+    "arbeitskraft": "",
+    "voraussetzungen": [],
+    "produktion": {
+      "inputs": [
+        {"ressource": "holz", "menge": 6},
+        {"ressource": "stein", "menge": 3}
+      ],
+      "outputs": [
+        {"ressource": "werkzeug", "menge": 1}
+      ],
+      "dauer_ticks": 600,
+      "wiederholbar": true,
+      "blockiert_ohne_eingang": true,
+      "blockiert_ohne_lagerplatz": true
+    }
+  }
+]

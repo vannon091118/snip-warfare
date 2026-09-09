@@ -96,6 +96,28 @@ func objekt_daten(index: int) -> Dictionary:
 		return {}
 	return objekte[index]
 
+func objekt_feld(index: int, schluessel: String, default: Variant = null) -> Variant:
+	# Gelesener Zustand eines Objekt-Feldes (zum Beispiel Gebäudezustand);
+	# die Daten gehören dem Modell, Fremde lesen nur über diese Schnittstelle.
+	if index < 0 or index >= objekte.size():
+		return default
+	return objekte[index].get(schluessel, default)
+
+func objekt_feld_setzen(index: int, schluessel: String, wert: Variant) -> void:
+	# Einzige Schreibstelle für Zusatzfelder am Objekt (Gebäudezustand,
+	# Fortschritte); der Besitzer bleibt dieses Modell.
+	if index < 0 or index >= objekte.size():
+		return
+	objekte[index][schluessel] = wert
+
+func objekte_mit_element_id(element_id: String) -> Array[int]:
+	# Alle Objekt-Indizes einer Element-Art; für Gebäude- und Statusabfragen.
+	var treffer: Array[int] = []
+	for index in objekte.size():
+		if str(objekte[index].get("element_id", "")) == element_id:
+			treffer.append(index)
+	return treffer
+
 func objekt_ids() -> Array[String]:
 	var ids: Array[String] = []
 	for eintrag in objekte:
@@ -224,7 +246,13 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 		for eintrag: Variant in neue_objekte:
 			if typeof(eintrag) == TYPE_DICTIONARY and eintrag.has("element_id") and eintrag.has("position"):
 				var position_werte: Array = eintrag["position"]
-				objekt_hinzufuegen(str(eintrag["element_id"]), Vector2(position_werte[0], position_werte[1]))
+				var objekt_index := objekt_hinzufuegen(str(eintrag["element_id"]), Vector2(position_werte[0], position_werte[1]))
+				# Zusatzfelder (Gebäudezustand, Fortschritte) müssen den
+				# Speicher-Rundlauf überstehen: alle fremden Schlüssel kopieren.
+				for schluessel: String in (eintrag as Dictionary).keys():
+					if schluessel == "id" or schluessel == "element_id" or schluessel == "position":
+						continue
+					objekt_feld_setzen(objekt_index, schluessel, (eintrag as Dictionary)[schluessel])
 	regionen.clear()
 	region_kante = maxi(int(daten.get("region_kante", 4)), 1)
 	welt_seed = int(daten.get("welt_seed", 0))
