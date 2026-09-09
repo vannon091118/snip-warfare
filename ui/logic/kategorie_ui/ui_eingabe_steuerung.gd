@@ -33,9 +33,6 @@ var _karten_oeffnen: bool = false
 var _gebaeude: Gebaeude_Manager = null
 var _rechtsklick_welt_position := Vector2.ZERO
 
-signal karten_umschalten_gewuenscht
-signal verteilung_gewuenscht(nahrung_je_takt: float)
-
 ## Kategorie logik: Eingabe in Maschinen-Aufrufe übersetzen.
 
 func einrichten(p: Dictionary) -> void:
@@ -66,7 +63,7 @@ func karten_umschalten() -> void:
 	if _karten_oeffnen and _karten_viewer != null:
 		_karten_viewer.fokus_auf_spieler()
 
-func unhandled_input(ereignis: InputEvent, klick_position: Callable, rechteck_pflegen: Callable, hotkey: Callable) -> void:
+func unhandled_input(ereignis: InputEvent, klick_ermitteln: Callable, rechteck_pflegen: Callable, hotkey: Callable) -> void:
 	if ereignis is InputEventMouseButton and ereignis.pressed:
 		match ereignis.button_index:
 			MOUSE_BUTTON_WHEEL_UP:
@@ -77,11 +74,11 @@ func unhandled_input(ereignis: InputEvent, klick_position: Callable, rechteck_pf
 					_kamera_steuerung.zoom(_kamera_steuerung.zoom_schritt(), _kamera)
 			MOUSE_BUTTON_LEFT:
 				if _auswahl != null:
-					_auswahl.einzel_start(klick_position.call(ereignis))
+					_auswahl.einzel_start(klick_ermitteln.call(ereignis))
 			MOUSE_BUTTON_RIGHT:
-				_rechtsklick_verarbeiten(klick_position.call(ereignis))
+				_rechtsklick_verarbeiten(klick_ermitteln.call(ereignis))
 	elif ereignis is InputEventMouseButton and not ereignis.pressed and ereignis.button_index == MOUSE_BUTTON_LEFT:
-		_linksklick_ende(klick_position.call(ereignis))
+		_linksklick_ende(klick_ermitteln.call(ereignis))
 	elif ereignis is InputEventMouseMotion and _auswahl != null and _auswahl.ziehen_aktiv:
 		rechteck_pflegen.call()
 	elif ereignis is InputEventKey and ereignis.pressed:
