@@ -152,6 +152,8 @@ Die World ist der Anker über allen Karten einer Partie. `Welt_World` hält die 
 
 Persistenz: `Welt_Speicher.world_speichern`/`world_laden` sichern die World als eine Datei mit allen Maps; alte Einzelwelt-Dateien bleiben über die bestehenden Funktionen ladbar (Abwärtskompatibilität). `Ui_WeltSitzung` trägt die geladene World und die aktive Map; `Welt_Ladevorgang` speist das Szenen-Modell aus der aktiven Map und erzeugt bei einem neuen Spiel eine frische World mit einer Basis-Map (`karte_0`).
 
+Erzeugung: `Welt_MapFabrik` ist die einzige Stelle, die neue Karten generiert und in die World einträgt. Die erste Karte entsteht als Basis (`basis_karte_erzeugen`); die Expansion (`neue_karte_erzeugen`) leitet den Seed deterministisch aus dem World-Bestand ab (kein Zeit-Seed), erzeugt die Karte über den Generator, trägt sie ein und markiert sie als neue Basis. Die Kontext-Aktion `Expansion: Neue Basis-Karte` in `steuerung.json` (logik_id `expansieren`) löst sie über die Eingabe-Steuerung aus; `welt.gd` übernimmt das neue Modell und stellt alle Beobachter und Manager auf die Karte um, während die alte Karte in der World gespeichert bleibt.
+
 ## 5d. Produktionsökonomie (Gebäude und Ketten)
 
 Die Produktionsökonomie ist eine geschlossene Kette über bestehende Domänen: `Weltobjekt -> Arbeit -> Rohstoff -> Lager -> Gebäudekosten -> Gebäude -> Produktionsauftrag -> Zeit -> Output -> Lager -> neuer Bedarf`.

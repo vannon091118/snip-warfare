@@ -9,10 +9,12 @@ class_name Welt_Ladevorgang
 
 var _model: Welt_Model = null
 var _generator: Welt_Generator = null
+var _map_fabrik := Welt_MapFabrik.new()
 
 func einrichten(model: Welt_Model, generator: Welt_Generator) -> void:
 	_model = model
 	_generator = generator
+	_map_fabrik.einrichten(generator)
 
 func ausfuehren(welt_name: String, seed_wunsch: int, biom_id: String) -> bool:
 	if _model == null or _generator == null:
@@ -64,14 +66,14 @@ func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> b
 		seed_wert = kandidat_zufall.naechste_zahl() % 1000000000
 	if not _generator.welt_erzeugen(_model, seed_wert, biom_id):
 		return false
-	# World-Ebene: Die neue Karte wird als Basis-Map in eine frische World
-	# eingetragen, die Sitzung zeigt auf sie.
+	# World-Ebene: Die erste Karte entsteht über die Fabrik als Basis-Map in
+	# einer frischen World, die Sitzung zeigt auf sie.
 	var world := Welt_World.new()
 	var speicher_welt_name := welt_name
 	if speicher_welt_name == "":
 		speicher_welt_name = "generiert_" + str(seed_wert)
 	world.world_name = speicher_welt_name
-	world.map_hinzufuegen(_model, "karte_0", true)
+	_map_fabrik.basis_karte_erzeugen(world, seed_wert, biom_id)
 	WeltSitzung.world = world
 	WeltSitzung.aktive_map_id = "karte_0"
 	var speicher := Welt_Speicher.new()

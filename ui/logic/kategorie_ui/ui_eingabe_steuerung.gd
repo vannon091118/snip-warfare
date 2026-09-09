@@ -31,6 +31,8 @@ var _karten_ebene: CanvasLayer = null
 var _karten_viewer: Ui_KartenViewer = null
 var _karten_oeffnen: bool = false
 var _gebaeude: Gebaeude_Manager = null
+var _map_fabrik: Welt_MapFabrik = null
+var _modell_ersetzen: Callable = Callable()
 var _rechtsklick_welt_position := Vector2.ZERO
 
 ## Kategorie logik: Eingabe in Maschinen-Aufrufe übersetzen.
@@ -53,6 +55,8 @@ func einrichten(p: Dictionary) -> void:
 	_karten_ebene = p.get("karten_ebene")
 	_karten_viewer = p.get("karten_viewer")
 	_gebaeude = p.get("gebaeude")
+	_map_fabrik = p.get("map_fabrik")
+	_modell_ersetzen = p.get("modell_ersetzen", Callable())
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
 
@@ -142,6 +146,9 @@ func auf_kontext_aktion(aktion: Dictionary) -> void:
 	if logik == "bauen":
 		_bauen_ausfuehren(aktion)
 		return
+	if logik == "expansieren":
+		_expansion_ausfuehren()
+		return
 	if label_text.to_lower().contains("wachstum") or logik.to_lower().contains("wachstum"):
 		var haus_pos := _kamera_steuerung.kamera_position if _kamera_steuerung != null else Vector2.ZERO
 		if _lager != null and _lager.lager_zahl() > 0:
@@ -175,6 +182,22 @@ func _rechtsklick_verarbeiten(welt_pos: Vector2) -> void:
 	if _kamera != null and _kamera.get_viewport() != null:
 		_kontext.position = _kamera.get_viewport().get_mouse_position()
 	_kontext.popup()
+
+func _expansion_ausfuehren() -> void:
+	# Expansion: Die Fabrik erzeugt eine neue Karte, trägt sie in die World
+	# ein und markiert sie als Basis; die Szene übernimmt das neue Modell.
+	if _map_fabrik == null or WeltSitzung.world == null or not _modell_ersetzen.is_valid():
+		(_hud as Variant).meldung_setzen("Expansion nicht möglich: Keine World geladen.")
+		return
+	var neue_karte := _map_fabrik.neue_karte_erzeugen(WeltSitzung.world, "karte_%d" % WeltSitzung.world.map_zahl(), "gemaaessigt")
+	if neue_karte == null:
+		(_hud as Variant).meldung_setzen("Expansion fehlgeschlagen: Generator verwarf die Karte.")
+		return
+	WeltSitzung.aktive_map_id = neue_karte.map_id
+	var speicher := Welt_Speicher.new()
+	speicher.world_speichern(WeltSitzung.welt_name, WeltSitzung.world)
+	_modell_ersetzen.call(neue_karte)
+	(_hud as Variant).meldung_setzen("Expansion: Neue Basis-Karte %s erzeugt und gespeichert." % neue_karte.map_id)
 
 func _bauen_ausfuehren(aktion: Dictionary) -> void:
 	if _gebaeude == null or _hud == null:

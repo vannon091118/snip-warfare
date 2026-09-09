@@ -32,6 +32,7 @@ var _karten_info: Ui_WeltInfo = null
 
 ## Unter-Spitzen: Jede hält genau eine Zuständigkeit.
 var _ladevorgang := Welt_Ladevorgang.new()
+var _map_fabrik := Welt_MapFabrik.new()
 var _gebaeude := Gebaeude_Manager.new()
 var _lager_fabrik := Welt_LagerFabrik.new()
 var _tier_platzierer := Welt_TierPlatzierer.new()
@@ -51,6 +52,7 @@ var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 
 func _ready() -> void:
 	_ladevorgang.einrichten(_model, _generator)
+	_map_fabrik.einrichten(_generator)
 	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)
 	_tageszyklus.einrichten(6.0, 4.0, 2.0)
 	_tages_overlay = preload("res://world/scenes/tageszyklus_overlay.gd").new()
@@ -104,6 +106,8 @@ func _ready() -> void:
 		"karten_viewer": _karten_viewer,
 		"schnellwahl": _schnellwahl,
 		"gebaeude": _gebaeude,
+		"map_fabrik": _map_fabrik,
+		"modell_ersetzen": _modell_ersetzen,
 	})
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
@@ -130,6 +134,21 @@ func _karten_ebene_bauen() -> void:
 	_karten_viewer.einrichten(_model, _registry, _biome)
 	add_child(_karten_ebene)
 	_karten_info = info
+
+func _modell_ersetzen(neues_modell: Welt_Model) -> void:
+	# Expansion: Die neue Basis-Karte ersetzt das Szenen-Modell; alle
+	# Beobachter und Manager werden auf die neue Karte umgestellt. Die
+	# alte Karte bleibt in der World gespeichert.
+	if neues_modell == null:
+		return
+	_model = neues_modell
+	_karte.darstellen(_model, _registry, _biome)
+	_kamera.position = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
+	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera.position)
+	_tier_platzierer.platzieren(_model, _registry, _tiere)
+	_waerme_sammler.sammeln(_model, _stockmaenner)
+	_karten_beobachter.einrichten(_model, _generator, _tiere)
+	_auswahl.auswahl_leeren()
 
 func _input(ereignis: InputEvent) -> void:
 	_eingabe_steuerung.eingabe(ereignis, self, _auf_verteilung)

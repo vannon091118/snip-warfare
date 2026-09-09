@@ -279,6 +279,24 @@ func _init() -> void:
 			fehler += 1
 		else:
 			print("OK: World hält 2 Maps, Basis-Markierung und map_id überstehen den Speicher-Rundlauf")
+	# 14) Map-Fabrik: Expansion erzeugt eine neue Karte, trägt sie in die
+	#     World ein und markiert sie als neue Basis.
+	var fabrik_world := Welt_World.new()
+	fabrik_world.world_name = "fabrik_welt"
+	var fabrik_generator := Welt_Generator.new()
+	var fabrik := Welt_MapFabrik.new()
+	fabrik.einrichten(fabrik_generator)
+	var basis_karte := fabrik.karte_erzeugen(fabrik_world, "karte_0", 4242, "gemaaessigt", true)
+	var expansions_karte := fabrik.neue_karte_erzeugen(fabrik_world, "karte_1", "gemaaessigt")
+	if basis_karte == null or expansions_karte == null:
+		print("FEHLER: Map-Fabrik erzeugt keine Karten")
+		fehler += 1
+	elif fabrik_world.map_zahl() != 2 or fabrik_world.basis_map_id() != "karte_1" \
+			or fabrik_world.map_model("karte_1") != expansions_karte:
+		print("FEHLER: Expansion trägt die neue Basis-Karte nicht korrekt in die World")
+		fehler += 1
+	else:
+		print("OK: Map-Fabrik erzeugt Expansion, neue Karte ist Basis (2 Maps in der World)")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)
