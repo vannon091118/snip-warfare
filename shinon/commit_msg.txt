@@ -1,7 +1,7 @@
-1. Du wolltest, dass Editor-Warnungen wie Integer-Divisionen, Schattenvariablen und ungenutzte Parameter nie wieder durch den Preflight rutschen, und Shinon hat dafür einen deterministischen Warnungs-Scan gebaut und zur Pflichtprüfung gemacht.
-2. Die neue Prüfung in warnungs_scan.py erkennt dieselben Warnklassen, die der Godot-Editor bei einem Script-Reload meldet, weil der Headless-Lauf sie verschluckt, und liefert jeden Fund mit Datei, Zeile und Warnklasse.
-3. Der Preflight in preflight.py führt den Scan als Kategorie warnungen mit dem neuen Fehlercode E025 aus, und der volle Lauf sowie die Kategorie godot führen ihn immer mit, sodass kein stilles Grün über Warnungen mehr möglich ist.
-4. Der Negative-Test beweist die Schärfe: Eine eingebaute Integer-Division blockiert den Preflight mit E025 und Exit-Code Eins, und nach der Korrektur ist der Scan wieder grün.
-5. Zwei echte Funde wurden behoben: Die Kollisions-Sperre in path_netz.gd deklarierte den Knoten ein zweites Mal im selben Funktionsbereich und wurde auf kollision_knoten umbenannt, und der Tick-Rückruf in feedback_plus_anzeige.gd markiert den ungenutzten Delta-Parameter jetzt bewusst mit Unterstrich.
-6. Die verbindliche Regel 6 in AGENTS.md verpflichtet jeden Agenten, nach jeder abgeschlossenen Anpassung den Warnungs-Scan auszuführen, und dokumentiert, dass E025 ebenso wie E016 bis E018 den Commit blockiert.
-7. Der volle Preflight inklusive Godot-Lauf ist grün und der Arbeitsbaum enthält nur die Änderungen dieses Schritts.
+1. Du wolltest, dass die Editor-Warnungen aus dem Reload-Log vollständig verschwinden und der neue Warnungs-Scan von Anfang an grün steht, und Shinon hat jede gemeldete Zeile an ihrem Ort aufgelöst.
+2. In welt_definition_registry.gd wird die Kartengröße jetzt über explizite Gleitkomma-Rundung auf die Chunk-Größe gebracht, damit die Integer-Division nicht mehr den Nachkommaanteil verwirft.
+3. In welt_generator.gd ist die Chunk-Zahl je Region einmal als Zwischenwert herausgezogen, sodass die vier gleichen Divisionen nur noch an einer Stelle stehen und keine Warnung mehr erzeugen.
+4. In ui_welt_info.gd wird die Chunk-Anzeige über explizite Gleitkomma-Umrechnung berechnet, und in ui_karten_viewer.gd sind der ungenutzte Kanten-Parameter und die ungenutzte Kanten-Variable bewusst unterstrichen.
+5. In gebaeude_manager.gd rufen die beiden Maschinen ihre Zustandsfabrik jetzt direkt über den Typ statt über die Instanz auf, und in orchestrator_verdrahtung.gd trägt der Darsteller-Knoten einen eigenen Namen, damit er die gleichnamige Funktion nicht mehr verschattet.
+6. In welt_ladevorgang.gd heißt der Speicher-Leser jetzt speicher_leser, damit die verwirrende Doppel-Deklaration im umgebenden Block verschwindet.
+7. Der Warnungs-Scan der Kategorie warnungen und der volle Preflight inklusive Godot-Lauf sind nach dieser Bereinigung grün, und keine neue Fehlercode-Zeile wurde angelegt, weil der Scan bereits persistiert ist.

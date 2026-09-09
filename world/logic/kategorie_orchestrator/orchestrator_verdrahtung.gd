@@ -16,13 +16,13 @@ func verdrahten(registry: Orchestrator_Registry, manager: Orchestrator_Manager, 
 	for konfig in registry.zonen:
 		konfig.zustand = Orchestrator_Status.Zustand.AKTIV
 		var idx := manager.orchestrator_platzieren(konfig)
-		var darsteller := Orchestrator_Darsteller.new()
-		darsteller.einrichten(konfig)
-		eltern.add_child(darsteller)
-		_darsteller.append(darsteller)
+		var darsteller_knoten := Orchestrator_Darsteller.new()
+		darsteller_knoten.einrichten(konfig)
+		eltern.add_child(darsteller_knoten)
+		_darsteller.append(darsteller_knoten)
 		var status := manager.status_fuer(idx)
 		if status != null:
-			status.zustand_geaendert.connect(darsteller.status_geaendert)
+			status.zustand_geaendert.connect(darsteller_knoten.status_geaendert)
 	return _darsteller
 
 func darsteller() -> Array[Orchestrator_Darsteller]:

@@ -57,6 +57,6 @@ func lokalkarten_groesse_fuer(welt_seed: int) -> Vector2i:
 	# Auf Chunk-Groesse runden, damit Regionen/Chunks aufgehen.
 	var chunk := chunk_groesse()
 	if chunk > 0:
-		breite = maxi(chunk, (breite / chunk) * chunk)
-		hoehe = maxi(chunk, (hoehe / chunk) * chunk)
+		breite = maxi(chunk, int(floor(float(breite) / float(chunk))) * chunk)
+		hoehe = maxi(chunk, int(floor(float(hoehe) / float(chunk))) * chunk)
 	return Vector2i(breite, hoehe)

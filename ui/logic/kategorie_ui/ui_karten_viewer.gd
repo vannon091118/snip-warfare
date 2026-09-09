@@ -74,7 +74,7 @@ func _kacheln_malen(kachel_px: float) -> void:
 				farbe = Color.from_string(biom.farbe, Color.WHITE).darkened(0.25)
 			draw_rect(Rect2(Vector2(x, y) * kachel_px, Vector2(kachel_px, kachel_px)), farbe, true)
 
-func _regionen_malen(kachel_px: float, kante: int) -> void:
+func _regionen_malen(kachel_px: float, _kante: int) -> void:
 	# Region-Grenzen als dicke Linien: die Makrostruktur wird sichtbar.
 	var kacheln: Vector2i = _model.groesse()
 	var region_kante := maxi(_model.region_kante, 1)
@@ -131,7 +131,7 @@ func _gui_input(ereignis: InputEvent) -> void:
 	if ereignis is InputEventMouseButton and ereignis.pressed and ereignis.button_index == MOUSE_BUTTON_LEFT:
 		var kachel_px := _kachel_pixel()
 		if kachel_px > 0.0 and _model != null:
-			var kanten: Vector2 = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE
+			var _kanten: Vector2 = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE
 			_fokus = Vector2(ereignis.position.x / (kachel_px * _model.raster_breite), ereignis.position.y / (kachel_px * _model.raster_hoehe))
 			_fokus = _fokus.clamp(Vector2.ZERO, Vector2.ONE)
 			queue_redraw()

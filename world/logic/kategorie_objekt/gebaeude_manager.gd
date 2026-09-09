@@ -58,7 +58,7 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 			return {"ok": false, "grund": "Entnahme fehlgeschlagen"}
 	var objekt_index := _model.objekt_hinzufuegen(definition.welt_objekt_id, welt_position)
 	_model.objekt_feld_setzen(objekt_index, "gebaeude_id", gebaeude_id)
-	var bau_zustand := _bau_maschine.starten(_bau_maschine.neuer_zustand())
+	var bau_zustand := _bau_maschine.starten(Gebaeude_BauMaschine.neuer_zustand())
 	_model.objekt_feld_setzen(objekt_index, "bau_phase", int(bau_zustand["phase"]))
 	_model.objekt_feld_setzen(objekt_index, "bau_fortschritt", 0)
 	_model.objekt_feld_setzen(objekt_index, "prod_phase", int(Gebaeude_ProduktionsMaschine.Phase.DEAKTIVIERT))
@@ -131,7 +131,7 @@ func _bau_ticken(index: int, definition: Gebaeude_Definition) -> void:
 	_model.objekt_feld_setzen(index, "bau_fortschritt", int(neu["fortschritt"]))
 	if _bau_maschine.ist_fertig(neu):
 		# Bau abgeschlossen: Produktion geht in den Wartezustand.
-		var prod := _produktions_maschine.starten(_produktions_maschine.neuer_zustand())
+		var prod := _produktions_maschine.starten(Gebaeude_ProduktionsMaschine.neuer_zustand())
 		_model.objekt_feld_setzen(index, "prod_phase", int(prod["phase"]))
 		_model.objekt_feld_setzen(index, "prod_fortschritt", 0)
 		gebaeude_meldung.emit("%s ist fertig gebaut und wartet auf Eingänge." % definition.angezeigter_name)

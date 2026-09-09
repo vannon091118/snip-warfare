@@ -21,7 +21,7 @@ func zustand_zeigen(model: Welt_Model, tier_zahl: int, blick_position: Vector2, 
 	var zeilen := [
 		"Seed: %d" % model.welt_seed,
 		"Region: %s" % region_text,
-		"Chunk: %d/%d" % [kachel.x / Welt_Generator.CHUNK_GROESSE, kachel.y / Welt_Generator.CHUNK_GROESSE],
+		"Chunk: %d/%d" % [int(floor(float(kachel.x) / float(Welt_Generator.CHUNK_GROESSE))), int(floor(float(kachel.y) / float(Welt_Generator.CHUNK_GROESSE)))],
 		"Biom: %s" % biom_text,
 		"Objekte: %d" % model.objekt_anzahl(),
 		"Tiere: %d" % tier_zahl,

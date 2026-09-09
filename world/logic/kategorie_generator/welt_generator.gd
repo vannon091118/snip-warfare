@@ -92,9 +92,10 @@ func region_materialisieren(model: Welt_Model, region_x: int, region_y: int) -> 
 		return false
 	var biom_wahl := str(region.get("biom_id", "gemaaessigt"))
 	var kacheln := CHUNK_GROESSE * CHUNK_GROESSE
-	for dy in REGION_KANTE / CHUNK_GROESSE:
-		for dx in REGION_KANTE / CHUNK_GROESSE:
-			var chunk := Vector2i(region_x * (REGION_KANTE / CHUNK_GROESSE) + dx, region_y * (REGION_KANTE / CHUNK_GROESSE) + dy)
+	var chunk_pro_region := REGION_KANTE / CHUNK_GROESSE
+	for dy in chunk_pro_region:
+		for dx in chunk_pro_region:
+			var chunk := Vector2i(region_x * chunk_pro_region + dx, region_y * chunk_pro_region + dy)
 			_chunk_fuellen_mit(model, chunk, kacheln, biom_wahl)
 	return true
 
