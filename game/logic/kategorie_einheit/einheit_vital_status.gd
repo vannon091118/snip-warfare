@@ -116,5 +116,5 @@ func _folgen_würfeln(schaden: int, art: String, zufall: Kern_Zufall) -> void:
 		modifikator_hinzufuegen("verletzung_bein")
 	elif art == "kampf" and wurf < 20:
 		modifikator_hinzufuegen("verletzung_arm")
-	elif schaden > max_hp / 2 and wurf < 40:
+	elif float(schaden) > float(max_hp) / 2.0 and wurf < 40:
 		modifikator_hinzufuegen("verblutung")

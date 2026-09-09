@@ -18,7 +18,9 @@ var _helligkeit: float = 1.0
 var _phase: Phase = Phase.TAG
 
 ## Kategorie logik: Tick an Weltuhr, Phase und Helligkeit ableiten.
-func einrichten(neu_takt_minuten: float = 6.0, neu_tag_minuten: float = 4.0, neu_nacht_minuten: float = 2.0) -> void:
+func einrichten(neu_takt_minuten: float = 6.0, neu_tag_minuten: float = 4.0, _neu_nacht_minuten: float = 2.0) -> void:
+	# Die Nacht ergibt sich aus Takt minus Tag; der eigene Nacht-Wert ist
+	# bewusst nur ein Platzhalter in der Signatur und bleibt ungenutzt.
 	takt_minuten = maxf(neu_takt_minuten, 1.0)
 	tag_minuten = clampf(neu_tag_minuten, 0.5, takt_minuten - 0.5)
 	nacht_minuten = takt_minuten - tag_minuten
@@ -89,8 +91,8 @@ func _phase_fuer(tick_im_takt: int, tag_ticks: int, takt_ticks: int) -> Phase:
 		return Phase.NACHT
 	return Phase.MORGEN
 
-func _helligkeit_fuer(phase: Phase, tick_im_takt: int, tag_ticks: int, takt_ticks: int) -> float:
-	match phase:
+func _helligkeit_fuer(aktuelle_phase: Phase, tick_im_takt: int, tag_ticks: int, takt_ticks: int) -> float:
+	match aktuelle_phase:
 		Phase.TAG:
 			return 1.0
 		Phase.DAEMMERUNG:

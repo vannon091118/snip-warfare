@@ -82,8 +82,8 @@ func _einheiten_im_radius(konfig: Orchestrator_Konfiguration) -> Array[int]:
 	if _einheit_manager == null:
 		return gefundene
 	for index in _einheit_manager.einheit_zahl():
-		var position := _einheit_manager.einheit_position(index)
-		var im_radius := position.distance_to(konfig.position) <= konfig.radius
+		var einheit_position := _einheit_manager.einheit_position(index)
+		var im_radius := einheit_position.distance_to(konfig.position) <= konfig.radius
 		if im_radius and _einheit_manager.job_id_einheit(index) == "":
 			gefundene.append(index)
 	return gefundene

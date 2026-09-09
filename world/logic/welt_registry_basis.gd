@@ -16,9 +16,12 @@ var eintraege: Array[RefCounted] = []
 ## Kategorie logik: Laden, Registrieren und Zugriff.
 var _quelle_pfad: String = ""
 
-func _init(quelle_pfad: String) -> void:
+func _init(quelle_pfad: String = "") -> void:
 	_quelle_pfad = quelle_pfad
-	laden()
+	if _quelle_pfad != "":
+		# Nur eine Registry mit eigener Quelle lädt selbst. Fach-Sichten
+		# werden von ihrer Fassade befüllt und laden nicht parallel.
+		laden()
 
 func laden() -> bool:
 	eintraege_nach_id.clear()

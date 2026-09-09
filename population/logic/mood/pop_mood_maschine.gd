@@ -16,7 +16,6 @@ var _mood_mods: Pop_MoodModifikatorRegistry = null
 var _welt_position: Vector2 = Vector2.ZERO
 var _werte: Dictionary = {}
 var _mood: Pop_Mood = Pop_Mood.new()
-var _letzte_hp_ticks: int = 0
 
 ## Kategorie logik: Tick, Übergänge, abgeleitete Stimmung.
 func einrichten(need_registry: Pop_NeedRegistry, lager: Lager_Manager) -> void:

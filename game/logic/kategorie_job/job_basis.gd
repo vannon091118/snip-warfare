@@ -14,6 +14,9 @@ class_name Job_Basis
 ## Phase 3.3: Validierung ob Einheit physisch fähig ist, Job auszuführen.
 
 signal arbeitsschritt_erledigt(ressource: String, menge: int)
+# Wird von Unterklassen und dem Status verbunden, in dieser Klasse selbst
+# nicht emittiert: bewusst als Vertrag markiert statt versteckt.
+@warning_ignore("unused_signal")
 signal job_beendet()
 
 enum ZielTyp {

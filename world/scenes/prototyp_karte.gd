@@ -29,8 +29,6 @@ var _tageszyklus := Welt_TageszyklusMaschine.new()
 var _tages_overlay: CanvasLayer = null
 var _auswahl := _AuswahlManagerSkript.new()
 var _schnellwahl: Array[int] = []
-var _job_kette: Array[Dictionary] = []
-var _kette_laeuft: bool = false
 var _orchestrator_registry := Orchestrator_Registry.new()
 var _orchestrator_manager := Orchestrator_Manager.new()
 var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
@@ -227,7 +225,7 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 	if not ketten_nachfrage:
 		_hud.meldung_setzen("Hier gibt es nichts zu tun")
 
-func _job_vergeben_fuer_tier(tier_nummer: int, ziel_position: Vector2, kette: bool) -> void:
+func _job_vergeben_fuer_tier(tier_nummer: int, ziel_position: Vector2, _kette: bool) -> void:
 	var tier_art := _tiere.tier_art(tier_nummer)
 	if tier_art == "":
 		return
@@ -243,7 +241,7 @@ func _job_vergeben_fuer_tier(tier_nummer: int, ziel_position: Vector2, kette: bo
 			_hud.job_anzeigen(_job_registry.job_name(job_id))
 			return
 
-func _job_vergeben_fuer_objekt(objekt_index: int, ziel_position: Vector2, element_id: String, kette: bool) -> void:
+func _job_vergeben_fuer_objekt(objekt_index: int, ziel_position: Vector2, element_id: String, _kette: bool) -> void:
 	var radius := _steuerung.steuerung.auswahl_radius if _steuerung.steuerung != null else 60.0
 	for job_id: String in _job_registry.job_ids():
 		var probe := _job_registry.job_erzeugen(job_id)
