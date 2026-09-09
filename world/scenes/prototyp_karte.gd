@@ -59,7 +59,7 @@ func _ready() -> void:
 	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
 	add_child(_stockmaenner)
 	_stockmaenner.einheit_hinzufuegen(_spieler_position)
-	_orchestrator_registry.laden([ORCHESTRATOR_PFAD])
+	_orchestrator_registry.laden(ORCHESTRATOR_PFAD)
 	_orchestrator_manager.referenzen_setzen(_stockmaenner, _model, _registry, _job_registry)
 	add_child(_orchestrator_manager)
 	_orchestratoren_verdrahten()
@@ -269,14 +269,14 @@ func _biom_anzeigen() -> void:
 	_hud.biom_anzeigen(str(zustand.get("biom_id", _model.biom_id)), float(zustand.get("biom_faktor", 1.0)))
 
 func _orchestratoren_verdrahten() -> void:
-	for konfig in _orchestrator_registry.konfigurationen():
+	for konfig in _orchestrator_registry.zonen:
 		konfig.zustand = Orchestrator_Status.Zustand.AKTIV
 		var idx := _orchestrator_manager.orchestrator_platzieren(konfig)
 		var darsteller := Orchestrator_Darsteller.new()
 		darsteller.einrichten(konfig)
 		add_child(darsteller)
 		_orchestrator_darsteller.append(darsteller)
-		var status := _orchestrator_manager._orchestratoren[idx]["status"]
+		var status := _orchestrator_manager.status_fuer(idx)
 		status.zustand_geaendert.connect(darsteller.status_geaendert)
 
 func _zoom(faktor: float) -> void:
