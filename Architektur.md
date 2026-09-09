@@ -18,7 +18,7 @@ Jede Klasse trägt ihre Kategorie als Präfix im Klassennamen und liegt im passe
 | `Tier_` | Tier-Datenklassen und Tier-Verhalten | `world/logic/kategorie_tier/` | Baer, Hase, Vogel, Vogelgruppe, Basis, Verhalten, Status, Darsteller, Manager |
 | `Job_` | Job-Zustandsmaschinen | `game/logic/kategorie_job/` | Holzfaeller, Steinmetz, Jaeger, HolzfaellerStumpf, JaegerKadaver, Heiler, Basis, Registry |
 | `Einheit_` | Spielfiguren-Domäne | `game/logic/kategorie_einheit/` | Status, VitalStatus (Leben und Modifikatoren), Darsteller, Manager, Ressourcen |
-| `Welt_` | Welt-Zustandsmaschinen und Dienste | `world/logic/` | Model, Registry, Speicher, Renderer (kategorie_welt), EditorWerkzeug (kategorie_welt), WaermeFeld (kategorie_waerme), TageszyklusMaschine (kategorie_tageszyklus), DefinitionRegistry + GrenzProfil (kategorie_welt) |
+| `Welt_` | Welt-Zustandsmaschinen und Dienste | `world/logic/` | Model, Registry, Speicher, Renderer (kategorie_welt), ObjektDarsteller (kategorie_welt), EditorWerkzeug (kategorie_welt), WaermeFeld (kategorie_waerme), TageszyklusMaschine (kategorie_tageszyklus), DefinitionRegistry + GrenzProfil (kategorie_welt) |
 | `Ui_` | Benutzeroberfläche | `ui/logic/kategorie_ui/` | MenueZustaende, WeltAuswahlDialog, WeltSitzung (Autoload) |
 
 Regeln:
@@ -168,6 +168,8 @@ Koordination: `Gebaeude_Manager` tickt beide Maschinen, prüft und entnimmt Kost
 
 Aktive Ketten: Werkstatt (15 Holz + 8 Stein, 480 Ticks Bau, verbraucht 6 Holz + 3 Stein zu 1 Werkzeug in 600 Ticks) und Räucherei (20 Holz + 12 Stein, 720 Ticks Bau, verbraucht 3 Fleisch + 2 Holz zu 1 Räucherfleisch in 900 Ticks) — beide über denselben Datenpool und dieselbe Produktionsmaschine, ohne Code-Sonderfall.
 
+Darstellung: Die Funktions-Animationen der Objekte (Werkstatt `grind`, Räucherei `raeuchern`, Lagerfeuer `flackern`, Busch `wehen`) sind Registry-Daten: Der Element-Katalog-Eintrag nennt die Animation über `funktions_animation`, das Animations-Verzeichnis `game/data/animationen.json` hält Sheet, Frame-Größe und `ticks_pro_frame`, und der `Welt_ObjektDarsteller` in `world/logic/kategorie_welt/` schneidet die Frames und spielt sie mit 24 geteilt durch `ticks_pro_frame` Schritten pro Sekunde ab, gekoppelt an die 24 Ticks der Weltuhr. Frame 1 eines jeden Sheets ist exakt das Standbild; ein Objekt ohne Registry-Animation wird nie animiert.
+
 ## 5e. Zentrale Modifikator-Logik (Trait-Boni und Zeiten)
 
 Trait-Boni, Modifikator-Zeiten und Bauzeiten laufen durch eine zentrale Rechenlogik: `Kern_ModifikatorMaschine`. Jede State-Maschine hält ihre eigene Instanz mit genau einem Bereich (Bau-Maschine → `bau`, Produktions-Maschine → `produktion`, Einheit-Bewegung → `bewegung`) und damit ihre eigenen angepassten Settings; die Rechenformeln sind trotzdem genau eine zentrale Logik.
@@ -247,6 +249,7 @@ Die Ausgabe listet zuerst alle Datenobjekt-Erzeugungen mit Datei, Klasse und Zei
 | E036 | Steuerung Pflicht verletzt | game/data/steuerung.json menschlich mit WASD Linksklick Drag Rechtsklick sammeln abbauen Icon Tooltip Werkzeug fuellen |
 | E037 | Shinon Footer Verbot verletzt | Agent-Footer oder Werkzeug-Signatur aus shinon/commit_msg.txt entfernen, die Nachricht gehört Shinon allein |
 | E038 | Shinon Nennungspflicht verletzt | Jede geänderte Datei in shinon/commit_msg.txt namentlich mit Dateinamen nennen |
+| E039 | Shinon Stilpflicht verletzt | Sätze auf höchstens 400 Zeichen kürzen, Endlos-Aufzählungen mit mehrfachem und dann auflösen, die Nachricht auf höchstens 2600 Zeichen insgesamt schlank halten |
 
 ## 9. Pflichten bei Änderungen
 

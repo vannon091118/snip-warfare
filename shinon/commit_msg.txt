@@ -1,7 +1,5 @@
-1. Du wolltest, dass ein gefällter Baum den Holzfäller nicht in den Idle schickt, sondern dass der Job als Schleife weiterläuft und die Einheit den nächsten Baum derselben Art aufsucht.
-2. Shinon hat die Job-Basis geprüft und festgestellt, dass das Loop-Flag und die Zielsuche längst existierten, aber die Zustandsmaschine den Abschluss nie meldete, weil das Beendet-Signal in der Produktion niemals gesendet wurde.
-3. Die Zustandsmaschine in einheit_status.gd meldet jetzt nach jedem abgeschlossenen Ernteschritt das Ende an den Job, und der Manager sucht über das Signal das nächste gültige Ziel desselben Typs und setzt den Job direkt neu fort.
-4. Die Fortsetzung in einheit_status.gd wechselt außerdem in den Geh-Zustand, wenn der nächste Baum außerhalb der Reichweite liegt, damit die Einheit erst hinhäuft, statt aus der Luft zu ernten.
-5. Der Manager in einheit_manager.gd bindet den Status sauber an das Loop-Signal an, wobei die Argumentreihenfolge des Signals und die gebundene Maschine jetzt zusammenpassen und der Typkonflikt verschwindet.
-6. Der Tier-Darsteller in tier_darsteller.gd löst die Weltuhr wie der Tier-Manager null-sicher auf, damit auch Testläufe ohne Autoload-Baum die Kette laden können.
-7. Der Lauf-Beweis in lauf_pruefung_welt.gd zeigt, dass die Einheit nach dem Fällen zum nächsten Baum läuft und dort weiterarbeitet, statt in den Idle zu fallen, und der volle Preflight bleibt als Frühwarnung grün.
+1. Du wolltest, dass das Shinon Gate Endlos-Nachrichten mechanisch verhindert, damit keine aufgeblähte Kette von und dann und dann mehr durchrutscht, und Shinon hat den Stil-Wächter dafür eingezogen.
+2. Der neue Stil-Prüfer in shinon_stil_pruefer.py begrenzt jeden Satz auf vierhundert Zeichen, die ganze Nachricht auf 2600 Zeichen und meldet jede Kette mit mehrfachem und dann als Stilpflicht-Verstoß E039.
+3. Das Gate in shinon_gate.py ruft den Stil-Wächter in beiden Prüfwegen auf, einmal gegen die echte Nachrichtendatei und einmal im reinen Text-Selbsttest, damit keine Lücke zwischen Produktion und Prüfung entsteht.
+4. Der Preflight in tools/preflight.py kennt den Code E039 jetzt in Doku, Kategorie-Liste und Selbsttest, wobei der Selbsttest eine alte Endlos-Nachricht als Negativprobe gegen den Wächter wirft und sie sicher als Verstoß erkennt.
+5. Die Architektur in Architektur.md trägt den neuen Fehlercode mit Behebung nach, und der volle Preflight bleibt als Frühwarnung grün, während die letzte Instanz weiterhin das laufende Spiel ist.

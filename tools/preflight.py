@@ -45,6 +45,7 @@ Fehlercodes:
   E036  Steuerung Pflicht: game/data/steuerung.json fehlt oder ist nicht menschenlesbar konfiguriert
   E037  Shinon Gate: Fremder Agent-Footer in commit_msg.txt (Generated with, Co-Authored-By, Werkzeug-Signaturen)
   E038  Shinon Gate: Geaenderte Datei wird in commit_msg.txt nicht namentlich genannt (Vorlagenpflicht)
+  E039  Shinon Gate: Stilpflicht verletzt (Satz ueberlaengt, aufgeblaehte Nachricht oder Endlos-Aufzaehlung mit und dann)
 
 Prüfkategorien (Flags) und ihre Codes:
   klassen       E001 E002 E003 E004 E008 E009 E021
@@ -54,7 +55,7 @@ Prüfkategorien (Flags) und ihre Codes:
   pfade         E015
   registries    E020 E022
   godot         E016 E017 E018 E025
-  shinon        E030 E031 E032 E033 E034 E035 E036 E037 E038
+  shinon        E030 E031 E032 E033 E034 E035 E036 E037 E038 E039
   assets        E022
 
 Ausführung aus dem Projektstamm:
@@ -124,7 +125,7 @@ PRUEFKATEGORIEN = {
     "registries": ("E020", "E022"),
     "godot": ("E016", "E017", "E018", "E025"),
     "warnungen": ("E025",),
-    "shinon": ("E030", "E031", "E032", "E033", "E034", "E035", "E036", "E037", "E038"),
+    "shinon": ("E030", "E031", "E032", "E033", "E034", "E035", "E036", "E037", "E038", "E039"),
     "assets": ("E022",),
     "pyramide": ("E023", "E024"),
     "biome": ("E024",),
@@ -250,6 +251,11 @@ def selbsttest():
             probleme.append("Shinon Bildsprache Pruefer meldet zu kurzen Satz nicht")
         if not any(b.code == "E037" for b in gate.pruefe_text("1. Fertige Arbeit und nun der Fuss.\n\U0001F916 Generated with Codebuff\nCo-Authored-By: Codebuff <noreply@codebuff.com>\n")):
             probleme.append("Shinon Footer Pruefer meldet den Agent-Footer nicht")
+        # E039 Stil: Die alte Endlos-Nachricht mit Kette und Aufblaehung muss
+        # sicher als Stilpflicht-Verstoss gemeldet werden.
+        endlos_text = "1. Der Nutzer wollte X und dann hat Shinon Y gemacht und dann wurde Z gebaut und dann kam noch W dazu und dann fehlte noch V und dann musste auch U her und dann war immer noch nicht Schluss und dann wurde alles noch einmal geprueft und dann war der Tag vorbei."
+        if not any(b.code == "E039" for b in gate.pruefe_text(endlos_text + "\n")):
+            probleme.append("Shinon Stil Pruefer meldet die Endlos-Aufzaehlung nicht")
         # E035 Readme und E036 Steuerung muessen ebenfalls im Selbsttest greifen.
         _rm_pfad2 = PROJEKT_STAMM / "shinon" / "shinon_readme_pruefer.py"
         _rm_spez2 = _ilu.spec_from_file_location("_shinon_readme_selbsttest", str(_rm_pfad2))
