@@ -2,6 +2,12 @@ Regel 0 = CODE ist wahrheit Doku ois der momentane snap du niemals als quelle de
 
 
 
+Regel 6 – Warnungs-Scan Pflicht (verbindlich, E025)
+
+Jeder Agent führt nach jeder abgeschlossenen Anpassung den Warnungs-Scan über python tools/preflight.py --kategorie warnungen oder über den vollen Preflight aus. Der Scan erkennt deterministisch dieselben GDScript-Warnklassen, die der Godot-Editor bei einem Script-Reload meldet: Integer-Division, Schattenvariablen, ungenutzte Parameter und Variablen, ungenutzte Signale, statische Aufrufe auf Instanzen und verwirrende Block-Deklarationen. Jeder Befund ist der Fehler E025 und blockiert den Commit, genau wie die Godot-Lauf-Fehler E016 bis E018. Es gibt kein stilles Grün über Editor-Warnungen: Wer eine Warnung nicht beheben kann, markiert sie bewusst mit Unterstrich, mit @warning_ignore oder mit einem Kommentar, der die Bewusstheit dokumentiert, und der Scan ist so gebaut, dass dokumentierte Vertrags-Signale keine Befunde erzeugen. Der volle Preflight führt den Warnungs-Scan immer mit aus.
+
+
+
 
 Regel 2 Ergänzung: Nach jeder abgeschlossenen Aufgabe oder jedem Odoo wird über das Shinon Gate ein verifizierter Commit und Push durchgeführt. Lokal gilt origin/main, auch lokale Änderungen aus vorherigen Sitzungen werden funktional geprüft, wie eigene Anpassungen nachgezogen und in Slices mit maximal 10 bis 15 Dateien pro Commit gepusht, wobei jedes Mal der Commit-Workflow eingehalten wird.
 

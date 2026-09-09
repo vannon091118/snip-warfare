@@ -28,6 +28,8 @@ Fehlercodes:
   E016  Godot-Lauf: Parse-Fehler oder Script-Fehler
   E017  Godot-Lauf: unbekannte Definitionen (Typ, Klasse, Bezeichner)
   E018  Godot nicht ausführbar, oder Lauf meldet Fehler oder Warnungen
+  E025  Warnungs-Scan: Editor-Warnklasse statisch erkannt (Integer-Division,
+        Schatten, ungenutzter Parameter/Variable/Signal, statischer Aufruf)
   E019  Registry- oder Matrix-Quelle fehlt, ist unlesbar oder hat falsches Format
   E020  Registry-Gruppe ohne Member-Registry, oder IDs kollidieren
   E021  Registry-Klassenname folgt nicht dem Schema Prefix_Registry
@@ -51,7 +53,7 @@ Prüfkategorien (Flags) und ihre Codes:
   determinismus E012 E013 E014 E019
   pfade         E015
   registries    E020 E022
-  godot         E016 E017 E018
+  godot         E016 E017 E018 E025
   shinon        E030 E031 E032 E033 E034 E035 E036 E037 E038
   assets        E022
 
@@ -120,7 +122,8 @@ PRUEFKATEGORIEN = {
     "determinismus": ("E012", "E013", "E014", "E019"),
     "pfade": ("E015",),
     "registries": ("E020", "E022"),
-    "godot": ("E016", "E017", "E018"),
+    "godot": ("E016", "E017", "E018", "E025"),
+    "warnungen": ("E025",),
     "shinon": ("E030", "E031", "E032", "E033", "E034", "E035", "E036", "E037", "E038"),
     "assets": ("E022",),
     "pyramide": ("E023", "E024"),
@@ -853,6 +856,36 @@ def godot_lauf(godot_befehl: str) -> None:
 
 
 # --------------------------------------------------------------------------
+# Warnungs-Scan (E025): Editor-Warnklassen statisch erkennen
+# --------------------------------------------------------------------------
+
+def pruefe_warnungen(dateien):
+    """Lädt den statischen Warnungs-Scan und meldet jede Editor-Warnklasse.
+
+    Die GDScript-Warnungen (Integer-Division, Schatten, ungenutzte Parameter,
+    ungenutzte Signale, statische Aufrufe) erscheinen nur im GUI-Editor-Reload,
+    nicht im Headless-Lauf. Dieser Scan macht sie zur Pflichtprüfung.
+    """
+    try:
+        import importlib.util as _ilu_w
+        import sys as _sys_w
+        _w_pfad = PROJEKT_STAMM / "tools" / "warnungs_scan.py"
+        _w_spez = _ilu_w.spec_from_file_location("_warnungs_scan_lauf", str(_w_pfad))
+        _w_mod = _ilu_w.module_from_spec(_w_spez)
+        _sys_w.modules[_w_spez.name] = _w_mod
+        assert _w_spez.loader is not None
+        _w_spez.loader.exec_module(_w_mod)
+        scan = _w_mod.WarnungsScan(PROJEKT_STAMM)
+        for befund in scan.scanne(dateien):
+            fehler("E025", befund.datei, befund.zeile,
+                   "%s | %s" % (befund.klasse, befund.meldung))
+    except Exception as scan_fehler:
+        # Fail-closed: Ein nicht ladbarer Warnungs-Scan ist selbst ein Befund.
+        fehler("E025", "tools/warnungs_scan.py", 0,
+               "Warnungs-Scan nicht ausführbar (fail-closed): %s" % scan_fehler)
+
+
+# --------------------------------------------------------------------------
 # Hauptprogramm
 # --------------------------------------------------------------------------
 
@@ -922,6 +955,8 @@ def hauptprogramm():
         pruefe_pfade(dateien)
     if "registries" in gewaehlt:
         pruefe_registries(dateien)
+    if "warnungen" in gewaehlt or "godot" in gewaehlt:
+        pruefe_warnungen(dateien)
     if "shinon" in gewaehlt:
         pruefe_shinon()
     if "pyramide" in gewaehlt or "biome" in gewaehlt or "einheitlich" in gewaehlt:

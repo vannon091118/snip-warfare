@@ -32,9 +32,9 @@ func aufbauen(model: Welt_Model, registry: Kern_PathRegistry, kollisions_positio
 	# Kollisionsboxen der Weltobjekte sperren ihre Kacheln, ohne sie zu löschen.
 	for position: Vector2 in kollisions_positionen:
 		var kachel := Vector2i(int(position.x / Welt_Model.KACHEL_GROESSE), int(position.y / Welt_Model.KACHEL_GROESSE))
-		var knoten: Kern_PathKnoten = knoten_nach_position.get(kachel)
-		if knoten != null:
-			knoten.gesperrt = true
+		var kollision_knoten: Kern_PathKnoten = knoten_nach_position.get(kachel)
+		if kollision_knoten != null:
+			kollision_knoten.gesperrt = true
 
 func knoten_bei(pos: Vector2i) -> Kern_PathKnoten:
 	return knoten_nach_position.get(pos)

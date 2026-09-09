@@ -66,7 +66,7 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	Weltuhr.tick.disconnect(_auf_tick)
 
-func _auf_tick(tick_nummer: int, delta: float) -> void:
+func _auf_tick(tick_nummer: int, _delta: float) -> void:
 	_tick_nummer = tick_nummer
 	_verbleibende_ticks -= 1
 	var anteil: float = 1.0 - float(_verbleibende_ticks) / float(_gesamt_ticks)

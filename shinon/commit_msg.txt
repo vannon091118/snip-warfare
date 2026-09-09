@@ -1,4 +1,7 @@
-1. Du wolltest, dass die Knoten- und Szenenstruktur des Projekts gegen die Regeln der Godot-Szene-Komposition geprüft wird, und Shinon hat den Baum nach unsicheren Zugriffen durchsucht und einen stilistischen Fehlgebrauch gefunden.
-2. Die drei schwebenden Feedback-Anzeigen in feedback_plus_anzeige.gd, feedback_schaden_anzeige.gd und feedback_tod_anzeige.gd deklarierten ihre Kinder mit at onready, obwohl diese Knoten erst zur Laufzeit in der Bereit-Funktion gebaut werden und keine Szenen-Kinder sind.
-3. Die Kennzeichnung in den drei Dateien wurde auf einfache Variablen umgestellt, damit at onready nur noch dort steht, wo echte Szenen-Kinder über Pfadreferenzen aufgelöst werden.
-4. Der Headless-Lauf und der Preflight bleiben nach der Korrektur grün.
+1. Du wolltest, dass Editor-Warnungen wie Integer-Divisionen, Schattenvariablen und ungenutzte Parameter nie wieder durch den Preflight rutschen, und Shinon hat dafür einen deterministischen Warnungs-Scan gebaut und zur Pflichtprüfung gemacht.
+2. Die neue Prüfung in warnungs_scan.py erkennt dieselben Warnklassen, die der Godot-Editor bei einem Script-Reload meldet, weil der Headless-Lauf sie verschluckt, und liefert jeden Fund mit Datei, Zeile und Warnklasse.
+3. Der Preflight in preflight.py führt den Scan als Kategorie warnungen mit dem neuen Fehlercode E025 aus, und der volle Lauf sowie die Kategorie godot führen ihn immer mit, sodass kein stilles Grün über Warnungen mehr möglich ist.
+4. Der Negative-Test beweist die Schärfe: Eine eingebaute Integer-Division blockiert den Preflight mit E025 und Exit-Code Eins, und nach der Korrektur ist der Scan wieder grün.
+5. Zwei echte Funde wurden behoben: Die Kollisions-Sperre in path_netz.gd deklarierte den Knoten ein zweites Mal im selben Funktionsbereich und wurde auf kollision_knoten umbenannt, und der Tick-Rückruf in feedback_plus_anzeige.gd markiert den ungenutzten Delta-Parameter jetzt bewusst mit Unterstrich.
+6. Die verbindliche Regel 6 in AGENTS.md verpflichtet jeden Agenten, nach jeder abgeschlossenen Anpassung den Warnungs-Scan auszuführen, und dokumentiert, dass E025 ebenso wie E016 bis E018 den Commit blockiert.
+7. Der volle Preflight inklusive Godot-Lauf ist grün und der Arbeitsbaum enthält nur die Änderungen dieses Schritts.
