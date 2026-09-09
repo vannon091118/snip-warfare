@@ -1,10 +1,13 @@
 extends RefCounted
 class_name Ui_EingabeSteuerung
-## Spitze: Eingabe-Übersetzer. Einzige Stelle, die Maus- und Tasten-
+## Spitze: RTS Eingabe-Übersetzer. Einzige Stelle, die Maus- und Tasten-
 ## Eingaben in Aufrufe an Maschinen übersetzt (Auswahl, Jobs, Kamera,
 ## Hud). Sie besitzt keine Welt-Generierung, keine Lager-Fabrik und
 ## keine Biom-Logik. Jede Fremd-Logik läuft strikt über die gereichte
-## Maschinen-Referenz, nie direkt in der Szene.
+## Maschinen-Referenz, nie direkt in der Szene. RTS: Spieler wählt
+## Einheiten, vergibt Jobs, Kamera (WASD) ist reine Beobachtung.
+## Stickmen arbeiten nur orts- und jobabhängig; Orchestrator (Rathaus)
+## ist die einzige Automatisierung für Idle-Einheiten.
 
 const SCHNELLWAHL_MAX := 9
 
@@ -100,8 +103,8 @@ func klick_position(ereignis: InputEventMouseButton) -> Vector2:
 	var karten_transform := _karte.get_global_transform_with_canvas().affine_inverse()
 	return karten_transform * ereignis.position
 
-func linksklick_ende(ende: Vector2) -> void:
-	_linksklick_ende(ende)
+func linksklick_ende(_ende: Vector2) -> void:
+	pass
 
 func rechteck_pflegen_bild(maus_global: Vector2, viewport_transform: Transform2D, ziehen_start: Vector2) -> void:
 	if _auswahl == null or not _auswahl.ziehen_aktiv or _rechteck == null:
@@ -119,7 +122,6 @@ func hotkey_verarbeiten(ereignis: InputEventKey) -> void:
 	if slot >= SCHNELLWAHL_MAX:
 		return
 	if ereignis.ctrl_pressed:
-		# Schnellwahl merken: aktiven Index in den Slot legen.
 		if slot >= _schnellwahl.size():
 			_schnellwahl.resize(slot + 1)
 		_schnellwahl[slot] = _auswahl.aktiver_einheit_index
@@ -138,7 +140,7 @@ func auf_kontext_aktion(aktion: Dictionary) -> void:
 	var logik := str(aktion.get("logik_id", ""))
 	var label_text := str(aktion.get("label", ""))
 	if label_text.to_lower().contains("wachstum") or logik.to_lower().contains("wachstum"):
-		var haus_pos := _kamera_steuerung.spieler_position if _kamera_steuerung != null else Vector2.ZERO
+		var haus_pos := _kamera_steuerung.kamera_position if _kamera_steuerung != null else Vector2.ZERO
 		if _lager != null and _lager.lager_zahl() > 0:
 			haus_pos = _lager.lager_position(0)
 		if _stockmaenner != null and _stockmaenner.versuche_wachstum(haus_pos):
@@ -168,9 +170,8 @@ func _rechtsklick_verarbeiten(welt_pos: Vector2) -> void:
 	var ziel_objekt := _model.objekt_bei(welt_pos, radius)
 	var ziel_tier := _tiere.tier_id_bei(welt_pos, radius)
 	if ziel_objekt >= 0 or ziel_tier >= 0:
-		_kontext.position = _kamera.get_viewport_rect().size / 2 if _kamera != null else Vector2.ZERO
-		if _kamera != null:
-			_kontext.position = _kamera.get_viewport().get_mouse_position() if _kamera.get_viewport() != null else Vector2.ZERO
+		if _kamera != null and _kamera.get_viewport() != null:
+			_kontext.position = _kamera.get_viewport().get_mouse_position()
 		_kontext.popup()
 		return
 	if Input.is_key_pressed(KEY_SHIFT):
@@ -206,8 +207,8 @@ func _job_vergeben_fuer_tier(tier_nummer: int, ziel_position: Vector2, _kette: b
 		var probe := _job_registry.job_erzeugen(job_id)
 		if probe == null or not probe.passt_zu_tier(tier_art):
 			continue
-		var cam_pos := _kamera_steuerung.spieler_position if _kamera_steuerung != null else Vector2.ZERO
-		if cam_pos.distance_to(ziel_position) > probe.reichweite() + radius:
+		var einheit_pos := _stockmaenner.einheit_position(_auswahl.aktiver_einheit_index) if _stockmaenner != null and _auswahl != null else Vector2.ZERO
+		if einheit_pos.distance_to(ziel_position) > probe.reichweite() + radius:
 			if _hud != null:
 				(_hud as Variant).meldung_setzen("Zu weit entfernt: erst hinbewegen")
 			return
@@ -222,8 +223,8 @@ func _job_vergeben_fuer_objekt(objekt_index: int, ziel_position: Vector2, elemen
 		var probe := _job_registry.job_erzeugen(job_id)
 		if probe == null or not probe.passt_zu_objekt(element_id):
 			continue
-		var cam_pos := _kamera_steuerung.spieler_position if _kamera_steuerung != null else Vector2.ZERO
-		if cam_pos.distance_to(ziel_position) > probe.reichweite() + radius:
+		var einheit_pos2 := _stockmaenner.einheit_position(_auswahl.aktiver_einheit_index) if _stockmaenner != null and _auswahl != null else Vector2.ZERO
+		if einheit_pos2.distance_to(ziel_position) > probe.reichweite() + radius:
 			if _hud != null:
 				(_hud as Variant).meldung_setzen("Zu weit entfernt: erst hinbewegen")
 			return

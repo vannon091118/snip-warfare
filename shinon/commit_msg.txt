@@ -1,5 +1,5 @@
-1. Du verlangtest dass ein neues Spiel immer eine frisch generierte Welt baut statt stumm die alte Speicherwelt wiederzukäuen.
-2. In ui/scenes/hauptmenue.gd wurde der Startknopf sauber vom Laden getrennt, damit ein Klick auf Start nun mit leerem Welt-Namen und frischem Seed direkt aus dem Generator würfelt und nur der Ladenknopf die Auswahl öffnet.
-3. In world/logic/kategorie_welt/welt_ladevorgang.gd läuft weiter die Kette Speicher dann Generator dann Legacy, sodass neue Welten deterministisch aus ihrem Seed wachsen und alte Saves über die Eskalation erhalten bleiben.
-4. Die Szene ui/scenes/hauptmenue.tscn blieb unverändert sichtbar und die Logs in tools/logs halten weiter nur den letzten Lauf.
-5. Noch zu prüfen bleibt ob jeder Druck auf Start wirklich eine neue Insel malt und kein Schatten der alten Welt im Lager haften bleibt.
+1. Du stelltest klar dass SnipWarfare ein Survival Village City Builder mit RTS Prinzip ist und die Kamera mit WASD nichts mit dem Schieben einer Spielfigur zu tun hat.
+2. In ui/logic/kategorie_ui/ui_kamera_steuerung.gd wurde die Kamera aus der Figur gelöst, damit WASD nur noch den Blick verschiebt und die alten spieler_position Wege als Brücke erhalten blieben.
+3. In world/scenes/welt.gd wurde die enge Koppelung entfernt, damit Einheiten nicht mehr pro Frame an die Kamera geklebt werden und nur noch Jobs und das Rathaus über ihre eigenen Maschinen bewegen.
+4. In ui/logic/kategorie_ui/ui_eingabe_steuerung.gd wurde die Reichweitenprüfung vom Kamerapunkt auf den Standort der gewählten Einheit gelegt und world/scenes/welt.tscn trägt nun den ehrlichen RTS Hilfetext mit Rathaus Automatisierung.
+5. Noch zu prüfen bleibt ob die Auswahl im Rudel hält und das Rathaus die Müßigen dort abholt wo sie wirklich stehen.

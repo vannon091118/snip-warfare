@@ -1,33 +1,39 @@
 extends RefCounted
 class_name Ui_KameraSteuerung
-## Spitze: Kamera-Steuerung. Besitzt ausschließlich die Kamera-Zustände
+## Spitze: RTS-Kamera. Besitzt ausschließlich die Kamera-Zustände
 ## (Position, Zoom) und deren Bewegung. Keine Jobs, keine Welt-Generierung,
-## keine Lager-Logik. Liest nur Kern_SteuerungRegistry für Geschwindigkeit.
+## keine Lager-Logik, keine Spieler-Figuren-Logik. Die Stickmen bewegen
+## sich nie über die Kamera; sie folgen ausschließlich Jobs über ihre
+## eigenen Maschinen (Einheit_Manager + ggf. Pathfinding), nicht über WASD.
+## Das Rathaus (Orchestrator) ist die einzige Automatisierungs-Einheit;
+## alles andere ist orts- und jobabhängig, niemals autonom.
 
 const KAMERA_ZOOM_SCHRITT := 1.1
 const KAMERA_ZOOM_MIN := 0.2
 const KAMERA_ZOOM_MAX := 2.5
 
-var spieler_position: Vector2 = Vector2.ZERO
+var kamera_position: Vector2 = Vector2.ZERO
+## Rückwärtskompatibel: alter Name der Kamera-Position.
+var spieler_position: Vector2:
+	get: return kamera_position
+	set(wert): kamera_position = wert
 var _steuerung: Kern_SteuerungRegistry = null
 var _model: Welt_Model = null
 
 func einrichten(steuerung: Kern_SteuerungRegistry, model: Welt_Model, start_position: Vector2) -> void:
 	_steuerung = steuerung
 	_model = model
-	spieler_position = start_position
+	kamera_position = start_position
 
-func kamera_bewegen(delta: float, kamera: Camera2D, spieler: Node2D) -> void:
+func kamera_bewegen(delta: float, kamera: Camera2D) -> void:
 	var richtung := _lese_kamera_richtung()
 	var geschw := _steuerung.steuerung.kamera_geschwindigkeit if _steuerung != null and _steuerung.steuerung != null else 520.0
-	spieler_position += richtung * geschw * delta
+	kamera_position += richtung * geschw * delta
 	if _model != null:
 		var karten_groesse := Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE
-		spieler_position = spieler_position.clamp(Vector2.ZERO, karten_groesse)
+		kamera_position = kamera_position.clamp(Vector2.ZERO, karten_groesse)
 	if kamera != null:
-		kamera.position = spieler_position
-	if spieler != null:
-		spieler.position = spieler_position
+		kamera.position = kamera_position
 
 func zoom(faktor: float, kamera: Camera2D) -> void:
 	if kamera == null:
