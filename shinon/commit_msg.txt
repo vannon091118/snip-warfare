@@ -1,5 +1,3 @@
-1. Du wolltest, dass das Shinon Gate Endlos-Nachrichten mechanisch verhindert, damit keine aufgeblähte Kette von und dann und dann mehr durchrutscht, und Shinon hat den Stil-Wächter dafür eingezogen.
-2. Der neue Stil-Prüfer in shinon_stil_pruefer.py begrenzt jeden Satz auf vierhundert Zeichen, die ganze Nachricht auf 2600 Zeichen und meldet jede Kette mit mehrfachem und dann als Stilpflicht-Verstoß E039.
-3. Das Gate in shinon_gate.py ruft den Stil-Wächter in beiden Prüfwegen auf, einmal gegen die echte Nachrichtendatei und einmal im reinen Text-Selbsttest, damit keine Lücke zwischen Produktion und Prüfung entsteht.
-4. Der Preflight in tools/preflight.py kennt den Code E039 jetzt in Doku, Kategorie-Liste und Selbsttest, wobei der Selbsttest eine alte Endlos-Nachricht als Negativprobe gegen den Wächter wirft und sie sicher als Verstoß erkennt.
-5. Die Architektur in Architektur.md trägt den neuen Fehlercode mit Behebung nach, und der volle Preflight bleibt als Frühwarnung grün, während die letzte Instanz weiterhin das laufende Spiel ist.
+1. Du wolltest, dass das Shinon Gate keine Endlos-Nachrichten mehr durchlässt, aber der erste Stil-Wächter war zu streng und hat schon zwei Vorkommen von und dann als Kette verurteilt, obwohl ein organischer Dreischritt das nicht ist.
+2. Der Stil-Prüfer in shinon_stil_pruefer.py zählt jetzt erst ab drei Vorkommen von und dann als echte Endlos-Aufzählung, damit wörtliche Beschreibungen der Regel selbst und natürliche Abfolgen nicht mehr fälschlich blockiert werden.
+3. Der volle Preflight bleibt als Frühwarnung grün, und die letzte Instanz ist weiterhin das laufende Spiel, in dem die Welt nach jedem Start sichtbar erwacht.

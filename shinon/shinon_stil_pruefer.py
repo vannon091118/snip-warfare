@@ -10,6 +10,9 @@ from dataclasses import dataclass
 MAX_ZEICHEN_PRO_SATZ = 400
 MAX_ZEICHEN_GESAMT = 2600
 KETTE_MUSTER = re.compile(r"und dann")
+# Eine echte Endlos-Aufzaehlung beginnt bei drei Vorkommen von und dann;
+# zwei Vorkommen sind noch ein organischer Dreischritt oder eine wörtliche
+# Beschreibung der Regel selbst und bleiben erlaubt.
 
 @dataclass(frozen=True)
 class ShinonStilBefund:
@@ -36,7 +39,7 @@ class ShinonStilPruefer:
                     text="Stilpflicht: Der Satz ist mit %d Zeichen länger als %d und reiht nur noch aneinander, kürze ihn auf das Nötigste." % (len(gestrippt), MAX_ZEICHEN_PRO_SATZ),
                 ))
             ketten = len(KETTE_MUSTER.findall(gestrippt))
-            if ketten > 1:
+            if ketten >= 3:
                 befunde.append(ShinonStilBefund(
                     code="E039",
                     zeile=index,
