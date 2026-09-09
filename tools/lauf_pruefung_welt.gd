@@ -375,6 +375,29 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Geh-Geschwindigkeit 70.0 und Reichweite 24.0 kommen aus den Modifikator-Settings")
+	# 20) Bau- und Produktionsmaschinen rechnen über ihre eigene
+	#     Modifikator-Maschine: Der Modus skaliert die effektive Zeit, und
+	#     die Menü-Abstimmung skaliert den Fortschritt prozentual mit.
+	var bau_maschine_mod := Gebaeude_BauMaschine.new()
+	var bau_neutral := bau_maschine_mod.zeit_ticks_fuer(480)
+	bau_maschine_mod._modifikatoren.modus_setzen("schnell")
+	var bau_effektiv := bau_maschine_mod.zeit_ticks_fuer(480)
+	var bau_laufend := {"phase": Gebaeude_BauMaschine.Phase.BAU_LAEUFT, "fortschritt": 240, "ziel_ticks": 480}
+	var bau_abgestimmt := bau_maschine_mod.abstimmen(bau_laufend, 480)
+	if bau_neutral != 480 or bau_effektiv != 320 or int(bau_abgestimmt["fortschritt"]) != 160 or int(bau_abgestimmt["ziel_ticks"]) != 320:
+		print("FEHLER: Bau-Maschine skaliert falsch (neutral %d, effektiv %d, abstimmen %s)" % [bau_neutral, bau_effektiv, str(bau_abgestimmt)])
+		fehler += 1
+	else:
+		print("OK: Bau-Maschine nutzt eigene Modifikator-Maschine, Abstimmung skaliert 240/480 auf 160/320")
+	var prod_maschine_mod := Gebaeude_ProduktionsMaschine.new()
+	var prod_neutral := prod_maschine_mod.zeit_ticks_fuer(600)
+	prod_maschine_mod._modifikatoren.modus_setzen("schnell")
+	var prod_effektiv := prod_maschine_mod.zeit_ticks_fuer(600)
+	if prod_neutral != 600 or prod_effektiv != 400:
+		print("FEHLER: Produktions-Maschine skaliert falsch (neutral %d, effektiv %d)" % [prod_neutral, prod_effektiv])
+		fehler += 1
+	else:
+		print("OK: Produktions-Maschine nutzt eigene Modifikator-Maschine (600 neutral, 400 schnell)")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

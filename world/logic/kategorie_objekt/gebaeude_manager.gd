@@ -26,11 +26,19 @@ func _ready() -> void:
 	var weltuhr := get_node_or_null("/root/Weltuhr")
 	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_auf_tick):
 		weltuhr.tick.connect(_auf_tick)
+	# Menü-Gegenprüfung: Ein geöffnetes Menü stößt die Abstimmung aller
+	# Gebäude-Fortschritte an, damit Anzeige und Zeiten präzise bleiben.
+	var bus := Kern_SignalBus.bus()
+	if bus != null and bus.has_signal("menue_geoeffnet") and not bus.menue_geoeffnet.is_connected(_auf_menue_geoeffnet):
+		bus.menue_geoeffnet.connect(_auf_menue_geoeffnet)
 
 func _exit_tree() -> void:
 	var weltuhr := get_node_or_null("/root/Weltuhr")
 	if weltuhr != null and weltuhr.has_signal("tick") and weltuhr.tick.is_connected(_auf_tick):
 		weltuhr.tick.disconnect(_auf_tick)
+	var bus := Kern_SignalBus.bus()
+	if bus != null and bus.has_signal("menue_geoeffnet") and bus.menue_geoeffnet.is_connected(_auf_menue_geoeffnet):
+		bus.menue_geoeffnet.disconnect(_auf_menue_geoeffnet)
 
 func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_Ressourcen, lager: Lager_Manager) -> void:
 	_model = model
@@ -61,8 +69,10 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	var bau_zustand := _bau_maschine.starten(Gebaeude_BauMaschine.neuer_zustand())
 	_model.objekt_feld_setzen(objekt_index, "bau_phase", int(bau_zustand["phase"]))
 	_model.objekt_feld_setzen(objekt_index, "bau_fortschritt", 0)
+	_model.objekt_feld_setzen(objekt_index, "bau_ziel_ticks", _bau_maschine.zeit_ticks_fuer(definition.bauzeit_ticks))
 	_model.objekt_feld_setzen(objekt_index, "prod_phase", int(Gebaeude_ProduktionsMaschine.Phase.DEAKTIVIERT))
 	_model.objekt_feld_setzen(objekt_index, "prod_fortschritt", 0)
+	_model.objekt_feld_setzen(objekt_index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
 	gebaeude_meldung.emit("Bau angefordert: %s (%d Ticks)" % [definition.angezeigter_name, definition.bauzeit_ticks])
 	return {"ok": true}
 
@@ -129,11 +139,13 @@ func _bau_ticken(index: int, definition: Gebaeude_Definition) -> void:
 	var neu := _bau_maschine.tick(zustand, definition.bauzeit_ticks)
 	_model.objekt_feld_setzen(index, "bau_phase", int(neu["phase"]))
 	_model.objekt_feld_setzen(index, "bau_fortschritt", int(neu["fortschritt"]))
+	_model.objekt_feld_setzen(index, "bau_ziel_ticks", int(neu.get("ziel_ticks", definition.bauzeit_ticks)))
 	if _bau_maschine.ist_fertig(neu):
 		# Bau abgeschlossen: Produktion geht in den Wartezustand.
 		var prod := _produktions_maschine.starten(Gebaeude_ProduktionsMaschine.neuer_zustand())
 		_model.objekt_feld_setzen(index, "prod_phase", int(prod["phase"]))
 		_model.objekt_feld_setzen(index, "prod_fortschritt", 0)
+		_model.objekt_feld_setzen(index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
 		gebaeude_meldung.emit("%s ist fertig gebaut und wartet auf Eingänge." % definition.angezeigter_name)
 
 func _produktion_ticken(index: int, definition: Gebaeude_Definition) -> void:
@@ -161,6 +173,7 @@ func _produktion_ticken(index: int, definition: Gebaeude_Definition) -> void:
 				neu = _produktions_maschine.phase_erzwingen(neu, Gebaeude_ProduktionsMaschine.Phase.WARTET_AUSGANG)
 	_model.objekt_feld_setzen(index, "prod_phase", int(neu.get("phase", zustand["phase"])))
 	_model.objekt_feld_setzen(index, "prod_fortschritt", int(neu.get("fortschritt", zustand["fortschritt"])))
+	_model.objekt_feld_setzen(index, "prod_ziel_ticks", int(neu.get("ziel_ticks", definition.dauer_ticks)))
 
 func _eingang_verfuegbar(definition: Gebaeude_Definition, lager_index: int) -> bool:
 	for input: Dictionary in definition.inputs:
@@ -192,3 +205,32 @@ func _output_menge(definition: Gebaeude_Definition) -> int:
 	for output: Dictionary in definition.outputs:
 		summe += int(output.get("menge", 0))
 	return summe
+
+func _auf_menue_geoeffnet() -> void:
+	# Menü-Gegenprüfung: Alle Gebäude-Fortschritte werden prozentual auf die
+	# aktuell geltenden effektiven Zeiten skaliert (nur bei Menü-Öffnung).
+	if _model == null:
+		return
+	for index in _model.objekt_anzahl():
+		var gebaeude_id := str(_model.objekt_feld(index, "gebaeude_id", ""))
+		if gebaeude_id == "":
+			continue
+		var definition := _definitionen.definition_fuer(gebaeude_id)
+		if definition == null:
+			continue
+		var bau_zustand := {
+			"phase": int(_model.objekt_feld(index, "bau_phase", 0)),
+			"fortschritt": int(_model.objekt_feld(index, "bau_fortschritt", 0)),
+			"ziel_ticks": int(_model.objekt_feld(index, "bau_ziel_ticks", definition.bauzeit_ticks)),
+		}
+		var bau_neu := _bau_maschine.abstimmen(bau_zustand, definition.bauzeit_ticks)
+		_model.objekt_feld_setzen(index, "bau_fortschritt", int(bau_neu["fortschritt"]))
+		_model.objekt_feld_setzen(index, "bau_ziel_ticks", int(bau_neu.get("ziel_ticks", definition.bauzeit_ticks)))
+		var prod_zustand := {
+			"phase": int(_model.objekt_feld(index, "prod_phase", 0)),
+			"fortschritt": int(_model.objekt_feld(index, "prod_fortschritt", 0)),
+			"ziel_ticks": int(_model.objekt_feld(index, "prod_ziel_ticks", definition.dauer_ticks)),
+		}
+		var prod_neu := _produktions_maschine.abstimmen(prod_zustand, definition)
+		_model.objekt_feld_setzen(index, "prod_fortschritt", int(prod_neu["fortschritt"]))
+		_model.objekt_feld_setzen(index, "prod_ziel_ticks", int(prod_neu.get("ziel_ticks", definition.dauer_ticks)))

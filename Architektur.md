@@ -126,7 +126,8 @@ Regeln des Gates und des Inits:
 | `world/data/standard_welt.json` | Nur Legacy-Editor-/Demo-Raster; niemals Generator- oder Produktionswahrheit, wird ausschließlich vom Karten-Editor im Kreativmodus geladen | `karten_editor.gd` (Editor-Demo) |
 | `world/data/welt_definition.json` | Zentrale Weltdefinition: max/min Kartengröße, Kachelgröße, Chunkgröße, Regionkante als Daten | `Welt_DefinitionRegistry` -> `Welt_Generator` (Kartengröße aus Seed deterministisch) |
 | `core/data/kern_logik.json` | Generische Logiken wiederverwendbar | `Kern_LogikRegistry` |
-| `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s (Verletzungen sperren Jobs) | `Kern_ModifikatorRegistry` + `Einheit_VitalStatus` |
+| `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s (Verletzungen sperren Jobs) | `Kern_ModifikatorRegistry` + `Kern_ModifikatorMaschine` + `Einheit_VitalStatus` |
+| `core/data/modifikator_settings.json` | Globale Modifikator-Settings je Bereich (bau, produktion, bewegung): Modus, Faktor-Grenzen, Bewegungs-Basiswerte, globaler Faktor | `Kern_ModifikatorMaschine` (eine Instanz je State-Maschine, Bereich als angepasste Settings) |
 | `population/data/needs.json` | Bedürfnisse mit Ressource, Schwellwert, Emoji und Sprechblase je Need (nahrung 0.8 je Takt, waerme als Vektor-Feld via Feuer) | `Pop_NeedRegistry` (inkl. Waerme) -> `Pop_MoodMaschine` (Need sammeln + Waerme je Kachel + Tageszyklus) -> `Pop_Denkblase` (Beobachter) |
 | `population/data/mood_modifikatoren.json` | Mood-Modifikatoren als Progression-Gates (kaelte/hitze/hunger, in_sicherheit_bringen, HP-Abzug) | `Pop_MoodModifikatorRegistry` -> `Pop_MoodMaschine` (Gate-Prüfung waerme/Hitze) -> `Einheit_VitalStatus.umgebungsschaden_anwenden()` + `_in_sicherheit_bringen()` |
 | `world/data/element_katalog.json` (lagerfeuer) | Wärmequelle je Feuer, Radius 5 Kacheln abfallend | `Welt_WaermeFeld` (quellen_setzen, waerme_an je Weltposition deterministisch) |
@@ -165,6 +166,16 @@ Maschinen: `Gebaeude_BauMaschine` verarbeitet nur den Bauzustand (nicht gebaut, 
 Koordination: `Gebaeude_Manager` tickt beide Maschinen, prüft und entnimmt Kosten über `Einheit_Ressourcen`/`Lager_Manager`, lagert Ausgänge über die bestehende Erntebuchung ins nächste Lager ein und schreibt Bau-/Produktionszustand als Objekt-Zusatzfelder ins `Welt_Model`, die mitpersistiert werden. Die HUD-Anzeige (`hud_produktion_anzeige.gd`) liest nur Statuszeilen.
 
 Aktive Ketten: Werkstatt (15 Holz + 8 Stein, 480 Ticks Bau, verbraucht 6 Holz + 3 Stein zu 1 Werkzeug in 600 Ticks) und Räucherei (20 Holz + 12 Stein, 720 Ticks Bau, verbraucht 3 Fleisch + 2 Holz zu 1 Räucherfleisch in 900 Ticks) — beide über denselben Datenpool und dieselbe Produktionsmaschine, ohne Code-Sonderfall.
+
+## 5e. Zentrale Modifikator-Logik (Trait-Boni und Zeiten)
+
+Trait-Boni, Modifikator-Zeiten und Bauzeiten laufen durch eine zentrale Rechenlogik: `Kern_ModifikatorMaschine`. Jede State-Maschine hält ihre eigene Instanz mit genau einem Bereich (Bau-Maschine → `bau`, Produktions-Maschine → `produktion`, Einheit-Bewegung → `bewegung`) und damit ihre eigenen angepassten Settings; die Rechenformeln sind trotzdem genau eine zentrale Logik.
+
+Datenbesitzer: `core/data/modifikator_settings.json` (global einstellbar) definiert je Bereich den aktiven Modus, die Faktor-Grenzen und die Bewegungs-Basiswerte; der Modus verweist auf einen Modifikator aus `core/data/kern_modifikatoren.json` (normal, schnell, langsam, aggressiv). Balancing ändert nur diese Dateien, nie den Code.
+
+Formeln (einzige Stellen im Projekt): Zeit = Basis-Ticks geteilt durch Bereichsfaktor (`zeit_berechnen`, min 1 Tick), Geschwindigkeit = Basis mal Bereichsfaktor (`geschwindigkeit_berechnen`). Die Trait-Formel `wert_berechnen` aggregiert aktive Modifikatoren (Faktor multiplikativ, Attributwerte additiv) und wird von `Einheit_VitalStatus` für Geschwindigkeit und Tragekraft delegiert statt inline gerechnet.
+
+Keine redundanten Rechenschritte: Der Bereichsfaktor wird einmal berechnet und gecacht. Erst wenn ein Menü geöffnet wird, emittiert der Signalbus `menue_geoeffnet` (Kontextmenü und Hauptmenü melden sich), die Maschinen aktualisieren ihre Faktoren, und `Gebaeude_Manager` stimmt alle Gebäude-Fortschritte prozentual auf die neuen effektiven Zeiten ab (`abstimmen` in Bau- und Produktionsmaschine, `ziel_ticks` als Objekt-Zusatzfeld mitpersistiert). Die Bewegungs-Basiswerte in `einheit_status.gd` kommen aus den Settings, nicht aus Konstanten.
 
 ## 6. RT Pyramide
 
