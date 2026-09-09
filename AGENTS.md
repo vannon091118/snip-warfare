@@ -3,7 +3,7 @@ Regel 0 = CODE ist wahrheit Doku ois der momentane snap du niemals als quelle de
 
 
 
-regl 2 Ergänzung, nach  jeder abgeschloßenn aufgab oder odo wird über das shinon gate ein verfizierter commit du push durchgeführt. Lokal =origin/main auch lokale changes aus pre ssions weren funktional geprüf wie eigene Anpassungen nachgezogn und in slics mit maximal 10-15 daten pro commit gepusht dabei wid jedesmal der commit workflow eingehalten
+Regel 2 Ergänzung: Nach jeder abgeschlossenen Aufgabe oder jedem Odoo wird über das Shinon Gate ein verifizierter Commit und Push durchgeführt. Lokal gilt origin/main, auch lokale Änderungen aus vorherigen Sitzungen werden funktional geprüft, wie eigene Anpassungen nachgezogen und in Slices mit maximal 10 bis 15 Dateien pro Commit gepusht, wobei jedes Mal der Commit-Workflow eingehalten wird.
 
 
 
