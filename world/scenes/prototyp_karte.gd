@@ -163,7 +163,7 @@ func _welt_generieren() -> bool:
 	var kandidat_zufall := Kern_Zufall.new()
 	kandidat_zufall.start_zustand_setzen(basis_seed)
 	var seed_wert := basis_seed
-	for versuch in 20:
+	for _versuch in range(20):
 		if _generator.welt_erzeugen(_model, seed_wert, _model.biom_id) and _generator.verworfene_chunks == 0:
 			break
 		seed_wert = kandidat_zufall.naechste_zahl() % 1000000000
