@@ -22,5 +22,29 @@
       "blockiert_ohne_eingang": true,
       "blockiert_ohne_lagerplatz": true
     }
+  },
+  {
+    "id": "raeucherei",
+    "name": "Räucherei",
+    "kategorie": "Produktion",
+    "icon_pfad": "res://world/assets/terrain/raeucherei.svg",
+    "welt_objekt_id": "raeucherei",
+    "baukosten": {"holz": 20, "stein": 12},
+    "bauzeit_ticks": 720,
+    "arbeitskraft": "",
+    "voraussetzungen": [],
+    "produktion": {
+      "inputs": [
+        {"ressource": "fleisch", "menge": 3},
+        {"ressource": "holz", "menge": 2}
+      ],
+      "outputs": [
+        {"ressource": "raeuchelfleisch", "menge": 1}
+      ],
+      "dauer_ticks": 900,
+      "wiederholbar": true,
+      "blockiert_ohne_eingang": true,
+      "blockiert_ohne_lagerplatz": true
+    }
   }
 ]

@@ -154,7 +154,39 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Wiederholbare Produktion beginnt neuen Zyklus und wartet auf Eingang")
-	# 10) Manager-Kette: Kosten fließen wirklich, Gebäude entsteht im Modell.
+	# 10) Zweite Kette: Räucherei kommt rein über Datenpool + Registry, keine
+	#     Maschinenänderung; dieselbe Produktionsmaschine verarbeitet sie.
+	var raeucherei: Gebaeude_Definition = null
+	if not gebaeude_reg.hat_gebaeude("raeucherei"):
+		print("FEHLER: Räucherei fehlt in der Gebäude-Definition")
+		fehler += 1
+	else:
+		raeucherei = gebaeude_reg.definition_fuer("raeucherei")
+		print("OK: Räucherei über Datenpool in der Registry (Kosten %d Holz, %d Stein, Dauer %d)" % [
+			int(raeucherei.baukosten_paare()[0]["menge"]), int(raeucherei.baukosten_paare()[1]["menge"]), raeucherei.dauer_ticks])
+	var r_prod := prod_maschine.starten(prod_maschine.neuer_zustand())
+	r_prod = prod_maschine.tick(r_prod, raeucherei, false, true)
+	if int(r_prod.get("phase", -1)) != Gebaeude_ProduktionsMaschine.Phase.WARTET_EINGANG:
+		print("FEHLER: Räucherei-Produktion wartet nicht ohne Eingang")
+		fehler += 1
+	r_prod = prod_maschine.tick(r_prod, raeucherei, true, true)
+	if str(r_prod.get("aktion", "")) != "input_ziehen":
+		print("FEHLER: Räucherei zieht keine Eingänge")
+		fehler += 1
+	for i in range(raeucherei.dauer_ticks):
+		r_prod = prod_maschine.tick(r_prod, raeucherei, true, true)
+	if str(r_prod.get("aktion", "")) != "output_legen":
+		print("FEHLER: Räucherei legt keine Ausgänge ab")
+		fehler += 1
+	else:
+		print("OK: Dieselbe Produktionsmaschine verarbeitet die Räucherei ohne Code-Eingriff")
+	var raeucherei_asset := katalog_reg.finde_objekt("raeucherei")
+	if raeucherei_asset == null:
+		print("FEHLER: Räucherei fehlt im Element-Katalog")
+		fehler += 1
+	else:
+		print("OK: Räucherei im Element-Katalog mit Asset auflösbar")
+	# 11) Manager-Kette: Kosten fließen wirklich, Gebäude entsteht im Modell.
 	var bau_modell := Welt_Model.new()
 	var bau_generator := Welt_Generator.new()
 	bau_generator.welt_erzeugen(bau_modell, 4242, "gemaaessigt")

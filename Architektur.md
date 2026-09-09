@@ -146,6 +146,18 @@ Jede Region wird aus `Kern_Zufall.abgeleitet_fuer(welt_seed, region_identitaet)`
 
 Kartengrößen (max/min, Kachel, Chunk, Regionkante) kommen aus `world/data/welt_definition.json` über `Welt_DefinitionRegistry`; der Generator hat keine Sonderfälle für 25/50/75/100 Prozent, sondern leitet den Flächenanteil deterministisch aus dem Seed ab. `region_materialisieren()` und `chunk_materialisieren()` erlauben einzelne Regionen/Chunks ohne Materialisierungspflicht der ganzen Welt.
 
+## 5c. Produktionsökonomie (Gebäude und Ketten)
+
+Die Produktionsökonomie ist eine geschlossene Kette über bestehende Domänen: `Weltobjekt -> Arbeit -> Rohstoff -> Lager -> Gebäudekosten -> Gebäude -> Produktionsauftrag -> Zeit -> Output -> Lager -> neuer Bedarf`.
+
+Datenbesitzer: `world/data/gebaeude.json` beschreibt jedes Gebäude mit ID, Name, Kategorie, Icon, Weltobjekt-ID, Baukosten, Bauzeit, Arbeitskraft, Voraussetzungen und Produktionsrezept (Eingänge mit Mengen, Ausgänge mit Mengen, Dauer in Ticks, Wiederholbarkeit, Blockierregeln). `Gebaeude_DefinitionRegistry` ist die einzige Erweiterungsgrenze: Ein neues Gebäude entsteht ausschließlich über einen Katalog-, Gewichte- und Gebäude-Eintrag plus Asset, ohne Änderung an Maschinen oder Manager. Die Bau-Aktionen des Kontextmenüs kommen aus `game/data/steuerung.json` (logik_id `bauen`, gebaeude_id), das Menü ist damit ebenfalls datengetrieben.
+
+Maschinen: `Gebaeude_BauMaschine` verarbeitet nur den Bauzustand (nicht gebaut, Bau angefordert, Bau läuft, fertig) über die Weltuhr; `Gebaeude_ProduktionsMaschine` verarbeitet nur den Produktionszustand (deaktiviert, wartet auf Eingang, Produktion läuft, wartet auf Ausgangslager, abgeschlossen) und meldet Aktionen (`input_ziehen`, `output_legen`). Beide besitzen keinen eigenen Timer.
+
+Koordination: `Gebaeude_Manager` tickt beide Maschinen, prüft und entnimmt Kosten über `Einheit_Ressourcen`/`Lager_Manager`, lagert Ausgänge über die bestehende Erntebuchung ins nächste Lager ein und schreibt Bau-/Produktionszustand als Objekt-Zusatzfelder ins `Welt_Model`, die mitpersistiert werden. Die HUD-Anzeige (`hud_produktion_anzeige.gd`) liest nur Statuszeilen.
+
+Aktive Ketten: Werkstatt (15 Holz + 8 Stein, 480 Ticks Bau, verbraucht 6 Holz + 3 Stein zu 1 Werkzeug in 600 Ticks) und Räucherei (20 Holz + 12 Stein, 720 Ticks Bau, verbraucht 3 Fleisch + 2 Holz zu 1 Räucherfleisch in 900 Ticks) — beide über denselben Datenpool und dieselbe Produktionsmaschine, ohne Code-Sonderfall.
+
 ## 6. RT Pyramide
 
 Die Architektur ist eine echte Pyramide mit modularer Spitze. Basis: `Welt_Model` haelt nur Daten. Darueber: Registries halten alle exakten Datenklassen zentral und zeigen je Eintrag auf ein sichtbares Asset, Logiken und Modifikatoren sind generisch wiederverwendbar. Darueber: State Maschinen und Mutationsmaschinen mit je genau einer Verantwortung. Spitze: Endszene `world/scenes/welt.tscn` komponiert alle Untersysteme, besitzt aber selbst keine Logik und wird durch die Untersysteme modular bestimmt. `prototyp_karte.*` wurde restlos entfernt.

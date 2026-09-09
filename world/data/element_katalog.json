@@ -15,5 +15,6 @@
   {"id": "vogelgruppe", "name": "Vogelgruppe", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/vogelgruppe.svg", "frame_breite": 48, "frame_hoehe": 64},
   {"id": "eisbaer", "name": "Eisbär", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/eisbaer.svg", "frame_breite": 48, "frame_hoehe": 72, "logik_id": "baer_verfolgen", "modifikator_id": "aggressiv", "faktor": 1.2},
   {"id": "busch", "name": "Busch", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/terrain/busch.svg", "arbeits_ressource": "holz", "logik_id": "ressource_holz", "modifikator_id": "normal", "faktor": 1.0},
-  {"id": "werkstatt", "name": "Werkstatt", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/werkstatt.svg"}
+  {"id": "werkstatt", "name": "Werkstatt", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/werkstatt.svg"},
+  {"id": "raeucherei", "name": "Räucherei", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/raeucherei.svg"}
 ]

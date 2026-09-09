@@ -46,6 +46,15 @@
         "werkzeug": "keines",
         "logik_id": "bauen",
         "gebaeude_id": "werkstatt"
+      },
+      {
+        "id": "bauen_raeucherei",
+        "label": "Bauen: Räucherei",
+        "icon_pfad": "res://world/assets/terrain/raeucherei.svg",
+        "tooltip": "Kostet 20 Holz und 12 Stein, raeuchert 3 Fleisch und 2 Holz zu Räucherfleisch, Werkzeug {werkzeug} wird nicht benoetigt",
+        "werkzeug": "keines",
+        "logik_id": "bauen",
+        "gebaeude_id": "raeucherei"
       }
     ]
   },

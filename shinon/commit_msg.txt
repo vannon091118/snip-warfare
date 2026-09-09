@@ -1,4 +1,7 @@
-1. Du wolltest, dass die drei Editor-Befunde in der Eingabe-Steuerung nicht ignoriert, sondern wirklich bereinigt werden, und Shinon hat jede Meldung an ihrem Ort aufgelöst.
-2. Die beiden toten Signale in ui_eingabe_steuerung.gd wurden entfernt, weil sie nirgends verbunden oder emittiert wurden und die Karten-Ansicht ihre Umschaltung bereits direkt über die Methode karten_umschalten steuert.
-3. Der Eingabe-Parameter in ui_eingabe_steuerung.gd wurde von klick_position in klick_ermitteln umbenannt, damit er nicht mehr die gleichnamige Klassenfunktion verschattet und der Compiler keine Schattenwarnung mehr meldet.
-4. Der Headless-Lauf meldet nach der Bereinigung keine Fehler- oder Warnzeilen mehr, und der Preflight bleibt in den geprüften Kategorien grün.
+1. Du wolltest, dass die Lösung wirklich konfigurationsgetrieben ist und ein neues Gebäude ohne Änderung an der Produktionsmaschine eingebunden werden kann, und Shinon hat mit der Räucherei den zweiten Beweis durch denselben Datenpool und dieselbe Registry geführt.
+2. Die Gebäude-Konfiguration in gebaeude.json führt jetzt die Räucherei mit eigenen Baukosten, eigener Bauzeit und eigenem Rezept, das drei Fleisch und zwei Holz in neunhundert Ticks zu einem Räucherfleisch verwandelt.
+3. Die Ressourcen-Konfiguration in ressourcen.json führt die neue Ausgangsressource Räucherfleisch mit eigener Farbe, und die beiden neuen Bilddateien in raeucherei.svg und ressource_raeuchelfleisch.svg stellen Gebäude und Ressource sichtbar dar.
+4. Der Element-Katalog in element_katalog.json registriert die Räucherei als Gebäude mit ihrer Textur, und die Steuerung in steuerung.json öffnet die neue Bau-Aktion im Kontextmenü mit Icon und Werkzeug-Platzhalter im Tooltip.
+5. Der Lauf-Beweis in lauf_pruefung_welt.gd führt die Räucherei durch dieselbe Bau- und Produktionsmaschine wie die Werkstatt und bestätigt, dass die Maschinen keinerlei Code-Eingriff für die zweite Kette brauchen.
+6. Die Architektur in Architektur.md beschreibt jetzt die Produktionsökonomie mit Datenbesitzern, Maschinen, Koordination und beiden aktiven Ketten als eingefrorene Baseline.
+7. Übrig bleibt der sichtbare Spielbeweis mit HUD, Kostenfluss und Speicher-Rundlauf, der im laufenden Godot-Spiel stattfindet.
