@@ -8,9 +8,11 @@ SnipWarfare ist ein eigenstaendiges Projekt mit eigener Identitaet. Kein Ableger
 
 Du fuehrst kleine Figuren durch eine grosse Karte, sammelst, baust, schickst Tiere auf die Flucht oder in den Topf und haeltst die Welt am Laufen waehrend die Uhr tickt. Klingt niedlich. Ist Arbeit. Und genau deshalb tickt hier alles ueber 24 ticks pro sekunde ueber Kern_Weltuhr als einzigem globalen tick. Kein Wildwuchs. Ein Takt fuer alle. Wenn du denkst hier laeuft irgendwas nebenbei dann irrst du dich herzlich.
 
-Der Stand heute ist spielbar und gleichzeitig Baustelle. 13 Katalog Elemente und 5 Tierarten sind bereits registriert, jedes davon nur gueltig wenn es auf ein echtes Asset zeigt. Keine Grafik keine Existenz. Ich lasse nichts durch das unsichtbar bleibt. Falls ein Bild fehlt bastle ich dir einen Platzhalter damit du siehst wo du schuldig bist und nicht ich.
+Der Stand heute ist spielbar und gleichzeitig Baustelle. 18 Katalog Elemente und 5 Tierarten sind bereits registriert, jedes davon nur gueltig wenn es auf ein echtes Asset zeigt. Keine Grafik keine Existenz. Ich lasse nichts durch das unsichtbar bleibt. Falls ein Bild fehlt bastle ich dir einen Platzhalter damit du siehst wo du schuldig bist und nicht ich.
 
-Die Szenen sind einfach. Prototyp Karte fuer das eigentliche Spiel und Karten Editor fuer deine Weltideen. Beide sind da. Der Rest ist Logik, sauber getrennt, getestet, nicht geraten.
+Und die Dinge bewegen sich inzwischen, falls du es noch nicht bemerkt hast. Der Busch wiegt im Wind, das Lagerfeuer flackert, die Werkstatt arbeitet und die Raeucherei raucht, alles ueber denselben 24er Takt der Weltuhr und nur wenn die Registry es erlaubt. Ein Holzfaeler faellt nicht einen Baum und steht dann ratlos da: Er laeuft zum naechsten und zum uebernaechsten weiter, solange es Baeume gibt. Das ist kein Zauber, das ist ein Loop der nie hart in den Idle kippt.
+
+Die Szenen sind einfach. Das Hauptmenue laeutet jede Reise ueber eine Zwischen-Szene ein, dann kommt die Welt-Szene mit Kamera und Karte, und der Karten Editor wartet fuer deine Weltideen. Der Rest ist Logik, sauber getrennt, getestet, nicht geraten.
 
 ## Wie du es steuerst
 
@@ -30,7 +32,7 @@ Style agnostisch heisst fuer mich du kannst das hier malern wie du willst. Braun
 
 Ich bin zynisch und humorvoll und das ist kein Widerspruch. Ich lobe dich passiv wenn du aufräumst. Ich bin sarkastisch wenn du Bugs hinterlaesst. Ich bin nihilistisch wenn du ein Feature halb baust und euphorisch wenn du es zu Ende bringst. Und ja ich rede ueber dich waehrend du das hier liest.
 
-Technisch laeuft das Ganze auf config/features=PackedStringArray("4.7", "GL Compatibility"). python tools/preflight.py mit shinon gate E030 bis E036 haelt das Gate. Shinon heisst ich. Das Gate im Root heisst auch ich und es ist streng. Kein Banner. Kein Bullet. Nur nummerierte ganze Saetze wenn du committest. Und keine Sorge du musst das nicht auswendig lernen. Ich pruefe dich. Staendig.
+Technisch laeuft das Ganze auf config/features=PackedStringArray("4.7", "GL Compatibility"). python tools/preflight.py mit shinon gate E030 bis E039 haelt das Gate. Shinon heisst ich. Das Gate im Root heisst auch ich und es ist streng. Kein Banner. Kein Bullet. Keine Endlos-Saetze die mit und dann und dann weitermachen. Nur nummerierte ganze Saetze wenn du committest. Und keine Sorge du musst das nicht auswendig lernen. Ich pruefe dich. Staendig.
 
 Diese Readme halte ich lebendig. Sie erzaehlt dir immer den aktuellen Zustand fuer Spieler, nicht fuer Aktenordner. Wenn sich das Projekt bewegt bewegt sie sich mit. Versprochen. Und wenn nicht dann schreie ich E035 bis du mich wieder fuetterst. Glaub mir du willst nicht dass ich schreie.
 
