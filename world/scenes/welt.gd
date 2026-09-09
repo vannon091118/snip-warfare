@@ -44,7 +44,6 @@ var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
-@onready var _spieler: Node2D = %Spieler
 @onready var _tiere: Tier_Manager = %Tiere
 @onready var _hud: VBoxContainer = %HUD
 @onready var _rechteck: Control = %AuswahlRechteck
@@ -63,9 +62,8 @@ func _ready() -> void:
 	_tier_platzierer.platzieren(_model, _registry, _tiere)
 	var start_position := Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
 	_kamera_steuerung.einrichten(_steuerung, _model, start_position)
+	_tiere.spieler_position_setzen(_kamera_steuerung.kamera_position)
 	_kamera.position = _kamera_steuerung.kamera_position
-	# Spieler-Sprite ist nur noch Kamera-Anker, keine Spielfigur mehr.
-	_spieler.position = _kamera_steuerung.kamera_position
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
 	_ressourcen.lager_setzen(_lager)
 	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
@@ -138,7 +136,7 @@ func _input(ereignis: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	_kamera_steuerung.kamera_bewegen(delta, _kamera)
-	_spieler.position = _kamera_steuerung.kamera_position
+	_tiere.spieler_position_setzen(_kamera.position)
 	# RTS-Prinzip: Kamera und Einheiten sind entkoppelt. Stickmen bewegen
 	# sich ausschließlich über Jobs (Einheit_Status + Rathaus/Orchestrator),
 	# niemals durch unmittelbares Setzen ihrer Position pro Frame.

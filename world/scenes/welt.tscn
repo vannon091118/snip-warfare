@@ -3,7 +3,6 @@
 [ext_resource type="Script" path="res://world/scenes/welt.gd" id="1_karte"]
 [ext_resource type="Script" path="res://world/logic/kategorie_welt/welt_renderer.gd" id="2_renderer"]
 [ext_resource type="Script" path="res://world/logic/kategorie_tier/tier_manager.gd" id="3_tiere"]
-[ext_resource type="Texture2D" path="res://world/assets/ui/strichmaennchen_stehend.svg" id="4_spieler"]
 [ext_resource type="Script" path="res://ui/scenes/hud/hud_leiste.gd" id="5_hudleiste"]
 [ext_resource type="Script" path="res://ui/scenes/hud/hud_ressourcen_leiste.gd" id="6_ressourcen"]
 [ext_resource type="Script" path="res://ui/scenes/hud/hud_job_anzeige.gd" id="7_jobanzeige"]
@@ -22,13 +21,6 @@ script = ExtResource("2_renderer")
 [node name="Tiere" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("3_tiere")
-
-[node name="Spieler" type="Node2D" parent="."]
-unique_name_in_owner = true
-
-[node name="SpielerBild" type="Sprite2D" parent="Spieler"]
-texture = ExtResource("4_spieler")
-offset = Vector2(0, -30)
 
 [node name="Kamera" type="Camera2D" parent="."]
 unique_name_in_owner = true

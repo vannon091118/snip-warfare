@@ -90,9 +90,8 @@ func region_materialisieren(model: Welt_Model, region_x: int, region_y: int) -> 
 	var region := _finde_region(model, region_x, region_y)
 	if region.is_empty():
 		return false
-	var biom_wahl := str(region.get("biom_id", "gemaaessigt"))
-	var kacheln := CHUNK_GROESSE * CHUNK_GROESSE
-	var chunk_pro_region := REGION_KANTE / CHUNK_GROESSE
+	var biom_wahl := str(region.get("biom_id", "gemaaessigt"))		var kacheln := CHUNK_GROESSE * CHUNK_GROESSE
+		var chunk_pro_region := int(float(REGION_KANTE) / float(CHUNK_GROESSE))
 	for dy in chunk_pro_region:
 		for dx in chunk_pro_region:
 			var chunk := Vector2i(region_x * chunk_pro_region + dx, region_y * chunk_pro_region + dy)
