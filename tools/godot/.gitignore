@@ -1,0 +1,4 @@
+# Godot Binaries: relativer Pfad, nicht ins Repo
+*.exe
+*.pck
+.cache/
