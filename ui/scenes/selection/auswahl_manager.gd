@@ -32,7 +32,7 @@ func ziehen_ende(position: Vector2, einheit_zahl: int, position_leser: Callable)
 		ziehen_aktiv = false
 		ziehen_start = Vector2.INF
 		return ergebnis
-	var rect := Rect2(zieren_start, position - ziehen_start).abs()
+	var rect := Rect2(ziehen_start, position - ziehen_start).abs()
 	for idx in einheit_zahl:
 		var pos: Vector2 = position_leser.call(idx)
 		if rect.has_point(pos):
