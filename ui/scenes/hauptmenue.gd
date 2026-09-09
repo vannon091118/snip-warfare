@@ -71,16 +71,13 @@ func _process(delta: float) -> void:
 			laeufer.position.x = GRENZE_RECHTS
 
 func _auf_start() -> void:
-	var speicher := Welt_Speicher.new()
-	if speicher.welt_namen().is_empty():
-		# Keine gespeicherte Welt: Start öffnet direkt die Prototyp-Karte.
-		WeltSitzung.welt_name = ""
-		WeltSitzung.kommt_vom_editor = false
-		get_tree().change_scene_to_file(SZENE_KARTE)
-	else:
-		# Vorhandene Welten: Start öffnet die Weltauswahl wie Laden.
-		_wechsle_zu(Ui_MenueZustaende.Zustand.WELT_AUSWAHL_LADEN)
-		_dialog_laden.popup_centered()
+	# Neues Spiel heißt immer neue Welt: Unabhängig von gespeicherten
+	# Welten wird frisch aus dem Generator mit zufälligem Seed erzeugt.
+	# Laden bleibt ausschließlich dem Laden-Knopf vorbehalten.
+	WeltSitzung.welt_name = ""
+	WeltSitzung.seed_wunsch = 0
+	WeltSitzung.kommt_vom_editor = false
+	get_tree().change_scene_to_file(SZENE_KARTE)
 
 func _auf_laden() -> void:
 	_wechsle_zu(Ui_MenueZustaende.Zustand.WELT_AUSWAHL_LADEN)
