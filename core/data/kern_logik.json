@@ -1,47 +1,47 @@
 {
   "baer_verfolgen": {
-    "name": "Bär Verfolgen",
-    "beschreibung": "Geht auf die Spielereinheit zu und hält Aufhalte-Abstand.",
-    "verhalten": "verfolgen",
-    "basis_faktor": 1.0
+	"name": "Bär Verfolgen",
+	"beschreibung": "Geht auf die Spielereinheit zu und hält Aufhalte-Abstand.",
+	"verhalten": "verfolgen",
+	"basis_faktor": 1.0
   },
   "hase_flucht": {
-    "name": "Hase Flucht",
-    "beschreibung": "Hoppelt kurz auf und rennt am Boden davon.",
-    "verhalten": "flucht_boden",
-    "basis_faktor": 1.0
+	"name": "Hase Flucht",
+	"beschreibung": "Hoppelt kurz auf und rennt am Boden davon.",
+	"verhalten": "flucht_boden",
+	"basis_faktor": 1.0
   },
   "vogel_flucht": {
-    "name": "Vogel Flucht",
-    "beschreibung": "Steigt schräg nach oben und blendet danach aus.",
-    "verhalten": "wegfliegen",
-    "basis_faktor": 1.0
+	"name": "Vogel Flucht",
+	"beschreibung": "Steigt schräg nach oben und blendet danach aus.",
+	"verhalten": "wegfliegen",
+	"basis_faktor": 1.0
   },
   "vogelgruppe_flucht": {
-    "name": "Vogelgruppe Flucht",
-    "beschreibung": "Wie Vogel, längerer Fade, Keilformation.",
-    "verhalten": "wegfliegen",
-    "basis_faktor": 1.0
+	"name": "Vogelgruppe Flucht",
+	"beschreibung": "Wie Vogel, längerer Fade, Keilformation.",
+	"verhalten": "wegfliegen",
+	"basis_faktor": 1.0
   },
   "ressource_holz": {
-    "name": "Holz gewinnen",
-    "beschreibung": "Holzfäller erntet Holz am Baum.",
-    "verhalten": "ernte_fix",
-    "ressource": "holz",
-    "basis_faktor": 1.0
+	"name": "Holz gewinnen",
+	"beschreibung": "Holzfäller erntet Holz am Baum.",
+	"verhalten": "ernte_fix",
+	"ressource": "holz",
+	"basis_faktor": 1.0
   },
   "ressource_stein": {
-    "name": "Stein gewinnen",
-    "beschreibung": "Steinmetz erntet Stein.",
-    "verhalten": "ernte_fix",
-    "ressource": "stein",
-    "basis_faktor": 1.0
+	"name": "Stein gewinnen",
+	"beschreibung": "Steinmetz erntet Stein.",
+	"verhalten": "ernte_fix",
+	"ressource": "stein",
+	"basis_faktor": 1.0
   },
   "ressource_fleisch": {
-    "name": "Fleisch gewinnen",
-    "beschreibung": "Jäger erntet Fleisch am Tier.",
-    "verhalten": "ernte_fix",
-    "ressource": "fleisch",
-    "basis_faktor": 1.0
+	"name": "Fleisch gewinnen",
+	"beschreibung": "Jäger erntet Fleisch am Tier.",
+	"verhalten": "ernte_fix",
+	"ressource": "fleisch",
+	"basis_faktor": 1.0
   }
 }

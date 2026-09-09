@@ -1,13 +1,4 @@
-1. Du wolltest, dass der vorhandene Welt- und Generatorbestand zu einer hierarchischen deterministischen Weltstruktur zusammengeführt wird, und Shinon hat zuerst den laufenden Pfad gescannt statt nach einem neuen Generator zu rufen.
-2. Die Welt besitzt jetzt genau einen autoritativen Seed im welt_model, der zusammen mit dem Zustand gespeichert wird, und keine Szene und keine Region darf sich eine eigene zweite Wahrheit ausdenken.
-3. Der Ladevorgang in welt_ladevorgang zieht den Zufalls-Seed nicht mehr aus der Uhrzeit, sondern leitet ihn deterministisch aus dem bestehenden Weltbestand und dem Namen ab, damit gleiche Eingaben immer dieselbe Welt ergeben.
-4. Die Zufallszuständigkeit in kern_zufall wurde um ortsfeste Ableitungen für Regionen und Chunks erweitert, sodass gleicher Seed plus gleiche Koordinate immer denselben Teilzustand liefert.
-5. Der Generator in welt_generator plant jede Region aus ihrer eigenen ortsfesten Ableitung und füllt jeden Chunk aus seiner eigenen Chunk-Ableitung, wodurch die Erzeugungsreihenfolge das Ergebnis nicht mehr verändern kann.
-6. Die Verteilungsmaschine in generator_verteilung zieht Einträge jetzt mit expliziter Zufallsquelle, damit die Regionen und Chunks reproduzierbar dieselben Lose erhalten wie in der vollständigen Welt.
-7. Eine neue Weltdefinition in welt_definition.json hält maximale und minimale Kartengröße, Kachelgröße, Chunkgröße und Regionkante als reine Daten, und die neue welt_definition_registry leitet daraus die Lokalkartengröße deterministisch aus dem Seed ab.
-8. Eine neue Grenzprofil-Maschine in welt_grenz_profil leitet Nachbarschaften ausschließlich aus der Koordinatenstruktur ab und liefert das Randprofil zwischen Regionen ohne manuelles Nachbarschafts-Array.
-9. Die Variante Busch wurde über den Datenpool in element_katalog und generator_gewichte sowie als neue Busch-SVG eingebracht und erscheint im Generator, ohne dass eine bestehende Maschine dafür erweitert wurde.
-10. Der Preflight in preflight.py wacht jetzt mit eigenen Mustern über zeitbasierte Seedquellen und zweite Zufallswelten und führt eine eigene Welt-Kategorie für diese Driftprüfungen.
-11. Der Lauf-Beweis in lauf_pruefung_welt prüft nun zusätzlich die Kartengröße aus Daten, die Einzelreproduzierbarkeit einer Region und die Registry-Variante Busch, und alle Prüfungen sind im Headless-Lauf grün.
-12. Die Architekturdokumentation beschreibt jetzt die echte Welt-Hierarchie, den Seedbesitzer, die Datenquelle der Größen und die Erweiterungsgrenzen, sodass niemand mehr aus der Doku eine Wunschwelt liest.
-13. Übrig bleibt, die Kartenansicht und den Editor auf die neue Weltdefinition umzustellen und die Lokalkarten nach Bedarf über die Materialisierungsfunktionen nachzuziehen, ohne die gehärtete Generator-Kette anzufassen.
+1. Die beiden letzten Restdateien aus demselben Lauf werden jetzt mitgenommen, damit der Arbeitsstand vollständig auf main landet und nichts Fremdes zurückbleibt.
+2. Die Logik-Sammlung in kern_logik.json wurde nur geglättet, indem Einrückungen vereinheitlicht wurden, ohne dass sich ein einziger Wert oder ein Verhalten verändert hat.
+3. Die Job-Basis in job_basis.gd bekam am Ende der Datei nur die fehlende Abschlusszeile, sodass die Datei sauber endet und keine Warnung mehr erzeugt.
+4. Damit ist der Welt-Konsolidierungsauftrag inklusive aller Begleitdateien aus diesem Lauf vollständig eingefroren und gepusht.
