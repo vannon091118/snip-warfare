@@ -51,19 +51,13 @@ func blockiert_job(job_id: String) -> String:
 	return ""
 
 func effektive_geschwindigkeit(basis_geschwindigkeit: float) -> float:
-	var wert := basis_geschwindigkeit
-	for mod in aktive_modifikatoren:
-		wert *= mod.faktor
-		if mod.attribute_modifikation.has("geschwindigkeit"):
-			wert += float(mod.attribute_modifikation["geschwindigkeit"])
-	return maxf(wert, 0.1)
+	# Trait-Boni laufen über die zentrale Modifikator-Logik; diese Maschine
+	# rechnet nichts selbst, sie delegiert nur ihre aktiven Modifikatoren.
+	return Kern_ModifikatorMaschine.wert_berechnen(basis_geschwindigkeit, aktive_modifikatoren, 0.1)
 
 func effektive_tragekraft(basis_tragekraft: int) -> int:
-	var wert := basis_tragekraft
-	for mod in aktive_modifikatoren:
-		if mod.attribute_modifikation.has("tragekraft"):
-			wert += int(mod.attribute_modifikation["tragekraft"])
-	return maxi(wert, 0)
+	# Dieselbe zentrale Formel wie bei der Geschwindigkeit, nur ganzzahlig.
+	return int(Kern_ModifikatorMaschine.wert_berechnen(float(basis_tragekraft), aktive_modifikatoren, 0.0))
 
 func schaden_nehmen(schaden: int, zufall: Kern_Zufall, art: String = "physisch") -> int:
 	# Zieht Lebenspunkte ab, meldet Schaden über den Kern-Bus und würfelt

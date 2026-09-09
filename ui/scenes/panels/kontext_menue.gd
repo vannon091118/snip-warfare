@@ -19,6 +19,16 @@ func einrichten(steuerung: Kern_SteuerungRegistry) -> void:
 	eintraege_aufbauen()
 	if not id_pressed.is_connected(_auf_id):
 		id_pressed.connect(_auf_id)
+	if not about_to_popup.is_connected(_auf_oeffnen):
+		about_to_popup.connect(_auf_oeffnen)
+
+func _auf_oeffnen() -> void:
+	# Menü-Gegenprüfung: Das Öffnen meldet sich über den Signalbus; die
+	# Modifikator-Maschinen aktualisieren daraufhin ihre Faktoren, damit
+	# Anzeige und Zeiten präzise zum aktuellen Balancing passen.
+	var bus := Kern_SignalBus.bus()
+	if bus != null:
+		bus._emit_menue_geoeffnet()
 
 func eintraege_aufbauen() -> void:
 	clear()

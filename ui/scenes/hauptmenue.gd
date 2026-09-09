@@ -29,6 +29,15 @@ func _ready() -> void:
 	_dialog_laden.welt_gewaehlt.connect(_auf_welt_geladen)
 	_dialog_editor.welt_gewaehlt.connect(_auf_editor_welt_gewaehlt)
 	_erzeuge_laeufer()
+	_menue_gegenpruefung()
+
+func _menue_gegenpruefung() -> void:
+	# Menü-Gegenprüfung: Das Öffnen meldet sich über den Signalbus, damit
+	# die Modifikator-Maschinen ihre Faktoren neu ziehen und die Anzeige
+	# zum aktuellen Balancing passt.
+	var bus := Kern_SignalBus.bus()
+	if bus != null:
+		bus._emit_menue_geoeffnet()
 
 func _erzeuge_laeufer() -> void:
 	var textur_rechts: Texture2D = load("res://world/assets/ui/laeufer_rechts.svg")
@@ -84,10 +93,12 @@ func _auf_start() -> void:
 func _auf_laden() -> void:
 	_wechsle_zu(Ui_MenueZustaende.Zustand.WELT_AUSWAHL_LADEN)
 	_dialog_laden.popup_centered()
+	_menue_gegenpruefung()
 
 func _auf_editor() -> void:
 	_wechsle_zu(Ui_MenueZustaende.Zustand.WELT_AUSWAHL_EDITOR)
 	_dialog_editor.popup_centered()
+	_menue_gegenpruefung()
 
 func _auf_welt_geladen(welt_name: String) -> void:
 	WeltSitzung.welt_name = welt_name

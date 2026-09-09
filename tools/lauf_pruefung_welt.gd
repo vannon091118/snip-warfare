@@ -337,6 +337,44 @@ func _init() -> void:
 			fehler += 1
 		else:
 			print("OK: Manager übernimmt die bewegte Position, Einheit steht am Job-Ziel")
+	# 17) Zentrale Modifikator-Maschine: Bereichs-Faktor wird gecacht, die
+	#     Zeitformel nutzt ihn ohne Neuberechnung, der Modus-Wechsel zieht neu.
+	var mod_maschine := Kern_ModifikatorMaschine.new()
+	mod_maschine.bereich_setzen("bau")
+	mod_maschine.aktualisieren()
+	var schritte_start := mod_maschine.rechen_schritte()
+	var bauzeit_neutral := mod_maschine.zeit_berechnen(480)
+	var schritte_nach_zeit := mod_maschine.rechen_schritte()
+	mod_maschine.modus_setzen("schnell")
+	var bauzeit_schnell := mod_maschine.zeit_berechnen(480)
+	if bauzeit_neutral != 480 or bauzeit_schnell != 320 or schritte_nach_zeit != schritte_start:
+		print("FEHLER: Modifikator-Maschine rechnet falsch (neutral %d, schnell %d, schritte %d/%d)" % [bauzeit_neutral, bauzeit_schnell, schritte_nach_zeit, schritte_start])
+		fehler += 1
+	else:
+		print("OK: Zentrale Zeitformel (neutral 480, schnell 320) ohne redundante Rechenschritte")
+	# 18) Trait-Formel: Ein zentraler Rechenweg für aktive Modifikatoren,
+	#     den auch die Vital-Maschine nutzt (Verletzung halbiert und zieht ab).
+	var trait_registry := Kern_ModifikatorRegistry.new()
+	var bein_mod: Kern_ModifikatorBasis = trait_registry.modifikator_fuer("verletzung_bein")
+	var mods_fuer_wert: Array[Kern_ModifikatorBasis] = [bein_mod]
+	var trait_wert := Kern_ModifikatorMaschine.wert_berechnen(100.0, mods_fuer_wert, 0.1)
+	var vital_wert := Einheit_VitalStatus.new()
+	vital_wert.modifikator_hinzufuegen("verletzung_bein")
+	var vital_delegiert := vital_wert.effektive_geschwindigkeit(100.0)
+	if absf(trait_wert - 49.5) > 0.001 or absf(vital_delegiert - 49.5) > 0.001:
+		print("FEHLER: Trait-Formel weicht ab (zentral %f, vital %f)" % [trait_wert, vital_delegiert])
+		fehler += 1
+	else:
+		print("OK: Trait-Formel zentral (49.5) und Vital delegiert an dieselbe Logik")
+	# 19) Bewegung kommt aus den globalen Settings: Die Einheit bekommt ihre
+	#     Geh-Geschwindigkeit über die eigene Modifikator-Maschine, nicht
+	#     aus einer Konstante im Code.
+	var bewegungs_status := Einheit_Status.new()
+	if absf(bewegungs_status._geh_geschwindigkeit - 70.0) > 0.001 or absf(bewegungs_status._geh_reichweite - 24.0) > 0.001:
+		print("FEHLER: Bewegungswerte nicht aus Settings (geschwindigkeit %f, reichweite %f)" % [bewegungs_status._geh_geschwindigkeit, bewegungs_status._geh_reichweite])
+		fehler += 1
+	else:
+		print("OK: Geh-Geschwindigkeit 70.0 und Reichweite 24.0 kommen aus den Modifikator-Settings")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

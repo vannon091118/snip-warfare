@@ -1,0 +1,25 @@
+{
+  "_kommentar": "Globale Modifikator-Settings je Zuständigkeitsbereich. Jede State-Maschine hält ihre eigene Kern_ModifikatorMaschine, die genau einen Bereich liest. Der Modus verweist auf einen Modifikator aus kern_modifikatoren.json (normal, schnell, langsam, aggressiv). Zeit = Basis-Ticks geteilt durch Faktor, Geschwindigkeit = Basis mal Faktor. Balancing ändert nur diese Datei, nie den Code.",
+  "global": {
+    "faktor": 1.0
+  },
+  "bereiche": {
+    "bau": {
+      "modus": "normal",
+      "faktor_min": 0.5,
+      "faktor_max": 2.0
+    },
+    "produktion": {
+      "modus": "normal",
+      "faktor_min": 0.5,
+      "faktor_max": 2.0
+    },
+    "bewegung": {
+      "modus": "normal",
+      "faktor_min": 0.5,
+      "faktor_max": 2.0,
+      "basis_geschwindigkeit": 70.0,
+      "basis_reichweite": 24.0
+    }
+  }
+}

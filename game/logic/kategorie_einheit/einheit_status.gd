@@ -38,11 +38,13 @@ var vital: Einheit_VitalStatus = Einheit_VitalStatus.new()
 var _job_queue: Array[Dictionary] = []
 
 ## Bewegung: Der GEHEN-Zustand bewegt die Einheit in der Welt (kein Teleport),
-## die Geschwindigkeit kommt aus der zentralen Steuerungskonfiguration.
+## Geschwindigkeit und Reichweite kommen aus den globalen Modifikator-Settings
+## über die eigene Modifikator-Maschine, nie aus Konstanten im Code.
 var welt_position := Vector2.ZERO
 var _geh_ziel := Vector2.ZERO
-var _geh_geschwindigkeit := 70.0
-var _geh_reichweite := 24.0
+var _geh_geschwindigkeit := 0.0
+var _geh_reichweite := 0.0
+var _modifikatoren := Kern_ModifikatorMaschine.new()
 
 ## Kategorie logik: Jobvergabe mit Vitalprüfung, Arbeitsloop und Vitaltick.
 
@@ -218,8 +220,19 @@ func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
 	zustand_geaendert.emit(neuer_zustand)
 
 func _init() -> void:
+	# Die eigene Modifikator-Maschine liest den Bereich Bewegung aus den
+	# globalen Settings; bei einer Menü-Gegenprüfung werden Geschwindigkeit
+	# und Reichweite übernommen, ohne pro Tick neu zu rechnen.
+	_modifikatoren.bereich_setzen("bewegung")
+	_modifikatoren.aktualisieren()
+	_modifikatoren.aktualisiert.connect(_bewegungswerte_uebernehmen)
+	_bewegungswerte_uebernehmen()
 	# Der Tod der Vital-Maschine endet den Job und meldet nach oben.
 	vital.gestorben.connect(_auf_eigenen_tod)
+
+func _bewegungswerte_uebernehmen() -> void:
+	_geh_geschwindigkeit = _modifikatoren.geschwindigkeit_berechnen(_modifikatoren.basis_wert("basis_geschwindigkeit", 70.0))
+	_geh_reichweite = _modifikatoren.basis_wert("basis_reichweite", 24.0)
 
 func _auf_eigenen_tod(welt_position: Vector2) -> void:
 	var bus := Kern_SignalBus.bus()
