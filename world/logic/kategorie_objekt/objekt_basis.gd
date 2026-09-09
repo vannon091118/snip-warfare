@@ -16,6 +16,7 @@ var arbeits_ressource: String = ""
 var logik_id: String = ""
 var modifikator_id: String = "normal"
 var faktor: float = 1.0
+var funktions_animation: String = ""
 var schluessel_daten: Dictionary = {}
 
 func aus_katalog_eintrag(eintrag: Dictionary) -> void:
@@ -31,6 +32,9 @@ func aus_katalog_eintrag(eintrag: Dictionary) -> void:
 	logik_id = str(eintrag.get("logik_id", ""))
 	modifikator_id = str(eintrag.get("modifikator_id", "normal"))
 	faktor = float(eintrag.get("faktor", 1.0))
+	# Funktions-Animation als Registry-Name aus game/data/animationen.json:
+	# Der Darsteller entscheidet daraus, ob er das Objekt animiert malt.
+	funktions_animation = str(eintrag.get("funktions_animation", ""))
 	schluessel_daten = eintrag.duplicate()
 
 func ticks_fuer_faktor() -> int:

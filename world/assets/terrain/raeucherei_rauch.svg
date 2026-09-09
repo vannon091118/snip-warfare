@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 144" width="640" height="144">
+  <!-- Räucherei: Funktions-Animation "raeuchern" in 4 Frames à 160x144. -->
+  <!-- Frame 1 ist exakt das Standbild raeucherei.svg; der Rauch steigt ab Frame 2 -->
+  <!-- über dem eigenen Schornstein auf und folgt der Papierwolke aus haus.svg. -->
+  <!-- Nur Rauchformen tragen ein opacity-Attribut, alle Standformen sind deckend. -->
+
+  <!-- Frame 1: Grundhaltung, kleiner Rauchknoten am Topf (identisch mit raeucherei.svg) -->
+  <g transform="translate(0 0)">
+    <ellipse cx="78" cy="136" rx="60" ry="8" fill="#7A9549"/>
+    <ellipse cx="79" cy="134.5" rx="57" ry="7" fill="#8FAB58"/>
+    <path fill="#8A6240" d="M 32 132 L 32 84 Q 32 80 36 80 L 124 80 Q 128 80 128 84 L 128 132 Q 128 136 124 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="#A87F52" d="M 32 132 L 32 84 Q 32 80 36 80 L 58 80 Q 56 94 56 110 Q 56 126 58 132 Q 58 136 62 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 84 80 L 84 136"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 108 80 L 108 136"/>
+    <path fill="#5C4028" d="M 84 136 L 84 106 Q 84 102 88 102 L 102 102 Q 106 102 106 106 L 106 136 Z"/>
+    <path fill="#8A6240" d="M 88 136 L 88 108 L 102 108 L 102 136 Z"/>
+    <circle cx="99" cy="120" r="2" fill="#C89B6C"/>
+    <path fill="#F6F1E4" d="M 44 100 L 66 100 L 66 104 L 44 104 Z"/>
+    <path fill="#D9B183" d="M 44 100 L 66 100 L 66 102 L 44 102 Z"/>
+    <path fill="none" stroke="#D9B183" stroke-width="2" stroke-linecap="round" d="M 44 122 L 60 122 L 60 114"/>
+    <path fill="#6E675D" d="M 28 136 L 26 128 L 34 124 L 126 124 L 134 128 L 132 136 Q 131 140 124 140 L 36 140 Q 29 140 28 136 Z"/>
+    <path fill="#8B8478" d="M 30 134 L 29 128 L 36 125 L 124 125 L 130 128 L 129 134 Q 128 137 123 137 L 37 137 Q 31 137 30 134 Z"/>
+    <path fill="#6D4A31" d="M 112 80 L 112 56 L 124 56 L 124 80 Z"/>
+    <path fill="#8A6240" d="M 112 78 L 112 56 L 115 56 L 115 78 Z"/>
+    <path fill="#CFC9BE" d="M 109 55 L 113 50 L 123 50 L 127 55 Q 127 57 125 57 L 111 57 Q 109 57 109 55 Z"/>
+    <path fill="#F6F1E4" d="M 114 46 Q 108 42 112 36 Q 116 30 124 32 Q 132 34 130 40 Q 128 46 120 46 Z"/>
+  </g>
+
+  <!-- Frame 2: Rauchstoß, Wolke wächst über dem Schornstein -->
+  <g transform="translate(160 0)">
+    <ellipse cx="78" cy="136" rx="60" ry="8" fill="#7A9549"/>
+    <ellipse cx="79" cy="134.5" rx="57" ry="7" fill="#8FAB58"/>
+    <path fill="#8A6240" d="M 32 132 L 32 84 Q 32 80 36 80 L 124 80 Q 128 80 128 84 L 128 132 Q 128 136 124 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="#A87F52" d="M 32 132 L 32 84 Q 32 80 36 80 L 58 80 Q 56 94 56 110 Q 56 126 58 132 Q 58 136 62 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 84 80 L 84 136"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 108 80 L 108 136"/>
+    <path fill="#5C4028" d="M 84 136 L 84 106 Q 84 102 88 102 L 102 102 Q 106 102 106 106 L 106 136 Z"/>
+    <path fill="#8A6240" d="M 88 136 L 88 108 L 102 108 L 102 136 Z"/>
+    <circle cx="99" cy="120" r="2" fill="#C89B6C"/>
+    <path fill="#F6F1E4" d="M 44 100 L 66 100 L 66 104 L 44 104 Z"/>
+    <path fill="#D9B183" d="M 44 100 L 66 100 L 66 102 L 44 102 Z"/>
+    <path fill="none" stroke="#D9B183" stroke-width="2" stroke-linecap="round" d="M 44 122 L 60 122 L 60 114"/>
+    <path fill="#6E675D" d="M 28 136 L 26 128 L 34 124 L 126 124 L 134 128 L 132 136 Q 131 140 124 140 L 36 140 Q 29 140 28 136 Z"/>
+    <path fill="#8B8478" d="M 30 134 L 29 128 L 36 125 L 124 125 L 130 128 L 129 134 Q 128 137 123 137 L 37 137 Q 31 137 30 134 Z"/>
+    <path fill="#6D4A31" d="M 112 80 L 112 56 L 124 56 L 124 80 Z"/>
+    <path fill="#8A6240" d="M 112 78 L 112 56 L 115 56 L 115 78 Z"/>
+    <path fill="#CFC9BE" d="M 109 55 L 113 50 L 123 50 L 127 55 Q 127 57 125 57 L 111 57 Q 109 57 109 55 Z"/>
+    <path fill="#F6F1E4" d="M 112 36 Q 106 32 110 26 Q 114 20 122 22 Q 130 24 128 30 Q 126 36 118 36 Z"/>
+    <path fill="#FBF6E8" d="M 122 22 Q 120 18 124 16 Q 128 14 131 17 Q 133 20 130 23 Q 126 25 122 22 Z"/>
+  </g>
+
+  <!-- Frame 3: Hoher Rauch, zwei Wolkenschichten weit oben -->
+  <g transform="translate(320 0)">
+    <ellipse cx="78" cy="136" rx="60" ry="8" fill="#7A9549"/>
+    <ellipse cx="79" cy="134.5" rx="57" ry="7" fill="#8FAB58"/>
+    <path fill="#8A6240" d="M 32 132 L 32 84 Q 32 80 36 80 L 124 80 Q 128 80 128 84 L 128 132 Q 128 136 124 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="#A87F52" d="M 32 132 L 32 84 Q 32 80 36 80 L 58 80 Q 56 94 56 110 Q 56 126 58 132 Q 58 136 62 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 84 80 L 84 136"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 108 80 L 108 136"/>
+    <path fill="#5C4028" d="M 84 136 L 84 106 Q 84 102 88 102 L 102 102 Q 106 102 106 106 L 106 136 Z"/>
+    <path fill="#8A6240" d="M 88 136 L 88 108 L 102 108 L 102 136 Z"/>
+    <circle cx="99" cy="120" r="2" fill="#C89B6C"/>
+    <path fill="#F6F1E4" d="M 44 100 L 66 100 L 66 104 L 44 104 Z"/>
+    <path fill="#D9B183" d="M 44 100 L 66 100 L 66 102 L 44 102 Z"/>
+    <path fill="none" stroke="#D9B183" stroke-width="2" stroke-linecap="round" d="M 44 122 L 60 122 L 60 114"/>
+    <path fill="#6E675D" d="M 28 136 L 26 128 L 34 124 L 126 124 L 134 128 L 132 136 Q 131 140 124 140 L 36 140 Q 29 140 28 136 Z"/>
+    <path fill="#8B8478" d="M 30 134 L 29 128 L 36 125 L 124 125 L 130 128 L 129 134 Q 128 137 123 137 L 37 137 Q 31 137 30 134 Z"/>
+    <path fill="#6D4A31" d="M 112 80 L 112 56 L 124 56 L 124 80 Z"/>
+    <path fill="#8A6240" d="M 112 78 L 112 56 L 115 56 L 115 78 Z"/>
+    <path fill="#CFC9BE" d="M 109 55 L 113 50 L 123 50 L 127 55 Q 127 57 125 57 L 111 57 Q 109 57 109 55 Z"/>
+    <path fill="#F6F1E4" d="M 112 22 Q 106 18 110 12 Q 114 6 122 8 Q 130 10 128 16 Q 126 22 118 22 Z"/>
+    <path fill="#FBF6E8" d="M 120 12 Q 118 8 122 6 Q 126 4 129 7 Q 131 10 128 13 Q 124 15 120 12 Z"/>
+  </g>
+
+  <!-- Frame 4: Ablauf, alte Wolke verblasst, neuer Nachstoß am Topf -->
+  <g transform="translate(480 0)">
+    <ellipse cx="78" cy="136" rx="60" ry="8" fill="#7A9549"/>
+    <ellipse cx="79" cy="134.5" rx="57" ry="7" fill="#8FAB58"/>
+    <path fill="#8A6240" d="M 32 132 L 32 84 Q 32 80 36 80 L 124 80 Q 128 80 128 84 L 128 132 Q 128 136 124 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="#A87F52" d="M 32 132 L 32 84 Q 32 80 36 80 L 58 80 Q 56 94 56 110 Q 56 126 58 132 Q 58 136 62 136 L 36 136 Q 32 136 32 132 Z"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 84 80 L 84 136"/>
+    <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 108 80 L 108 136"/>
+    <path fill="#5C4028" d="M 84 136 L 84 106 Q 84 102 88 102 L 102 102 Q 106 102 106 106 L 106 136 Z"/>
+    <path fill="#8A6240" d="M 88 136 L 88 108 L 102 108 L 102 136 Z"/>
+    <circle cx="99" cy="120" r="2" fill="#C89B6C"/>
+    <path fill="#F6F1E4" d="M 44 100 L 66 100 L 66 104 L 44 104 Z"/>
+    <path fill="#D9B183" d="M 44 100 L 66 100 L 66 102 L 44 102 Z"/>
+    <path fill="none" stroke="#D9B183" stroke-width="2" stroke-linecap="round" d="M 44 122 L 60 122 L 60 114"/>
+    <path fill="#6E675D" d="M 28 136 L 26 128 L 34 124 L 126 124 L 134 128 L 132 136 Q 131 140 124 140 L 36 140 Q 29 140 28 136 Z"/>
+    <path fill="#8B8478" d="M 30 134 L 29 128 L 36 125 L 124 125 L 130 128 L 129 134 Q 128 137 123 137 L 37 137 Q 31 137 30 134 Z"/>
+    <path fill="#6D4A31" d="M 112 80 L 112 56 L 124 56 L 124 80 Z"/>
+    <path fill="#8A6240" d="M 112 78 L 112 56 L 115 56 L 115 78 Z"/>
+    <path fill="#CFC9BE" d="M 109 55 L 113 50 L 123 50 L 127 55 Q 127 57 125 57 L 111 57 Q 109 57 109 55 Z"/>
+    <path fill="#F6F1E4" d="M 114 36 Q 108 32 112 26 Q 116 20 124 22 Q 132 24 130 30 Q 128 36 120 36 Z" opacity="0.75"/>
+    <path fill="#F6F1E4" d="M 114 48 Q 110 45 112 41 Q 115 37 121 39 Q 126 41 124 45 Q 122 49 116 48 Z"/>
+  </g>
+</svg>

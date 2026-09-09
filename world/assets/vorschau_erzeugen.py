@@ -13,6 +13,14 @@ ORDNER_TERRAIN = ORDNER_HIER / "terrain"
 ORDNER_TIERE = ORDNER_HIER / "tiere"
 ORDNER_UI = ORDNER_HIER / "ui"
 
+# Funktions-Animationen der Objekte: Sprite-Sheets mit 4 Frames je Objektgröße
+VORSCHAU_ANIMATIONEN = [
+    ("werkstatt_grind.svg", "Werkstatt grind (4 Frames)", 160, 144),
+    ("raeucherei_rauch.svg", "Räucherei räuchern (4 Frames)", 160, 144),
+    ("lagerfeuer_flackern.svg", "Lagerfeuer flackern (4 Frames)", 128, 128),
+    ("busch_wehen.svg", "Busch wehen (4 Frames)", 96, 88),
+]
+
 # Reihenfolge und Beschriftung der Einzel-Assets
 EINZEL_ASSETS = [
     ("baum.svg", "Baum", 128, 160),
@@ -126,6 +134,12 @@ SEITEN_VORLAGE = """<!DOCTYPE html>
 
 <div class="karte">
   <div class="reihe">
+{animationen}
+  </div>
+</div>
+
+<div class="karte">
+  <div class="reihe">
 {haeuser}
   </div>
 </div>
@@ -182,6 +196,9 @@ def baue_gruppe(asset_liste, ordner=None):
 def baue_einzel():
     return baue_gruppe(EINZEL_ASSETS)
 
+def baue_animationen():
+    return baue_gruppe(VORSCHAU_ANIMATIONEN)
+
 def baue_haeuser():
     return baue_gruppe(HAUSER)
 
@@ -205,12 +222,13 @@ def baue_kacheln():
 
 def hauptprogramm():
     svg_einzel = baue_einzel()
+    svg_animationen = baue_animationen()
     svg_haeuser = baue_haeuser()
     svg_tiere = baue_tiere()
     svg_figuren = baue_figuren()
     svg_icons = baue_icons()
     svg_kacheln = baue_kacheln()
-    seite = SEITEN_VORLAGE.format(einzel=svg_einzel, haeuser=svg_haeuser, tiere=svg_tiere, figuren=svg_figuren, icons=svg_icons, kacheln=svg_kacheln)
+    seite = SEITEN_VORLAGE.format(einzel=svg_einzel, animationen=svg_animationen, haeuser=svg_haeuser, tiere=svg_tiere, figuren=svg_figuren, icons=svg_icons, kacheln=svg_kacheln)
     ziel = ORDNER_HIER / "vorschau.html"
     with ziel.open("w", encoding="utf-8") as datei:
         datei.write(seite)

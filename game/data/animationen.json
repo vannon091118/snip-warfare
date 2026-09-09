@@ -28,5 +28,41 @@
     "ticks_pro_frame": 2,
     "schleife": true,
     "geschwindigkeit_faktor": 1.0
+  },
+  "grind": {
+    "sheet_pfad": "res://world/assets/terrain/werkstatt_grind.svg",
+    "frame_breite": 160,
+    "frame_hoehe": 144,
+    "frames": 4,
+    "ticks_pro_frame": 4,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
+  },
+  "raeuchern": {
+    "sheet_pfad": "res://world/assets/terrain/raeucherei_rauch.svg",
+    "frame_breite": 160,
+    "frame_hoehe": 144,
+    "frames": 4,
+    "ticks_pro_frame": 6,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
+  },
+  "flackern": {
+    "sheet_pfad": "res://world/assets/terrain/lagerfeuer_flackern.svg",
+    "frame_breite": 128,
+    "frame_hoehe": 128,
+    "frames": 4,
+    "ticks_pro_frame": 2,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
+  },
+  "wehen": {
+    "sheet_pfad": "res://world/assets/terrain/busch_wehen.svg",
+    "frame_breite": 96,
+    "frame_hoehe": 88,
+    "frames": 4,
+    "ticks_pro_frame": 5,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
   }
 }

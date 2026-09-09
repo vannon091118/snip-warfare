@@ -5,20 +5,28 @@ class_name Welt_Renderer
 ## Editor beim Drag & Drop nicht die ganze Karte neu zeichnet.
 ## Enthält keine Simulationslogik und keine Zustandsübergänge.
 ## Er liest ausschließlich die Datenklassen (Objekt_Basis und Unterklassen).
+## Funktions-Animationen von Objekten laufen über den zentralen
+## Welt_ObjektDarsteller, den die Registry-Einträge steuern.
+
+const OBJEKT_DARSTELLER_SKRIPT := preload("res://world/logic/kategorie_welt/welt_objekt_darsteller.gd")
 
 var _model: Welt_Model
 var _registry: Welt_Registry
 var _biome: Welt_BiomRegistry = null
 var _fliesen_knoten: Node2D
 var _objekte_knoten: Node2D
+var _objekt_darsteller: Welt_ObjektDarsteller
 
 func _ready() -> void:
 	_fliesen_knoten = Node2D.new()
 	_fliesen_knoten.name = "Fliesen"
 	_objekte_knoten = Node2D.new()
 	_objekte_knoten.name = "Objekte"
+	_objekt_darsteller = OBJEKT_DARSTELLER_SKRIPT.new()
+	_objekt_darsteller.name = "ObjektDarsteller"
 	add_child(_fliesen_knoten)
 	add_child(_objekte_knoten)
+	add_child(_objekt_darsteller)
 
 func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegistry = null) -> void:
 	_model = model
@@ -48,6 +56,11 @@ func objekt_knoten_anhaengen(index: int) -> Sprite2D:
 	sprite.texture = _textur_fuer(_model.objekt_element_id(index))
 	sprite.position = _model.objekt_position(index)
 	_objekte_knoten.add_child(sprite)
+	# Funktions-Animation über die zentrale Objekt-Darstellungs-Spitze:
+	# Nur Einträge mit Registry-Animation erhalten ein Bewegtbild; das
+	# Standbild bleibt immer der erste Frame desselben Sheets.
+	if eintrag != null and _objekt_darsteller != null:
+		_objekt_darsteller.objekt_darstellen(eintrag, sprite.position)
 	return sprite
 
 func objekt_knoten_verschieben(index: int, neue_position: Vector2) -> void:
@@ -59,6 +72,8 @@ func objekt_knoten_entfernen(index: int) -> void:
 	if index < 0 or index >= _objekte_knoten.get_child_count():
 		return
 	_objekte_knoten.get_child(index).queue_free()
+	if _objekt_darsteller != null:
+		_objekt_darsteller.objekt_entfernen(_model.objekt_position(index))
 
 func objekt_knoten_anzahl() -> int:
 	return _objekte_knoten.get_child_count()
@@ -80,6 +95,13 @@ func _textur_fuer(element_id: String) -> Texture2D:
 		atlas.atlas = textur
 		atlas.region = Rect2(0, 0, float(objekt.schluessel_daten["frame_breite"]), float(objekt.schluessel_daten["frame_hoehe"]))
 		return atlas
+	# Funktions-Animation: das Standbild bleibt der erste Frame des Sheets,
+	# damit Editor, Vorschau und Karte dasselbe Bild zeigen.
+	if objekt.funktions_animation != "":
+		var anim_atlas := AtlasTexture.new()
+		anim_atlas.atlas = textur
+		anim_atlas.region = Rect2(0, 0, objekt.anzeige_breite, objekt.anzeige_hoehe)
+		return anim_atlas
 	return textur
 
 func _biom_farbe_fuer_kachel(x: int, y: int) -> Color:
@@ -109,6 +131,9 @@ func _fliesen_erneuern() -> void:
 func _objekte_erneuern() -> void:
 	for kind: Node in _objekte_knoten.get_children():
 		kind.queue_free()
+	if _objekt_darsteller != null:
+		for kind: Node in _objekt_darsteller.get_children():
+			kind.queue_free()
 	if _model == null:
 		return
 	for index in _model.objekt_anzahl():

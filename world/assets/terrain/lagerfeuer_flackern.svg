@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 128" width="512" height="128">
+  <!-- Lagerfeuer: Funktions-Animation in 4 Frames à 128x128, Papier-Flammen flackern -->
+  <!-- Frame 1: Grundflamme mittig -->
+  <g transform="translate(0 0)">
+    <ellipse cx="64" cy="116" rx="42" ry="7" fill="#7A9549"/>
+    <ellipse cx="65" cy="114.5" rx="38" ry="5.6" fill="#8FAB58"/>
+    <g fill="#6D4A31">
+      <ellipse cx="38" cy="106" rx="10" ry="6" transform="rotate(-18 38 106)"/>
+      <ellipse cx="90" cy="106" rx="10" ry="6" transform="rotate(18 90 106)"/>
+      <ellipse cx="64" cy="110" rx="34" ry="10"/>
+    </g>
+    <path fill="#8A6240" d="M 30 108 Q 34 103 42 104 Q 46 105 45 110 Q 40 113 32 112 Z"/>
+    <path fill="#8A6240" d="M 98 108 Q 94 103 86 104 Q 82 105 83 110 Q 88 113 96 112 Z"/>
+    <ellipse cx="38" cy="106" rx="4" ry="2.6" transform="rotate(-18 38 106)" fill="#C89B6C"/>
+    <ellipse cx="90" cy="106" rx="4" ry="2.6" transform="rotate(18 90 106)" fill="#C89B6C"/>
+    <path fill="#D06528" d="M 64 94 C 50 78 46 60 64 32 C 82 60 78 78 64 94 Z"/>
+    <path fill="#FFC93A" d="M 64 86 C 57 74 55 64 64 48 C 73 64 71 74 64 86 Z"/>
+    <path fill="#FFF2B8" d="M 64 80 C 60 72 60 66 64 57 C 68 66 68 72 64 80 Z"/>
+    <path fill="none" stroke="#FFF2B8" stroke-width="2" stroke-linecap="round" d="M 56 84 C 52 72 52 60 60 46"/>
+  </g>
+
+  <!-- Frame 2: Flamme links geneigt, Schein tief -->
+  <g transform="translate(128 0)">
+    <ellipse cx="64" cy="116" rx="42" ry="7" fill="#7A9549"/>
+    <ellipse cx="65" cy="114.5" rx="38" ry="5.6" fill="#8FAB58"/>
+    <g fill="#6D4A31">
+      <ellipse cx="38" cy="106" rx="10" ry="6" transform="rotate(-18 38 106)"/>
+      <ellipse cx="90" cy="106" rx="10" ry="6" transform="rotate(18 90 106)"/>
+      <ellipse cx="64" cy="110" rx="34" ry="10"/>
+    </g>
+    <path fill="#8A6240" d="M 30 108 Q 34 103 42 104 Q 46 105 45 110 Q 40 113 32 112 Z"/>
+    <path fill="#8A6240" d="M 98 108 Q 94 103 86 104 Q 82 105 83 110 Q 88 113 96 112 Z"/>
+    <ellipse cx="38" cy="106" rx="4" ry="2.6" transform="rotate(-18 38 106)" fill="#C89B6C"/>
+    <ellipse cx="90" cy="106" rx="4" ry="2.6" transform="rotate(18 90 106)" fill="#C89B6C"/>
+    <path fill="#D06528" d="M 60 94 C 44 80 40 62 54 38 C 68 62 72 80 60 94 Z"/>
+    <path fill="#FFC93A" d="M 60 86 C 52 76 50 66 58 52 C 66 64 68 76 60 86 Z"/>
+    <path fill="#FFF2B8" d="M 60 80 C 56 72 56 66 60 58 C 64 66 64 72 60 80 Z"/>
+    <path fill="none" stroke="#FFF2B8" stroke-width="2" stroke-linecap="round" d="M 52 84 C 48 72 48 62 54 50"/>
+  </g>
+
+  <!-- Frame 3: Flamme hoch und schmal -->
+  <g transform="translate(256 0)">
+    <ellipse cx="64" cy="116" rx="42" ry="7" fill="#7A9549"/>
+    <ellipse cx="65" cy="114.5" rx="38" ry="5.6" fill="#8FAB58"/>
+    <g fill="#6D4A31">
+      <ellipse cx="38" cy="106" rx="10" ry="6" transform="rotate(-18 38 106)"/>
+      <ellipse cx="90" cy="106" rx="10" ry="6" transform="rotate(18 90 106)"/>
+      <ellipse cx="64" cy="110" rx="34" ry="10"/>
+    </g>
+    <path fill="#8A6240" d="M 30 108 Q 34 103 42 104 Q 46 105 45 110 Q 40 113 32 112 Z"/>
+    <path fill="#8A6240" d="M 98 108 Q 94 103 86 104 Q 82 105 83 110 Q 88 113 96 112 Z"/>
+    <ellipse cx="38" cy="106" rx="4" ry="2.6" transform="rotate(-18 38 106)" fill="#C89B6C"/>
+    <ellipse cx="90" cy="106" rx="4" ry="2.6" transform="rotate(18 90 106)" fill="#C89B6C"/>
+    <path fill="#D06528" d="M 64 94 C 54 76 52 52 64 22 C 76 52 74 76 64 94 Z"/>
+    <path fill="#FFC93A" d="M 64 86 C 58 74 57 60 64 40 C 71 60 70 74 64 86 Z"/>
+    <path fill="#FFF2B8" d="M 64 80 C 61 70 61 62 64 50 C 67 62 67 70 64 80 Z"/>
+    <path fill="none" stroke="#FFF2B8" stroke-width="2" stroke-linecap="round" d="M 57 84 C 54 70 54 56 60 42"/>
+  </g>
+
+  <!-- Frame 4: Flamme rechts geneigt -->
+  <g transform="translate(384 0)">
+    <ellipse cx="64" cy="116" rx="42" ry="7" fill="#7A9549"/>
+    <ellipse cx="65" cy="114.5" rx="38" ry="5.6" fill="#8FAB58"/>
+    <g fill="#6D4A31">
+      <ellipse cx="38" cy="106" rx="10" ry="6" transform="rotate(-18 38 106)"/>
+      <ellipse cx="90" cy="106" rx="10" ry="6" transform="rotate(18 90 106)"/>
+      <ellipse cx="64" cy="110" rx="34" ry="10"/>
+    </g>
+    <path fill="#8A6240" d="M 30 108 Q 34 103 42 104 Q 46 105 45 110 Q 40 113 32 112 Z"/>
+    <path fill="#8A6240" d="M 98 108 Q 94 103 86 104 Q 82 105 83 110 Q 88 113 96 112 Z"/>
+    <ellipse cx="38" cy="106" rx="4" ry="2.6" transform="rotate(-18 38 106)" fill="#C89B6C"/>
+    <ellipse cx="90" cy="106" rx="4" ry="2.6" transform="rotate(18 90 106)" fill="#C89B6C"/>
+    <path fill="#D06528" d="M 68 94 C 84 80 88 62 74 38 C 60 62 56 80 68 94 Z"/>
+    <path fill="#FFC93A" d="M 68 86 C 76 76 78 66 70 52 C 62 64 60 76 68 86 Z"/>
+    <path fill="#FFF2B8" d="M 68 80 C 72 72 72 66 68 58 C 64 66 64 72 68 80 Z"/>
+    <path fill="none" stroke="#FFF2B8" stroke-width="2" stroke-linecap="round" d="M 76 84 C 80 72 80 62 74 50"/>
+  </g>
+</svg>

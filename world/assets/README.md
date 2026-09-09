@@ -16,6 +16,14 @@ Dieser Ordner enthält die modularen SVG-Assets der Prototyp-Karte im Papierschn
 | `terrain/steine_gruppe.svg` | Steingruppe 160x104 aus großem Stein, kleinem Stein und Splitter |
 | `terrain/haus.svg` | Haus 160x144 mit Satteldach, Tür, Fenster, Schornstein und Papier-Rauch |
 | `terrain/haus_gross.svg` | Großes Haus 208x160 mit zwei Fenstern und Bogen-Tür |
+| `terrain/werkstatt.svg` | Werkstatt 160x144 als Papier-Pultdach-Halle mit Tor, Fenster, Schornstein, Stamm und Werkzeugplan |
+| `terrain/werkstatt_grind.svg` | Werkstatt-Funktions-Animation "grind", 4 Frames à 160x144; Frame 1 ist das Standbild, der Werkzeugplan schlägt und Papierstaub fällt (nur Bewegungsformen tragen opacity) |
+| `terrain/raeucherei.svg` | Räucherei 160x144 als Holzzylinder auf Steinsockel mit Tür, Schlitz, Hakenzeichen und eigenem Schornstein |
+| `terrain/raeucherei_rauch.svg` | Räucherei-Funktions-Animation "raeuchern", 4 Frames à 160x144; Rauchstöße in der Papierwolken-Sprache aus haus.svg |
+| `terrain/lagerfeuer.svg` | Lagerfeuer 128x128 mit drei Papier-Scheiten und dreischichtiger Papierflamme |
+| `terrain/lagerfeuer_flackern.svg` | Lagerfeuer-Funktions-Animation "flackern", 4 Frames à 128x128; Flamme neigt, streckt und legt sich, Scheite und Schatten stehen still |
+| `terrain/busch.svg` | Busch 96x88 aus drei Papierschichten mit Bodenschatten und ausgeschnittenem Blatt |
+| `terrain/busch_wehen.svg` | Busch-Funktions-Animation "wehen", 4 Frames à 96x88; Kronenschichten wiegen sich wie im Wind, Erdpunkt bleibt fixiert |
 | `ui/laeufer_rechts.svg` | Strichmännchen-Gangzyklus, 4 Frames à 48x64 auf 192x64, Laufrichtung rechts |
 | `ui/laeufer_links.svg` | Gleicher Gangzyklus gespiegelt, Laufrichtung links |
 | `ui/idle_rechts.svg` | Idle-Animation, 4 Frames à 48x64, Atmung und Wiegen; Füße bleiben an derselben Stelle |
@@ -30,7 +38,7 @@ Dieser Ordner enthält die modularen SVG-Assets der Prototyp-Karte im Papierschn
 | `tiere/hase.svg` | Hase, 4 Frames à 32x72 auf 128x72, Flucht-Hoppeln |
 | `tiere/vogel.svg` | Vogel, 4 Frames à 32x64 auf 128x64, Flügelschlag |
 | `tiere/vogelgruppe.svg` | Vogelgruppe, 4 Frames à 48x64 auf 192x64, Keilformation |
-| `vorschau.html` | Generierte Vorschau-Seite mit allen Assets |
+| `vorschau.html` | Generierte Vorschau-Seite mit allen Assets inklusive Funktions-Animationen |
 | `vorschau_erzeugen.py` | Generator-Skript für die Vorschau-Seite |
 
 ## Stilregeln
@@ -97,6 +105,21 @@ Dieser Ordner enthält die modularen SVG-Assets der Prototyp-Karte im Papierschn
 | Stein-Icon | `#B9B2A2` / `#C4BCAA` / `#D8D2C2` / `#DDD6C6` |
 | Fleisch-Icon | `#C75B39` / `#E0876A` / `#FBF6E8` |
 
+## Funktions-Animationen der Weltobjekte (Registry)
+
+Weltobjekte können eine Funktions-Animation tragen. Der Name steht im Element-Katalog (`world/data/element_katalog.json`, Feld `funktions_animation`) und zeigt auf einen Eintrag in der zentralen Animations-Registry `game/data/animationen.json`; dort liegen Sheet-Pfad, Frame-Größe, Frame-Anzahl und `ticks_pro_frame`. Optional drosselt `funktions_takt_faktor` den Animationstakt je Objekt (0.4 bedeutet: die Flamme flackert langsamer als der Registry-Standard).
+
+Die Kette ist fest: Katalog-Eintrag -> `Objekt_Basis` liest `funktions_animation` -> `Welt_Renderer` erzeugt für das Standbild den ersten Frame des Sheets -> `Welt_ObjektDarsteller` (`world/logic/kategorie_welt/welt_objekt_darsteller.gd`) schneidet alle Frames aus `sheet_pfad` und spielt sie mit 24 geteilt durch `ticks_pro_frame` Animationsschritten pro Sekunde ab, gekoppelt an die 24 Ticks der Weltuhr. Ein Objekt ohne Registry-Eintrag wird nie animiert; es gibt keine versteckte Aktivierung.
+
+Regeln für Funktions-Animationen: Frame 1 ist immer exakt das Standbild, damit Editor, Vorschau und Karte dasselbe Bild zeigen. Bewegung entsteht nur durch Formen, die zusätzlich gezeichnet werden oder versetzt werden; alle Formen, die nur im Bewegungsframe existieren, tragen ein opacity-Attribut. Es gibt keine eigenständige Darsteller-Zeit: Nur die zentrale Weltuhr treibt die Abspielgeschwindigkeit.
+
+| Objekt | Animation | Funktion |
+| --- | --- | --- |
+| Werkstatt | grind | Arbeit am Werkstück: Werkzeugplan schlägt, Papierstaub fällt |
+| Räucherei | raeuchern | Produktion: Rauchstöße über dem eigenen Schornstein |
+| Lagerfeuer | flackern | Wärmequelle: Flamme flackert im Feuertakt |
+| Busch | wehen | Natur: Kronenschichten wiegen sich im Wind |
+
 ## Tiere und Verhalten (Trigger-Zonen)
 
 Die Tierverhalten stehen in `world/data/tier_verhalten.json` und werden nicht hart codiert:
@@ -147,6 +170,7 @@ Die Tierbewegung läuft ebenfalls über den globalen Tick (Weltuhr, 24 Ticks/Sek
 - Keine fest einprogrammierten Werte in Logikdateien: Werte stehen in den SVG-Dateien, in `element_katalog.json` bzw. in den Tabellen dieser Dokumentation.
 - Neue Assets folgen denselben Stilregeln und werden in `vorschau_erzeugen.py` ergänzt, sodass die Vorschau sie automatisch anzeigt.
 - Sprite-Sheets für Animationen haben immer vier Frames nebeneinander mit gleicher Frame-Breite (48 Pixel beim Strichmännchen); Godot schneidet die Frames über AtlasTexture aus.
+- Funktions-Animationen der Objekte nutzen dieselbe Frame-Größe wie das zugehörige Standbild, und Frame 1 entspricht dem Standbild; die Standbilddatei selbst enthält keine Bewegungsformen.
 - Animations-Frames der Spielfigur verankern die Füße an denselben Punkten (y = 58 in den Grund-Frames); Bewegung entsteht nie innerhalb der Animation.
 
 ## Struktur der Spieldomänen (Stand dieses Schritts)

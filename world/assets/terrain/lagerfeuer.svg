@@ -1,17 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-  <ellipse cx="64" cy="118" rx="44" ry="8" fill="#7A9549" opacity="0.5"/>
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="64" cy="116" rx="42" ry="7" fill="#7A9549"/>
+  <ellipse cx="65" cy="114.5" rx="38" ry="5.6" fill="#8FAB58"/>
+
+  <!-- Holzstapel: drei Papierscheite mit hellem Schnittende -->
   <g fill="#6D4A31">
-    <ellipse cx="38" cy="108" rx="10" ry="6" transform="rotate(-18 38 108)"/>
-    <ellipse cx="90" cy="108" rx="10" ry="6" transform="rotate(18 90 108)"/>
-    <ellipse cx="64" cy="112" rx="34" ry="10"/>
+    <ellipse cx="38" cy="106" rx="10" ry="6" transform="rotate(-18 38 106)"/>
+    <ellipse cx="90" cy="106" rx="10" ry="6" transform="rotate(18 90 106)"/>
+    <ellipse cx="64" cy="110" rx="34" ry="10"/>
   </g>
-  <g fill="#E07A2E">
-    <path d="M 64 96 C 52 80 48 62 64 36 C 80 62 76 80 64 96 Z"/>
+  <path fill="#8A6240" d="M 30 108 Q 34 103 42 104 Q 46 105 45 110 Q 40 113 32 112 Z"/>
+  <path fill="#8A6240" d="M 98 108 Q 94 103 86 104 Q 82 105 83 110 Q 88 113 96 112 Z"/>
+  <ellipse cx="38" cy="106" rx="4" ry="2.6" transform="rotate(-18 38 106)" fill="#C89B6C"/>
+  <ellipse cx="90" cy="106" rx="4" ry="2.6" transform="rotate(18 90 106)" fill="#C89B6C"/>
+
+  <!-- Flamme: drei gestapelte Papierschichten, Licht oben -->
+  <g fill="#D06528">
+    <path d="M 64 94 C 50 78 46 60 64 32 C 82 60 78 78 64 94 Z"/>
   </g>
   <g fill="#FFC93A">
-    <path d="M 64 88 C 58 76 56 66 64 52 C 72 66 70 76 64 88 Z"/>
+    <path d="M 64 86 C 57 74 55 64 64 48 C 73 64 71 74 64 86 Z"/>
   </g>
   <g fill="#FFF2B8">
-    <path d="M 64 82 C 60 74 60 68 64 60 C 68 68 68 74 64 82 Z"/>
+    <path d="M 64 80 C 60 72 60 66 64 57 C 68 66 68 72 64 80 Z"/>
   </g>
+
+  <!-- Geschnittene Papierkante an der Flammenseite: heller Saum -->
+  <path fill="none" stroke="#FFF2B8" stroke-width="2" stroke-linecap="round" d="M 56 84 C 52 72 52 60 60 46"/>
 </svg>

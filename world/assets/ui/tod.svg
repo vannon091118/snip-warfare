@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-  <!-- Tod: Grabkreuz, Anzeige des Endes einer Einheit oder eines Tieres -->
+  <!-- Tod: Grabkreuz aus zwei Papierschichten, helle Oberkante wie beim Schaden-Icon -->
   <rect x="10.5" y="3" width="3" height="18" fill="#3A3A40"/>
   <rect x="5" y="7.5" width="14" height="3" fill="#3A3A40"/>
-  <rect x="10.5" y="3" width="3" height="18" fill="#55555E"/>
+  <rect x="10.5" y="3" width="1.2" height="18" fill="#55555E"/>
 </svg>

@@ -1,1 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="8" fill="#4a7a3a"/><circle cx="20" cy="28" r="14" fill="#6fa86f"/><circle cx="44" cy="30" r="12" fill="#5a9a4a"/><circle cx="32" cy="44" r="10" fill="#7ab87a"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 88" width="96" height="88">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="46" cy="80" rx="32" ry="7" fill="#7A9549"/>
+  <ellipse cx="47" cy="78.5" rx="29" ry="6" fill="#8FAB58"/>
+
+  <!-- Unterste Papierschicht: dunkel, schaut unten links hervor -->
+  <g fill="#4E7434">
+    <circle cx="20" cy="56" r="13"/>
+    <circle cx="32" cy="46" r="17"/>
+    <circle cx="52" cy="42" r="18"/>
+    <circle cx="72" cy="52" r="14"/>
+    <circle cx="58" cy="60" r="12"/>
+    <rect x="20" y="50" width="56" height="20"/>
+  </g>
+
+  <!-- Mittlere Papierschicht, nach oben versetzt -->
+  <g fill="#5E8A3E">
+    <circle cx="26" cy="50" r="11"/>
+    <circle cx="38" cy="40" r="14"/>
+    <circle cx="56" cy="38" r="14"/>
+    <circle cx="70" cy="48" r="10"/>
+    <circle cx="46" cy="54" r="10"/>
+    <rect x="26" y="44" width="44" height="18"/>
+  </g>
+
+  <!-- Oberste Papierschicht, von der Sonne aufgehellt -->
+  <g fill="#7AA84E">
+    <circle cx="34" cy="44" r="9"/>
+    <circle cx="48" cy="38" r="10"/>
+    <circle cx="60" cy="46" r="8"/>
+    <rect x="34" y="42" width="28" height="13"/>
+  </g>
+
+  <!-- Geschnittene Papierkante: heller Saum an der obersten Schicht -->
+  <path fill="none" stroke="#94C464" stroke-width="2" stroke-linecap="round" d="M 27 46 C 31 38 38 34 46 33"/>
+  <path fill="none" stroke="#94C464" stroke-width="2" stroke-linecap="round" d="M 64 52 C 58 55 52 54 48 51"/>
+
+  <!-- Ausgeschnittenes Papierblatt am Rand -->
+  <path fill="#7AA84E" d="M 74 34 C 81 28 89 27 93 32 C 90 38 82 41 75 39 Z"/>
+</svg>
