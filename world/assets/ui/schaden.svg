@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+  <!-- Schaden: gebrochener Riss im Schild, Anzeige eines Treffers -->
+  <path d="M12 2 L20 5 V12 C20 17 16 21 12 22 C8 21 4 17 4 12 V5 Z" fill="#8B1A12" stroke="#5E0F09" stroke-width="1.5"/>
+  <path d="M12 4 L10 10 L13 12 L11 18" stroke="#F2D5C9" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>

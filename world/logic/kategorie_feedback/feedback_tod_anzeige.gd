@@ -1,33 +1,29 @@
 extends Node2D
-class_name Welt_PlusAnzeige
-## Visuelles Feedback einer abgeschlossenen Arbeit (Preflight-Gate E022):
-## Jede Aktion zeigt am Ziel-Objekt das passende Ressourcen-Icon und einen
-## +X Zähler (Menge des Jobs). Die Registries liefern über logik_id und
-## faktor die Logik; die Anzeige schwebt tick-basiert nach oben und verblasst.
+class_name Welt_TodAnzeige
+## Visuelles Feedback eines Todes-Ereignisses: Sie zeigt am Ziel ein
+## Kreuz-Icon mit Typ, schwebt tick-basiert nach oben und verblasst.
+## Sie liest nur die Weltuhr und ändert keinen Zustand.
 
 ## Kategorie daten: der anzuzeigende Zustand.
-var ressource: String = ""
-var menge: int = 0
-var icon_pfad: String = ""
+var typ: String = "tier"
+var war_einheit: bool = false
+var icon_pfad: String = "res://world/assets/ui/tod.svg"
 var _start_position := Vector2.ZERO
 var _verbleibende_ticks: int = 0
 var _gesamt_ticks: int = 0
-var _tick_nummer: int = 0
 
 ## Kategorie logik: Lebenszyklus der Anzeige.
-const DAUER_FAKTOR := 0.09
+const DAUER_FAKTOR := 0.125
 const HUB_HOEHE := 48.0
-const BEWEGUNG_PRO_TICK := 38.0 / 24.0
-const SKALIERUNG_MAX := 0.12
+const BEWEGUNG_PRO_TICK := 30.0 / 24.0
 
 @onready var _icon: TextureRect = null
 @onready var _label: Label = null
 @onready var _kasten: HBoxContainer = null
 
-func einrichten(ressource_id: String, menge_erhalten: int, icon: String, welt_position: Vector2) -> void:
-	ressource = ressource_id
-	menge = menge_erhalten
-	icon_pfad = icon
+func einrichten(typ_erhalten: String, einheit_gefallen: bool, welt_position: Vector2) -> void:
+	typ = typ_erhalten
+	war_einheit = einheit_gefallen
 	_start_position = welt_position + Vector2(0, -HUB_HOEHE)
 	position = _start_position
 	_verbleibende_ticks = Kern_Weltuhr.ticks_aus_faktor(DAUER_FAKTOR)
@@ -46,16 +42,16 @@ func _ready() -> void:
 		_icon.texture = load(icon_pfad)
 	_kasten.add_child(_icon)
 	_label = Label.new()
-	_label.text = "+%d" % menge
+	_label.text = "✝ %s" % typ
 	_label.add_theme_font_size_override("font_size", 20)
-	_label.add_theme_color_override("font_color", Color(0.23, 0.25, 0.20, 1.0))
+	_label.add_theme_color_override("font_color", Color(0.12, 0.12, 0.14, 1.0))
 	_label.add_theme_color_override("font_outline_color", Color(1, 1, 1, 0.92))
 	_label.add_theme_constant_override("outline_size", 5)
 	_kasten.add_child(_label)
 	var schatten := ColorRect.new()
 	schatten.color = Color(0, 0, 0, 0.10)
-	schatten.custom_minimum_size = Vector2(56, 20)
-	schatten.position = Vector2(-28, 6)
+	schatten.custom_minimum_size = Vector2(88, 20)
+	schatten.position = Vector2(-44, 6)
 	schatten.z_index = -1
 	add_child(schatten)
 	move_child(schatten, 0)
@@ -64,14 +60,13 @@ func _enter_tree() -> void:
 	Kern_Weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	Kern_Weltuhr.tick.disconnect(_auf_tick)
+	if Kern_Weltuhr.tick.is_connected(_auf_tick):
+		Kern_Weltuhr.tick.disconnect(_auf_tick)
 
-func _auf_tick(tick_nummer: int, delta: float) -> void:
-	_tick_nummer = tick_nummer
+func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 	_verbleibende_ticks -= 1
 	var anteil: float = 1.0 - float(_verbleibende_ticks) / float(_gesamt_ticks)
 	position.y -= BEWEGUNG_PRO_TICK
 	modulate.a = 1.0 - anteil
-	scale = Vector2.ONE * (1.0 + anteil * SKALIERUNG_MAX)
 	if _verbleibende_ticks <= 0:
 		queue_free()

@@ -11,7 +11,10 @@
     "harvest_menge": 10,
     "reichweite": 140.0,
     "sammel_auf_flaeche": true,
-    "loop": true
+    "loop": true,
+    "mindest_tragekraft": 5,
+    "benoetigt_werkzeug": "axt",
+    "koerperliche_anforderung": "schwer"
   },
   "steinmetz": {
     "name": "Steinmetz",
@@ -24,7 +27,10 @@
     "harvest_zeit_ticks": 24,
     "harvest_menge": 10,
     "reichweite": 140.0,
-    "sammel_auf_flaeche": false
+    "sammel_auf_flaeche": false,
+    "mindest_tragekraft": 10,
+    "benoetigt_werkzeug": "spitzhacke",
+    "koerperliche_anforderung": "sehr_schwer"
   },
   "jaeger": {
     "name": "Jäger",
@@ -37,6 +43,60 @@
     "harvest_zeit_ticks": 24,
     "harvest_menge": 5,
     "reichweite": 160.0,
-    "sammel_auf_flaeche": false
+    "sammel_auf_flaeche": false,
+    "mindest_tragekraft": 3,
+    "benoetigt_werkzeug": "bogen",
+    "koerperliche_anforderung": "mittel"
+  },
+  "holzfaeller_stumpf": {
+    "name": "Holzfäller (Stumpf)",
+    "ressource": "holz",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
+    "logik_id": "ressource_holz",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 12,
+    "harvest_menge": 5,
+    "reichweite": 120.0,
+    "sammel_auf_flaeche": false,
+    "loop": true,
+    "mindest_tragekraft": 3,
+    "benoetigt_werkzeug": "axt",
+    "koerperliche_anforderung": "leicht"
+  },
+  "jaeger_kadaver": {
+    "name": "Jäger (Kadaver)",
+    "ressource": "fleisch",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
+    "logik_id": "ressource_fleisch",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 12,
+    "harvest_menge": 5,
+    "reichweite": 120.0,
+    "sammel_auf_flaeche": false,
+    "loop": true,
+    "mindest_tragekraft": 2,
+    "benoetigt_werkzeug": "messer",
+    "koerperliche_anforderung": "leicht"
+  },
+  "heiler": {
+    "name": "Heiler",
+    "ressource": "",
+    "animation": "heilen",
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
+    "logik_id": "heilen",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 60,
+    "harvest_menge": 0,
+    "reichweite": 80.0,
+    "sammel_auf_flaeche": false,
+    "loop": false,
+    "mindest_tragekraft": 0,
+    "benoetigt_werkzeug": "verbandszeug",
+    "koerperliche_anforderung": "leicht"
   }
 }

@@ -1,6 +1,6 @@
 extends RefCounted
 class_name Tier_Status
-## Zustandsmaschine eines Tieres: Ruhe, Aufgeschreckt, Wegfliegen, Verfolgen.
+## Zustandsmaschine eines Tieres: Ruhe, Aufgeschreckt, Wegfliegen, Verfolgen, Tot.
 ## Reagiert ausschließlich auf den globalen Tick und auf Trigger-Ereignisse;
 ## Darstellung macht der Tier_Darsteller, Daten kommen aus den Tier-Klassen.
 
@@ -26,6 +26,7 @@ var fleisch: int = 1
 var _faktor: float = 1.0
 var _modifikator_id: String = "normal"
 var _logik_id: String = ""
+var _welt_position: Vector2 = Vector2.ZERO
 
 func _init(tier: String, verhaltens_daten: Tier_Registry) -> void:
 	tier_id = tier
@@ -57,7 +58,6 @@ func modifikator_id() -> String:
 	return _modifikator_id
 
 func speed_aktuell() -> float:
-	# Modifikator skaliert Geschwindigkeit: Faktor 1.2 bedeutet 20 Prozent schneller.
 	var basis := 0.0
 	match zustand:
 		Zustand.AUFGESCHRECKT:
@@ -80,12 +80,15 @@ func schrecken(richtung: Vector2, ziel: Vector2) -> void:
 func ist_tot() -> bool:
 	return zustand == Zustand.TOT
 
+func welt_position_setzen(pos: Vector2) -> void:
+	_welt_position = pos
+
 func schaden_nehmen(schaden: int) -> int:
-	# Zieht Lebenspunkte ab und gibt die tatsächlich verbrauchte Menge zurück.
 	if zustand == Zustand.TOT:
 		return 0
 	var verbraucht := mini(schaden, hp)
 	hp -= verbraucht
+	Kern_SignalBus.schaden_erhalten.emit(_welt_position, verbraucht, "physisch")
 	if hp <= 0:
 		_zu_zustand_wechseln(Zustand.TOT)
 	return verbraucht
@@ -93,17 +96,19 @@ func schaden_nehmen(schaden: int) -> int:
 func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
 	if zustand == neuer_zustand:
 		return
+	var alter_zustand := zustand
 	zustand = neuer_zustand
 	tick_in_zustand = 0
 	steigt = false
 	zustand_geaendert.emit(neuer_zustand)
+	if neuer_zustand == Zustand.TOT and alter_zustand != Zustand.TOT:
+		Kern_SignalBus.gestorben.emit(_welt_position, tier_id, false)
 
 func ticks_fuer_faktor() -> int:
 	return Kern_Weltuhr.ticks_aus_faktor(effektiver_faktor())
 
 func tick(delta: float, eigene_position: Vector2, spieler_position: Vector2) -> Vector2:
-	# Liefert die Bewegung dieses Ticks; der Aufrufer schreibt die Position.
-	# Trigger wird rein aus Registry gelesen: ausloeser bestimmt den Folgezustand.
+	_welt_position = eigene_position
 	tick_in_zustand += 1
 	var bewegung := Vector2.ZERO
 	match zustand:
@@ -120,22 +125,17 @@ func tick(delta: float, eigene_position: Vector2, spieler_position: Vector2) -> 
 						ziel_position = spieler_position
 						_zu_zustand_wechseln(Zustand.WEGFLIEGEN)
 		Zustand.TOT:
-			# Tote Tiere warten auf das Ernten; sie bewegen sich nicht mehr.
 			bewegung = Vector2.ZERO
 		Zustand.AUFGESCHRECKT:
-			# Der Hase hoppelt kurz auf, dann setzt die reguläre Flucht ein.
 			bewegung = flucht_richtung * speed_aktuell() * delta
 			if tick_in_zustand > 8:
 				_zu_zustand_wechseln(Zustand.WEGFLIEGEN)
 		Zustand.WEGFLIEGEN:
-			# Vögel steigen während der ersten Ticks schräg nach oben und
-			# blenden danach aus; der Hase läuft am Boden weiter.
 			if ist_vogel():
 				var steig_anteil := int(verhalten.wert(tier_id, "steig_anteil_ticks", 40))
 				steigt = tick_in_zustand <= steig_anteil
 			bewegung = flucht_richtung * speed_aktuell() * delta
 		Zustand.VERFOLGEN:
-			# Der Bär geht direkt auf die Spielereinheit zu.
 			ziel_position = spieler_position
 			var abstand := verhalten.wert(tier_id, "aufhalte_abstand", 120.0)
 			var differenz := spieler_position - eigene_position

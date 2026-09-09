@@ -11,6 +11,7 @@ const KAMERA_ZOOM_SCHRITT := 1.1
 const KAMERA_ZOOM_MIN := 0.2
 const KAMERA_ZOOM_MAX := 2.5
 const SCHNELLWAHL_MAX := 9
+const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
 
 ## Kategorie logik: Laden, Verdrahtung und Eingabe-Übersetzung der Spitzen.
 
@@ -19,6 +20,7 @@ var _model := Welt_Model.new()
 var _registry := Welt_Registry.new()
 var _steuerung := Kern_SteuerungRegistry.new()
 var _spieler_position := Vector2.ZERO
+var _lager := Lager_Manager.new()
 var _ressourcen := Einheit_Ressourcen.new()
 var _job_registry := Job_Registry.new()
 var _stockmaenner := Einheit_Manager.new()
@@ -26,6 +28,9 @@ var _auswahl := Ui_AuswahlManager.new()
 var _schnellwahl: Array[int] = []
 var _job_kette: Array[Dictionary] = []
 var _kette_laeuft: bool = false
+var _orchestrator_registry := Orchestrator_Registry.new()
+var _orchestrator_manager := Orchestrator_Manager.new()
+var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
@@ -49,9 +54,15 @@ func _ready() -> void:
 	_spieler_position = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
 	_spieler.position = _spieler_position
 	_kamera.position = _spieler_position
+	_lager_anlegen_aus_welt()
+	_ressourcen.lager_setzen(_lager)
 	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
 	add_child(_stockmaenner)
 	_stockmaenner.einheit_hinzufuegen(_spieler_position)
+	_orchestrator_registry.laden(ORCHESTRATOR_PFAD)
+	_orchestrator_manager.referenzen_setzen(_stockmaenner, _model, _registry, _job_registry)
+	add_child(_orchestrator_manager)
+	_orchestratoren_verdrahten()
 	_hud.einrichten(_ressourcen)
 	_kontext.einrichten(_steuerung)
 	_kontext.aktion_gewaehlt.connect(_auf_kontext_aktion)
@@ -59,6 +70,20 @@ func _ready() -> void:
 	_biom_anzeigen()
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
+
+func _lager_anlegen_aus_welt() -> void:
+	# Jedes Haus-Objekt in der Welt ist ein lokales Lager. Liegt keines da,
+	# bekommt die Startposition ein kleines Lager, damit Arbeit nicht ins Leere faellt.
+	for objekt: Dictionary in _model.objekte:
+		var element_id := str(objekt.get("element_id", ""))
+		if element_id == "haus":
+			var pos: Array = objekt["position"]
+			_lager.lager_anlegen("kleines_lager", Vector2(pos[0], pos[1]))
+		elif element_id == "haus_gross":
+			var pos2: Array = objekt["position"]
+			_lager.lager_anlegen("grosses_lager", Vector2(pos2[0], pos2[1]))
+	if _lager.lager_zahl() == 0:
+		_lager.lager_anlegen("kleines_lager", _spieler_position)
 
 func _tiere_platzieren() -> void:
 	# Objekte mit Typ "bewegt" sind Tiere und werden dem Tier_Manager übergeben.
@@ -227,11 +252,32 @@ func _rechteck_pflegen() -> void:
 func _auf_kontext_aktion(aktion: Dictionary) -> void:
 	# Das Panel meldet nur die Wahl; die Karte reicht sie an die Kette weiter.
 	var logik := str(aktion.get("logik_id", ""))
-	_hud.meldung_setzen("Kontext: %s ueber Logik %s" % [str(aktion.get("label", "")), logik])
+	var label := str(aktion.get("label", ""))
+	if label.to_lower().contains("wachstum") or logik.to_lower().contains("wachstum"):
+		var haus_pos := _spieler_position
+		if _lager.lager_zahl() > 0:
+			haus_pos = _lager.lager_position(0)
+		if _stockmaenner.versuche_wachstum(haus_pos):
+			_hud.meldung_setzen("Wachstum: Neuer Stickman am Lager, 3 Nahrung verbraucht.")
+		else:
+			_hud.meldung_setzen("Wachstum braucht 3 Nahrung im naechsten Lager.")
+		return
+	_hud.meldung_setzen("Kontext: %s ueber Logik %s" % [label, logik])
 
 func _biom_anzeigen() -> void:
 	var zustand := _model.biom_zustand()
 	_hud.biom_anzeigen(str(zustand.get("biom_id", _model.biom_id)), float(zustand.get("biom_faktor", 1.0)))
+
+func _orchestratoren_verdrahten() -> void:
+	for konfig in _orchestrator_registry.zonen:
+		konfig.zustand = Orchestrator_Status.Zustand.AKTIV
+		var idx := _orchestrator_manager.orchestrator_platzieren(konfig)
+		var darsteller := Orchestrator_Darsteller.new()
+		darsteller.einrichten(konfig)
+		add_child(darsteller)
+		_orchestrator_darsteller.append(darsteller)
+		var status := _orchestrator_manager.status_fuer(idx)
+		status.zustand_geaendert.connect(darsteller.status_geaendert)
 
 func _zoom(faktor: float) -> void:
 	var neuer_zoom: float = clampf(_kamera.zoom.x * faktor, KAMERA_ZOOM_MIN, KAMERA_ZOOM_MAX)

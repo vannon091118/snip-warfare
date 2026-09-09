@@ -53,4 +53,10 @@ func _job_erzeugen(job_id: String) -> Job_Basis:
 			return Job_Steinmetz.new()
 		"jaeger":
 			return Job_Jaeger.new()
+		"holzfaeller_stumpf":
+			return Job_HolzfaellerStumpf.new()
+		"jaeger_kadaver":
+			return Job_JaegerKadaver.new()
+		"heiler":
+			return Job_Heiler.new()
 	return null

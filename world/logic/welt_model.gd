@@ -20,6 +20,7 @@ var objekte: Array[Dictionary] = []
 var biom_id: String = "gemaaessigt"
 var _naechste_objekt_nummer: int = 1
 var _biom_manager: Welt_BiomManager = null
+var _welt_registry: Welt_Registry = null
 
 func _init() -> void:
 	ueberziehe_fliesen("boden")
@@ -77,7 +78,9 @@ func objekt_bei(ziel: Vector2, such_radius: float) -> int:
 	# Gibt den Index des Objekts zurück, das den Punkt (nahe) abdeckt; sonst -1.
 	# Für die Trefferprüfung wird nur die Datenklasse Objekt_Basis gelesen;
 	# hier fließt keine Logik einer anderen Domäne ein.
-	var registry := Welt_Registry.new()
+	if _welt_registry == null:
+		_welt_registry = Welt_Registry.new()
+	var registry := _welt_registry
 	var bester_index := -1
 	var beste_flaeche := INF
 	for index in objekte.size():
