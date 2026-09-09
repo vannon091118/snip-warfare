@@ -67,6 +67,7 @@ unbrauchbarem Preflight (E000, unbekannte Flags) mit 2.
 """
 
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -122,6 +123,14 @@ PRUEFKATEGORIEN = {
 }
 
 GODOT_FEHLER_MUSTER = ("ERROR", "WARNING", "Parse Error", "SCRIPT ERROR")
+
+# Relativer Headless Referenzpfad (extern, nicht im Repo). Wird nur als letzter
+# Fallback verwendet. Bevorzugt werden GODOT_BIN, --godot-befehl, tools/godot/*.
+GODOT_EXTERN_FALLBACK = Path("C:/Users/Vannon/Desktop/godu/godot_console.exe")
+GODOT_LOKAL_KANDIDATEN = [
+    Path("tools/godot/godot_console.exe"),
+    Path("tools/godot/godot.exe"),
+]
 
 FEHLER = []
 
@@ -692,35 +701,93 @@ def pruefe_shinon():
 # Prüfkategorie godot
 # --------------------------------------------------------------------------
 
-def godot_lauf(godot_befehl):
-    if shutil.which(godot_befehl) is None:
+def _aufloese_godot_befehl(befehl_arg: str) -> str | None:
+    umgebung = os.environ.get("GODOT_BIN", "").strip()
+    if umgebung != "":
+        return umgebung
+    if befehl_arg != "godot":
+        return befehl_arg
+    for kandidat in GODOT_LOKAL_KANDIDATEN:
+        voller = PROJEKT_STAMM / kandidat
+        if voller.is_file():
+            return str(voller)
+    if shutil.which("godot") is not None:
+        return "godot"
+    if GODOT_EXTERN_FALLBACK.is_file():
+        return str(GODOT_EXTERN_FALLBACK)
+    return None
+
+
+def godot_lauf(godot_befehl: str) -> None:
+    aufgeloest = _aufloese_godot_befehl(godot_befehl)
+    if aufgeloest is None:
         fehler("E018", "godot", 0,
-               "Godot wurde als '%s' nicht gefunden; --godot-befehl verwenden" % godot_befehl)
+               "Godot nicht gefunden (fail-closed). Setze GODOT_BIN, --godot-befehl, lege tools/godot/godot_console.exe ab oder nutze Godot im PATH. Relativer Referenzpfad extern: %s" % GODOT_EXTERN_FALLBACK)
         return
-    befehl = [godot_befehl, "--headless", "--path", str(PROJEKT_STAMM), "--quit-after", "120"]
+    # Fail-closed: Wenn expliziter Pfad angegeben wurde, muss er existieren oder im PATH sein.
+    if aufgeloest != "godot" and not Path(aufgeloest).is_file() and shutil.which(aufgeloest) is None:
+        fehler("E018", "godot", 0,
+               "Godot wurde als '%s' nicht gefunden; --godot-befehl oder GODOT_BIN pruefen (fail-closed). Relativer Fallback: %s" % (aufgeloest, GODOT_EXTERN_FALLBACK))
+        return
+    if shutil.which(aufgeloest) is None and not Path(aufgeloest).is_file():
+        fehler("E018", "godot", 0,
+               "Godot wurde als '%s' nicht gefunden; --godot-befehl verwenden (fail-closed)" % aufgeloest)
+        return
+    befehl = [aufgeloest, "--headless", "--path", str(PROJEKT_STAMM), "--quit-after", "120"]
+    # Fail-closed Kill: Timeout 300s, danach Prozess hart beenden. Kein stilles Gruen.
     try:
         ergebnis = subprocess.run(befehl, capture_output=True, text=True,
                                   encoding="utf-8", errors="replace", timeout=300)
     except subprocess.TimeoutExpired:
-        fehler("E018", "godot", 0, "Godot-Lauf hat das Zeitlimit von 300 Sekunden überschritten")
+        # subprocess.run killt den Kindprozess bei Timeout bereits, wir melden fail-closed.
+        # Zusaetzlich hängende Godot Prozesse suchen und beenden.
+        try:
+            # Windows: taskkill fuer verwaiste Godot Prozesse
+            subprocess.run(["taskkill", "/F", "/IM", "godot_console.exe"], capture_output=True, timeout=5)
+        except Exception:
+            pass
+        fehler("E018", "godot", 0, "Godot-Lauf hat das Zeitlimit von 300 Sekunden ueberschritten (fail-closed, Prozess gekillt)")
         return
     ausgabe = (ergebnis.stdout or "") + (ergebnis.stderr or "")
-    fundzeilen = []
+    fundzeilen: list[str] = []
     for zeile in ausgabe.splitlines():
         zugehoerig = zeile.strip()
         if any(muster in zugehoerig for muster in GODOT_FEHLER_MUSTER):
             if zugehoerig not in fundzeilen:
                 fundzeilen.append(zugehoerig)
+    # Debugging Übersetzer: Jede Godot Zeile wird in E016/E017/E018 mit Hinweis übersetzt.
+    try:
+        import importlib.util as _ilu_d
+        import sys as _sys_d
+        _dbg_pfad = PROJEKT_STAMM / "tools" / "debug_uebersetzer.py"
+        _dbg_spez = _ilu_d.spec_from_file_location("_debug_uebersetzer_lauf", str(_dbg_pfad))
+        _dbg_mod = _ilu_d.module_from_spec(_dbg_spez)
+        _sys_d.modules[_dbg_spez.name] = _dbg_mod
+        assert _dbg_spez.loader is not None
+        _dbg_spez.loader.exec_module(_dbg_mod)
+        uebersetzer = _dbg_mod.DebugUebersetzer()
+        hat_uebersetzer = True
+    except Exception:
+        hat_uebersetzer = False
+        uebersetzer = None
     for zeile in fundzeilen:
-        if "Parse Error" in zeile or "SCRIPT ERROR" in zeile:
-            fehler("E016", "godot", 0, zeile)
-        elif any(muster in zeile for muster in ("Could not find", "not declared",
-                                                "Cannot infer", "Could not resolve",
-                                                "Could not parse", "Attempt to open script",
-                                                "unknown")):
-            fehler("E017", "godot", 0, zeile)
+        if hat_uebersetzer:
+            uebers = uebersetzer.uebersetze(zeile)
+            datei, zeilen_nr = uebersetzer.datei_und_zeile(zeile)
+            # Wenn res:// Pfad erkannt, als relative Datei melden, sonst godot.
+            ziel_datei = datei if datei != "godot" else "godot"
+            ziel_zeile = zeilen_nr if zeilen_nr != 0 else 0
+            fehler(uebers.code, ziel_datei, ziel_zeile, uebers.text)
         else:
-            fehler("E018", "godot", 0, zeile)
+            if "Parse Error" in zeile or "SCRIPT ERROR" in zeile:
+                fehler("E016", "godot", 0, zeile)
+            elif any(muster in zeile for muster in ("Could not find", "not declared",
+                                                    "Cannot infer", "Could not resolve",
+                                                    "Could not parse", "Attempt to open script",
+                                                    "unknown")):
+                fehler("E017", "godot", 0, zeile)
+            else:
+                fehler("E018", "godot", 0, zeile)
 
 
 # --------------------------------------------------------------------------
@@ -739,8 +806,26 @@ def hauptprogramm():
     parser.add_argument("--ohne-godot", action="store_true",
                         help="Godot-Lauf überspringen")
     parser.add_argument("--godot-befehl", default="godot",
-                        help="Befehl oder Pfad der Godot-Engine (Standard: godot)")
+                        help="Befehl oder Pfad der Godot-Engine (Standard: godot). Aufloesung: GODOT_BIN > --godot-befehl > tools/godot/godot_console.exe > tools/godot/godot.exe > godot im PATH > %s" % GODOT_EXTERN_FALLBACK)
+    parser.add_argument("--hilfe-fehler", action="store_true",
+                        help="Zeigt die Zuordnung Godot Zeile -> E016/E017/E018 aus tools/debug_uebersetzer.py")
     argumente = parser.parse_args()
+    if argumente.hilfe_fehler:
+        try:
+            import importlib.util as _ilu_h
+            import sys as _sys_h
+            _h_pfad = PROJEKT_STAMM / "tools" / "debug_uebersetzer.py"
+            _h_spez = _ilu_h.spec_from_file_location("_debug_hilfe", str(_h_pfad))
+            _h_mod = _ilu_h.module_from_spec(_h_spez)
+            _sys_h.modules[_h_spez.name] = _h_mod
+            assert _h_spez.loader is not None
+            _h_spez.loader.exec_module(_h_mod)
+            print("Godot Debugging Uebersetzer (E016 Parse, E017 unbekannte Definition, E018 Warning/Hidden):")
+            for muster, code, hinweis in _h_mod.DebugUebersetzer.MUSTER:
+                print(f"  {code} | {muster.pattern[:70]:70} | {hinweis}")
+        except Exception as hf:
+            print(f"Hilfe nicht ladbar: {hf}")
+        return 0
 
     unbekannt = [k for k in argumente.kategorie if k.lower() not in PRUEFKATEGORIEN]
     if unbekannt:

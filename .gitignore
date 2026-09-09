@@ -4,12 +4,21 @@
 export.cfg
 export_presets.cfg
 
+# Godot Import Artefakte: niemals auf GitHub
+*.import
+*.uid
+
 # Lokale Godot Artefakte
 /android/
 
 # FreieBuff interne Daten: niemals auf GitHub
 .freebuff/
 .tmp/
+
+# Python Cache: niemals auf GitHub
+__pycache__/
+*.pyc
+*.pyo
 
 # Lokale Editor- und OS-Artefakte
 *.tmp
