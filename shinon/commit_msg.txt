@@ -1,7 +1,4 @@
-1. Du wolltest, dass die Lösung wirklich konfigurationsgetrieben ist und ein neues Gebäude ohne Änderung an der Produktionsmaschine eingebunden werden kann, und Shinon hat mit der Räucherei den zweiten Beweis durch denselben Datenpool und dieselbe Registry geführt.
-2. Die Gebäude-Konfiguration in gebaeude.json führt jetzt die Räucherei mit eigenen Baukosten, eigener Bauzeit und eigenem Rezept, das drei Fleisch und zwei Holz in neunhundert Ticks zu einem Räucherfleisch verwandelt.
-3. Die Ressourcen-Konfiguration in ressourcen.json führt die neue Ausgangsressource Räucherfleisch mit eigener Farbe, und die beiden neuen Bilddateien in raeucherei.svg und ressource_raeuchelfleisch.svg stellen Gebäude und Ressource sichtbar dar.
-4. Der Element-Katalog in element_katalog.json registriert die Räucherei als Gebäude mit ihrer Textur, und die Steuerung in steuerung.json öffnet die neue Bau-Aktion im Kontextmenü mit Icon und Werkzeug-Platzhalter im Tooltip.
-5. Der Lauf-Beweis in lauf_pruefung_welt.gd führt die Räucherei durch dieselbe Bau- und Produktionsmaschine wie die Werkstatt und bestätigt, dass die Maschinen keinerlei Code-Eingriff für die zweite Kette brauchen.
-6. Die Architektur in Architektur.md beschreibt jetzt die Produktionsökonomie mit Datenbesitzern, Maschinen, Koordination und beiden aktiven Ketten als eingefrorene Baseline.
-7. Übrig bleibt der sichtbare Spielbeweis mit HUD, Kostenfluss und Speicher-Rundlauf, der im laufenden Godot-Spiel stattfindet.
+1. Du wolltest, dass die Knoten- und Szenenstruktur des Projekts gegen die Regeln der Godot-Szene-Komposition geprüft wird, und Shinon hat den Baum nach unsicheren Zugriffen durchsucht und einen stilistischen Fehlgebrauch gefunden.
+2. Die drei schwebenden Feedback-Anzeigen in feedback_plus_anzeige.gd, feedback_schaden_anzeige.gd und feedback_tod_anzeige.gd deklarierten ihre Kinder mit at onready, obwohl diese Knoten erst zur Laufzeit in der Bereit-Funktion gebaut werden und keine Szenen-Kinder sind.
+3. Die Kennzeichnung in den drei Dateien wurde auf einfache Variablen umgestellt, damit at onready nur noch dort steht, wo echte Szenen-Kinder über Pfadreferenzen aufgelöst werden.
+4. Der Headless-Lauf und der Preflight bleiben nach der Korrektur grün.

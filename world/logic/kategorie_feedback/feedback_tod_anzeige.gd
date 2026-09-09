@@ -17,9 +17,9 @@ const DAUER_FAKTOR := 0.125
 const HUB_HOEHE := 48.0
 const BEWEGUNG_PRO_TICK := 30.0 / 24.0
 
-@onready var _icon: TextureRect = null
-@onready var _label: Label = null
-@onready var _kasten: HBoxContainer = null
+var _icon: TextureRect = null
+var _label: Label = null
+var _kasten: HBoxContainer = null
 
 func einrichten(typ_erhalten: String, einheit_gefallen: bool, welt_position: Vector2) -> void:
 	typ = typ_erhalten

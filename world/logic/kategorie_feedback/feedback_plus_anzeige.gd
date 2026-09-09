@@ -20,9 +20,9 @@ const HUB_HOEHE := 48.0
 const BEWEGUNG_PRO_TICK := 38.0 / 24.0
 const SKALIERUNG_MAX := 0.12
 
-@onready var _icon: TextureRect = null
-@onready var _label: Label = null
-@onready var _kasten: HBoxContainer = null
+var _icon: TextureRect = null
+var _label: Label = null
+var _kasten: HBoxContainer = null
 
 func einrichten(ressource_id: String, menge_erhalten: int, icon: String, welt_position: Vector2) -> void:
 	ressource = ressource_id
