@@ -477,6 +477,40 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Loop-Job endet nicht im Idle, Einheit laeuft zum naechsten Baum (Ziel 1, x=%.0f)" % loop_end_position.x)
+	# 25) Atomare Buchungen: Ein Rezept mit zweimal derselben Ressource darf
+	#     nie teilweise entnehmen; Pruefung und Entnahme sind ein Schritt.
+	var atom_lager := Lager_Manager.new()
+	atom_lager.lager_anlegen("kleines_lager", Vector2(0, 0))
+	atom_lager.startbestand_setzen("holz", 10, 0)
+	var atom_ressourcen := Einheit_Ressourcen.new()
+	atom_ressourcen.lager_setzen(atom_lager)
+	var atom_doppelt := atom_ressourcen.mehrfach_entnehmen([
+		{"ressource": "holz", "menge": 6},
+		{"ressource": "holz", "menge": 6},
+	], 0)
+	var atom_bestand := atom_lager.gesamt_bestand("holz")
+	var atom_gedeckt := atom_ressourcen.mehrfach_entnehmen([
+		{"ressource": "holz", "menge": 4},
+		{"ressource": "holz", "menge": 4},
+	], 0)
+	var atom_rest := atom_lager.gesamt_bestand("holz")
+	if atom_doppelt or atom_bestand != 10 or not atom_gedeckt or atom_rest != 2:
+		print("FEHLER: Mehrfach-Entnahme nicht atomar (doppelt ok %s, bestand %d, gedeckt %s, rest %d)" % [
+			str(atom_doppelt), atom_bestand, str(atom_gedeckt), atom_rest])
+		fehler += 1
+	else:
+		print("OK: Mehrfach-Entnahme atomar (12 bei 10 verweigert ohne Teilbuchung, 4+4 bucht auf 2)")
+	var atom_modell := Welt_Model.new()
+	atom_modell.karte_erzeugen(8, 8, "boden")
+	var atom_manager := Gebaeude_Manager.new()
+	atom_manager.einrichten(atom_modell, Welt_Registry.new(), atom_ressourcen, atom_lager)
+	var atom_versuch := atom_manager.bauen_anfordern("werkstatt", Vector2(512, 512))
+	var atom_keine_teilbuchung := atom_lager.gesamt_bestand("holz") == 2
+	if bool(atom_versuch.get("ok", false)) or not atom_keine_teilbuchung:
+		print("FEHLER: Bau entnimmt trotz fehlender Kosten (ok %s, holz %d)" % [str(atom_versuch.get("ok", false)), atom_lager.gesamt_bestand("holz")])
+		fehler += 1
+	else:
+		print("OK: Bau-Anforderung verweigert bei fehlenden Kosten ohne Teil-Entnahme")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

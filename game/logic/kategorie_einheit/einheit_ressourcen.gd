@@ -123,6 +123,49 @@ func hinzufuegen(ressource: String, menge: int) -> void:
 			bestand_geaendert.emit(ressource, neue_summe)
 		return
 
+func kann_mehrfach_entnehmen(paare: Array[Dictionary], lager_index: int = -1) -> bool:
+	# Kumulative Pruefung: Gleiche Ressourcen werden summiert und erst die
+	# Summe wird gegen den Bestand geprueft. Ein Rezept mit zweimal derselben
+	# Ressource kann damit nicht an der Pruefung vorbei teilweise entnehmen.
+	var summen := {}
+	for paar: Dictionary in paare:
+		var ressource := str(paar.get("ressource", ""))
+		summen[ressource] = int(summen.get(ressource, 0)) + int(paar.get("menge", 0))
+	for ressource: String in summen:
+		if not kann_entnehmen(ressource, int(summen[ressource]), lager_index):
+			return false
+	return true
+
+func mehrfach_entnehmen(paare: Array[Dictionary], lager_index: int = -1) -> bool:
+	# Atomare Buchung: Die kumulative Pruefung garantiert, dass alle Mengen
+	# zusammen gedeckt sind; erst dann wird je Paar entnommen. Scheitert eine
+	# Entnahme dennoch, werden die bereits entnommenen Mengen in dasselbe
+	# Lager zurueckgebucht, damit nie eine Teilbuchung stehen bleibt.
+	if not kann_mehrfach_entnehmen(paare, lager_index):
+		return false
+	var gebucht: Array[Dictionary] = []
+	for paar: Dictionary in paare:
+		var ressource := str(paar.get("ressource", ""))
+		var menge := int(paar.get("menge", 0))
+		if menge <= 0:
+			continue
+		if not entnehmen(ressource, menge, lager_index):
+			for zurueck: Dictionary in gebucht:
+				_rueckbuchung(str(zurueck.get("ressource", "")), int(zurueck.get("menge", 0)), lager_index)
+			return false
+		gebucht.append({"ressource": ressource, "menge": menge})
+	return true
+
+func _rueckbuchung(ressource: String, menge: int, lager_index: int) -> void:
+	# Gibt eine bereits entnommene Menge in dasselbe Lager zurueck, damit
+	# eine gescheiterte Mehrfach-Entnahme keinen Teilbestand verliert.
+	if _lager != null and _lager.lager_zahl() > 0 and lager_index >= 0:
+		_lager.einlagern(ressource, menge, lager_index)
+		return
+	var bestaende := _bestaende_lesen().duplicate(true)
+	bestaende[ressource] = int(bestaende.get(ressource, 0)) + menge
+	_zustand_uebernehmen({"bestaende": bestaende, "letzter_zufallswurf": aktueller_zustand.get("letzter_zufallswurf", 0)})
+
 func entnehmen(ressource: String, menge: int, lager_index: int = -1) -> bool:
 	if menge <= 0:
 		return false

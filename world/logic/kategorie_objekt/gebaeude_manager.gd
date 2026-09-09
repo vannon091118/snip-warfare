@@ -57,13 +57,11 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	var lager_index := _lager.naechstes_lager_fuer(welt_position)
 	if lager_index < 0:
 		return {"ok": false, "grund": "kein Lager in der Naehe"}
-	for kosten: Dictionary in definition.baukosten_paare():
-		var ressource := str(kosten["ressource"])
-		if not _ressourcen.kann_entnehmen(ressource, int(kosten["menge"]), lager_index):
-			return {"ok": false, "grund": "Kosten fehlen: %s" % ressource}
-	for kosten: Dictionary in definition.baukosten_paare():
-		if not _ressourcen.entnehmen(str(kosten["ressource"]), int(kosten["menge"]), lager_index):
-			return {"ok": false, "grund": "Entnahme fehlgeschlagen"}
+	# Atomare Buchung: Die kumulative Pruefung deckt alle Kosten zusammen
+	# ab, erst dann wird entnommen; eine Teil-Entnahme ohne Rollback ist
+	# damit ausgeschlossen (ein Schritt statt Pruefen und dann Entnehmen).
+	if not _ressourcen.mehrfach_entnehmen(definition.baukosten_paare(), lager_index):
+		return {"ok": false, "grund": "Kosten fehlen"}
 	var objekt_index := _model.objekt_hinzufuegen(definition.welt_objekt_id, welt_position)
 	_model.objekt_feld_setzen(objekt_index, "gebaeude_id", gebaeude_id)
 	var bau_zustand := _bau_maschine.starten(Gebaeude_BauMaschine.neuer_zustand())
@@ -176,16 +174,14 @@ func _produktion_ticken(index: int, definition: Gebaeude_Definition) -> void:
 	_model.objekt_feld_setzen(index, "prod_ziel_ticks", int(neu.get("ziel_ticks", definition.dauer_ticks)))
 
 func _eingang_verfuegbar(definition: Gebaeude_Definition, lager_index: int) -> bool:
-	for input: Dictionary in definition.inputs:
-		if not _ressourcen.kann_entnehmen(str(input.get("ressource", "")), int(input.get("menge", 0)), lager_index):
-			return false
-	return true
+	# Kumulative Pruefung ueber die Ressourcen-Zustaendigkeit: Gleiche
+	# Eingangsressourcen werden summiert, bevor gegen den Bestand geprueft
+	# wird, damit doppelte Eingaenge nicht faelschlich als gedeckt gelten.
+	return _ressourcen.kann_mehrfach_entnehmen(definition.inputs, lager_index)
 
 func _inputs_entnehmen(definition: Gebaeude_Definition, lager_index: int) -> bool:
-	for input: Dictionary in definition.inputs:
-		if not _ressourcen.entnehmen(str(input.get("ressource", "")), int(input.get("menge", 0)), lager_index):
-			return false
-	return true
+	# Atomare Entnahme aller Eingaenge: Erst kumulativ geprueft, dann gebucht.
+	return _ressourcen.mehrfach_entnehmen(definition.inputs, lager_index)
 
 func _outputs_einlagern(definition: Gebaeude_Definition, index: int) -> bool:
 	if _model == null or _ressourcen == null:

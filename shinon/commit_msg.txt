@@ -1,4 +1,5 @@
-1. Du hast die Readme daran erinnert, dass sie lebendig bleiben soll, und Shinon hat sie gegen die echten Projektdaten geprüft statt ihr zu glauben, wobei drei Stellen gelogen waren.
-2. Die Readme in README.md nennt jetzt achtzehn Katalog-Elemente statt dreizehn, erzählt von den Funktions-Animationen der Werkstatt und der Räucherei und beschreibt den Arbeitsloop des Holzfällers, der zum nächsten Baum weiterläuft statt in den Idle zu fallen.
-3. Die Szenen-Beschreibung führt jetzt die Übergangs-Brücke vor der Welt-Szene auf und das Gate-Wissen reicht bis zum neuen Stil-Code E039, damit Spieler und Neugierige den Stand ohne Aktenordner verstehen.
-4. Der Shinon-Prüfer bleibt grün und die Readme schreit vorerst nicht.
+1. Du wolltest, dass die Ressourcenbuchungen der Gebäude atomar werden, damit ein Rezept mit mehrfach derselben Ressource nie teilweise entnimmt und keine Teilbuchung ohne Rollback stehen bleibt, und Shinon hat die Buchung in die Ressourcen-Zuständigkeit verlagert.
+2. Die Ressourcen in einheit_ressourcen.gd können jetzt mehrere Paare kumulativ prüfen und atomar entnehmen, wobei gleiche Ressourcen erst summiert und dann gegen den Bestand geprüft werden und eine gescheiterte Entnahme die bereits gebuchten Mengen in dasselbe Lager zurückgibt.
+3. Der Gebäude-Manager in gebaeude_manager.gd nutzt für Baukosten und Produktionseingänge nur noch diese eine atomare Buchung, sodass die getrennte Schleife aus Prüfen und dann Entnehmen verschwindet und der Eingang kumulativ geprüft wird.
+4. Der Lauf-Beweis in lauf_pruefung_welt.gd zeigt, dass zwölf Holz bei zehn vorhandenen verweigert werden ohne Teilbuchung, dass vier plus vier korrekt auf zwei Rest buchen und dass eine Bau-Anforderung ohne gedeckte Kosten kein Holz verliert.
+5. Der volle Preflight bleibt als Frühwarnung grün, und die letzte Instanz ist weiterhin das laufende Spiel.
