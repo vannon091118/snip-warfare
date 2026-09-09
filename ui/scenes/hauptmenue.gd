@@ -4,6 +4,7 @@ extends Control
 
 const SZENE_KARTE := "res://world/scenes/welt.tscn"
 const SZENE_EDITOR := "res://world/scenes/karten_editor.tscn"
+const SZENE_UEBERGANG := "res://ui/scenes/uebergang.tscn"
 const GRENZE_RECHTS := 2200.0
 const GRENZE_LINKS := -140.0
 
@@ -88,7 +89,7 @@ func _auf_start() -> void:
 	WeltSitzung.kommt_vom_editor = false
 	WeltSitzung.world = null
 	WeltSitzung.aktive_map_id = ""
-	get_tree().change_scene_to_file(SZENE_KARTE)
+	_uebergang_einlaeuten(SZENE_KARTE, "Eine neue Welt wird geboren …")
 
 func _auf_laden() -> void:
 	_wechsle_zu(Ui_MenueZustaende.Zustand.WELT_AUSWAHL_LADEN)
@@ -107,12 +108,19 @@ func _auf_welt_geladen(welt_name: String) -> void:
 	# Map wählt der Ladevorgang aus (zuerst die zuletzt gespielte, sonst Basis).
 	WeltSitzung.world = null
 	WeltSitzung.aktive_map_id = ""
-	get_tree().change_scene_to_file(SZENE_KARTE)
+	_uebergang_einlaeuten(SZENE_KARTE, "Die gespeicherte Welt wird geladen …")
 
 func _auf_editor_welt_gewaehlt(welt_name: String) -> void:
 	WeltSitzung.welt_name = welt_name
 	WeltSitzung.kommt_vom_editor = true
-	get_tree().change_scene_to_file(SZENE_EDITOR)
+	_uebergang_einlaeuten(SZENE_EDITOR, "Der Kreativmodus wird geöffnet …")
+
+func _uebergang_einlaeuten(ziel: String, text: String) -> void:
+	# Verbindungs-Stelle: Jeder Szenenwechsel läuft über die Zwischen-Szene,
+	# damit später Events und Cutscenes zwischen Szenen eingefügt werden.
+	WeltSitzung.uebergang_ziel = ziel
+	WeltSitzung.uebergang_text = text
+	get_tree().change_scene_to_file(SZENE_UEBERGANG)
 
 func _wechsle_zu(nach: Ui_MenueZustaende.Zustand) -> void:
 	if not _zustaende.ist_gueltiger_uebergang(_zustand, nach):

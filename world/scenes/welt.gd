@@ -190,7 +190,11 @@ func _biom_anzeigen() -> void:
 	(_hud as Variant).biom_anzeigen(str(zustand.get("biom_id", _model.biom_id)), float(zustand.get("biom_faktor", 1.0)))
 
 func _auf_zurueck() -> void:
-	get_tree().change_scene_to_file("res://ui/scenes/hauptmenue.tscn")
+	# Auch der Rückweg läuft über die Übergangs-Verbindung, damit jede
+	# Szene denselben Weg nimmt und Events/Cutscenes dort andocken können.
+	WeltSitzung.uebergang_ziel = "res://ui/scenes/hauptmenue.tscn"
+	WeltSitzung.uebergang_text = "Zurück zum Hauptmenü …"
+	get_tree().change_scene_to_file("res://ui/scenes/uebergang.tscn")
 
 func _auf_gebaeude_meldung(text: String) -> void:
 	_hud.meldung_setzen(text)

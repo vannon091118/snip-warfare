@@ -2,6 +2,12 @@ Regel 0 = CODE ist wahrheit Doku ois der momentane snap du niemals als quelle de
 
 
 
+Regel 7 – Sichtbare Ingame-Verifikation (verbindlich, Abschluss jedes Features)
+
+Headless-Läufe, Preflight und Gate-Prüfungen sind nur Frühwarnsysteme, keine Freigabe. Ein Feature gilt erst dann als fertig und darf gelockt werden, wenn es im laufenden Spiel sichtbar verifiziert wurde: Das Ding muss auf der Karte erscheinen, angeklickt, bewegt, interagiert oder zumindest beobachtet werden können. Eine grüne Preflight-Zeile ohne sichtbares Ingame-Ergebnis ist wertlos. Der Arbeitsrhythmus folgt strikt dieser Reihenfolge: Asset einbauen, Logik nutzen oder ergänzen, Asset und Logik in der Registry verbinden, Verhalten anschließen wenn nicht statisch, Spawn-Regeln festlegen, und erst zuletzt die sichtbare Ingame-Verifikation. Ein Asset, das nur in der Registry steht und nie auf der Karte erscheint, ist verboten; ein Platzhalter ist erlaubt, solange er im Spiel sichtbar ist. Die Agenten bauen so, dass jede Arbeit im Spiel beobachtbar endet, und weisen den Nutzer am Abschluss darauf hin, was im laufenden Spiel zu sehen ist.
+
+
+
 Regel 6 – Warnungs-Scan Pflicht (verbindlich, E025)
 
 Jeder Agent führt nach jeder abgeschlossenen Anpassung den Warnungs-Scan über python tools/preflight.py --kategorie warnungen oder über den vollen Preflight aus. Der Scan erkennt deterministisch dieselben GDScript-Warnklassen, die der Godot-Editor bei einem Script-Reload meldet: Integer-Division, Schattenvariablen, ungenutzte Parameter und Variablen, ungenutzte Signale, statische Aufrufe auf Instanzen und verwirrende Block-Deklarationen. Jeder Befund ist der Fehler E025 und blockiert den Commit, genau wie die Godot-Lauf-Fehler E016 bis E018. Es gibt kein stilles Grün über Editor-Warnungen: Wer eine Warnung nicht beheben kann, markiert sie bewusst mit Unterstrich, mit @warning_ignore oder mit einem Kommentar, der die Bewusstheit dokumentiert, und der Scan ist so gebaut, dass dokumentierte Vertrags-Signale keine Befunde erzeugen. Der volle Preflight führt den Warnungs-Scan immer mit aus.

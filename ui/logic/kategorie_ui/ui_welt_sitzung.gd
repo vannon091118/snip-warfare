@@ -14,3 +14,9 @@ var seed_wunsch: int = 0
 ## die Logik liegt in Welt_World und Welt_Ladevorgang.
 var world: Welt_World = null
 var aktive_map_id: String = ""
+
+## Übergangs-Verbindung: Die Zwischen-Szene liest Ziel und Ankündigung
+## aus der Sitzung und läutet die nächste Szene ein. So können später
+## Events und Cutscenes als Verbindungen zwischen Szenen eingefügt werden.
+var uebergang_ziel: String = ""
+var uebergang_text: String = ""
