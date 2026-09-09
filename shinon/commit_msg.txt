@@ -1,5 +1,3 @@
-1. Du wolltest, dass die Weltobjekte im laufenden Spiel leben und ihre Arbeit sichtbar machen, und im Arbeitsbaum lag dafür eine uncommittete Darsteller-Schicht, die Shinon jetzt als eigenen Slice über das Gate führt.
-2. Der neue Objekt-Darsteller in welt_objekt_darsteller.gd schneidet für jeden Katalog-Eintrag mit Funktions-Animation ein eigenes Bewegtbild aus dem zentralen Animations-Sheet und tickt es über die 24 Takte der Weltuhr, ohne eigene Simulationslogik und ohne eigene Zeit.
-3. Der Renderer in welt_renderer.gd hängt die Darsteller-Spitze als eigenen Knoten in den Szenenbaum und meldet jedes Objekt mit Registry-Animation dort an, damit Busch, Lagerfeuer, Werkstatt und Räucherei sichtbar arbeiten.
-4. Der Katalog in element_katalog.json und die Basis in objekt_basis.gd tragen die neuen Felder für Funktions-Animation und Takt-Faktor, während animationen.json die vier Sheets für Wehen, Flackern, Grinden und Räuchern beschreibt.
-5. Die zugehörigen Assets in den vier Terrain-Sheets und die zwei Werkzeug- und Tod-Symbole sind importiert, die Vorschau-Seite und ihr Erzeuger dokumentieren die neuen Bilder, und der volle Preflight bleibt als Frühwarnung grün.
+1. Du wolltest, dass der Arbeitsbaum nach dem Push vollständig sauber ist, und Shinon hat dabei die kompilierten Python-Cache-Dateien entdeckt, die versehentlich im Repo gelandet waren.
+2. Die Cache-Dateien in shinon/__pycache__ sind aus dem Git-Index entfernt und über die bestehende Ignore-Regel künftig vom Tracking ausgeschlossen, sodass sie nie wieder in die History rutschen.
+3. Der volle Preflight bleibt als Frühwarnung grün, und die letzte Instanz ist weiterhin das laufende Spiel.
