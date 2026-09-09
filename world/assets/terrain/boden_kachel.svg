@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Boden-Kachel: unterste Papierebene (dunkler Ton schaut an den Rissen hervor) -->
+  <rect x="0" y="0" width="512" height="512" fill="#8FAB58"/>
+
+  <!-- Oberste Papierebene mit eingerissenem Rand (Licht von oben links) -->
+  <path fill="#A3BE6B" d="
+    M 12 22
+    Q 44 10 76 20 Q 108 30 140 18 Q 172 8 204 20 Q 236 32 268 20
+    Q 300 10 332 22 Q 364 32 396 18 Q 428 8 460 20 Q 484 28 498 40
+    Q 506 72 498 104 Q 490 136 502 168 Q 510 200 498 232
+    Q 486 264 500 296 Q 510 328 498 360 Q 486 392 500 424
+    Q 508 452 492 476
+    Q 464 486 432 494 Q 400 502 368 492 Q 336 482 304 494
+    Q 272 504 240 492 Q 208 482 176 494 Q 144 504 112 492
+    Q 80 482 48 492 Q 26 496 16 480
+    Q 8 448 16 416 Q 24 384 12 352 Q 2 320 14 288
+    Q 26 256 12 224 Q 2 192 14 160 Q 26 128 12 96
+    Q 2 64 12 36
+    Z"/>
+
+  <!-- Helle Papierschnipsel (Lichtflecken) -->
+  <path fill="#B7CE7E" d="M 70 90 Q 95 62 130 70 Q 168 60 190 84 Q 206 104 192 126 Q 170 150 132 144 Q 96 150 78 128 Q 62 108 70 90 Z"/>
+  <path fill="#B7CE7E" d="M 322 322 Q 348 306 374 316 Q 400 326 394 350 Q 386 372 356 370 Q 330 370 320 350 Q 314 336 322 322 Z"/>
+  <path fill="#B7CE7E" d="M 96 300 Q 112 290 128 298 Q 142 306 136 320 Q 128 334 108 330 Q 92 328 88 314 Q 88 306 96 300 Z"/>
+
+  <!-- Eingerissene Löcher (dunkler Untergrund schaut durch) -->
+  <path fill="#7A9549" d="M 420 120 Q 432 112 442 122 Q 450 132 440 142 Q 428 150 418 140 Q 412 130 420 120 Z"/>
+  <path fill="#7A9549" d="M 150 404 Q 160 396 170 404 Q 178 412 170 422 Q 160 430 150 422 Q 144 412 150 404 Z"/>
+  <path fill="#7A9549" d="M 300 210 Q 308 204 316 210 Q 322 216 316 224 Q 308 230 300 224 Q 296 216 300 210 Z"/>
+
+  <!-- Grasbüschel: ausgeschnittene Papierhalme -->
+  <g fill="#6F8A42">
+    <path transform="translate(60 236) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(210 130) scale(0.9)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(388 300) scale(1.2)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(440 96) scale(0.8)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(130 452) scale(1.0)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(286 418) scale(0.85)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+  </g>
+
+  <!-- Kleine Papier-Kieselsteine (hell oben, Schatten unten) -->
+  <g>
+    <ellipse cx="96" cy="182" rx="14" ry="9" fill="#9A9287"/>
+    <ellipse cx="95" cy="180" rx="13" ry="8" fill="#CFC9BE"/>
+    <ellipse cx="356" cy="120" rx="11" ry="7" fill="#9A9287"/>
+    <ellipse cx="355" cy="118" rx="10" ry="6" fill="#CFC9BE"/>
+    <ellipse cx="238" cy="330" rx="16" ry="10" fill="#9A9287"/>
+    <ellipse cx="237" cy="328" rx="15" ry="9" fill="#CFC9BE"/>
+  </g>
+</svg>

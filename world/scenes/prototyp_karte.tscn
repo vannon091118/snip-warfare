@@ -1,0 +1,63 @@
+[gd_scene load_steps=5 format=3 uid="uid://cprotokarte01"]
+
+[ext_resource type="Script" path="res://world/scenes/prototyp_karte.gd" id="1_karte"]
+[ext_resource type="Script" path="res://world/logic/kategorie_welt/welt_renderer.gd" id="2_renderer"]
+[ext_resource type="Script" path="res://world/logic/kategorie_tier/tier_manager.gd" id="3_tiere"]
+[ext_resource type="Texture2D" path="res://world/assets/ui/strichmaennchen_stehend.svg" id="4_spieler"]
+
+[node name="PrototypKarte" type="Node2D"]
+script = ExtResource("1_karte")
+
+[node name="Karte" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_renderer")
+
+[node name="Tiere" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_tiere")
+
+[node name="Spieler" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="SpielerBild" type="Sprite2D" parent="Spieler"]
+texture = ExtResource("4_spieler")
+offset = Vector2(0, -30)
+
+[node name="Kamera" type="Camera2D" parent="."]
+unique_name_in_owner = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="HUD" type="VBoxContainer" parent="CanvasLayer"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 480.0
+offset_bottom = 120.0
+theme_override_constants/separation = 8
+
+[node name="RessourcenReihe" type="HBoxContainer" parent="CanvasLayer/HUD"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="JobLabel" type="Label" parent="CanvasLayer/HUD"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Job: keiner (Objekt anklicken)"
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer/HUD"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+
+[node name="HilfeLabel" type="Label" parent="CanvasLayer/HUD"]
+layout_mode = 2
+text = "WASD bewegen, Klick vergibt den Job, Rechtsklick bricht ab"
+
+[node name="ZurueckKnopf" type="Button" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 16.0
+offset_top = 130.0
+offset_right = 136.0
+offset_bottom = 170.0
+text = "Hauptmenü"

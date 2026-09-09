@@ -1,0 +1,22 @@
+{
+  "normal": {
+    "name": "Normal",
+    "faktor": 1.0,
+    "beschreibung": "1.0 = 10 Sekunden Takt, neutral."
+  },
+  "aggressiv": {
+    "name": "Aggressiv",
+    "faktor": 1.2,
+    "beschreibung": "Schneller oder aggressiver, 20 Prozent über Normal."
+  },
+  "langsam": {
+    "name": "Langsam",
+    "faktor": 0.7,
+    "beschreibung": "Träger, 30 Prozent unter Normal."
+  },
+  "schnell": {
+    "name": "Schnell",
+    "faktor": 1.5,
+    "beschreibung": "Deutlich schneller, 50 Prozent über Normal."
+  }
+}

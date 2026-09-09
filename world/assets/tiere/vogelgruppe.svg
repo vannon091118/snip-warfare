@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Vogelgruppe: drei Vögel im Keil, Flügel versetzt geschlagen -->
+  <!-- Frame 1 -->
+  <g transform="translate(0 0)">
+    <g transform="translate(34 14)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240"/>
+      <ellipse cx="-1" cy="-1" rx="7" ry="4" fill="#A87F52"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-14" rx="3.6" ry="9" fill="#6D4A31" transform="rotate(-30 -2 -14)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 34)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-9" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(4 -2 -9)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 52)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-9" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(-8 -2 -9)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+
+  <!-- Frame 2 -->
+  <g transform="translate(48 0)">
+    <g transform="translate(34 14)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-12" rx="3.6" ry="8" fill="#6D4A31" transform="rotate(-8 -2 -12)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 34)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-11" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(24 -2 -11)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 52)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-11" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(12 -2 -11)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+
+  <!-- Frame 3 -->
+  <g transform="translate(96 0)">
+    <g transform="translate(34 16)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-8" rx="3.6" ry="9" fill="#6D4A31" transform="rotate(24 -2 -8)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 36)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-8" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(46 -2 -8)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 54)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-8" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(34 -2 -8)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+
+  <!-- Frame 4: Formation zieht nach oben weg -->
+  <g transform="translate(144 0)">
+    <g transform="translate(34 8)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240" transform="rotate(-14)"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-3" cy="-14" rx="3.6" ry="9" fill="#6D4A31" transform="rotate(-42 -3 -14)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 26)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240" transform="rotate(-12)"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-12" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(-34 -2 -12)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 44)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240" transform="rotate(-12)"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-12" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(-28 -2 -12)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 72" width="128" height="72">
+  <!-- Hase: Flucht-Hoppeln in 4 Frames, Laufrichtung nach rechts -->
+  <!-- Frame 1: gestreckt in der Luft, Ohren nach hinten -->
+  <g transform="translate(0 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="15" cy="44" rx="12" ry="8" fill="#B5AEA1" transform="rotate(8 15 44)"/>
+    <ellipse cx="14" cy="42" rx="10" ry="6" fill="#CFC9BE" transform="rotate(8 14 42)"/>
+    <circle cx="27" cy="34" r="7" fill="#B5AEA1"/>
+    <circle cx="26" cy="33" r="6" fill="#CFC9BE"/>
+    <ellipse cx="23" cy="21" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(24 23 21)"/>
+    <ellipse cx="22.6" cy="21" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(24 22.6 21)"/>
+    <ellipse cx="29" cy="22" rx="2.6" ry="9" fill="#B5AEA1" transform="rotate(40 29 22)"/>
+    <circle cx="29" cy="33.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="30.6" cy="36.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+    <ellipse cx="4" cy="46" rx="4" ry="2.6" fill="#FBF6E8" transform="rotate(30 4 46)"/>
+  </g>
+
+  <!-- Frame 2: zusammengedrückt, Pfoten unter dem Körper -->
+  <g transform="translate(32 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="16" cy="52" rx="13" ry="7" fill="#B5AEA1"/>
+    <ellipse cx="15" cy="50" rx="11" ry="5" fill="#CFC9BE"/>
+    <circle cx="28" cy="46" r="7" fill="#B5AEA1"/>
+    <circle cx="27" cy="45" r="6" fill="#CFC9BE"/>
+    <ellipse cx="24" cy="34" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(6 24 34)"/>
+    <ellipse cx="23.6" cy="34" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(6 23.6 34)"/>
+    <ellipse cx="31" cy="36" rx="2.4" ry="8" fill="#B5AEA1" transform="rotate(18 31 36)"/>
+    <circle cx="30" cy="45.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="31.6" cy="48.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+  </g>
+
+  <!-- Frame 3: gestreckt, Ohren flach -->
+  <g transform="translate(64 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="15" cy="44" rx="12" ry="8" fill="#B5AEA1" transform="rotate(-6 15 44)"/>
+    <ellipse cx="14" cy="42" rx="10" ry="6" fill="#CFC9BE" transform="rotate(-6 14 42)"/>
+    <circle cx="27" cy="33" r="7" fill="#B5AEA1"/>
+    <circle cx="26" cy="32" r="6" fill="#CFC9BE"/>
+    <ellipse cx="22" cy="22" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(58 22 22)"/>
+    <ellipse cx="21.6" cy="22" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(58 21.6 22)"/>
+    <ellipse cx="29" cy="26" rx="2.4" ry="9" fill="#B5AEA1" transform="rotate(70 29 26)"/>
+    <circle cx="29" cy="32.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="30.6" cy="35.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+    <ellipse cx="4" cy="48" rx="4" ry="2.6" fill="#FBF6E8" transform="rotate(10 4 48)"/>
+  </g>
+
+  <!-- Frame 4: zusammengedrückt, tief -->
+  <g transform="translate(96 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="16" cy="50" rx="13" ry="7" fill="#B5AEA1"/>
+    <ellipse cx="15" cy="48" rx="11" ry="5" fill="#CFC9BE"/>
+    <circle cx="28" cy="44" r="7" fill="#B5AEA1"/>
+    <circle cx="27" cy="43" r="6" fill="#CFC9BE"/>
+    <ellipse cx="24" cy="32" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(2 24 32)"/>
+    <ellipse cx="23.6" cy="32" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(2 23.6 32)"/>
+    <ellipse cx="31" cy="35" rx="2.4" ry="8" fill="#B5AEA1" transform="rotate(14 31 35)"/>
+    <circle cx="30" cy="43.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="31.6" cy="46.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+  </g>
+</svg>

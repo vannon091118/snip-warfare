@@ -1,0 +1,120 @@
+[gd_scene load_steps=6 format=3 uid="uid://c2hauptmenu01"]
+
+[ext_resource type="Script" path="res://ui/scenes/hauptmenue.gd" id="1_menue"]
+[ext_resource type="Script" path="res://ui/logic/kategorie_ui/ui_welt_auswahl_dialog.gd" id="2_dialog"]
+[ext_resource type="Texture2D" path="res://world/assets/terrain/boden_kachel.svg" id="3_boden"]
+[ext_resource type="Texture2D" path="res://world/assets/ui/strichmaennchen_stehend.svg" id="4_laeufer"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxKnopf"]
+bg_color = Color(0.964706, 0.945098, 0.894118, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 6
+border_color = Color(0.290196, 0.258824, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0.290196, 0.258824, 0.215686, 0.35)
+shadow_size = 6
+shadow_offset = Vector2(3, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxKnopfDruck"]
+bg_color = Color(0.913725, 0.890196, 0.835294, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.290196, 0.258824, 0.215686, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Hauptmenue" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menue")
+
+[node name="Hintergrund" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 1
+texture = ExtResource("3_boden")
+
+[node name="Titel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 48.0
+offset_bottom = 128.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 56
+text = "Snip Warfare"
+horizontal_alignment = 1
+
+[node name="LaeuferEbene" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Maskottchen" type="Sprite2D" parent="LaeuferEbene"]
+position = Vector2(240, 500)
+texture = ExtResource("4_laeufer")
+
+[node name="KnopfLeiste" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -130.0
+offset_top = 320.0
+offset_right = 130.0
+offset_bottom = 560.0
+grow_horizontal = 2
+theme_override_constants/separation = 18
+
+[node name="StartKnopf" type="Button" parent="KnopfLeiste"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Start"
+focus_mode = 0
+
+[node name="LadenKnopf" type="Button" parent="KnopfLeiste"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Laden"
+focus_mode = 0
+
+[node name="EditorKnopf" type="Button" parent="KnopfLeiste"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Map-Editor"
+focus_mode = 0
+
+[node name="DialogLaden" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Welt laden"
+size = Vector2i(420, 360)
+script = ExtResource("2_dialog")
+
+[node name="DialogEditor" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "Kreativmodus: Welt öffnen oder neue Welt"
+size = Vector2i(420, 360)
+script = ExtResource("2_dialog")
+neuer_name_erlaubt = true
+hinweis_text = "Kreativmodus: Wähle eine gespeicherte Welt oder lege eine neue Welt an."

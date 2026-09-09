@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160" width="128" height="160">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="60" cy="148" rx="42" ry="9" fill="#7A9549"/>
+  <ellipse cx="61" cy="146.5" rx="40" ry="8" fill="#8FAB58"/>
+
+  <!-- Stamm: zwei Papierzylinder -->
+  <path fill="#6D4A31" d="M 52 148 C 51 122 52 100 54 80 L 62 80 C 66 100 68 122 68 148 Z"/>
+  <path fill="#8A6240" d="M 52 148 C 51 122 52 100 54 80 L 57 80 C 59 100 60 122 60 148 Z"/>
+
+  <!-- Astansatz -->
+  <path fill="#8A6240" d="M 54 86 C 47 78 42 74 36 70 L 40 66 C 47 72 52 76 57 81 Z"/>
+
+  <!-- Stapelschatten der Krone auf dem Stamm -->
+  <path fill="#6D4A31" d="M 44 84 C 50 92 56 96 64 98 C 72 96 78 92 84 84 C 78 88 71 90 64 90 C 57 90 50 88 44 84 Z"/>
+
+  <!-- Krone, unterste Papierschicht: wellige Schnittkante aus Kreisbögen -->
+  <g fill="#4E7434">
+    <circle cx="40" cy="60" r="21"/>
+    <circle cx="63" cy="46" r="26"/>
+    <circle cx="88" cy="60" r="20"/>
+    <circle cx="50" cy="72" r="19"/>
+    <circle cx="76" cy="74" r="17"/>
+    <rect x="40" y="60" width="48" height="30"/>
+  </g>
+
+  <!-- Mittlere Papierschicht, nach oben versetzt -->
+  <g fill="#5E8A3E">
+    <circle cx="46" cy="56" r="17"/>
+    <circle cx="66" cy="43" r="21"/>
+    <circle cx="84" cy="57" r="15"/>
+    <circle cx="58" cy="68" r="16"/>
+    <rect x="46" y="56" width="38" height="24"/>
+  </g>
+
+  <!-- Oberste Papierschicht, von der Sonne aufgehellt -->
+  <g fill="#7AA84E">
+    <circle cx="54" cy="52" r="13"/>
+    <circle cx="69" cy="45" r="15"/>
+    <circle cx="63" cy="60" r="13"/>
+    <rect x="54" y="52" width="28" height="16"/>
+  </g>
+
+  <!-- Geschnittene Papierkante: heller Saum an der obersten Schicht -->
+  <path fill="none" stroke="#94C464" stroke-width="2" stroke-linecap="round" d="M 44 62 C 42 52 46 42 55 37"/>
+  <path fill="none" stroke="#94C464" stroke-width="2" stroke-linecap="round" d="M 74 78 C 66 81 58 80 52 76"/>
+
+  <!-- Ausgeschnittenes Papierblatt am Kronenrand -->
+  <path fill="#7AA84E" d="M 96 44 C 104 36 114 34 120 40 C 118 48 108 54 98 52 Z"/>
+</svg>

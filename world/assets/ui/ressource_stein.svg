@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Stein: zwei gestapelte Papierschichten mit heller Kante oben -->
+  <ellipse cx="32" cy="54" rx="22" ry="5" fill="#7A9549"/>
+  <ellipse cx="32" cy="52" rx="18" ry="4" fill="#8FAB58" opacity="0.8"/>
+  <path d="M 14 46 L 18 34 L 30 30 L 44 34 L 48 46 Z" fill="#B9B2A2"/>
+  <path d="M 18 34 L 30 30 L 44 34 L 41 37 L 29 34 L 21 37 Z" fill="#D8D2C2"/>
+  <path d="M 22 30 L 26 20 L 36 17 L 44 21 L 46 30 Z" fill="#C4BCAA"/>
+  <path d="M 26 20 L 36 17 L 44 21 L 40 23 L 32 21 L 26 23 Z" fill="#DDD6C6"/>
+</svg>

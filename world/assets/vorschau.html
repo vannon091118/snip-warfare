@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Papercraft-Assets – Vorschau</title>
+<style>
+  :root {
+    --papier: #F6F1E4;
+    --tinte: #4A4237;
+  }
+  body {
+    margin: 0;
+    background: #E9E2D0;
+    color: var(--tinte);
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  h1 { text-align: center; margin: 24px 0 4px; }
+  .hinweis { text-align: center; margin: 0 0 20px; opacity: .75; }
+  .karte {
+    background: var(--papier);
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(74, 66, 55, .25);
+    max-width: 960px;
+    margin: 0 auto 28px;
+    padding: 20px 24px 28px;
+  }
+  .reihe {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+    align-items: flex-end;
+  }
+  .feld {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .feld span { font-size: 14px; opacity: .8; }
+  .kacheln {
+    display: grid;
+    grid-template-columns: repeat(3, 170px);
+    justify-content: center;
+    border: 2px solid var(--tinte);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .kacheln img { display: block; width: 170px; height: 170px; }
+  .sprite {
+    filter: drop-shadow(0 10px 8px rgba(74, 66, 55, .18));
+  }
+</style>
+</head>
+<body>
+<h1>Papercraft-Assets – Vorschau</h1>
+<p class="hinweis">Erster Blick auf die modularen SVG-Assets im Papierschnitt-Stil.</p>
+
+<div class="karte">
+  <div class="reihe">
+    <div class="feld"><div class="sprite" style="width:179px;height:224px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 160" width="128" height="160">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="60" cy="148" rx="42" ry="9" fill="#7A9549"/>
+  <ellipse cx="61" cy="146.5" rx="40" ry="8" fill="#8FAB58"/>
+
+  <!-- Stamm: zwei Papierzylinder -->
+  <path fill="#6D4A31" d="M 52 148 C 51 122 52 100 54 80 L 62 80 C 66 100 68 122 68 148 Z"/>
+  <path fill="#8A6240" d="M 52 148 C 51 122 52 100 54 80 L 57 80 C 59 100 60 122 60 148 Z"/>
+
+  <!-- Astansatz -->
+  <path fill="#8A6240" d="M 54 86 C 47 78 42 74 36 70 L 40 66 C 47 72 52 76 57 81 Z"/>
+
+  <!-- Stapelschatten der Krone auf dem Stamm -->
+  <path fill="#6D4A31" d="M 44 84 C 50 92 56 96 64 98 C 72 96 78 92 84 84 C 78 88 71 90 64 90 C 57 90 50 88 44 84 Z"/>
+
+  <!-- Krone, unterste Papierschicht: wellige Schnittkante aus Kreisbögen -->
+  <g fill="#4E7434">
+    <circle cx="40" cy="60" r="21"/>
+    <circle cx="63" cy="46" r="26"/>
+    <circle cx="88" cy="60" r="20"/>
+    <circle cx="50" cy="72" r="19"/>
+    <circle cx="76" cy="74" r="17"/>
+    <rect x="40" y="60" width="48" height="30"/>
+  </g>
+
+  <!-- Mittlere Papierschicht, nach oben versetzt -->
+  <g fill="#5E8A3E">
+    <circle cx="46" cy="56" r="17"/>
+    <circle cx="66" cy="43" r="21"/>
+    <circle cx="84" cy="57" r="15"/>
+    <circle cx="58" cy="68" r="16"/>
+    <rect x="46" y="56" width="38" height="24"/>
+  </g>
+
+  <!-- Oberste Papierschicht, von der Sonne aufgehellt -->
+  <g fill="#7AA84E">
+    <circle cx="54" cy="52" r="13"/>
+    <circle cx="69" cy="45" r="15"/>
+    <circle cx="63" cy="60" r="13"/>
+    <rect x="54" y="52" width="28" height="16"/>
+  </g>
+
+  <!-- Geschnittene Papierkante: heller Saum an der obersten Schicht -->
+  <path fill="none" stroke="#94C464" stroke-width="2" stroke-linecap="round" d="M 44 62 C 42 52 46 42 55 37"/>
+  <path fill="none" stroke="#94C464" stroke-width="2" stroke-linecap="round" d="M 74 78 C 66 81 58 80 52 76"/>
+
+  <!-- Ausgeschnittenes Papierblatt am Kronenrand -->
+  <path fill="#7AA84E" d="M 96 44 C 104 36 114 34 120 40 C 118 48 108 54 98 52 Z"/>
+</svg>
+</div><span>Baum</span></div>
+    <div class="feld"><div class="sprite" style="width:134px;height:123px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 88" width="96" height="88">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="46" cy="80" rx="34" ry="7" fill="#7A9549"/>
+  <ellipse cx="47" cy="78.5" rx="32" ry="6" fill="#8FAB58"/>
+
+  <!-- Erdklumpen -->
+  <path fill="#7A5A3A" d="M 14 74 Q 12 62 22 58 Q 30 54 46 54 Q 62 54 70 58 Q 80 62 78 74 Q 78 78 72 79 Q 60 82 46 82 Q 32 82 20 79 Q 14 78 14 74 Z"/>
+  <path fill="#946F48" d="M 16 72 Q 16 63 24 60 Q 32 57 46 57 Q 60 57 68 60 Q 76 63 76 72 Q 76 75 71 76 Q 60 78 46 78 Q 32 78 21 76 Q 16 75 16 72 Z"/>
+
+  <!-- Stumpf: linke und rechte Mantelfläche -->
+  <path fill="#6D4A31" d="M 20 62 L 20 30 Q 20 24 26 24 L 62 24 Q 68 24 68 30 L 68 62 Z"/>
+  <path fill="#8A6240" d="M 20 62 L 20 30 Q 20 24 26 24 L 38 24 Q 36 32 36 44 Q 36 54 38 62 Z"/>
+
+  <!-- Anschnitt-Fläche: helles Papier mit Jahresringen -->
+  <ellipse cx="44" cy="24" rx="24" ry="10" fill="#C89B6C"/>
+  <ellipse cx="44" cy="24" rx="20" ry="8" fill="#D9B183"/>
+  <ellipse cx="44" cy="24" rx="14" ry="5.5" fill="none" stroke="#A87F52" stroke-width="1.8"/>
+  <ellipse cx="44" cy="24" rx="8" ry="3.2" fill="none" stroke="#A87F52" stroke-width="1.6"/>
+  <ellipse cx="44" cy="24" rx="3" ry="1.4" fill="#A87F52"/>
+
+  <!-- Risse in der Anschnitt-Fläche -->
+  <path fill="none" stroke="#A87F52" stroke-width="1.4" stroke-linecap="round" d="M 28 20 L 34 22"/>
+  <path fill="none" stroke="#A87F52" stroke-width="1.4" stroke-linecap="round" d="M 56 27 L 62 25"/>
+
+  <!-- Helle Trennlinie zwischen Stamm und Erdklumpen -->
+  <path fill="none" stroke="#D9B183" stroke-width="2" stroke-linecap="round" d="M 21 61 L 67 61"/>
+
+  <!-- Rindenschnitt im Stumpf -->
+  <path fill="none" stroke="#6D4A31" stroke-width="1.6" stroke-linecap="round" d="M 52 32 L 50 44"/>
+  <path fill="none" stroke="#6D4A31" stroke-width="1.4" stroke-linecap="round" d="M 58 34 L 57 42"/>
+</svg>
+</div><span>Baumstumpf</span></div>
+    <div class="feld"><div class="sprite" style="width:134px;height:123px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 88" width="96" height="88">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="46" cy="78" rx="34" ry="7" fill="#7A9549"/>
+  <ellipse cx="47" cy="76.5" rx="32" ry="6" fill="#8FAB58"/>
+
+  <!-- Fundament: schräg geschnittenes Grundpapier -->
+  <path fill="#6E675D" d="M 16 72 L 8 56 L 22 44 L 70 40 L 88 54 L 82 72 Q 80 78 72 78 L 26 78 Q 18 78 16 72 Z"/>
+  <path fill="#8B8478" d="M 16 70 L 10 56 L 24 46 L 68 42 L 84 54 L 79 70 Q 78 74 72 74 L 26 74 Q 18 74 16 70 Z"/>
+
+  <!-- Mittlere Papierschicht -->
+  <path fill="#6E675D" d="M 18 48 L 14 34 L 30 22 L 62 20 L 78 32 L 74 48 Q 72 52 66 52 L 26 52 Q 20 52 18 48 Z"/>
+  <path fill="#9A9287" d="M 18 46 L 16 34 L 31 24 L 61 22 L 75 32 L 71 46 Q 70 49 65 49 L 26 49 Q 20 49 18 46 Z"/>
+
+  <!-- Oberste Papierschicht mit Lichtecke oben links -->
+  <path fill="#6E675D" d="M 22 28 L 20 18 L 34 8 L 56 8 L 68 18 L 66 28 Q 64 31 58 31 L 30 31 Q 24 31 22 28 Z"/>
+  <path fill="#CFC9BE" d="M 22 26 L 21 18 L 35 10 L 55 10 L 65 18 L 63 26 Q 62 28 57 28 L 30 28 Q 24 28 22 26 Z"/>
+  <path fill="#B5AEA1" d="M 22 26 L 21 18 L 28 13 L 38 24 Q 33 27 26 27 Q 23 27 22 26 Z"/>
+
+  <!-- Splitter: ausgeschnittene Papierbrocken am Fuß -->
+  <path fill="#8B8478" d="M 78 66 L 84 60 L 90 64 L 88 70 Q 86 72 82 72 Z"/>
+  <path fill="#9A9287" d="M 8 64 L 12 58 L 18 62 L 16 68 Q 14 70 10 70 Z"/>
+
+  <!-- Riss auf der mittleren Schicht -->
+  <path fill="none" stroke="#6E675D" stroke-width="1.8" stroke-linecap="round" d="M 46 48 L 50 40 L 46 34"/>
+</svg>
+</div><span>Stein</span></div>
+    <div class="feld"><div class="sprite" style="width:224px;height:146px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 104" width="160" height="104">
+  <!-- Gemeinsame Schattenfläche, weich und abgesetzt -->
+  <ellipse cx="76" cy="94" rx="62" ry="8" fill="#7A9549"/>
+  <ellipse cx="77" cy="92.5" rx="59" ry="7" fill="#8FAB58"/>
+
+  <!-- Großer Stein: Fundament, Mittelschicht, Deckel -->
+  <path fill="#6E675D" d="M 34 86 L 24 68 L 40 54 L 92 50 L 114 66 L 108 86 Q 106 92 98 92 L 46 92 Q 38 92 34 86 Z"/>
+  <path fill="#8B8478" d="M 34 84 L 26 68 L 42 56 L 90 52 L 110 66 L 105 84 Q 104 88 98 88 L 46 88 Q 38 88 34 84 Z"/>
+
+  <path fill="#6E675D" d="M 36 62 L 30 46 L 48 32 L 86 30 L 102 44 L 98 62 Q 96 66 90 66 L 44 66 Q 38 66 36 62 Z"/>
+  <path fill="#9A9287" d="M 36 60 L 32 46 L 49 34 L 85 32 L 99 44 L 95 60 Q 94 63 89 63 L 44 63 Q 38 63 36 60 Z"/>
+
+  <path fill="#6E675D" d="M 42 40 L 40 30 L 54 20 L 76 20 L 88 30 L 86 40 Q 84 43 78 43 L 50 43 Q 44 43 42 40 Z"/>
+  <path fill="#CFC9BE" d="M 42 38 L 41 30 L 55 22 L 75 22 L 85 30 L 83 38 Q 82 40 77 40 L 50 40 Q 44 40 42 38 Z"/>
+  <path fill="#B5AEA1" d="M 42 38 L 41 30 L 48 25 L 58 36 Q 53 39 46 39 Q 43 39 42 38 Z"/>
+
+  <!-- Riss auf der Mittelschicht -->
+  <path fill="none" stroke="#6E675D" stroke-width="1.8" stroke-linecap="round" d="M 62 62 L 66 54 L 62 48"/>
+
+  <!-- Kleiner Stein rechts -->
+  <path fill="#6E675D" d="M 112 88 L 106 74 L 118 64 L 138 64 L 150 74 L 146 88 Q 144 92 138 92 L 120 92 Q 114 92 112 88 Z"/>
+  <path fill="#9A9287" d="M 112 86 L 108 74 L 119 66 L 137 66 L 147 74 L 144 86 Q 143 89 138 89 L 120 89 Q 114 89 112 86 Z"/>
+  <path fill="#6E675D" d="M 116 72 L 114 64 L 122 58 L 134 58 L 142 64 L 140 72 Q 139 74 135 74 L 121 74 Q 117 74 116 72 Z"/>
+  <path fill="#CFC9BE" d="M 116 70 L 115 64 L 123 60 L 133 60 L 139 64 L 137 70 Q 136 72 133 72 L 121 72 Q 117 72 116 70 Z"/>
+
+  <!-- Splitter dazwischen -->
+  <path fill="#8B8478" d="M 100 88 L 106 82 L 112 86 L 110 92 Q 108 94 104 94 Z"/>
+</svg>
+</div><span>Steingruppe</span></div>
+    <div class="feld"><div class="sprite" style="width:269px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Strichmännchen aus dunklen Papierstreifen, helles Papier für den Kopf -->
+  <!-- Frame 1: Schritt nach vorn, Leichtigneigung -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 26 24 L 30 33 L 33 41"/>
+      <path d="M 26 24 L 18 33 L 15 41"/>
+    </g>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 20 21 C 14 20 11 23 9 27" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2: Beine unter dem Körper, Körper federt nach oben -->
+  <g transform="translate(48 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 -1.5)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 27 48 L 28 58"/>
+        <path d="M 24 38 L 21 48 L 20 58"/>
+        <path d="M 24 24 L 27 34 L 29 42"/>
+        <path d="M 24 24 L 21 34 L 19 42"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 20 21 C 14 22 12 25 11 29" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+
+  <!-- Frame 3: anderer Schritt, Rumpf neigt sich zurück -->
+  <g transform="translate(96 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 22 24 L 18 33 L 15 41"/>
+      <path d="M 22 24 L 30 33 L 33 41"/>
+    </g>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 20 21 C 15 19 12 20 10 23" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4: Beine unter dem Körper, Körper federt nach unten -->
+  <g transform="translate(144 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 26 48 L 26 58"/>
+        <path d="M 24 38 L 22 48 L 22 58"/>
+        <path d="M 24 24 L 28 34 L 31 41"/>
+        <path d="M 24 24 L 20 34 L 17 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 20 21 C 14 21 11 24 10 28" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+</svg>
+</div><span>Läufer rechts (4 Frames)</span></div>
+    <div class="feld"><div class="sprite" style="width:269px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Strichmännchen aus dunklen Papierstreifen, helles Papier für den Kopf -->
+  <!-- Frame 1 -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 22 24 L 18 33 L 15 41"/>
+      <path d="M 22 24 L 30 33 L 33 41"/>
+    </g>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 28 21 C 34 20 37 23 39 27" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2 -->
+  <g transform="translate(48 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 -1.5)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 21 48 L 20 58"/>
+        <path d="M 24 38 L 27 48 L 28 58"/>
+        <path d="M 24 24 L 21 34 L 19 42"/>
+        <path d="M 24 24 L 27 34 L 29 42"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 28 21 C 34 22 36 25 37 29" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+
+  <!-- Frame 3 -->
+  <g transform="translate(96 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 26 24 L 30 33 L 33 41"/>
+      <path d="M 26 24 L 18 33 L 15 41"/>
+    </g>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 28 21 C 33 19 36 20 38 23" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4 -->
+  <g transform="translate(144 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 22 48 L 22 58"/>
+        <path d="M 24 38 L 26 48 L 26 58"/>
+        <path d="M 24 24 L 20 34 L 17 41"/>
+        <path d="M 24 24 L 28 34 L 31 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 28 21 C 34 21 37 24 38 28" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+</svg>
+</div><span>Läufer links (4 Frames)</span></div>
+  </div>
+</div>
+
+<div class="karte">
+  <div class="reihe">
+    <div class="feld"><div class="sprite" style="width:224px;height:202px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 144" width="160" height="144">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="78" cy="136" rx="62" ry="8" fill="#7A9549"/>
+  <ellipse cx="79" cy="134.5" rx="59" ry="7" fill="#8FAB58"/>
+
+  <!-- Hauskörper: Papierzylinder, dunkle Mantelfläche und helle Lichtseite -->
+  <path fill="#C89B6C" d="M 24 132 L 24 76 Q 24 72 28 72 L 132 72 Q 136 72 136 76 L 136 132 Q 136 136 132 136 L 28 136 Q 24 136 24 132 Z"/>
+  <path fill="#D9B183" d="M 24 132 L 24 76 Q 24 72 28 72 L 56 72 Q 54 84 54 100 Q 54 118 56 132 Q 56 136 60 136 L 28 136 Q 24 136 24 132 Z"/>
+
+  <!-- Dach: dreieckige Papierschicht mit darunterliegender dunkler Schicht -->
+  <path fill="#A0522D" d="M 14 78 L 76 22 L 78 26 L 20 80 Z"/>
+  <path fill="#B8663A" d="M 16 78 L 78 20 L 140 78 Q 140 82 136 82 L 20 82 Q 16 82 16 78 Z"/>
+  <path fill="#C97B4A" d="M 22 76 L 78 26 L 134 76 Q 134 78 132 78 L 24 78 Q 22 78 22 76 Z"/>
+
+  <!-- First: helle Papierkante -->
+  <path fill="none" stroke="#E0995C" stroke-width="2" stroke-linecap="round" d="M 24 72 L 76 22"/>
+
+  <!-- Tür: Papier-Rechteck mit hellem Rahmen -->
+  <path fill="#8A6240" d="M 84 136 L 84 100 Q 84 96 88 96 L 108 96 Q 112 96 112 100 L 112 136 Z"/>
+  <path fill="#A87F52" d="M 88 136 L 88 102 Q 88 100 90 100 L 92 100 Q 94 100 94 102 L 94 136 Z"/>
+
+  <!-- Fenster: Papier-Rechteck mit heller Lichtecke -->
+  <path fill="#6D4A31" d="M 36 104 L 36 84 Q 36 80 40 80 L 62 80 Q 66 80 66 84 L 66 104 Z"/>
+  <path fill="#F6F1E4" d="M 40 100 L 40 86 Q 40 84 42 84 L 50 84 L 50 100 Z"/>
+  <path fill="#FDF9EC" d="M 42 96 L 42 87 Q 42 86 43 86 L 47 86 L 47 96 Z"/>
+  <path fill="#6D4A31" d="M 40 92 L 62 92 L 62 94 L 40 94 Z"/>
+
+  <!-- Türgriff -->
+  <circle cx="106" cy="118" r="2.4" fill="#5C4028"/>
+
+  <!-- Schornstein -->
+  <path fill="#8B8478" d="M 112 46 L 112 30 L 124 30 L 124 40 Z"/>
+  <path fill="#9A9287" d="M 112 44 L 112 30 L 115 30 L 115 44 Z"/>
+  <ellipse cx="118" cy="29" rx="7" ry="2.6" fill="#CFC9BE"/>
+
+  <!-- Schornsteinrauch: ausgeschnittene Papierwolke -->
+  <path fill="#F6F1E4" d="M 112 22 Q 106 18 110 12 Q 114 6 122 8 Q 130 10 128 16 Q 126 22 118 22 Z"/>
+  <path fill="#FBF6E8" d="M 116 10 Q 114 6 118 4 Q 122 2 126 4 Q 129 7 126 9 Q 121 11 116 10 Z"/>
+</svg>
+</div><span>Haus</span></div>
+    <div class="feld"><div class="sprite" style="width:291px;height:224px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 208 160" width="208" height="160">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="102" cy="150" rx="84" ry="9" fill="#7A9549"/>
+  <ellipse cx="103" cy="148.5" rx="80" ry="8" fill="#8FAB58"/>
+
+  <!-- Hauskörper -->
+  <path fill="#C89B6C" d="M 24 148 L 24 84 Q 24 80 28 80 L 180 80 Q 184 80 184 84 L 184 148 Q 184 152 180 152 L 28 152 Q 24 152 24 148 Z"/>
+  <path fill="#D9B183" d="M 24 148 L 24 84 Q 24 80 28 80 L 64 80 Q 62 94 62 112 Q 62 132 64 148 Q 64 152 68 152 L 28 152 Q 24 152 24 148 Z"/>
+
+  <!-- Dach: dunkle Unterschicht, helle Hauptfläche, helle Firstkante -->
+  <path fill="#A0522D" d="M 14 88 L 102 24 L 104 28 L 18 90 Z"/>
+  <path fill="#B8663A" d="M 16 88 L 102 22 L 190 88 Q 190 92 186 92 L 20 92 Q 16 92 16 88 Z"/>
+  <path fill="#C97B4A" d="M 22 86 L 102 28 L 182 86 Q 182 88 180 88 L 24 88 Q 22 88 22 86 Z"/>
+  <path fill="none" stroke="#E0995C" stroke-width="2" stroke-linecap="round" d="M 26 82 L 102 26"/>
+
+  <!-- Fenster links -->
+  <path fill="#6D4A31" d="M 36 122 L 36 100 Q 36 96 40 96 L 60 96 Q 64 96 64 100 L 64 122 Z"/>
+  <path fill="#F6F1E4" d="M 40 118 L 40 101 Q 40 100 41 100 L 50 100 L 50 118 Z"/>
+  <path fill="#FDF9EC" d="M 42 114 L 42 102 Q 42 101 43 101 L 46 101 L 46 114 Z"/>
+
+  <!-- Fenster rechts -->
+  <path fill="#6D4A31" d="M 146 122 L 146 100 Q 146 96 150 96 L 170 96 Q 174 96 174 100 L 174 122 Z"/>
+  <path fill="#F6F1E4" d="M 150 118 L 150 101 Q 150 100 151 100 L 160 100 L 160 118 Z"/>
+  <path fill="#FDF9EC" d="M 152 114 L 152 102 Q 152 101 153 101 L 156 101 L 156 114 Z"/>
+
+  <!-- Tür mit bogenförmigem Papierabschluss -->
+  <path fill="#8A6240" d="M 92 152 L 92 108 Q 92 102 102 102 Q 112 102 112 108 L 112 152 Z"/>
+  <path fill="#A87F52" d="M 96 152 L 96 110 Q 96 106 102 106 Q 108 106 108 110 L 108 152 Z"/>
+  <circle cx="106" cy="130" r="2.4" fill="#5C4028"/>
+
+  <!-- Schornstein -->
+  <path fill="#8B8478" d="M 150 52 L 150 34 L 162 34 L 162 46 Z"/>
+  <path fill="#9A9287" d="M 150 50 L 150 34 L 153 34 L 153 50 Z"/>
+  <ellipse cx="156" cy="33" rx="7" ry="2.6" fill="#CFC9BE"/>
+
+  <!-- Schornsteinrauch: ausgeschnittene Papierwolke -->
+  <path fill="#F6F1E4" d="M 150 26 Q 144 22 148 16 Q 152 10 160 12 Q 168 14 166 20 Q 164 26 156 26 Z"/>
+  <path fill="#FBF6E8" d="M 154 14 Q 152 10 156 8 Q 160 6 164 8 Q 167 11 164 13 Q 159 15 154 14 Z"/>
+</svg>
+</div><span>Großes Haus</span></div>
+  </div>
+</div>
+
+<div class="karte">
+  <div class="reihe">
+    <div class="feld"><div class="sprite" style="width:67px;height:101px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 72" width="192" height="72">
+  <!-- Bär: gestapelte Papierschichten, Watschel-Gang in 4 Frames -->
+  <!-- Frame 1: linker Pfote vor, Kopf hoch -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="66" rx="18" ry="4" fill="#7A9549"/>
+    <ellipse cx="25" cy="65" rx="16" ry="3.2" fill="#8FAB58"/>
+    <ellipse cx="24" cy="52" rx="17" ry="13" fill="#6D4A31"/>
+    <ellipse cx="22" cy="50" rx="15" ry="11" fill="#8A6240"/>
+    <circle cx="20" cy="30" r="10" fill="#6D4A31"/>
+    <circle cx="19" cy="29" r="9" fill="#8A6240"/>
+    <circle cx="13" cy="22" r="3.4" fill="#6D4A31"/>
+    <circle cx="12.4" cy="21.6" r="2.6" fill="#C89B6C"/>
+    <circle cx="27" cy="21" r="3.4" fill="#6D4A31"/>
+    <circle cx="26.4" cy="20.6" r="2.6" fill="#C89B6C"/>
+    <ellipse cx="16" cy="31" rx="4.4" ry="3.4" fill="#C89B6C"/>
+    <circle cx="14.6" cy="30" r="1.6" fill="#4A3220"/>
+    <ellipse cx="24" cy="60" rx="4.4" ry="3" fill="#6D4A31" transform="rotate(-14 24 60)"/>
+    <ellipse cx="34" cy="62" rx="4.4" ry="3" fill="#8A6240" transform="rotate(12 34 62)"/>
+  </g>
+
+  <!-- Frame 2: mittige Stellung, Kopf nach unten -->
+  <g transform="translate(48 0)">
+    <ellipse cx="24" cy="66" rx="18" ry="4" fill="#7A9549"/>
+    <ellipse cx="25" cy="65" rx="16" ry="3.2" fill="#8FAB58"/>
+    <ellipse cx="24" cy="54" rx="17" ry="13" fill="#6D4A31"/>
+    <ellipse cx="22" cy="52" rx="15" ry="11" fill="#8A6240"/>
+    <circle cx="20" cy="33" r="10" fill="#6D4A31"/>
+    <circle cx="19" cy="32" r="9" fill="#8A6240"/>
+    <circle cx="13" cy="25" r="3.4" fill="#6D4A31"/>
+    <circle cx="12.4" cy="24.6" r="2.6" fill="#C89B6C"/>
+    <circle cx="27" cy="24" r="3.4" fill="#6D4A31"/>
+    <circle cx="26.4" cy="23.6" r="2.6" fill="#C89B6C"/>
+    <ellipse cx="16" cy="34" rx="4.4" ry="3.4" fill="#C89B6C"/>
+    <circle cx="14.6" cy="33" r="1.6" fill="#4A3220"/>
+    <ellipse cx="22" cy="63" rx="4.4" ry="3" fill="#6D4A31" transform="rotate(-4 22 63)"/>
+    <ellipse cx="28" cy="64" rx="4.4" ry="3" fill="#8A6240" transform="rotate(4 28 64)"/>
+  </g>
+
+  <!-- Frame 3: rechter Pfote vor, Kopf hoch, Rumpf kippt -->
+  <g transform="translate(96 0)">
+    <ellipse cx="24" cy="66" rx="18" ry="4" fill="#7A9549"/>
+    <ellipse cx="25" cy="65" rx="16" ry="3.2" fill="#8FAB58"/>
+    <ellipse cx="25" cy="52" rx="17" ry="13" fill="#6D4A31" transform="rotate(3 25 52)"/>
+    <ellipse cx="23" cy="50" rx="15" ry="11" fill="#8A6240" transform="rotate(3 23 50)"/>
+    <circle cx="21" cy="30" r="10" fill="#6D4A31"/>
+    <circle cx="20" cy="29" r="9" fill="#8A6240"/>
+    <circle cx="14" cy="22" r="3.4" fill="#6D4A31"/>
+    <circle cx="13.4" cy="21.6" r="2.6" fill="#C89B6C"/>
+    <circle cx="28" cy="21" r="3.4" fill="#6D4A31"/>
+    <circle cx="27.4" cy="20.6" r="2.6" fill="#C89B6C"/>
+    <ellipse cx="17" cy="31" rx="4.4" ry="3.4" fill="#C89B6C"/>
+    <circle cx="15.6" cy="30" r="1.6" fill="#4A3220"/>
+    <ellipse cx="16" cy="61" rx="4.4" ry="3" fill="#6D4A31" transform="rotate(8 16 61)"/>
+    <ellipse cx="30" cy="62" rx="4.4" ry="3" fill="#8A6240" transform="rotate(14 30 62)"/>
+  </g>
+
+  <!-- Frame 4: mittige Stellung, Kopf tief -->
+  <g transform="translate(144 0)">
+    <ellipse cx="24" cy="66" rx="18" ry="4" fill="#7A9549"/>
+    <ellipse cx="25" cy="65" rx="16" ry="3.2" fill="#8FAB58"/>
+    <ellipse cx="24" cy="53" rx="17" ry="13" fill="#6D4A31"/>
+    <ellipse cx="22" cy="51" rx="15" ry="11" fill="#8A6240"/>
+    <circle cx="20" cy="32" r="10" fill="#6D4A31"/>
+    <circle cx="19" cy="31" r="9" fill="#8A6240"/>
+    <circle cx="13" cy="24" r="3.4" fill="#6D4A31"/>
+    <circle cx="12.4" cy="23.6" r="2.6" fill="#C89B6C"/>
+    <circle cx="27" cy="23" r="3.4" fill="#6D4A31"/>
+    <circle cx="26.4" cy="22.6" r="2.6" fill="#C89B6C"/>
+    <ellipse cx="16" cy="33" rx="4.4" ry="3.4" fill="#C89B6C"/>
+    <circle cx="14.6" cy="32" r="1.6" fill="#4A3220"/>
+    <ellipse cx="23" cy="63" rx="4.4" ry="3" fill="#6D4A31" transform="rotate(-6 23 63)"/>
+    <ellipse cx="29" cy="64" rx="4.4" ry="3" fill="#8A6240" transform="rotate(6 29 64)"/>
+  </g>
+</svg>
+</div><span>Bär (4 Frames)</span></div>
+    <div class="feld"><div class="sprite" style="width:45px;height:101px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 72" width="128" height="72">
+  <!-- Hase: Flucht-Hoppeln in 4 Frames, Laufrichtung nach rechts -->
+  <!-- Frame 1: gestreckt in der Luft, Ohren nach hinten -->
+  <g transform="translate(0 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="15" cy="44" rx="12" ry="8" fill="#B5AEA1" transform="rotate(8 15 44)"/>
+    <ellipse cx="14" cy="42" rx="10" ry="6" fill="#CFC9BE" transform="rotate(8 14 42)"/>
+    <circle cx="27" cy="34" r="7" fill="#B5AEA1"/>
+    <circle cx="26" cy="33" r="6" fill="#CFC9BE"/>
+    <ellipse cx="23" cy="21" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(24 23 21)"/>
+    <ellipse cx="22.6" cy="21" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(24 22.6 21)"/>
+    <ellipse cx="29" cy="22" rx="2.6" ry="9" fill="#B5AEA1" transform="rotate(40 29 22)"/>
+    <circle cx="29" cy="33.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="30.6" cy="36.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+    <ellipse cx="4" cy="46" rx="4" ry="2.6" fill="#FBF6E8" transform="rotate(30 4 46)"/>
+  </g>
+
+  <!-- Frame 2: zusammengedrückt, Pfoten unter dem Körper -->
+  <g transform="translate(32 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="16" cy="52" rx="13" ry="7" fill="#B5AEA1"/>
+    <ellipse cx="15" cy="50" rx="11" ry="5" fill="#CFC9BE"/>
+    <circle cx="28" cy="46" r="7" fill="#B5AEA1"/>
+    <circle cx="27" cy="45" r="6" fill="#CFC9BE"/>
+    <ellipse cx="24" cy="34" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(6 24 34)"/>
+    <ellipse cx="23.6" cy="34" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(6 23.6 34)"/>
+    <ellipse cx="31" cy="36" rx="2.4" ry="8" fill="#B5AEA1" transform="rotate(18 31 36)"/>
+    <circle cx="30" cy="45.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="31.6" cy="48.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+  </g>
+
+  <!-- Frame 3: gestreckt, Ohren flach -->
+  <g transform="translate(64 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="15" cy="44" rx="12" ry="8" fill="#B5AEA1" transform="rotate(-6 15 44)"/>
+    <ellipse cx="14" cy="42" rx="10" ry="6" fill="#CFC9BE" transform="rotate(-6 14 42)"/>
+    <circle cx="27" cy="33" r="7" fill="#B5AEA1"/>
+    <circle cx="26" cy="32" r="6" fill="#CFC9BE"/>
+    <ellipse cx="22" cy="22" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(58 22 22)"/>
+    <ellipse cx="21.6" cy="22" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(58 21.6 22)"/>
+    <ellipse cx="29" cy="26" rx="2.4" ry="9" fill="#B5AEA1" transform="rotate(70 29 26)"/>
+    <circle cx="29" cy="32.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="30.6" cy="35.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+    <ellipse cx="4" cy="48" rx="4" ry="2.6" fill="#FBF6E8" transform="rotate(10 4 48)"/>
+  </g>
+
+  <!-- Frame 4: zusammengedrückt, tief -->
+  <g transform="translate(96 0)">
+    <ellipse cx="16" cy="66" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="17" cy="65" rx="10" ry="2.4" fill="#8FAB58"/>
+    <ellipse cx="16" cy="50" rx="13" ry="7" fill="#B5AEA1"/>
+    <ellipse cx="15" cy="48" rx="11" ry="5" fill="#CFC9BE"/>
+    <circle cx="28" cy="44" r="7" fill="#B5AEA1"/>
+    <circle cx="27" cy="43" r="6" fill="#CFC9BE"/>
+    <ellipse cx="24" cy="32" rx="2.6" ry="10" fill="#B5AEA1" transform="rotate(2 24 32)"/>
+    <ellipse cx="23.6" cy="32" rx="1.8" ry="8" fill="#CFC9BE" transform="rotate(2 23.6 32)"/>
+    <ellipse cx="31" cy="35" rx="2.4" ry="8" fill="#B5AEA1" transform="rotate(14 31 35)"/>
+    <circle cx="30" cy="43.4" r="1.5" fill="#4A4237"/>
+    <ellipse cx="31.6" cy="46.4" rx="2.2" ry="1.8" fill="#8B8478"/>
+  </g>
+</svg>
+</div><span>Hase (4 Frames)</span></div>
+    <div class="feld"><div class="sprite" style="width:45px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64" width="128" height="64">
+  <!-- Vogel: Flügelschlag in 4 Frames, Flugrichtung rechts -->
+  <!-- Frame 1: Flügel oben -->
+  <g transform="translate(0 0)">
+    <ellipse cx="16" cy="34" rx="10" ry="6.4" fill="#8A6240"/>
+    <ellipse cx="15" cy="33" rx="8" ry="5" fill="#A87F52"/>
+    <circle cx="25" cy="28" r="5.4" fill="#8A6240"/>
+    <circle cx="24" cy="27" r="4.4" fill="#A87F52"/>
+    <path d="M 29 27 L 35 29 L 29 31 Z" fill="#E8B84B"/>
+    <circle cx="25.6" cy="26.4" r="1.3" fill="#4A3220"/>
+    <ellipse cx="14" cy="18" rx="4" ry="10" fill="#6D4A31" transform="rotate(-28 14 18)"/>
+    <ellipse cx="13.4" cy="17" rx="2.6" ry="7" fill="#A87F52" transform="rotate(-28 13.4 17)"/>
+    <path d="M 5 36 Q 10 32 14 34 L 13 40 Q 8 41 5 36 Z" fill="#6D4A31"/>
+  </g>
+
+  <!-- Frame 2: Flügel in der Mitte -->
+  <g transform="translate(32 0)">
+    <ellipse cx="16" cy="32" rx="10" ry="6.4" fill="#8A6240"/>
+    <ellipse cx="15" cy="31" rx="8" ry="5" fill="#A87F52"/>
+    <circle cx="25" cy="29" r="5.4" fill="#8A6240"/>
+    <circle cx="24" cy="28" r="4.4" fill="#A87F52"/>
+    <path d="M 29 28 L 35 30 L 29 32 Z" fill="#E8B84B"/>
+    <circle cx="25.6" cy="27.4" r="1.3" fill="#4A3220"/>
+    <ellipse cx="15" cy="20" rx="4" ry="9" fill="#6D4A31" transform="rotate(-6 15 20)"/>
+    <ellipse cx="14.4" cy="19" rx="2.6" ry="6" fill="#A87F52" transform="rotate(-6 14.4 19)"/>
+    <path d="M 5 34 Q 10 31 14 33 L 13 39 Q 8 40 5 34 Z" fill="#6D4A31"/>
+  </g>
+
+  <!-- Frame 3: Flügel unten, Körper leicht gesenkt -->
+  <g transform="translate(64 0)">
+    <ellipse cx="16" cy="36" rx="10" ry="6.4" fill="#8A6240"/>
+    <ellipse cx="15" cy="35" rx="8" ry="5" fill="#A87F52"/>
+    <circle cx="25" cy="31" r="5.4" fill="#8A6240"/>
+    <circle cx="24" cy="30" r="4.4" fill="#A87F52"/>
+    <path d="M 29 30 L 35 32 L 29 34 Z" fill="#E8B84B"/>
+    <circle cx="25.6" cy="29.4" r="1.3" fill="#4A3220"/>
+    <ellipse cx="14" cy="46" rx="4" ry="10" fill="#6D4A31" transform="rotate(26 14 46)"/>
+    <ellipse cx="13.4" cy="45" rx="2.6" ry="7" fill="#A87F52" transform="rotate(26 13.4 45)"/>
+    <path d="M 5 38 Q 10 34 14 36 L 13 42 Q 8 43 5 38 Z" fill="#6D4A31"/>
+  </g>
+
+  <!-- Frame 4: Aufsteigen, Flügel oben, Kopf nach vorn oben -->
+  <g transform="translate(96 0)">
+    <ellipse cx="16" cy="28" rx="10" ry="6.4" fill="#8A6240" transform="rotate(-16 16 28)"/>
+    <ellipse cx="15" cy="27" rx="8" ry="5" fill="#A87F52" transform="rotate(-16 15 27)"/>
+    <circle cx="25" cy="21" r="5.4" fill="#8A6240"/>
+    <circle cx="24" cy="20" r="4.4" fill="#A87F52"/>
+    <path d="M 29 20 L 35 22 L 29 24 Z" fill="#E8B84B"/>
+    <circle cx="25.6" cy="19.4" r="1.3" fill="#4A3220"/>
+    <ellipse cx="13" cy="12" rx="4" ry="10" fill="#6D4A31" transform="rotate(-40 13 12)"/>
+    <ellipse cx="12.4" cy="11" rx="2.6" ry="7" fill="#A87F52" transform="rotate(-40 12.4 11)"/>
+    <path d="M 5 30 Q 10 26 14 28 L 13 34 Q 8 35 5 30 Z" fill="#6D4A31"/>
+  </g>
+</svg>
+</div><span>Vogel (4 Frames)</span></div>
+    <div class="feld"><div class="sprite" style="width:67px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Vogelgruppe: drei Vögel im Keil, Flügel versetzt geschlagen -->
+  <!-- Frame 1 -->
+  <g transform="translate(0 0)">
+    <g transform="translate(34 14)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240"/>
+      <ellipse cx="-1" cy="-1" rx="7" ry="4" fill="#A87F52"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-14" rx="3.6" ry="9" fill="#6D4A31" transform="rotate(-30 -2 -14)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 34)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-9" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(4 -2 -9)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 52)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-9" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(-8 -2 -9)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+
+  <!-- Frame 2 -->
+  <g transform="translate(48 0)">
+    <g transform="translate(34 14)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-12" rx="3.6" ry="8" fill="#6D4A31" transform="rotate(-8 -2 -12)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 34)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-11" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(24 -2 -11)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 52)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-11" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(12 -2 -11)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+
+  <!-- Frame 3 -->
+  <g transform="translate(96 0)">
+    <g transform="translate(34 16)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-8" rx="3.6" ry="9" fill="#6D4A31" transform="rotate(24 -2 -8)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 36)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-8" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(46 -2 -8)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 54)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-8" rx="3.4" ry="8" fill="#6D4A31" transform="rotate(34 -2 -8)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+
+  <!-- Frame 4: Formation zieht nach oben weg -->
+  <g transform="translate(144 0)">
+    <g transform="translate(34 8)">
+      <ellipse cx="0" cy="0" rx="9" ry="5.6" fill="#8A6240" transform="rotate(-14)"/>
+      <circle cx="8" cy="-5" r="4.8" fill="#8A6240"/>
+      <path d="M 12 -6 L 17 -4 L 12 -2 Z" fill="#E8B84B"/>
+      <ellipse cx="-3" cy="-14" rx="3.6" ry="9" fill="#6D4A31" transform="rotate(-42 -3 -14)"/>
+      <path d="M -13 2 Q -8 -2 -4 0 L -5 6 Q -10 7 -13 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 26)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240" transform="rotate(-12)"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-12" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(-34 -2 -12)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+    <g transform="translate(16 44)">
+      <ellipse cx="0" cy="0" rx="8" ry="5" fill="#8A6240" transform="rotate(-12)"/>
+      <circle cx="7" cy="-4" r="4.2" fill="#8A6240"/>
+      <path d="M 11 -5 L 15 -3 L 11 -1 Z" fill="#E8B84B"/>
+      <ellipse cx="-2" cy="-12" rx="3.4" ry="9" fill="#6D4A31" transform="rotate(-28 -2 -12)"/>
+      <path d="M -11 2 Q -7 -1 -4 0 L -5 5 Q -9 6 -11 2 Z" fill="#6D4A31"/>
+    </g>
+  </g>
+</svg>
+</div><span>Vogelgruppe (4 Frames)</span></div>
+  </div>
+</div>
+
+<div class="karte">
+  <div class="reihe">
+    <div class="feld"><div class="sprite" style="width:67px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Strichmännchen aus dunklen Papierstreifen, helles Papier für den Kopf -->
+  <!-- Frame 1: Schritt nach vorn, Leichtigneigung -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 26 24 L 30 33 L 33 41"/>
+      <path d="M 26 24 L 18 33 L 15 41"/>
+    </g>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 20 21 C 14 20 11 23 9 27" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2: Beine unter dem Körper, Körper federt nach oben -->
+  <g transform="translate(48 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 -1.5)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 27 48 L 28 58"/>
+        <path d="M 24 38 L 21 48 L 20 58"/>
+        <path d="M 24 24 L 27 34 L 29 42"/>
+        <path d="M 24 24 L 21 34 L 19 42"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 20 21 C 14 22 12 25 11 29" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+
+  <!-- Frame 3: anderer Schritt, Rumpf neigt sich zurück -->
+  <g transform="translate(96 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 22 24 L 18 33 L 15 41"/>
+      <path d="M 22 24 L 30 33 L 33 41"/>
+    </g>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 20 21 C 15 19 12 20 10 23" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4: Beine unter dem Körper, Körper federt nach unten -->
+  <g transform="translate(144 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 26 48 L 26 58"/>
+        <path d="M 24 38 L 22 48 L 22 58"/>
+        <path d="M 24 24 L 28 34 L 31 41"/>
+        <path d="M 24 24 L 20 34 L 17 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 20 21 C 14 21 11 24 10 28" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+</svg>
+</div><span>Laufen rechts (4 Frames)</span></div>
+    <div class="feld"><div class="sprite" style="width:67px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Strichmännchen aus dunklen Papierstreifen, helles Papier für den Kopf -->
+  <!-- Frame 1 -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 22 24 L 18 33 L 15 41"/>
+      <path d="M 22 24 L 30 33 L 33 41"/>
+    </g>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 28 21 C 34 20 37 23 39 27" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2 -->
+  <g transform="translate(48 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 -1.5)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 21 48 L 20 58"/>
+        <path d="M 24 38 L 27 48 L 28 58"/>
+        <path d="M 24 24 L 21 34 L 19 42"/>
+        <path d="M 24 24 L 27 34 L 29 42"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 28 21 C 34 22 36 25 37 29" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+
+  <!-- Frame 3 -->
+  <g transform="translate(96 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 17 48 L 13 58"/>
+      <path d="M 24 38 L 31 48 L 35 58"/>
+      <path d="M 26 24 L 30 33 L 33 41"/>
+      <path d="M 26 24 L 18 33 L 15 41"/>
+    </g>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 28 21 C 33 19 36 20 38 23" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4 -->
+  <g transform="translate(144 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 22 48 L 22 58"/>
+        <path d="M 24 38 L 26 48 L 26 58"/>
+        <path d="M 24 24 L 20 34 L 17 41"/>
+        <path d="M 24 24 L 28 34 L 31 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 28 21 C 34 21 37 24 38 28" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+</svg>
+</div><span>Laufen links (4 Frames)</span></div>
+    <div class="feld"><div class="sprite" style="width:67px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Idle: Atmung und leichtes Wiegen, Füße bleiben in jedem Frame an derselben Stelle -->
+  <!-- Frame 1: Grundhaltung -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 24 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 24 24 L 27 33 L 29 41"/>
+      <path d="M 24 24 L 21 33 L 19 41"/>
+    </g>
+    <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 20 21 C 15 20 12 22 10 26" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2: Einatmen, Oberkörper hebt sich minimal -->
+  <g transform="translate(48 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 -1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 27 49 L 26 58"/>
+        <path d="M 24 38 L 21 49 L 22 58"/>
+        <path d="M 24 24 L 27 33 L 29 41"/>
+        <path d="M 24 24 L 21 33 L 19 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 20 21 C 15 19 12 21 10 25" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+
+  <!-- Frame 3: Grundhaltung, Arm leicht ausgestellt -->
+  <g transform="translate(96 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 24 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 24 24 L 29 32 L 33 40"/>
+      <path d="M 24 24 L 19 33 L 16 41"/>
+    </g>
+    <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 20 21 C 15 20 12 22 10 26" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4: Ausatmen, Oberkörper senkt sich minimal -->
+  <g transform="translate(144 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 27 49 L 26 58"/>
+        <path d="M 24 38 L 21 49 L 22 58"/>
+        <path d="M 24 24 L 27 33 L 29 41"/>
+        <path d="M 24 24 L 21 33 L 19 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 20 21 C 15 21 12 23 10 27" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="20" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+</svg>
+</div><span>Idle rechts (4 Frames, Füße fest)</span></div>
+    <div class="feld"><div class="sprite" style="width:67px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 64" width="192" height="64">
+  <!-- Idle nach links: Spiegel der rechten Variante, Füße an denselben Punkten -->
+  <!-- Frame 1: Grundhaltung -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 24 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 24 24 L 27 33 L 29 41"/>
+      <path d="M 24 24 L 21 33 L 19 41"/>
+    </g>
+    <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 28 21 C 33 20 36 22 38 26" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2: Einatmen -->
+  <g transform="translate(48 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 -1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 27 49 L 26 58"/>
+        <path d="M 24 38 L 21 49 L 22 58"/>
+        <path d="M 24 24 L 27 33 L 29 41"/>
+        <path d="M 24 24 L 21 33 L 19 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 28 21 C 33 19 36 21 38 25" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+
+  <!-- Frame 3: Grundhaltung, Arm leicht ausgestellt -->
+  <g transform="translate(96 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 24 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 24 24 L 19 32 L 15 40"/>
+      <path d="M 24 24 L 29 33 L 32 41"/>
+    </g>
+    <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <path d="M 28 21 C 33 20 36 22 38 26" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+    <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4: Ausatmen -->
+  <g transform="translate(144 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g transform="translate(0 1)">
+      <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M 24 20 L 24 38"/>
+        <path d="M 24 38 L 27 49 L 26 58"/>
+        <path d="M 24 38 L 21 49 L 22 58"/>
+        <path d="M 24 24 L 27 33 L 29 41"/>
+        <path d="M 24 24 L 21 33 L 19 41"/>
+      </g>
+      <circle cx="24" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+      <path d="M 28 21 C 33 21 36 23 38 27" fill="none" stroke="#C75B39" stroke-width="3" stroke-linecap="round"/>
+      <rect x="17" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+    </g>
+  </g>
+</svg>
+</div><span>Idle links (4 Frames, Füße fest)</span></div>
+    <div class="feld"><div class="sprite" style="width:90px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 64" width="256" height="64">
+  <!-- Holzhacken: Vier-Schlag-Zyklus, Füße stehen in jedem Frame an denselben Punkten -->
+  <!-- Frame 1: Ausholen, Axt hinter dem Rücken hoch -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 26 22 L 20 14"/>
+      <path d="M 26 22 L 32 30"/>
+    </g>
+    <path d="M 20 14 L 13 7" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 12 9 C 8 4 15 1 20 4 L 15 10 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="22" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2: Schlag bringt die Axt über den Kopf nach vorn -->
+  <g transform="translate(64 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 26 22 L 33 14"/>
+      <path d="M 26 22 L 31 30"/>
+    </g>
+    <path d="M 33 14 L 41 7" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 42 9 C 47 4 50 11 45 16 L 38 10 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="22" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 3: Treffer, Axt tief vor dem Körper -->
+  <g transform="translate(128 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 26 22 L 34 28"/>
+      <path d="M 26 22 L 31 31"/>
+    </g>
+    <path d="M 34 28 L 43 34" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 44 32 C 50 30 51 38 44 39 L 39 33 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <path d="M 44 40 L 49 38 M 45 44 L 50 43" stroke="#4A4237" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="22" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4: Nachfedern, Axt wird wieder angehoben -->
+  <g transform="translate(192 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 26 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 26 22 L 30 22"/>
+      <path d="M 26 22 L 32 30"/>
+    </g>
+    <path d="M 30 22 L 37 18" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 38 20 C 43 15 46 22 41 26 L 34 21 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <circle cx="26" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="22" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+</svg>
+</div><span>Holzhacken rechts (4 Frames, Füße fest)</span></div>
+    <div class="feld"><div class="sprite" style="width:90px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 64" width="256" height="64">
+  <!-- Holzhacken nach links: Spiegel der rechten Variante, Füße unverändert -->
+  <!-- Frame 1: Ausholen -->
+  <g transform="translate(0 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 22 22 L 28 14"/>
+      <path d="M 22 22 L 16 30"/>
+    </g>
+    <path d="M 28 14 L 35 7" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 36 9 C 40 4 43 11 38 16 L 33 10 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="15" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 2: Schlag über den Kopf -->
+  <g transform="translate(64 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 22 22 L 15 14"/>
+      <path d="M 22 22 L 17 30"/>
+    </g>
+    <path d="M 15 14 L 7 7" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 6 9 C 1 4 -2 11 3 16 L 10 10 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="15" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 3: Treffer mit Splittern -->
+  <g transform="translate(128 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 22 22 L 14 28"/>
+      <path d="M 22 22 L 17 31"/>
+    </g>
+    <path d="M 14 28 L 5 34" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 4 32 C -2 30 -3 38 4 39 L 9 33 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <path d="M 4 40 L -1 38 M 3 44 L -2 43" stroke="#4A4237" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="15" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+
+  <!-- Frame 4: Nachfedern -->
+  <g transform="translate(192 0)">
+    <ellipse cx="24" cy="60" rx="12" ry="3" fill="#7A9549"/>
+    <ellipse cx="25" cy="59" rx="10" ry="2.4" fill="#8FAB58"/>
+    <g stroke="#4A4237" stroke-width="3.5" stroke-linecap="round" fill="none">
+      <path d="M 22 20 L 24 38"/>
+      <path d="M 24 38 L 27 49 L 26 58"/>
+      <path d="M 24 38 L 21 49 L 22 58"/>
+      <path d="M 22 22 L 18 22"/>
+      <path d="M 22 22 L 16 30"/>
+    </g>
+    <path d="M 18 22 L 11 18" stroke="#8B5A2B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M 10 20 C 5 15 2 22 7 26 L 14 21 Z" fill="#C9C2B4" stroke="#4A4237" stroke-width="1.6"/>
+    <circle cx="22" cy="13" r="6.5" fill="#FBF6E8" stroke="#4A4237" stroke-width="3"/>
+    <rect x="15" y="19" width="11" height="4" rx="2" fill="#C75B39"/>
+  </g>
+</svg>
+</div><span>Holzhacken links (4 Frames, Füße fest)</span></div>
+  </div>
+</div>
+
+<div class="karte">
+  <div class="reihe">
+    <div class="feld"><div class="sprite" style="width:90px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Holz: zwei gestapelte Papierstämme mit hellem Schnittende -->
+  <ellipse cx="32" cy="54" rx="22" ry="5" fill="#7A9549"/>
+  <ellipse cx="32" cy="52" rx="18" ry="4" fill="#8FAB58" opacity="0.8"/>
+  <g transform="rotate(-6 32 40)">
+    <rect x="10" y="36" width="40" height="12" rx="6" fill="#8B5A2B"/>
+    <rect x="10" y="36" width="40" height="4" rx="2" fill="#A5713C"/>
+    <ellipse cx="50" cy="42" rx="4" ry="6" fill="#E8D9A8" stroke="#4A4237" stroke-width="1.6"/>
+  </g>
+  <g transform="rotate(5 30 26)">
+    <rect x="12" y="22" width="38" height="12" rx="6" fill="#8B5A2B"/>
+    <rect x="12" y="22" width="38" height="4" rx="2" fill="#A5713C"/>
+    <ellipse cx="50" cy="28" rx="4" ry="6" fill="#E8D9A8" stroke="#4A4237" stroke-width="1.6"/>
+  </g>
+</svg>
+</div><span>Holz</span></div>
+    <div class="feld"><div class="sprite" style="width:90px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Stein: zwei gestapelte Papierschichten mit heller Kante oben -->
+  <ellipse cx="32" cy="54" rx="22" ry="5" fill="#7A9549"/>
+  <ellipse cx="32" cy="52" rx="18" ry="4" fill="#8FAB58" opacity="0.8"/>
+  <path d="M 14 46 L 18 34 L 30 30 L 44 34 L 48 46 Z" fill="#B9B2A2"/>
+  <path d="M 18 34 L 30 30 L 44 34 L 41 37 L 29 34 L 21 37 Z" fill="#D8D2C2"/>
+  <path d="M 22 30 L 26 20 L 36 17 L 44 21 L 46 30 Z" fill="#C4BCAA"/>
+  <path d="M 26 20 L 36 17 L 44 21 L 40 23 L 32 21 L 26 23 Z" fill="#DDD6C6"/>
+</svg>
+</div><span>Stein</span></div>
+    <div class="feld"><div class="sprite" style="width:90px;height:90px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Fleisch: Schinkenkeule aus zwei Papierschichten mit weißem Papierknochen -->
+  <ellipse cx="32" cy="54" rx="22" ry="5" fill="#7A9549"/>
+  <ellipse cx="32" cy="52" rx="18" ry="4" fill="#8FAB58" opacity="0.8"/>
+  <g transform="rotate(-18 32 32)">
+    <path d="M 40 22 C 48 26 47 38 39 42 C 30 46 21 42 20 36 C 19 30 26 25 33 24 Z" fill="#C75B39"/>
+    <path d="M 38 24 C 44 27 43 36 37 39 C 30 42 24 39 23 35 C 22 30 28 26 33 25 Z" fill="#E0876A"/>
+    <path d="M 21 37 C 17 38 15 41 16 44 C 17 47 21 47 23 44 L 24 38 Z" fill="#FBF6E8" stroke="#4A4237" stroke-width="1.6"/>
+  </g>
+</svg>
+</div><span>Fleisch</span></div>
+  </div>
+</div>
+
+<div class="karte">
+  <div class="kacheln">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="170" height="170">
+  <!-- Boden-Kachel: unterste Papierebene (dunkler Ton schaut an den Rissen hervor) -->
+  <rect x="0" y="0" width="170" height="170" fill="#8FAB58"/>
+
+  <!-- Oberste Papierebene mit eingerissenem Rand (Licht von oben links) -->
+  <path fill="#A3BE6B" d="
+    M 12 22
+    Q 44 10 76 20 Q 108 30 140 18 Q 172 8 204 20 Q 236 32 268 20
+    Q 300 10 332 22 Q 364 32 396 18 Q 428 8 460 20 Q 484 28 498 40
+    Q 506 72 498 104 Q 490 136 502 168 Q 510 200 498 232
+    Q 486 264 500 296 Q 510 328 498 360 Q 486 392 500 424
+    Q 508 452 492 476
+    Q 464 486 432 494 Q 400 502 368 492 Q 336 482 304 494
+    Q 272 504 240 492 Q 208 482 176 494 Q 144 504 112 492
+    Q 80 482 48 492 Q 26 496 16 480
+    Q 8 448 16 416 Q 24 384 12 352 Q 2 320 14 288
+    Q 26 256 12 224 Q 2 192 14 160 Q 26 128 12 96
+    Q 2 64 12 36
+    Z"/>
+
+  <!-- Helle Papierschnipsel (Lichtflecken) -->
+  <path fill="#B7CE7E" d="M 70 90 Q 95 62 130 70 Q 168 60 190 84 Q 206 104 192 126 Q 170 150 132 144 Q 96 150 78 128 Q 62 108 70 90 Z"/>
+  <path fill="#B7CE7E" d="M 322 322 Q 348 306 374 316 Q 400 326 394 350 Q 386 372 356 370 Q 330 370 320 350 Q 314 336 322 322 Z"/>
+  <path fill="#B7CE7E" d="M 96 300 Q 112 290 128 298 Q 142 306 136 320 Q 128 334 108 330 Q 92 328 88 314 Q 88 306 96 300 Z"/>
+
+  <!-- Eingerissene Löcher (dunkler Untergrund schaut durch) -->
+  <path fill="#7A9549" d="M 420 120 Q 432 112 442 122 Q 450 132 440 142 Q 428 150 418 140 Q 412 130 420 120 Z"/>
+  <path fill="#7A9549" d="M 150 404 Q 160 396 170 404 Q 178 412 170 422 Q 160 430 150 422 Q 144 412 150 404 Z"/>
+  <path fill="#7A9549" d="M 300 210 Q 308 204 316 210 Q 322 216 316 224 Q 308 230 300 224 Q 296 216 300 210 Z"/>
+
+  <!-- Grasbüschel: ausgeschnittene Papierhalme -->
+  <g fill="#6F8A42">
+    <path transform="translate(60 236) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(210 130) scale(0.9)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(388 300) scale(1.2)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(440 96) scale(0.8)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(130 452) scale(1.0)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(286 418) scale(0.85)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+  </g>
+
+  <!-- Kleine Papier-Kieselsteine (hell oben, Schatten unten) -->
+  <g>
+    <ellipse cx="96" cy="182" rx="14" ry="9" fill="#9A9287"/>
+    <ellipse cx="95" cy="180" rx="13" ry="8" fill="#CFC9BE"/>
+    <ellipse cx="356" cy="120" rx="11" ry="7" fill="#9A9287"/>
+    <ellipse cx="355" cy="118" rx="10" ry="6" fill="#CFC9BE"/>
+    <ellipse cx="238" cy="330" rx="16" ry="10" fill="#9A9287"/>
+    <ellipse cx="237" cy="328" rx="15" ry="9" fill="#CFC9BE"/>
+  </g>
+</svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="170" height="170">
+  <!-- Wiese-Kachel: unterste Papierebene (dunkler Ton schaut an den Rissen hervor) -->
+  <rect x="0" y="0" width="170" height="170" fill="#7FA04B"/>
+
+  <!-- Oberste Papierebene mit eingerissenem Rand -->
+  <path fill="#96B75F" d="
+    M 12 22
+    Q 44 10 76 20 Q 108 30 140 18 Q 172 8 204 20 Q 236 32 268 20
+    Q 300 10 332 22 Q 364 32 396 18 Q 428 8 460 20 Q 484 28 498 40
+    Q 506 72 498 104 Q 490 136 502 168 Q 510 200 498 232
+    Q 486 264 500 296 Q 510 328 498 360 Q 486 392 500 424
+    Q 508 452 492 476
+    Q 464 486 432 494 Q 400 502 368 492 Q 336 482 304 494
+    Q 272 504 240 492 Q 208 482 176 494 Q 144 504 112 492
+    Q 80 482 48 492 Q 26 496 16 480
+    Q 8 448 16 416 Q 24 384 12 352 Q 2 320 14 288
+    Q 26 256 12 224 Q 2 192 14 160 Q 26 128 12 96
+    Q 2 64 12 36
+    Z"/>
+
+  <!-- Helle Papierschnipsel -->
+  <path fill="#ACC876" d="M 380 84 Q 404 70 428 80 Q 448 92 440 112 Q 428 130 402 126 Q 382 122 376 104 Q 374 92 380 84 Z"/>
+  <path fill="#ACC876" d="M 92 210 Q 108 200 122 208 Q 134 216 128 228 Q 120 240 102 236 Q 88 232 86 220 Q 86 214 92 210 Z"/>
+
+  <!-- Grasbüschel: ausgeschnittene Papierhalme -->
+  <g fill="#5E7A36">
+    <path transform="translate(56 120) scale(1.5)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(180 88) scale(1.2)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(300 150) scale(1.7)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(410 200) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(90 330) scale(1.4)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(230 300) scale(1.6)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(360 370) scale(1.3)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(140 440) scale(1.5)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(330 460) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(460 430) scale(1.4)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+  </g>
+
+  <!-- Blüten: weiße Papierblätter, gelber Kern, gestapelter Schatten -->
+  <g>
+    <g transform="translate(150 190)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(272 238)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(402 300)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(206 402)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(64 262)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+  </g>
+</svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="170" height="170">
+  <!-- Boden-Kachel: unterste Papierebene (dunkler Ton schaut an den Rissen hervor) -->
+  <rect x="0" y="0" width="170" height="170" fill="#8FAB58"/>
+
+  <!-- Oberste Papierebene mit eingerissenem Rand (Licht von oben links) -->
+  <path fill="#A3BE6B" d="
+    M 12 22
+    Q 44 10 76 20 Q 108 30 140 18 Q 172 8 204 20 Q 236 32 268 20
+    Q 300 10 332 22 Q 364 32 396 18 Q 428 8 460 20 Q 484 28 498 40
+    Q 506 72 498 104 Q 490 136 502 168 Q 510 200 498 232
+    Q 486 264 500 296 Q 510 328 498 360 Q 486 392 500 424
+    Q 508 452 492 476
+    Q 464 486 432 494 Q 400 502 368 492 Q 336 482 304 494
+    Q 272 504 240 492 Q 208 482 176 494 Q 144 504 112 492
+    Q 80 482 48 492 Q 26 496 16 480
+    Q 8 448 16 416 Q 24 384 12 352 Q 2 320 14 288
+    Q 26 256 12 224 Q 2 192 14 160 Q 26 128 12 96
+    Q 2 64 12 36
+    Z"/>
+
+  <!-- Helle Papierschnipsel (Lichtflecken) -->
+  <path fill="#B7CE7E" d="M 70 90 Q 95 62 130 70 Q 168 60 190 84 Q 206 104 192 126 Q 170 150 132 144 Q 96 150 78 128 Q 62 108 70 90 Z"/>
+  <path fill="#B7CE7E" d="M 322 322 Q 348 306 374 316 Q 400 326 394 350 Q 386 372 356 370 Q 330 370 320 350 Q 314 336 322 322 Z"/>
+  <path fill="#B7CE7E" d="M 96 300 Q 112 290 128 298 Q 142 306 136 320 Q 128 334 108 330 Q 92 328 88 314 Q 88 306 96 300 Z"/>
+
+  <!-- Eingerissene Löcher (dunkler Untergrund schaut durch) -->
+  <path fill="#7A9549" d="M 420 120 Q 432 112 442 122 Q 450 132 440 142 Q 428 150 418 140 Q 412 130 420 120 Z"/>
+  <path fill="#7A9549" d="M 150 404 Q 160 396 170 404 Q 178 412 170 422 Q 160 430 150 422 Q 144 412 150 404 Z"/>
+  <path fill="#7A9549" d="M 300 210 Q 308 204 316 210 Q 322 216 316 224 Q 308 230 300 224 Q 296 216 300 210 Z"/>
+
+  <!-- Grasbüschel: ausgeschnittene Papierhalme -->
+  <g fill="#6F8A42">
+    <path transform="translate(60 236) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(210 130) scale(0.9)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(388 300) scale(1.2)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(440 96) scale(0.8)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(130 452) scale(1.0)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(286 418) scale(0.85)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+  </g>
+
+  <!-- Kleine Papier-Kieselsteine (hell oben, Schatten unten) -->
+  <g>
+    <ellipse cx="96" cy="182" rx="14" ry="9" fill="#9A9287"/>
+    <ellipse cx="95" cy="180" rx="13" ry="8" fill="#CFC9BE"/>
+    <ellipse cx="356" cy="120" rx="11" ry="7" fill="#9A9287"/>
+    <ellipse cx="355" cy="118" rx="10" ry="6" fill="#CFC9BE"/>
+    <ellipse cx="238" cy="330" rx="16" ry="10" fill="#9A9287"/>
+    <ellipse cx="237" cy="328" rx="15" ry="9" fill="#CFC9BE"/>
+  </g>
+</svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="170" height="170">
+  <!-- Wiese-Kachel: unterste Papierebene (dunkler Ton schaut an den Rissen hervor) -->
+  <rect x="0" y="0" width="170" height="170" fill="#7FA04B"/>
+
+  <!-- Oberste Papierebene mit eingerissenem Rand -->
+  <path fill="#96B75F" d="
+    M 12 22
+    Q 44 10 76 20 Q 108 30 140 18 Q 172 8 204 20 Q 236 32 268 20
+    Q 300 10 332 22 Q 364 32 396 18 Q 428 8 460 20 Q 484 28 498 40
+    Q 506 72 498 104 Q 490 136 502 168 Q 510 200 498 232
+    Q 486 264 500 296 Q 510 328 498 360 Q 486 392 500 424
+    Q 508 452 492 476
+    Q 464 486 432 494 Q 400 502 368 492 Q 336 482 304 494
+    Q 272 504 240 492 Q 208 482 176 494 Q 144 504 112 492
+    Q 80 482 48 492 Q 26 496 16 480
+    Q 8 448 16 416 Q 24 384 12 352 Q 2 320 14 288
+    Q 26 256 12 224 Q 2 192 14 160 Q 26 128 12 96
+    Q 2 64 12 36
+    Z"/>
+
+  <!-- Helle Papierschnipsel -->
+  <path fill="#ACC876" d="M 380 84 Q 404 70 428 80 Q 448 92 440 112 Q 428 130 402 126 Q 382 122 376 104 Q 374 92 380 84 Z"/>
+  <path fill="#ACC876" d="M 92 210 Q 108 200 122 208 Q 134 216 128 228 Q 120 240 102 236 Q 88 232 86 220 Q 86 214 92 210 Z"/>
+
+  <!-- Grasbüschel: ausgeschnittene Papierhalme -->
+  <g fill="#5E7A36">
+    <path transform="translate(56 120) scale(1.5)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(180 88) scale(1.2)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(300 150) scale(1.7)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(410 200) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(90 330) scale(1.4)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(230 300) scale(1.6)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(360 370) scale(1.3)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(140 440) scale(1.5)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(330 460) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(460 430) scale(1.4)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+  </g>
+
+  <!-- Blüten: weiße Papierblätter, gelber Kern, gestapelter Schatten -->
+  <g>
+    <g transform="translate(150 190)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(272 238)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(402 300)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(206 402)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(64 262)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+  </g>
+</svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="170" height="170">
+  <!-- Boden-Kachel: unterste Papierebene (dunkler Ton schaut an den Rissen hervor) -->
+  <rect x="0" y="0" width="170" height="170" fill="#8FAB58"/>
+
+  <!-- Oberste Papierebene mit eingerissenem Rand (Licht von oben links) -->
+  <path fill="#A3BE6B" d="
+    M 12 22
+    Q 44 10 76 20 Q 108 30 140 18 Q 172 8 204 20 Q 236 32 268 20
+    Q 300 10 332 22 Q 364 32 396 18 Q 428 8 460 20 Q 484 28 498 40
+    Q 506 72 498 104 Q 490 136 502 168 Q 510 200 498 232
+    Q 486 264 500 296 Q 510 328 498 360 Q 486 392 500 424
+    Q 508 452 492 476
+    Q 464 486 432 494 Q 400 502 368 492 Q 336 482 304 494
+    Q 272 504 240 492 Q 208 482 176 494 Q 144 504 112 492
+    Q 80 482 48 492 Q 26 496 16 480
+    Q 8 448 16 416 Q 24 384 12 352 Q 2 320 14 288
+    Q 26 256 12 224 Q 2 192 14 160 Q 26 128 12 96
+    Q 2 64 12 36
+    Z"/>
+
+  <!-- Helle Papierschnipsel (Lichtflecken) -->
+  <path fill="#B7CE7E" d="M 70 90 Q 95 62 130 70 Q 168 60 190 84 Q 206 104 192 126 Q 170 150 132 144 Q 96 150 78 128 Q 62 108 70 90 Z"/>
+  <path fill="#B7CE7E" d="M 322 322 Q 348 306 374 316 Q 400 326 394 350 Q 386 372 356 370 Q 330 370 320 350 Q 314 336 322 322 Z"/>
+  <path fill="#B7CE7E" d="M 96 300 Q 112 290 128 298 Q 142 306 136 320 Q 128 334 108 330 Q 92 328 88 314 Q 88 306 96 300 Z"/>
+
+  <!-- Eingerissene Löcher (dunkler Untergrund schaut durch) -->
+  <path fill="#7A9549" d="M 420 120 Q 432 112 442 122 Q 450 132 440 142 Q 428 150 418 140 Q 412 130 420 120 Z"/>
+  <path fill="#7A9549" d="M 150 404 Q 160 396 170 404 Q 178 412 170 422 Q 160 430 150 422 Q 144 412 150 404 Z"/>
+  <path fill="#7A9549" d="M 300 210 Q 308 204 316 210 Q 322 216 316 224 Q 308 230 300 224 Q 296 216 300 210 Z"/>
+
+  <!-- Grasbüschel: ausgeschnittene Papierhalme -->
+  <g fill="#6F8A42">
+    <path transform="translate(60 236) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(210 130) scale(0.9)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(388 300) scale(1.2)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(440 96) scale(0.8)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(130 452) scale(1.0)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(286 418) scale(0.85)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+  </g>
+
+  <!-- Kleine Papier-Kieselsteine (hell oben, Schatten unten) -->
+  <g>
+    <ellipse cx="96" cy="182" rx="14" ry="9" fill="#9A9287"/>
+    <ellipse cx="95" cy="180" rx="13" ry="8" fill="#CFC9BE"/>
+    <ellipse cx="356" cy="120" rx="11" ry="7" fill="#9A9287"/>
+    <ellipse cx="355" cy="118" rx="10" ry="6" fill="#CFC9BE"/>
+    <ellipse cx="238" cy="330" rx="16" ry="10" fill="#9A9287"/>
+    <ellipse cx="237" cy="328" rx="15" ry="9" fill="#CFC9BE"/>
+  </g>
+</svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="170" height="170">
+  <!-- Wiese-Kachel: unterste Papierebene (dunkler Ton schaut an den Rissen hervor) -->
+  <rect x="0" y="0" width="170" height="170" fill="#7FA04B"/>
+
+  <!-- Oberste Papierebene mit eingerissenem Rand -->
+  <path fill="#96B75F" d="
+    M 12 22
+    Q 44 10 76 20 Q 108 30 140 18 Q 172 8 204 20 Q 236 32 268 20
+    Q 300 10 332 22 Q 364 32 396 18 Q 428 8 460 20 Q 484 28 498 40
+    Q 506 72 498 104 Q 490 136 502 168 Q 510 200 498 232
+    Q 486 264 500 296 Q 510 328 498 360 Q 486 392 500 424
+    Q 508 452 492 476
+    Q 464 486 432 494 Q 400 502 368 492 Q 336 482 304 494
+    Q 272 504 240 492 Q 208 482 176 494 Q 144 504 112 492
+    Q 80 482 48 492 Q 26 496 16 480
+    Q 8 448 16 416 Q 24 384 12 352 Q 2 320 14 288
+    Q 26 256 12 224 Q 2 192 14 160 Q 26 128 12 96
+    Q 2 64 12 36
+    Z"/>
+
+  <!-- Helle Papierschnipsel -->
+  <path fill="#ACC876" d="M 380 84 Q 404 70 428 80 Q 448 92 440 112 Q 428 130 402 126 Q 382 122 376 104 Q 374 92 380 84 Z"/>
+  <path fill="#ACC876" d="M 92 210 Q 108 200 122 208 Q 134 216 128 228 Q 120 240 102 236 Q 88 232 86 220 Q 86 214 92 210 Z"/>
+
+  <!-- Grasbüschel: ausgeschnittene Papierhalme -->
+  <g fill="#5E7A36">
+    <path transform="translate(56 120) scale(1.5)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(180 88) scale(1.2)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(300 150) scale(1.7)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(410 200) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(90 330) scale(1.4)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(230 300) scale(1.6)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(360 370) scale(1.3)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(140 440) scale(1.5)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(330 460) scale(1.1)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+    <path transform="translate(460 430) scale(1.4)" d="M 0 0 C -2 -8 -7 -12 -5 -22 C -1 -13 1 -10 3 -24 C 6 -13 8 -10 10 -19 C 13 -11 12 -6 13 0 Z"/>
+  </g>
+
+  <!-- Blüten: weiße Papierblätter, gelber Kern, gestapelter Schatten -->
+  <g>
+    <g transform="translate(150 190)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(272 238)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(402 300)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(206 402)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+    <g transform="translate(64 262)">
+      <ellipse cx="-1.5" cy="1.5" rx="6" ry="5" fill="#6D8A40"/>
+      <ellipse cx="0" cy="0" rx="6" ry="5" fill="#FBF6E8"/>
+      <circle cx="0" cy="0" r="2.6" fill="#E8B84B"/>
+    </g>
+  </g>
+</svg>
+
+  </div>
+</div>
+
+</body>
+</html>

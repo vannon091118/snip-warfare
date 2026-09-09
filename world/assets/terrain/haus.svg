@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 144" width="160" height="144">
+  <!-- Schatten der untersten Papierebene, weich und abgesetzt -->
+  <ellipse cx="78" cy="136" rx="62" ry="8" fill="#7A9549"/>
+  <ellipse cx="79" cy="134.5" rx="59" ry="7" fill="#8FAB58"/>
+
+  <!-- Hauskörper: Papierzylinder, dunkle Mantelfläche und helle Lichtseite -->
+  <path fill="#C89B6C" d="M 24 132 L 24 76 Q 24 72 28 72 L 132 72 Q 136 72 136 76 L 136 132 Q 136 136 132 136 L 28 136 Q 24 136 24 132 Z"/>
+  <path fill="#D9B183" d="M 24 132 L 24 76 Q 24 72 28 72 L 56 72 Q 54 84 54 100 Q 54 118 56 132 Q 56 136 60 136 L 28 136 Q 24 136 24 132 Z"/>
+
+  <!-- Dach: dreieckige Papierschicht mit darunterliegender dunkler Schicht -->
+  <path fill="#A0522D" d="M 14 78 L 76 22 L 78 26 L 20 80 Z"/>
+  <path fill="#B8663A" d="M 16 78 L 78 20 L 140 78 Q 140 82 136 82 L 20 82 Q 16 82 16 78 Z"/>
+  <path fill="#C97B4A" d="M 22 76 L 78 26 L 134 76 Q 134 78 132 78 L 24 78 Q 22 78 22 76 Z"/>
+
+  <!-- First: helle Papierkante -->
+  <path fill="none" stroke="#E0995C" stroke-width="2" stroke-linecap="round" d="M 24 72 L 76 22"/>
+
+  <!-- Tür: Papier-Rechteck mit hellem Rahmen -->
+  <path fill="#8A6240" d="M 84 136 L 84 100 Q 84 96 88 96 L 108 96 Q 112 96 112 100 L 112 136 Z"/>
+  <path fill="#A87F52" d="M 88 136 L 88 102 Q 88 100 90 100 L 92 100 Q 94 100 94 102 L 94 136 Z"/>
+
+  <!-- Fenster: Papier-Rechteck mit heller Lichtecke -->
+  <path fill="#6D4A31" d="M 36 104 L 36 84 Q 36 80 40 80 L 62 80 Q 66 80 66 84 L 66 104 Z"/>
+  <path fill="#F6F1E4" d="M 40 100 L 40 86 Q 40 84 42 84 L 50 84 L 50 100 Z"/>
+  <path fill="#FDF9EC" d="M 42 96 L 42 87 Q 42 86 43 86 L 47 86 L 47 96 Z"/>
+  <path fill="#6D4A31" d="M 40 92 L 62 92 L 62 94 L 40 94 Z"/>
+
+  <!-- Türgriff -->
+  <circle cx="106" cy="118" r="2.4" fill="#5C4028"/>
+
+  <!-- Schornstein -->
+  <path fill="#8B8478" d="M 112 46 L 112 30 L 124 30 L 124 40 Z"/>
+  <path fill="#9A9287" d="M 112 44 L 112 30 L 115 30 L 115 44 Z"/>
+  <ellipse cx="118" cy="29" rx="7" ry="2.6" fill="#CFC9BE"/>
+
+  <!-- Schornsteinrauch: ausgeschnittene Papierwolke -->
+  <path fill="#F6F1E4" d="M 112 22 Q 106 18 110 12 Q 114 6 122 8 Q 130 10 128 16 Q 126 22 118 22 Z"/>
+  <path fill="#FBF6E8" d="M 116 10 Q 114 6 118 4 Q 122 2 126 4 Q 129 7 126 9 Q 121 11 116 10 Z"/>
+</svg>

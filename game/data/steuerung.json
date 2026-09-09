@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "_kommentar": "Menschenlesbar: Diese Datei wird direkt editiert und von Kern_SteuerungRegistry nach ticks und Eingaben uebersetzt. Ein Wert faktor 1.0 bedeutet 10 Sekunden auf der Weltuhr (24 ticks pro Sekunde).",
+  "kamera": {
+    "bewegen": "WASD zum Kamera bewegen",
+    "tasten": ["W", "A", "S", "D"],
+    "alternativ_tasten": ["Pfeiltasten"],
+    "geschwindigkeit": 520.0,
+    "beschreibung": "Kamera folgt der Spielerposition, WASD verschiebt die Kamera frei"
+  },
+  "auswahl": {
+    "einzeln": "Linksklick waehlt eine Einheit oder ein Objekt",
+    "masse": "Linksklick halten und ziehen waehlt alle Einheiten im Rechteck",
+    "ausloeser_einzeln": "linksklick",
+    "ausloeser_masse": "links_halten_ziehen",
+    "auswahl_radius": 60.0,
+    "rechteck_stil": "gestrichelt hellblau"
+  },
+  "kontextmenue": {
+    "ausloeser": "Rechtsklick oeffnet immer ein Kontextmenue",
+    "position": "am Cursor",
+    "aktionen": [
+      {
+        "id": "sammeln",
+        "label": "Sammeln",
+        "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
+        "tooltip": "Benötigt Werkzeug {werkzeug}",
+        "werkzeug": "Axt",
+        "logik_id": "ressource_holz",
+        "faktor": 1.0
+      },
+      {
+        "id": "abbauen",
+        "label": "Abbauen",
+        "icon_pfad": "res://world/assets/ui/ressource_stein.svg",
+        "tooltip": "Benötigt Werkzeug {werkzeug}",
+        "werkzeug": "Spitzhacke",
+        "logik_id": "ressource_stein",
+        "faktor": 1.0
+      }
+    ]
+  },
+  "hinweis_werkzeug": "Tooltip zeigt immer Benoetigt Werkzeug X wenn das Ziel ein Werkzeug verlangt, sonst ohne Tooltip",
+  "ticks_hinweis": "faktor 1.0 wird intern zu 240 ticks (10 Sekunden mal 24 ticks). faktor 1.2 zu 288 ticks. Die Registry uebersetzt automatisch."
+}

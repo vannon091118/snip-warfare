@@ -1,0 +1,17 @@
+{
+  "holz": {
+    "name": "Holz",
+    "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
+    "farbe": "#8B5A2B"
+  },
+  "stein": {
+    "name": "Stein",
+    "icon_pfad": "res://world/assets/ui/ressource_stein.svg",
+    "farbe": "#B9B2A2"
+  },
+  "fleisch": {
+    "name": "Fleisch",
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
+    "farbe": "#C75B39"
+  }
+}

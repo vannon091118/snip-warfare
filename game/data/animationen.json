@@ -1,0 +1,32 @@
+{
+  "laufen": {
+    "sheet_pfad": "res://world/assets/ui/laeufer_rechts.svg",
+    "sheet_pfad_links": "res://world/assets/ui/laeufer_links.svg",
+    "frame_breite": 48,
+    "frame_hoehe": 64,
+    "frames": 4,
+    "ticks_pro_frame": 2,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
+  },
+  "idle": {
+    "sheet_pfad": "res://world/assets/ui/idle_rechts.svg",
+    "sheet_pfad_links": "res://world/assets/ui/idle_links.svg",
+    "frame_breite": 48,
+    "frame_hoehe": 64,
+    "frames": 4,
+    "ticks_pro_frame": 3,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
+  },
+  "hacken": {
+    "sheet_pfad": "res://world/assets/ui/hacken_rechts.svg",
+    "sheet_pfad_links": "res://world/assets/ui/hacken_links.svg",
+    "frame_breite": 64,
+    "frame_hoehe": 64,
+    "frames": 4,
+    "ticks_pro_frame": 2,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
+  }
+}

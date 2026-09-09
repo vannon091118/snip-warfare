@@ -1,0 +1,28 @@
+{
+  "schema_name": "Einheit_Ressourcen",
+  "start_zustaende": {
+    "bestaende": {
+      "holz": 0,
+      "stein": 0,
+      "fleisch": 0
+    }
+  },
+  "mutationen": [
+    {
+      "name": "StartBestaendeUebernehmen",
+      "quelle": "start_zustand",
+      "beschreibung": "Nimmt die Startbestaende aus dieser Datei, solange der Zustand noch keine Bestaende enthaelt."
+    },
+    {
+      "name": "ErnteGutschreiben",
+      "quelle": "ressource",
+      "beschreibung": "Bucht die Ernte einer Einheit auf den Bestand; mit Varianz aus dem Zustand abgeleitet, nie aus der Uhrzeit.",
+      "varianz": {
+        "aktiv": true,
+        "minimum_anteil": 0.8,
+        "maximum_anteil": 1.2,
+        "mindest_menge": 1
+      }
+    }
+  ]
+}

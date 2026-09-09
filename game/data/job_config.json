@@ -1,0 +1,41 @@
+{
+  "holzfaeller": {
+    "name": "Holzfäller",
+    "ressource": "holz",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
+    "logik_id": "ressource_holz",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 24,
+    "harvest_menge": 10,
+    "reichweite": 140.0,
+    "sammel_auf_flaeche": true
+  },
+  "steinmetz": {
+    "name": "Steinmetz",
+    "ressource": "stein",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_stein.svg",
+    "logik_id": "ressource_stein",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 24,
+    "harvest_menge": 10,
+    "reichweite": 140.0,
+    "sammel_auf_flaeche": false
+  },
+  "jaeger": {
+    "name": "Jäger",
+    "ressource": "fleisch",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
+    "logik_id": "ressource_fleisch",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 24,
+    "harvest_menge": 5,
+    "reichweite": 160.0,
+    "sammel_auf_flaeche": false
+  }
+}
