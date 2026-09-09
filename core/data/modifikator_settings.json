@@ -20,6 +20,11 @@
       "faktor_max": 2.0,
       "basis_geschwindigkeit": 70.0,
       "basis_reichweite": 24.0
+    },
+    "need": {
+      "modus": "normal",
+      "faktor_min": 0.5,
+      "faktor_max": 2.0
     }
   }
 }

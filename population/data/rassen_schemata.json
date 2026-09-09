@@ -1,0 +1,32 @@
+{
+  "mensch": {
+    "name": "Mensch",
+    "beschreibung": "Ausgewogenes Schema: alle Multiplikatoren neutral.",
+    "faktor_nahrung": 1.0,
+    "faktor_dringlichkeit": 1.0,
+    "faktor_abfall": 1.0,
+    "faktor_schwellwert": 1.0,
+    "faktor_bewegung": 1.0,
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg"
+  },
+  "elf": {
+    "name": "Elf",
+    "beschreibung": "Genügsam und flink: weniger Nahrung, Bedürfnisse steigen langsamer, schneller satt, läuft schneller.",
+    "faktor_nahrung": 0.7,
+    "faktor_dringlichkeit": 0.8,
+    "faktor_abfall": 1.2,
+    "faktor_schwellwert": 1.0,
+    "faktor_bewegung": 1.15,
+    "icon_pfad": "res://world/assets/ui/ressource_raeuchelfleisch.svg"
+  },
+  "ork": {
+    "name": "Ork",
+    "beschreibung": "Gefräßig und zäh: deutlich mehr Nahrung, Hunger steigt schneller, wird langsamer satt, läuft langsamer.",
+    "faktor_nahrung": 1.5,
+    "faktor_dringlichkeit": 1.3,
+    "faktor_abfall": 0.7,
+    "faktor_schwellwert": 1.0,
+    "faktor_bewegung": 0.9,
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg"
+  }
+}

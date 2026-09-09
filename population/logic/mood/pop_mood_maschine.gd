@@ -1,9 +1,13 @@
-extends RefCounted
+extends Node
 class_name Pop_MoodMaschine
 ## State-Maschine der Stimmung. Genau eine Verantwortung:
 ## Aus Bedürfnissen und Status-Übergängen wird die Mood je Einheit
 ## abgeleitet. Haltung: Sprechblase + Emoji, nicht Zahl im HUD.
 ## Architektur: konsumiert nach oben, akkumuliert, gibt nie zurück.
+## Die Maschine hängt als Node-Kind im eigenen Need-Baum (Pop_NeedBaum)
+## und trägt ihr Rassen-Schema: Die Need-Raten laufen über den Faktor der
+## eigenen Modifikator-Maschine (Bereich need) mal die Multiplikatoren
+## des Rassen-Schemas.
 
 signal mood_geaendert(mood: Pop_Mood)
 
@@ -16,11 +20,23 @@ var _mood_mods: Pop_MoodModifikatorRegistry = null
 var _welt_position: Vector2 = Vector2.ZERO
 var _werte: Dictionary = {}
 var _mood: Pop_Mood = Pop_Mood.new()
+var _rassen_schema: Pop_RassenSchema = null
+var _modifikatoren := Kern_ModifikatorMaschine.new()
 
 ## Kategorie logik: Tick, Übergänge, abgeleitete Stimmung.
+
+func _init() -> void:
+	# Eigene Modifikator-Maschine mit Bereich Need: Der zentrale Faktor
+	# skaliert die Need-Raten; die Rassen-Multiplikatoren kommen vom Schema.
+	_modifikatoren.bereich_setzen("need")
+	_modifikatoren.aktualisieren()
+
 func einrichten(need_registry: Pop_NeedRegistry, lager: Lager_Manager) -> void:
 	_need_registry = need_registry
 	_lager = lager
+
+func rassen_schema_setzen(schema: Pop_RassenSchema) -> void:
+	_rassen_schema = schema
 
 func waerme_und_zyklus_setzen(waerme_feld: Welt_WaermeFeld, tageszyklus: Welt_TageszyklusMaschine, mood_mods: Pop_MoodModifikatorRegistry) -> void:
 	_waerme_feld = waerme_feld
@@ -50,12 +66,12 @@ func auf_tick(_nummer: int, _delta: float) -> Vector2:
 			elif waerme > 0.55:
 				verfuegbar = 99
 			else:
-				verfuegbar = typ.schwellwert
+				verfuegbar = schwellwert_fuer(typ)
 		var naechster := vorher
-		if verfuegbar < typ.schwellwert:
-			naechster = clampf(vorher + typ.dringlichkeit_pro_tick, 0.0, 1.0)
+		if verfuegbar < schwellwert_fuer(typ):
+			naechster = clampf(vorher + dringlichkeit_fuer(typ), 0.0, 1.0)
 		else:
-			naechster = clampf(vorher - typ.abfall_pro_tick, 0.0, 1.0)
+			naechster = clampf(vorher - abfall_fuer(typ), 0.0, 1.0)
 		_werte[typ.need_id] = naechster
 	_ableiten()
 	return _hp_folge_und_ziel()
@@ -78,6 +94,30 @@ func _verfuegbar_fuer(typ: Pop_NeedBasis) -> int:
 	if _lager != null and not typ.ressource.is_empty():
 		return _lager.gesamt_bestand(typ.ressource)
 	return 0
+
+## Rassen-Schema und zentraler Faktor: Diese Maschine sorgt über ihren
+## Modifikator-Faktor mal die Multiplikatoren des Schemas für die Raten.
+
+func dringlichkeit_fuer(typ: Pop_NeedBasis) -> float:
+	var schema_faktor := _rassen_schema.faktor_dringlichkeit if _rassen_schema != null else 1.0
+	return maxf(typ.dringlichkeit_pro_tick * schema_faktor * _modifikatoren.faktor(), 0.0)
+
+func abfall_fuer(typ: Pop_NeedBasis) -> float:
+	var schema_faktor := _rassen_schema.faktor_abfall if _rassen_schema != null else 1.0
+	return maxf(typ.abfall_pro_tick * schema_faktor * _modifikatoren.faktor(), 0.0)
+
+func schwellwert_fuer(typ: Pop_NeedBasis) -> int:
+	var schema_faktor := _rassen_schema.faktor_schwellwert if _rassen_schema != null else 1.0
+	return maxi(int(round(float(typ.schwellwert) * schema_faktor)), 0)
+
+func nahrungs_faktor() -> float:
+	# Kombinierter Verbrauchsfaktor je Rasse: Schema mal zentraler Faktor.
+	var schema_faktor := _rassen_schema.faktor_nahrung if _rassen_schema != null else 1.0
+	return maxf(schema_faktor * _modifikatoren.faktor(), 0.1)
+
+func bewegungs_faktor() -> float:
+	# Rassen-Multiplikator für die Bewegung der Einheit.
+	return _rassen_schema.faktor_bewegung if _rassen_schema != null else 1.0
 
 func waerme_wert() -> float:
 	if _waerme_feld == null:
