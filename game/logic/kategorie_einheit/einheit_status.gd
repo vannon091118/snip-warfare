@@ -44,6 +44,7 @@ var welt_position := Vector2.ZERO
 var _geh_ziel := Vector2.ZERO
 var _geh_geschwindigkeit := 0.0
 var _geh_reichweite := 0.0
+var _rasse_bewegungs_faktor := 1.0
 var _modifikatoren := Kern_ModifikatorMaschine.new()
 
 ## Kategorie logik: Jobvergabe mit Vitalprüfung, Arbeitsloop und Vitaltick.
@@ -231,8 +232,15 @@ func _init() -> void:
 	vital.gestorben.connect(_auf_eigenen_tod)
 
 func _bewegungswerte_uebernehmen() -> void:
-	_geh_geschwindigkeit = _modifikatoren.geschwindigkeit_berechnen(_modifikatoren.basis_wert("basis_geschwindigkeit", 70.0))
+	# Zentrale Basis mal Modifikator-Faktor mal Rassen-Multiplikator: Die
+	# Geschwindigkeit kommt aus der Modifikator-Maschine und dem Schema.
+	_geh_geschwindigkeit = _modifikatoren.geschwindigkeit_berechnen(_modifikatoren.basis_wert("basis_geschwindigkeit", 70.0)) * _rasse_bewegungs_faktor
 	_geh_reichweite = _modifikatoren.basis_wert("basis_reichweite", 24.0)
+
+func rasse_faktor_setzen(faktor: float) -> void:
+	# Rassen-Multiplikator aus dem Schema des Need-Baums; wirkt ab dem
+	# nächsten Tick ohne Neuberechnung der Modifikator-Maschine.
+	_rasse_bewegungs_faktor = maxf(faktor, 0.1)
 
 func _auf_eigenen_tod(welt_position: Vector2) -> void:
 	var bus := Kern_SignalBus.bus()

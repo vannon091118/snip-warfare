@@ -20,6 +20,7 @@ var _model: Welt_Model = null
 var _tiere: Tier_Manager = null
 var _ressourcen: Einheit_Ressourcen = null
 var _lager: Lager_Manager = null
+var _need_baum: Pop_NeedBaum = null
 
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
@@ -46,6 +47,11 @@ func lager_setzen(lager: Lager_Manager) -> void:
 		m.einrichten(_need_registry, _lager)
 		m.waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
 
+func need_baum_setzen(baum: Pop_NeedBaum) -> void:
+	# Der eigene Need-Tree erzeugt und besitzt die Mood-Maschinen als Kinder;
+	# der Manager greift nur noch über Referenzen zu.
+	_need_baum = baum
+
 func waerme_quellen_aktualisieren(feuer_positionen: Array[Vector2]) -> void:
 	_waerme_feld.quellen_setzen(feuer_positionen, 5, 1.0)
 
@@ -57,17 +63,29 @@ func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
 func verteilung_setzen(nahrung_je_takt: float) -> void:
 	_nahrung_je_einheit_je_takt = clampf(nahrung_je_takt, 0.1, 5.0)
 
-func einheit_hinzufuegen(welt_position: Vector2) -> void:
+func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 	var status := Einheit_Status.new()
 	status.welt_position_setzen(welt_position)
 	var darsteller := Einheit_Darsteller.new()
 	darsteller.einrichten(status)
 	darsteller.position = welt_position
 	darsteller.animation_setzen(status.animation())
-	var mood := Pop_MoodMaschine.new()
-	mood.einrichten(_need_registry, _lager)
+	var rasse := rasse_id
+	if rasse == "":
+		# Ohne Wunsch gilt die Standard-Rasse des Need-Baums; ohne Baum bleibt
+		# der neutrale Mensch als Fallback für Testläufe.
+		rasse = _need_baum.standard_rasse() if _need_baum != null else "mensch"
+	var mood: Pop_MoodMaschine = null
+	if _need_baum != null:
+		mood = _need_baum.einheit_need_anlegen(rasse, welt_position)
+	else:
+		# Fallback ohne Baum: Maschine bleibt ohne Parent, damit Testläufe
+		# ohne Szenenbaum weiterhin laufen.
+		mood = Pop_MoodMaschine.new()
+		mood.einrichten(_need_registry, _lager)
+		mood.welt_position_setzen(welt_position)
 	mood.waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
-	mood.welt_position_setzen(welt_position)
+	status.rasse_faktor_setzen(mood.bewegungs_faktor())
 	var denkblase := Pop_Denkblase.new()
 	denkblase.einrichten(mood)
 	darsteller.add_child(denkblase)
@@ -82,6 +100,7 @@ func einheit_hinzufuegen(welt_position: Vector2) -> void:
 		"mood": mood,
 		"denkblase": denkblase,
 		"position": welt_position,
+		"rasse": rasse,
 		"_letzter_zustand": status.zustand,
 	})
 
@@ -368,7 +387,12 @@ func _in_sicherheit_bringen(einheit: Dictionary, ziel: Vector2) -> void:
 func _nahrung_verteilen() -> void:
 	if _ressourcen == null or _lager == null:
 		return
-	var gesamt := int(ceil(_nahrung_je_einheit_je_takt * float(_einheiten.size())))
+	# Rassen-Schemata: Jede Einheit verbraucht ihren eigenen Rassen-Faktor
+	# mal den zentralen Need-Faktor, geliefert von ihrer Mood-Maschine.
+	var gesamt := 0
+	for einheit: Dictionary in _einheiten:
+		var m: Pop_MoodMaschine = einheit["mood"]
+		gesamt += int(ceil(_nahrung_je_einheit_je_takt * m.nahrungs_faktor()))
 	if gesamt <= 0:
 		return
 	if not _ressourcen.entnehmen("fleisch", gesamt):

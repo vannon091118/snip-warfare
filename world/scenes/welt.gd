@@ -37,7 +37,9 @@ var _gebaeude := Gebaeude_Manager.new()
 var _lager_fabrik := Welt_LagerFabrik.new()
 var _tier_platzierer := Welt_TierPlatzierer.new()
 var _waerme_sammler := Welt_WaermeSammler.new()
+var _need_baum := Pop_NeedBaum.new()
 var _karten_beobachter := Welt_KartenBeobachter.new()
+var _feedback := Welt_FeedbackManager.new()
 var _orchestrator_verdrahtung := Orchestrator_Verdrahtung.new()
 var _kamera_steuerung := Ui_KameraSteuerung.new()
 var _eingabe_steuerung := Ui_EingabeSteuerung.new()
@@ -60,6 +62,8 @@ func _ready() -> void:
 	add_child(_tages_overlay)
 	(_tages_overlay as Object).call("einrichten", _tageszyklus)
 	_karte.darstellen(_model, _registry, _biome)
+	add_child(_feedback)
+	_feedback.einrichten(_ressourcen)
 	_karten_ebene_bauen()
 	_tier_platzierer.platzieren(_model, _registry, _tiere)
 	var start_position := Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
@@ -68,7 +72,12 @@ func _ready() -> void:
 	_kamera.position = _kamera_steuerung.kamera_position
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
 	_ressourcen.lager_setzen(_lager)
+	# Der eigene Need-Tree hängt als struktureller Anker der
+	# Bedürfnis-Domäne unter der Welt-Szene; er erzeugt die
+	# Mood-Maschinen als Kinder und vergibt die Rassen-Schemata.
+	add_child(_need_baum)
 	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
+	_stockmaenner.need_baum_setzen(_need_baum)
 	_stockmaenner.lager_setzen(_lager)
 	_stockmaenner.tageszyklus_setzen(_tageszyklus)
 	_waerme_sammler.sammeln(_model, _stockmaenner)

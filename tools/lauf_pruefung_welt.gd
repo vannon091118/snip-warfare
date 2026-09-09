@@ -398,6 +398,48 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Produktions-Maschine nutzt eigene Modifikator-Maschine (600 neutral, 400 schnell)")
+	# 21) Rassen-Schemata: Der Datenpool liefert die Multiplikatoren je
+	#     Rasse, ohne dass Code eine Rasse kennt.
+	var rassen_registry := Pop_RassenSchemaRegistry.new()
+	var mensch_schema := rassen_registry.schema_fuer("mensch")
+	var elf_schema := rassen_registry.schema_fuer("elf")
+	var ork_schema := rassen_registry.schema_fuer("ork")
+	if mensch_schema == null or elf_schema == null or ork_schema == null:
+		print("FEHLER: Rassen-Schemata fehlen im Datenpool")
+		fehler += 1
+	elif absf(elf_schema.faktor_nahrung - 0.7) > 0.001 or absf(ork_schema.faktor_nahrung - 1.5) > 0.001 \
+			or absf(elf_schema.faktor_bewegung - 1.15) > 0.001 or absf(ork_schema.faktor_bewegung - 0.9) > 0.001:
+		print("FEHLER: Rassen-Multiplikatoren weichen ab")
+		fehler += 1
+	else:
+		print("OK: 3 Rassen-Schemata aus Daten (elf nahrung 0.7/bewegung 1.15, ork nahrung 1.5/bewegung 0.9)")
+	# 22) Need-Baum: Der eigene Tree erzeugt die Need-Maschinen als Kinder
+	#     und weist ihnen das Rassen-Schema zu; die Maschinen skalieren ihre
+	#     Raten über Schema mal zentralen Faktor.
+	var need_baum := Pop_NeedBaum.new()
+	var elf_maschine := need_baum.einheit_need_anlegen("elf", Vector2.ZERO)
+	var ork_maschine := need_baum.einheit_need_anlegen("ork", Vector2.ZERO)
+	var standard_maschine := need_baum.einheit_need_anlegen("", Vector2.ZERO)
+	if elf_maschine == null or ork_maschine == null or standard_maschine == null or need_baum.get_child_count() != 3:
+		print("FEHLER: Need-Baum erzeugt keine Maschinen-Kinder")
+		fehler += 1
+	elif absf(elf_maschine.nahrungs_faktor() - 0.7) > 0.001 or absf(ork_maschine.nahrungs_faktor() - 1.5) > 0.001 \
+			or absf(standard_maschine.nahrungs_faktor() - 1.0) > 0.001:
+		print("FEHLER: Rassen-Faktoren greifen nicht in den Need-Maschinen")
+		fehler += 1
+	else:
+		print("OK: Need-Baum hält 3 Maschinen als Kinder, Faktoren greifen (elf 0.7, ork 1.5, standard 1.0)")
+	# 23) Einheit_Manager vergibt die Rasse beim Spawn: Der Bewegungsfaktor
+	#     der Rasse landet in der Zustandsmaschine der Einheit.
+	var rassen_manager := Einheit_Manager.new()
+	rassen_manager.need_baum_setzen(need_baum)
+	rassen_manager.einheit_hinzufuegen(Vector2.ZERO, "elf")
+	var elf_status: Einheit_Status = rassen_manager._einheiten[0]["status"]
+	if rassen_manager._einheiten[0]["rasse"] != "elf" or absf(elf_status._rasse_bewegungs_faktor - 1.15) > 0.001:
+		print("FEHLER: Manager vergibt Rasse oder Bewegungsfaktor nicht (rasse %s, faktor %f)" % [str(rassen_manager._einheiten[0]["rasse"]), elf_status._rasse_bewegungs_faktor])
+		fehler += 1
+	else:
+		print("OK: Elf beim Spawn gesetzt, Bewegungsfaktor 1.15 in der Zustandsmaschine (70 Basis -> 80.5)")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

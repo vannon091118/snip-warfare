@@ -8,7 +8,7 @@ Jede Klasse trägt ihre Kategorie als Präfix im Klassennamen und liegt im passe
 
 | Präfix | Kategorie | Ordner | Inhalt |
 | --- | --- | --- | --- |
-| `Pop_` | Bevölkerung Bedürfnisse und Stimmungen | `population/` | Needs (Pop_NeedBasis/Nahrung/Waerme + Pop_NeedRegistry aus needs.json), Mood (Pop_Mood + Pop_MoodMaschine + Pop_MoodModifikator/Registry aus mood_modifikatoren.json), Denkblase (Pop_Denkblase als Observer) |
+| `Pop_` | Bevölkerung Bedürfnisse und Stimmungen | `population/` | Needs (Pop_NeedBasis/Nahrung/Waerme + Pop_NeedRegistry aus needs.json), Rassen (Pop_RassenSchema + Pop_RassenSchemaRegistry aus rassen_schemata.json), Mood (Pop_Mood + Pop_MoodMaschine als Node-Kind des Pop_NeedBaum + Pop_MoodModifikator/Registry aus mood_modifikatoren.json), Denkblase (Pop_Denkblase als Observer) |
 | `Kern_` | Zentrale Engine-Dienste | `core/` | Weltuhr (einziger globaler Tick), Asset Pflicht Gate, Zufall (Kern_Zufall), Modifikatoren, Signalbus (Autoload `Kern_SignalBus`, Klasse in `core/logic/events/`) |
 | `Lager_` | Lokale Speicher | `economy/logic/storage/` | Basis (Typ), Registry (Templates), Manager (Instanzen je Ort), Mutationen (Einlagern, Entnehmen) |
 | `Orchestrator_` | Zonen-Orchestrator | `world/logic/kategorie_orchestrator/` | Basis, Konfiguration, Status, Manager (Bedarf -> Jobvergabe), Registry, Darsteller |
@@ -127,7 +127,8 @@ Regeln des Gates und des Inits:
 | `world/data/welt_definition.json` | Zentrale Weltdefinition: max/min Kartengröße, Kachelgröße, Chunkgröße, Regionkante als Daten | `Welt_DefinitionRegistry` -> `Welt_Generator` (Kartengröße aus Seed deterministisch) |
 | `core/data/kern_logik.json` | Generische Logiken wiederverwendbar | `Kern_LogikRegistry` |
 | `core/data/kern_modifikatoren.json` | Modifikatoren mit faktor 1=10s (Verletzungen sperren Jobs) | `Kern_ModifikatorRegistry` + `Kern_ModifikatorMaschine` + `Einheit_VitalStatus` |
-| `core/data/modifikator_settings.json` | Globale Modifikator-Settings je Bereich (bau, produktion, bewegung): Modus, Faktor-Grenzen, Bewegungs-Basiswerte, globaler Faktor | `Kern_ModifikatorMaschine` (eine Instanz je State-Maschine, Bereich als angepasste Settings) |
+| `core/data/modifikator_settings.json` | Globale Modifikator-Settings je Bereich (bau, produktion, bewegung, need): Modus, Faktor-Grenzen, Bewegungs-Basiswerte, globaler Faktor | `Kern_ModifikatorMaschine` (eine Instanz je State-Maschine, Bereich als angepasste Settings) |
+| `population/data/rassen_schemata.json` | Rassen-Schemata mit Multiplikatoren für Nahrung, Dringlichkeit, Abfall, Schwellwert, Bewegung | `Pop_RassenSchemaRegistry` -> `Pop_NeedBaum` -> `Pop_MoodMaschine` (Schema × zentraler Faktor) + `Einheit_Status` (Bewegung) + `Einheit_Manager` (Nahrungsverteilung) |
 | `population/data/needs.json` | Bedürfnisse mit Ressource, Schwellwert, Emoji und Sprechblase je Need (nahrung 0.8 je Takt, waerme als Vektor-Feld via Feuer) | `Pop_NeedRegistry` (inkl. Waerme) -> `Pop_MoodMaschine` (Need sammeln + Waerme je Kachel + Tageszyklus) -> `Pop_Denkblase` (Beobachter) |
 | `population/data/mood_modifikatoren.json` | Mood-Modifikatoren als Progression-Gates (kaelte/hitze/hunger, in_sicherheit_bringen, HP-Abzug) | `Pop_MoodModifikatorRegistry` -> `Pop_MoodMaschine` (Gate-Prüfung waerme/Hitze) -> `Einheit_VitalStatus.umgebungsschaden_anwenden()` + `_in_sicherheit_bringen()` |
 | `world/data/element_katalog.json` (lagerfeuer) | Wärmequelle je Feuer, Radius 5 Kacheln abfallend | `Welt_WaermeFeld` (quellen_setzen, waerme_an je Weltposition deterministisch) |
@@ -176,6 +177,14 @@ Datenbesitzer: `core/data/modifikator_settings.json` (global einstellbar) defini
 Formeln (einzige Stellen im Projekt): Zeit = Basis-Ticks geteilt durch Bereichsfaktor (`zeit_berechnen`, min 1 Tick), Geschwindigkeit = Basis mal Bereichsfaktor (`geschwindigkeit_berechnen`). Die Trait-Formel `wert_berechnen` aggregiert aktive Modifikatoren (Faktor multiplikativ, Attributwerte additiv) und wird von `Einheit_VitalStatus` für Geschwindigkeit und Tragekraft delegiert statt inline gerechnet.
 
 Keine redundanten Rechenschritte: Der Bereichsfaktor wird einmal berechnet und gecacht. Erst wenn ein Menü geöffnet wird, emittiert der Signalbus `menue_geoeffnet` (Kontextmenü und Hauptmenü melden sich), die Maschinen aktualisieren ihre Faktoren, und `Gebaeude_Manager` stimmt alle Gebäude-Fortschritte prozentual auf die neuen effektiven Zeiten ab (`abstimmen` in Bau- und Produktionsmaschine, `ziel_ticks` als Objekt-Zusatzfeld mitpersistiert). Die Bewegungs-Basiswerte in `einheit_status.gd` kommen aus den Settings, nicht aus Konstanten.
+
+## 5f. Need-Baum und Rassen-Schemata
+
+Das Need-System ist ein eigener Baum: `Pop_NeedBaum` hängt als struktureller Anker unter der Welt-Szene (`world/scenes/welt.gd`), hält die Registries der Domäne (Need-Typen aus `needs.json`, Rassen-Schemata aus `rassen_schemata.json`) und erzeugt je Einheit eine `Pop_MoodMaschine` als echtes Node-Kind mit zugewiesenem Rassen-Schema. Der Baum tickt nicht selbst: Der Tick-Fluss bleibt beim `Einheit_Manager`, der die Maschinen über Referenzen anspricht; der Baum sorgt nur für Struktur, Schema-Zuordnung und Erzeugung.
+
+Rassen-Schemata: `population/data/rassen_schemata.json` definiert je Rasse Multiplikatoren (mensch neutral, elf genügsam/flink, ork gefräßig/zäh) für Nahrungsverbrauch, Dringlichkeit, Abfall, Schwellwert und Bewegung. `Pop_RassenSchemaRegistry` ist die einzige Erweiterungsgrenze: Neue Rassen entstehen nur über Datenpool + Registry. Jede Need-Maschine hält ihre eigene `Kern_ModifikatorMaschine` mit dem Bereich `need` (zentrale Settings) und skaliert ihre Raten über Schema-Multiplikator mal zentralen Faktor (`dringlichkeit_fuer`, `abfall_fuer`, `schwellwert_fuer`, `nahrungs_faktor`).
+
+Vergabe: `Einheit_Manager.einheit_hinzufuegen(position, rasse)` ordnet die Rasse beim Spawn zu (Standard-Rasse aus dem Baum, sonst neutral), speichert sie an der Einheit, reicht den Rassen-Bewegungsfaktor über `Einheit_Status.rasse_faktor_setzen()` in die Zustandsmaschine (wirkt multiplikativ auf die zentrale Geh-Geschwindigkeit) und verteilt die Nahrung je Einheit über deren kombinierten Rassen-Faktor.
 
 ## 6. RT Pyramide
 
