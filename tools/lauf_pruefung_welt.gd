@@ -440,6 +440,43 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Elf beim Spawn gesetzt, Bewegungsfaktor 1.15 in der Zustandsmaschine (70 Basis -> 80.5)")
+	# 24) Arbeitsloop statt One-Shot: Ein Loop-Job endet nach dem
+	#     Arbeitsschritt nicht im Idle, der Manager sucht das naechste Ziel
+	#     desselben Typs und die Einheit laeuft dorthin (GEHEN) statt den
+	#     naechsten Baum aus der Luft zu ernten.
+	var loop_direkt := Einheit_Status.new()
+	loop_direkt.welt_position_setzen(Vector2(0, 0))
+	var loop_job := queue_job_registry.job_erzeugen("holzfaeller")
+	loop_direkt.geh_ziel_setzen(Vector2(0, 0))
+	loop_direkt.job_vergeben(loop_job, Job_Basis.ZielTyp.OBJEKT, 0, "holz")
+	var loop_arbeitete := loop_direkt.zustand == Einheit_Status.Zustand.ARBEITEN
+	loop_direkt.geh_ziel_setzen(Vector2(500, 0))
+	loop_direkt.job_loopy_fortsetzen(loop_job, Job_Basis.ZielTyp.OBJEKT, 1, "holz")
+	var loop_geht := loop_direkt.zustand == Einheit_Status.Zustand.GEHEN
+	var loop_modell := Welt_Model.new()
+	loop_modell.karte_erzeugen(8, 8, "boden")
+	loop_modell.objekt_hinzufuegen("baum", Vector2(200, 200))
+	loop_modell.objekt_hinzufuegen("baum", Vector2(600, 200))
+	var loop_manager := Einheit_Manager.new()
+	loop_manager.einrichten(loop_modell, null, Einheit_Ressourcen.new())
+	loop_manager.einheit_hinzufuegen(Vector2(200, 200))
+	loop_manager.job_vergeben(0, "holzfaeller", Job_Basis.ZielTyp.OBJEKT, 0, Vector2(200, 200))
+	for _schritt in 240:
+		loop_manager._auf_tick(1, 1.0 / 24.0)
+	var loop_status: Einheit_Status = loop_manager._einheiten[0]["status"]
+	var loop_laeuft_weiter := loop_status.zustand != Einheit_Status.Zustand.IDLE
+	var loop_ziel_index := loop_status.aktuelles_ziel_index
+	for _schritt in 150:
+		loop_manager._auf_tick(1, 1.0 / 24.0)
+	var loop_end_position := loop_manager.einheit_position(0)
+	var loop_erreicht := loop_end_position.x > 500.0
+	if not loop_arbeitete or not loop_geht or not loop_laeuft_weiter \
+			or loop_ziel_index != 1 or not loop_erreicht:
+		print("FEHLER: Arbeitsloop greift nicht (arbeitete %s, geht %s, weiter %s, ziel %d, erreicht %s)" % [
+			str(loop_arbeitete), str(loop_geht), str(loop_laeuft_weiter), loop_ziel_index, str(loop_erreicht)])
+		fehler += 1
+	else:
+		print("OK: Loop-Job endet nicht im Idle, Einheit laeuft zum naechsten Baum (Ziel 1, x=%.0f)" % loop_end_position.x)
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

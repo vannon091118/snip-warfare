@@ -92,7 +92,7 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 	add_child(darsteller)
 	status.zustand_geaendert.connect(_auf_zustand_geaendert.bind(status, mood))
 	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
-	status.job_loop_gefragt.connect(_auf_job_loop_gefragt)
+	status.job_loop_gefragt.connect(_auf_job_loop_gefragt.bind(status))
 	status.naechster_job_aus_queue.connect(_auf_naechster_job_aus_queue.bind(status))
 	_einheiten.append({
 		"status": status,
@@ -288,10 +288,11 @@ func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp,
 	status.job_vergeben(job, int(eintrag.get("ziel_typ", 0)),
 		int(eintrag.get("ziel_index", -1)), str(eintrag.get("ressource", "")))
 
-func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int) -> void:
-	# Die Schleife des Users (USER_JOB) endet nie hart im Idle: Der Manager
-	# sucht das naechste gueltige Ziel desselben Typs und setzt den Job neu.
-	if status.job == null or _ressourcen == null:
+func _auf_job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int, status: Einheit_Status) -> void:
+	# Die Schleife endet nie hart im Idle: Der Manager sucht das naechste
+	# gueltige Ziel desselben Typs und setzt den Job direkt neu. Der Status
+	# haengt ueber bind() am Ende der Signal-Argumente, der Job kommt zuerst.
+	if job == null or status.job != job or _ressourcen == null:
 		return
 	var such_index := -1
 	match ziel_typ:
@@ -303,9 +304,8 @@ func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, 
 				such_index = _naechstes_tier(status, alter_ziel_index)
 	if such_index < 0:
 		return
-	var ziel_typ_neu := ziel_typ
-	status.geh_ziel_setzen(_ziel_position_fuer(ziel_typ_neu, such_index))
-	status.job_loopy_fortsetzen(status.job, ziel_typ_neu, such_index, status.job.ressource())
+	status.geh_ziel_setzen(_ziel_position_fuer(ziel_typ, such_index))
+	status.job_loopy_fortsetzen(job, ziel_typ, such_index, job.ressource())
 
 func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 	# Ein Arbeitsschritt ist fertig; je nach Job-Typ wird geerntet.

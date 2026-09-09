@@ -136,6 +136,10 @@ func job_loopy_fortsetzen(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, zie
 	ziel_ressource = ressource
 	_loop_fortgesetzt = true
 	job.startet_neu()
+	# Die fehlende Zustandstransition des Arbeitsloops: Das neue Ziel liegt
+	# moeglicherweise ausserhalb der Reichweite, dann laeuft die Einheit erst
+	# hin (GEHEN), statt den naechsten Baum aus der Luft zu ernten.
+	_arbeit_oder_gehen()
 
 func job_abbrechen() -> void:
 	job = null
@@ -193,6 +197,13 @@ func _arbeit_tick(_delta: float) -> void:
 		return
 	if job.schritt_vorruecken():
 		job.arbeitsschritt(ziel_ressource)
+		# Ein abgeschlossener Arbeitsschritt beendet Erntejobs: Bei Loop-Jobs
+		# sucht der Manager das naechste Ziel desselben Typs und setzt den Job
+		# direkt neu, sonst faellt die Einheit in den Idle. Tier-Jobs (Jagd)
+		# enden ueber den Manager, sobald die Beute faellt; der Heiler ohne
+		# Ressource endet ueber seinen eigenen Heilpfad.
+		if job != null and job.ziel_typ() == Job_Basis.ZielTyp.OBJEKT and job.ressource() != "":
+			job.job_beendet.emit()
 
 func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
 	arbeitsschritt_erledigt.emit(ressource, menge)

@@ -49,11 +49,15 @@ func verschwinden() -> void:
 
 func _ready() -> void:
 	# Tiere bewegen sich im Takt der globalen Weltuhr, nicht pro Frame.
-	Weltuhr.tick.connect(_auf_tick)
+	# Null-sichere Aufloesung, damit Testlaeufe ohne Autoload-Baum laden.
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null:
+		weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	if Weltuhr.tick.is_connected(_auf_tick):
-		Weltuhr.tick.disconnect(_auf_tick)
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.tick.is_connected(_auf_tick):
+		weltuhr.tick.disconnect(_auf_tick)
 
 func _auf_tick(_nummer: int, delta: float) -> void:
 	if status == null:
