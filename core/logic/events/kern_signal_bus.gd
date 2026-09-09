@@ -14,6 +14,10 @@ signal gestorben(position: Vector2, typ: String, war_einheit: bool)
 # Modifikator-Maschinen aktualisieren daraufhin ihre Faktoren.
 @warning_ignore("unused_signal")
 signal menue_geoeffnet()
+# Zustands-Timeline: Jede protokollierte Buchung wird gemeldet, damit die
+# UI den Einfluss der Modifikatoren zeigen kann. Nichts passiert ohne Feedback.
+@warning_ignore("unused_signal")
+signal timeline_eintrag(beschreibung: String)
 
 static func bus() -> Kern_SignalBus:
 	var baum := Engine.get_main_loop() as SceneTree
@@ -31,3 +35,6 @@ func _emit_gestorben(position: Vector2, typ: String, war_einheit: bool) -> void:
 
 func _emit_menue_geoeffnet() -> void:
 	menue_geoeffnet.emit()
+
+func _emit_timeline_eintrag(beschreibung: String) -> void:
+	timeline_eintrag.emit(beschreibung)

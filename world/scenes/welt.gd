@@ -39,6 +39,7 @@ var _tier_platzierer := Welt_TierPlatzierer.new()
 var _waerme_sammler := Welt_WaermeSammler.new()
 var _need_baum := Pop_NeedBaum.new()
 var _karten_beobachter := Welt_KartenBeobachter.new()
+var _timeline := Kern_Timeline.new()
 var _feedback := Welt_FeedbackManager.new()
 var _orchestrator_verdrahtung := Orchestrator_Verdrahtung.new()
 var _kamera_steuerung := Ui_KameraSteuerung.new()
@@ -72,6 +73,11 @@ func _ready() -> void:
 	_kamera.position = _kamera_steuerung.kamera_position
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
 	_ressourcen.lager_setzen(_lager)
+	# Die Zustands-Timeline beobachtet jede Buchung der Ressourcen und
+	# meldet sie ueber den Bus, damit das HUD den Einfluss der
+	# Modifikatoren sichtbar machen kann. Nichts passiert ohne Feedback.
+	_ressourcen.timeline_setzen(_timeline)
+	_timeline.eintrag_neu.connect(_auf_timeline_eintrag)
 	# Der eigene Need-Tree hängt als struktureller Anker der
 	# Bedürfnis-Domäne unter der Welt-Szene; er erzeugt die
 	# Mood-Maschinen als Kinder und vergibt die Rassen-Schemata.
@@ -198,3 +204,10 @@ func _auf_zurueck() -> void:
 
 func _auf_gebaeude_meldung(text: String) -> void:
 	_hud.meldung_setzen(text)
+
+func _auf_timeline_eintrag(eintrag: Kern_TimelineEintrag) -> void:
+	# Reine Beobachtung: Die Timeline meldet, das HUD zeigt die Begruendung.
+	_hud.timeline_anzeigen(eintrag.delta_text())
+	var bus := Kern_SignalBus.bus()
+	if bus != null:
+		bus._emit_timeline_eintrag(eintrag.delta_text())

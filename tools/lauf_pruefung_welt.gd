@@ -511,6 +511,48 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Bau-Anforderung verweigert bei fehlenden Kosten ohne Teil-Entnahme")
+	# 26) Zustands-Timeline: Ursprung plus Mutationen als Deltas, jeder
+	#     Zustand rekonstruierbar, warum ist das so jederzeit beantwortbar.
+	var timeline_lager := Lager_Manager.new()
+	timeline_lager.lager_anlegen("kleines_lager", Vector2(0, 0))
+	timeline_lager.startbestand_setzen("holz", 50, 0)
+	timeline_lager.startbestand_setzen("stein", 20, 0)
+	var timeline_ressourcen := Einheit_Ressourcen.new()
+	timeline_ressourcen.lager_setzen(timeline_lager)
+	var timeline := Kern_Timeline.new()
+	timeline_ressourcen.timeline_setzen(timeline)
+	timeline_ressourcen.entnehmen("holz", 10, 0)
+	timeline_ressourcen.hinzufuegen("fleisch", 5)
+	timeline_ressourcen.mehrfach_entnehmen([
+		{"ressource": "holz", "menge": 6},
+		{"ressource": "stein", "menge": 4},
+	], 0)
+	var timeline_anzahl := timeline.eintraege.size()
+	var holz_jetzt := timeline_lager.gesamt_bestand("holz")
+	var rekonstruiert := timeline.zustand_zu_tick(timeline.eintraege[timeline.eintraege.size() - 1].tick)
+	var rekonstruiert_holz := int(rekonstruiert.get("holz", -1))
+	var warum_holz := timeline.warum("ressourcen")
+	var einfluss := timeline.einfluss_modifikatoren()
+	if timeline_anzahl < 3 or holz_jetzt != 34 or rekonstruiert_holz != holz_jetzt or warum_holz.is_empty():
+		print("FEHLER: Timeline liefert falsch (eintraege %d, holz %d, rekonstruiert %d, warum %d)" % [
+			timeline_anzahl, holz_jetzt, rekonstruiert_holz, warum_holz.size()])
+		fehler += 1
+	else:
+		print("OK: Timeline mit Ursprung + %d Deltas, Rekonstruktion exakt (%d), Warum-Kette (%d Eintraege)" % [
+			timeline_anzahl, rekonstruiert_holz, warum_holz.size()])
+	# Timeline mit Modifikator-Einfluss: Ein Eintrag mit Modifikator wird
+	# im Einfluss-Verzeichnis sichtbar, ohne Modifikator bleibt es leer.
+	var timeline_mod := Kern_Timeline.new()
+	timeline_mod.ursprung_festlegen({"wert": 10})
+	timeline_mod.eintrag_anhaengen(1, "test", "entscheidung", "Schnell-Modus", {"wert": 10}, {"wert": 15}, "schnell", 1.5)
+	timeline_mod.eintrag_anhaengen(2, "test", "entscheidung", "Normal", {"wert": 15}, {"wert": 12})
+	var mod_einfluss := timeline_mod.einfluss_modifikatoren()
+	var mod_anzahl := int(mod_einfluss.get("schnell", {}).get("anzahl", 0)) if mod_einfluss.has("schnell") else 0
+	if mod_anzahl != 1 or not mod_einfluss.has("schnell"):
+		print("FEHLER: Modifikator-Einfluss nicht sichtbar (einfluss %s)" % str(mod_einfluss))
+		fehler += 1
+	else:
+		print("OK: Modifikator-Einfluss aggregiert (schnell wirkt 1x mit Faktor 1.5)")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

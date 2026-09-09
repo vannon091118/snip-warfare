@@ -22,6 +22,9 @@ func job_anzeigen(job_name: String) -> void:
 func meldung_setzen(text: String) -> void:
 	(_status as Variant).meldung_setzen(text)
 
+func timeline_anzeigen(begruendung: String) -> void:
+	(_status as Variant).timeline_anzeigen(begruendung)
+
 func biom_anzeigen(biom_id: String, biom_faktor: float) -> void:
 	(_status as Variant).biom_anzeigen(biom_id, biom_faktor)
 

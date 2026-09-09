@@ -188,6 +188,12 @@ Rassen-Schemata: `population/data/rassen_schemata.json` definiert je Rasse Multi
 
 Vergabe: `Einheit_Manager.einheit_hinzufuegen(position, rasse)` ordnet die Rasse beim Spawn zu (Standard-Rasse aus dem Baum, sonst neutral), speichert sie an der Einheit, reicht den Rassen-Bewegungsfaktor über `Einheit_Status.rasse_faktor_setzen()` in die Zustandsmaschine (wirkt multiplikativ auf die zentrale Geh-Geschwindigkeit) und verteilt die Nahrung je Einheit über deren kombinierten Rassen-Faktor.
 
+## 5g. Zustands-Timeline (Warum ist das so)
+
+`Kern_Timeline` (core/logic/kern_timeline.gd) mit `Kern_TimelineEintrag` (core/logic/kern_timeline_eintrag.gd) ist die zentrale Zeitlinie aller Zustandsänderungen. Sie ist kein Dump: Sie hält einen Ursprungs-Snapshot plus jede Mutation als Delta-Eintrag (nur die betroffenen Schlüssel mit vorher/nachher, Quelle, Beschreibung, Modifikator-ID und Faktor). `zustand_zu_tick(tick)` rekonstruiert den Zustand zu jedem Zeitpunkt aus Ursprung plus Deltas, `warum(ziel_id)` liefert die Begründungskette eines Ziels in zeitlicher Reihenfolge, `einfluss_modifikatoren()` aggregiert, welche Modifikatoren wie oft mit welchem Faktor gewirkt haben. Keine Zeit, kein Zufall, keine Simulationslogik in der Timeline: Sie protokolliert nur, was andere Zuständigkeiten melden.
+
+Anbindung: `Einheit_Ressourcen.timeline_setzen(timeline)` setzt den Ursprungs-Snapshot der Bestände und protokolliert jede Buchung (einlagern, entnehmen, mehrfach_entnehmen, Rückbuchung) als Delta. Die Welt-Szene erzeugt die Timeline als eigene Spitze, verbindet `eintrag_neu` mit dem HUD (`hud_status_anzeige.timeline_anzeigen`) und dem Signalbus (`timeline_eintrag`), sodass jede Buchung als Begründung sichtbar wird. Damit bleibt die Frage warum ist das so jederzeit intern und für den Spieler beantwortbar, und der Einfluss aller Modifikatoren ist zukünftig kombinierbar visualisierbar.
+
 ## 6. RT Pyramide
 
 Die Architektur ist eine echte Pyramide mit modularer Spitze. Basis: `Welt_Model` haelt nur Daten. Darueber: Registries halten alle exakten Datenklassen zentral und zeigen je Eintrag auf ein sichtbares Asset, Logiken und Modifikatoren sind generisch wiederverwendbar. Darueber: State Maschinen und Mutationsmaschinen mit je genau einer Verantwortung. Spitze: Endszene `world/scenes/welt.tscn` komponiert alle Untersysteme, besitzt aber selbst keine Logik und wird durch die Untersysteme modular bestimmt. `prototyp_karte.*` wurde restlos entfernt.

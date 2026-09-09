@@ -9,6 +9,10 @@ class_name Einheit_Ressourcen
 signal bestand_geaendert(ressource: String, neuer_bestand: int)
 
 const KONFIG_PFAD := "res://game/data/ressourcen.json"
+# Die Zustands-Timeline ist optional: Jede Buchung wird als Delta-Eintrag
+# mit Quelle und Beschreibung protokolliert, damit der Zustand jederzeit
+# rekonstruierbar und die Frage warum ist das so beantwortbar bleibt.
+var _timeline: Kern_Timeline = null
 
 ## Kategorie daten: Instanzen der Ressourcen-Datenklassen und der aktuelle Zustand.
 var ressourcen_objekte: Array[Resource_Basis] = []
@@ -81,6 +85,30 @@ func ressource_name(ressource: String) -> String:
 func lager_setzen(lager: Lager_Manager) -> void:
 	_lager = lager
 
+func timeline_setzen(timeline: Kern_Timeline) -> void:
+	# Die Timeline ist eine reine Beobachtungsstelle: Sie bekommt den
+	# Ursprungs-Snapshot der Bestaende und dann jede Buchung als Delta.
+	# Der Ursprung ist flach (ressource -> menge), damit die Rekonstruktion
+	# die Delta-Eintraege direkt anwenden kann.
+	_timeline = timeline
+	if _timeline != null:
+		var ursprung := _bestaende_lesen().duplicate(true)
+		if _lager != null and _lager.lager_zahl() > 0:
+			ursprung = _lager.gesamt_bestand_alle()
+		_timeline.ursprung_festlegen(ursprung)
+
+func _timeline_buchung(quelle: String, beschreibung: String, ressource: String, alte_menge: int, neue_menge: int) -> void:
+	if _timeline == null:
+		return
+	var tick := 0
+	var baum := Engine.get_main_loop() as SceneTree
+	if baum != null:
+		var weltuhr := baum.root.get_node_or_null("/root/Weltuhr")
+		if weltuhr != null and weltuhr.has_method("tick_nummer"):
+			tick = int(weltuhr.tick_nummer())
+	_timeline.eintrag_anhaengen(tick, "ressourcen", quelle, beschreibung,
+		{ressource: alte_menge}, {ressource: neue_menge})
+
 func ernte_position_setzen(welt_position: Vector2) -> void:
 	_letzte_ernte_position = welt_position
 
@@ -121,7 +149,9 @@ func hinzufuegen(ressource: String, menge: int) -> void:
 		var neue_summe := _lager.gesamt_bestand(ressource)
 		if alte_summe != neue_summe:
 			bestand_geaendert.emit(ressource, neue_summe)
+		_timeline_buchung("einlagern", "%s eingelagert" % ressource, ressource, alte_summe, neue_summe)
 		return
+	_timeline_buchung("einlagern", "%s eingelagert" % ressource, ressource, alte_summe, bestand(ressource))
 
 func kann_mehrfach_entnehmen(paare: Array[Dictionary], lager_index: int = -1) -> bool:
 	# Kumulative Pruefung: Gleiche Ressourcen werden summiert und erst die
@@ -159,16 +189,20 @@ func mehrfach_entnehmen(paare: Array[Dictionary], lager_index: int = -1) -> bool
 func _rueckbuchung(ressource: String, menge: int, lager_index: int) -> void:
 	# Gibt eine bereits entnommene Menge in dasselbe Lager zurueck, damit
 	# eine gescheiterte Mehrfach-Entnahme keinen Teilbestand verliert.
+	var alte_summe := bestand(ressource)
 	if _lager != null and _lager.lager_zahl() > 0 and lager_index >= 0:
 		_lager.einlagern(ressource, menge, lager_index)
+		_timeline_buchung("rueckbuchung", "Rueckbuchung %s" % ressource, ressource, alte_summe, bestand(ressource))
 		return
 	var bestaende := _bestaende_lesen().duplicate(true)
 	bestaende[ressource] = int(bestaende.get(ressource, 0)) + menge
 	_zustand_uebernehmen({"bestaende": bestaende, "letzter_zufallswurf": aktueller_zustand.get("letzter_zufallswurf", 0)})
+	_timeline_buchung("rueckbuchung", "Rueckbuchung %s" % ressource, ressource, alte_summe, bestand(ressource))
 
 func entnehmen(ressource: String, menge: int, lager_index: int = -1) -> bool:
 	if menge <= 0:
 		return false
+	var alte_summe := bestand(ressource)
 	if _lager != null and _lager.lager_zahl() > 0:
 		var ziel_index := lager_index
 		if ziel_index < 0:
@@ -176,6 +210,7 @@ func entnehmen(ressource: String, menge: int, lager_index: int = -1) -> bool:
 		if ziel_index < 0 or not _lager.entnehmen(ressource, menge, ziel_index):
 			return false
 		bestand_geaendert.emit(ressource, _lager.gesamt_bestand(ressource))
+		_timeline_buchung("entnehmen", "%s entnommen" % ressource, ressource, alte_summe, bestand(ressource))
 		return true
 	var aktueller := int(_bestaende_lesen().get(ressource, 0))
 	if aktueller < menge:
@@ -184,6 +219,7 @@ func entnehmen(ressource: String, menge: int, lager_index: int = -1) -> bool:
 	bestaende[ressource] = aktueller - menge
 	var zustand := {"bestaende": bestaende, "letzter_zufallswurf": aktueller_zustand.get("letzter_zufallswurf", 0)}
 	_zustand_uebernehmen(zustand)
+	_timeline_buchung("entnehmen", "%s entnommen" % ressource, ressource, aktueller, bestand(ressource))
 	return true
 
 func _zustand_uebernehmen(zustand: Dictionary) -> void:
