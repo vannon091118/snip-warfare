@@ -7,6 +7,7 @@ extends VBoxContainer
 @onready var _ressourcen: HBoxContainer = %RessourcenLeiste
 @onready var _job: Label = %JobAnzeige
 @onready var _status: Label = %StatusAnzeige
+@onready var _produktion: Label = %ProduktionAnzeige
 
 ## Kategorie daten: keine eigenen Arrays; die Kinder tragen den Zustand.
 
@@ -23,3 +24,6 @@ func meldung_setzen(text: String) -> void:
 
 func biom_anzeigen(biom_id: String, biom_faktor: float) -> void:
 	(_status as Variant).biom_anzeigen(biom_id, biom_faktor)
+
+func produktion_anzeigen(zeilen: Array[String]) -> void:
+	(_produktion as Variant).status_setzen(zeilen)

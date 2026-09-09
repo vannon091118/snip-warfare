@@ -67,6 +67,28 @@ func gesamt_bestand_alle() -> Dictionary:
 			summe[ressource] = int(summe.get(ressource, 0)) + int(bestaende[ressource])
 	return summe
 
+func startbestand_setzen(ressource: String, menge: int, lager_index: int) -> void:
+	# Deterministischer Startbestand für Tests und Editor-Setup: schreibt die
+	# Menge direkt als Anfangszustand, ohne die Ernte-Varianz des Schemas.
+	if lager_index < 0 or lager_index >= _lager.size() or menge < 0:
+		return
+	var bestaende: Dictionary = _lager[lager_index].get("bestaende", {})
+	bestaende[ressource] = menge
+	_lager[lager_index]["bestaende"] = bestaende
+
+func hat_lagerplatz(lager_index: int, menge: int) -> bool:
+	# Produktions-Gate: Ausgänge dürfen nur gebucht werden, wenn das Lager
+	# genug freie Kapazität hat; blockiert sonst die Produktion.
+	if lager_index < 0 or lager_index >= _lager.size() or menge <= 0:
+		return false
+	var eintrag: Dictionary = _lager[lager_index]
+	var kapazitaet := int(eintrag.get("kapazitaet", 0))
+	var belegt := 0
+	var bestaende: Dictionary = eintrag.get("bestaende", {})
+	for ressource: String in bestaende.keys():
+		belegt += int(bestaende[ressource])
+	return belegt + menge <= kapazitaet
+
 ## Nächstes Lager für eine Weltposition (für Ernte und Verbrauch).
 
 func naechstes_lager_fuer(welt_position: Vector2) -> int:

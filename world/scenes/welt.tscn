@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://ui/scenes/hud/hud_ressourcen_leiste.gd" id="6_ressourcen"]
 [ext_resource type="Script" path="res://ui/scenes/hud/hud_job_anzeige.gd" id="7_jobanzeige"]
 [ext_resource type="Script" path="res://ui/scenes/hud/hud_status_anzeige.gd" id="8_statusanzeige"]
+[ext_resource type="Script" path="res://ui/scenes/hud/hud_produktion_anzeige.gd" id="8b_produktion"]
 [ext_resource type="Script" path="res://ui/scenes/selection/auswahl_rechteck.gd" id="9_rechteck"]
 [ext_resource type="Script" path="res://ui/scenes/panels/kontext_menue.gd" id="10_kontext"]
 
@@ -60,6 +61,12 @@ unique_name_in_owner = true
 layout_mode = 2
 text = ""
 script = ExtResource("8_statusanzeige")
+
+[node name="ProduktionAnzeige" type="Label" parent="CanvasLayer/HUD"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Produktion: keine Gebaeude"
+script = ExtResource("8b_produktion")
 
 [node name="HilfeLabel" type="Label" parent="CanvasLayer/HUD"]
 layout_mode = 2

@@ -30,6 +30,8 @@ var _kamera_steuerung: Ui_KameraSteuerung = null
 var _karten_ebene: CanvasLayer = null
 var _karten_viewer: Ui_KartenViewer = null
 var _karten_oeffnen: bool = false
+var _gebaeude: Gebaeude_Manager = null
+var _rechtsklick_welt_position := Vector2.ZERO
 
 signal karten_umschalten_gewuenscht
 signal verteilung_gewuenscht(nahrung_je_takt: float)
@@ -53,6 +55,7 @@ func einrichten(p: Dictionary) -> void:
 	_kamera_steuerung = p.get("kamera_steuerung")
 	_karten_ebene = p.get("karten_ebene")
 	_karten_viewer = p.get("karten_viewer")
+	_gebaeude = p.get("gebaeude")
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
 
@@ -139,6 +142,9 @@ func auf_verteilung(nahrung_je_takt: float) -> void:
 func auf_kontext_aktion(aktion: Dictionary) -> void:
 	var logik := str(aktion.get("logik_id", ""))
 	var label_text := str(aktion.get("label", ""))
+	if logik == "bauen":
+		_bauen_ausfuehren(aktion)
+		return
 	if label_text.to_lower().contains("wachstum") or logik.to_lower().contains("wachstum"):
 		var haus_pos := _kamera_steuerung.kamera_position if _kamera_steuerung != null else Vector2.ZERO
 		if _lager != null and _lager.lager_zahl() > 0:
@@ -164,20 +170,24 @@ func _linksklick_ende(ende: Vector2) -> void:
 		(_hud as Variant).meldung_setzen("Massenwahl: %d Einheiten im Rechteck" % treffer.size())
 
 func _rechtsklick_verarbeiten(welt_pos: Vector2) -> void:
-	if _model == null or _tiere == null or _kontext == null or _hud == null:
+	if _kontext == null or _hud == null:
 		return
-	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
-	var ziel_objekt := _model.objekt_bei(welt_pos, radius)
-	var ziel_tier := _tiere.tier_id_bei(welt_pos, radius)
-	if ziel_objekt >= 0 or ziel_tier >= 0:
-		if _kamera != null and _kamera.get_viewport() != null:
-			_kontext.position = _kamera.get_viewport().get_mouse_position()
-		_kontext.popup()
+	_rechtsklick_welt_position = welt_pos
+	# Rechtsklick öffnet immer das Kontextmenü: an Objekten und Tieren für
+	# Sammel-/Abbau-Aktionen, auf freiem Feld für Bau-Aktionen.
+	if _kamera != null and _kamera.get_viewport() != null:
+		_kontext.position = _kamera.get_viewport().get_mouse_position()
+	_kontext.popup()
+
+func _bauen_ausfuehren(aktion: Dictionary) -> void:
+	if _gebaeude == null or _hud == null:
 		return
-	if Input.is_key_pressed(KEY_SHIFT):
-		(_hud as Variant).meldung_setzen("Aggressiver Move: Ziel wird automatisch angegriffen")
+	var gebaeude_id := str(aktion.get("gebaeude_id", ""))
+	var ergebnis := _gebaeude.bauen_anfordern(gebaeude_id, _rechtsklick_welt_position)
+	if bool(ergebnis.get("ok", false)):
+		(_hud as Variant).meldung_setzen("Bau angefordert: %s" % str(aktion.get("label", gebaeude_id)))
 	else:
-		(_hud as Variant).meldung_setzen("Move-Befehl an aktive Einheit")
+		(_hud as Variant).meldung_setzen("Bauen nicht möglich: %s" % str(ergebnis.get("grund", "unbekannt")))
 
 func _klick_verarbeiten(klick: Vector2) -> void:
 	if _model == null or _registry == null or _tiere == null or _job_registry == null or _stockmaenner == null or _auswahl == null or _hud == null:

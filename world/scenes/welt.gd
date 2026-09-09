@@ -32,6 +32,7 @@ var _karten_info: Ui_WeltInfo = null
 
 ## Unter-Spitzen: Jede hält genau eine Zuständigkeit.
 var _ladevorgang := Welt_Ladevorgang.new()
+var _gebaeude := Gebaeude_Manager.new()
 var _lager_fabrik := Welt_LagerFabrik.new()
 var _tier_platzierer := Welt_TierPlatzierer.new()
 var _waerme_sammler := Welt_WaermeSammler.new()
@@ -72,6 +73,9 @@ func _ready() -> void:
 	_stockmaenner.tageszyklus_setzen(_tageszyklus)
 	_waerme_sammler.sammeln(_model, _stockmaenner)
 	add_child(_stockmaenner)
+	_gebaeude.einrichten(_model, _registry, _ressourcen, _lager)
+	add_child(_gebaeude)
+	_gebaeude.gebaeude_meldung.connect(_auf_gebaeude_meldung)
 	_stockmaenner.einheit_hinzufuegen(_kamera_steuerung.kamera_position + Vector2(0, 48))
 	_karten_beobachter.einrichten(_model, _generator, _tiere)
 	_orchestrator_registry.laden(ORCHESTRATOR_PFAD)
@@ -101,6 +105,7 @@ func _ready() -> void:
 		"karten_ebene": _karten_ebene,
 		"karten_viewer": _karten_viewer,
 		"schnellwahl": _schnellwahl,
+		"gebaeude": _gebaeude,
 	})
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
@@ -138,6 +143,7 @@ func _process(delta: float) -> void:
 	# sich ausschließlich über Jobs (Einheit_Status + Rathaus/Orchestrator),
 	# niemals durch unmittelbares Setzen ihrer Position pro Frame.
 	_karten_beobachter.beobachten(_karten_viewer, _karten_info, _karten_ebene, _kamera_steuerung.kamera_position, _kamera)
+	_hud.produktion_anzeigen(_gebaeude.status_zeilen())
 
 func _unhandled_input(ereignis: InputEvent) -> void:
 	_eingabe_steuerung.unhandled_input(
@@ -159,3 +165,6 @@ func _biom_anzeigen() -> void:
 
 func _auf_zurueck() -> void:
 	get_tree().change_scene_to_file("res://ui/scenes/hauptmenue.tscn")
+
+func _auf_gebaeude_meldung(text: String) -> void:
+	_hud.meldung_setzen(text)

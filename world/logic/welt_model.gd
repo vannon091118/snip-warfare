@@ -64,6 +64,9 @@ func fliese(x: int, y: int) -> String:
 	return raster[y * raster_breite + x]
 
 func objekt_hinzufuegen(element_id: String, position: Vector2) -> int:
+	# Liefert den Array-Index des neuen Objekts zurück, damit Aufrufer sofort
+	# Zustandsfelder über objekt_feld_setzen schreiben können. Die fachliche
+	# Objekt-Nummer bleibt als Feld "id" erhalten.
 	var nummer := _naechste_objekt_nummer
 	_naechste_objekt_nummer += 1
 	objekte.append({
@@ -71,7 +74,7 @@ func objekt_hinzufuegen(element_id: String, position: Vector2) -> int:
 		"element_id": element_id,
 		"position": [position.x, position.y],
 	})
-	return nummer
+	return objekte.size() - 1
 
 func objekt_position(index: int) -> Vector2:
 	var position_werte: Array = objekte[index]["position"]

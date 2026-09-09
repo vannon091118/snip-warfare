@@ -37,6 +37,15 @@
         "werkzeug": "Spitzhacke",
         "logik_id": "ressource_stein",
         "faktor": 1.0
+      },
+      {
+        "id": "bauen_werkstatt",
+        "label": "Bauen: Werkstatt",
+        "icon_pfad": "res://world/assets/terrain/werkstatt.svg",
+        "tooltip": "Kostet 15 Holz und 8 Stein, Werkzeug {werkzeug} wird nicht benoetigt",
+        "werkzeug": "keines",
+        "logik_id": "bauen",
+        "gebaeude_id": "werkstatt"
       }
     ]
   },

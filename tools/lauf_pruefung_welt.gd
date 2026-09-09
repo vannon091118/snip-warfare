@@ -3,6 +3,14 @@ extends SceneTree
 ## Reihenfolge-Unabhängigkeit der Generierung.
 
 func _init() -> void:
+	# Autoload-Ersatz: Der Testlauf startet ohne Hauptszene, deshalb wird die
+	# zentrale Weltuhr hier als Wurzelkind nachgebaut, damit Manager-Module,
+	# die den Weltuhr-Tick erwarten, auch im Test kompilieren und ticken.
+	var weltuhr_skript: GDScript = load("res://core/weltuhr.gd")
+	if weltuhr_skript != null:
+		var weltuhr: Node = weltuhr_skript.new()
+		weltuhr.name = "Weltuhr"
+		root.add_child(weltuhr)
 	var fehler := 0
 	# 1) Determinismus: gleicher Seed, gleiche Welt.
 	var modell_eins := Welt_Model.new()
@@ -105,6 +113,75 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Variante 'busch' im Element-Katalog mit Asset auflösbar")
+	# 9) Gebäude-Fundament: Definition, Bau-Maschine, Produktions-Maschine.
+	var gebaeude_reg := Gebaeude_DefinitionRegistry.new()
+	var werkstatt: Gebaeude_Definition = null
+	if not gebaeude_reg.hat_gebaeude("werkstatt"):
+		print("FEHLER: Werkstatt fehlt in der Gebäude-Definition")
+		fehler += 1
+	else:
+		werkstatt = gebaeude_reg.definition_fuer("werkstatt")
+		print("OK: Werkstatt definiert mit Bauzeit %d und Dauer %d" % [werkstatt.bauzeit_ticks, werkstatt.dauer_ticks])
+	var bau_maschine := Gebaeude_BauMaschine.new()
+	var bau := bau_maschine.starten(bau_maschine.neuer_zustand())
+	for i in range(werkstatt.bauzeit_ticks):
+		bau = bau_maschine.tick(bau, werkstatt.bauzeit_ticks)
+	if not bau_maschine.ist_fertig(bau):
+		print("FEHLER: Bau-Maschine erreicht FERTIG nicht nach Bauzeit")
+		fehler += 1
+	else:
+		print("OK: Bau-Maschine erreicht FERTIG nach %d Ticks" % werkstatt.bauzeit_ticks)
+	var prod_maschine := Gebaeude_ProduktionsMaschine.new()
+	var prod := prod_maschine.starten(prod_maschine.neuer_zustand())
+	prod = prod_maschine.tick(prod, werkstatt, false, true)
+	if int(prod.get("phase", -1)) != Gebaeude_ProduktionsMaschine.Phase.WARTET_EINGANG:
+		print("FEHLER: Produktion wartet nicht ohne Eingang")
+		fehler += 1
+	prod = prod_maschine.tick(prod, werkstatt, true, true)
+	if str(prod.get("aktion", "")) != "input_ziehen":
+		print("FEHLER: Produktionsstart zieht keine Eingänge")
+		fehler += 1
+	for i in range(werkstatt.dauer_ticks):
+		prod = prod_maschine.tick(prod, werkstatt, true, true)
+	if str(prod.get("aktion", "")) != "output_legen":
+		print("FEHLER: Produktionsabschluss legt keine Ausgänge ab")
+		fehler += 1
+	else:
+		print("OK: Produktion verbraucht Eingang und meldet Ausgang nach %d Ticks" % werkstatt.dauer_ticks)
+	prod = prod_maschine.tick(prod, werkstatt, false, false)
+	if int(prod.get("phase", -1)) != Gebaeude_ProduktionsMaschine.Phase.WARTET_EINGANG:
+		print("FEHLER: Wiederholbare Produktion startet keinen neuen Zyklus")
+		fehler += 1
+	else:
+		print("OK: Wiederholbare Produktion beginnt neuen Zyklus und wartet auf Eingang")
+	# 10) Manager-Kette: Kosten fließen wirklich, Gebäude entsteht im Modell.
+	var bau_modell := Welt_Model.new()
+	var bau_generator := Welt_Generator.new()
+	bau_generator.welt_erzeugen(bau_modell, 4242, "gemaaessigt")
+	var bau_lager := Lager_Manager.new()
+	bau_lager.lager_anlegen("kleines_lager", Vector2(0, 0))
+	var bau_ressourcen := Einheit_Ressourcen.new()
+	bau_ressourcen.lager_setzen(bau_lager)
+	bau_lager.startbestand_setzen("holz", 50, 0)
+	bau_lager.startbestand_setzen("stein", 30, 0)
+	var bau_manager := Gebaeude_Manager.new()
+	bau_manager.einrichten(bau_modell, Welt_Registry.new(), bau_ressourcen, bau_lager)
+	var bau_ergebnis := bau_manager.bauen_anfordern("werkstatt", Vector2(512, 512))
+	if not bool(bau_ergebnis.get("ok", false)):
+		print("FEHLER: Bau-Anforderung scheitert: %s" % str(bau_ergebnis.get("grund", "?")))
+		fehler += 1
+	else:
+		var holz_rest := bau_lager.gesamt_bestand("holz")
+		var stein_rest := bau_lager.gesamt_bestand("stein")
+		var werkstatt_indizes := bau_modell.objekte_mit_element_id("werkstatt")
+		var gebaeude_id := ""
+		if not werkstatt_indizes.is_empty():
+			gebaeude_id = str(bau_modell.objekt_feld(werkstatt_indizes[0], "gebaeude_id", ""))
+		if holz_rest != 35 or stein_rest != 22 or gebaeude_id != "werkstatt":
+			print("FEHLER: Kosten fließen nicht korrekt (holz %d, stein %d, id %s)" % [holz_rest, stein_rest, gebaeude_id])
+			fehler += 1
+		else:
+			print("OK: Baukosten wirklich entnommen (holz 35, stein 22) und Werkstatt im Modell")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)
