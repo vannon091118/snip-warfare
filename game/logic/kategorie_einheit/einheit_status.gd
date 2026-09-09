@@ -64,9 +64,14 @@ func job_loopy_fortsetzen(neuer_job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, zie
 	ziel_ressource = ressource
 	_loop_fortgesetzt = true
 	job.startet_neu()
+
+func job_abbrechen() -> void:
+	# Das Ende des Jobs: alle Zielwerte fallen auf leer, der Zustand geht in den Idle.
 	job = null
+	aktuelles_ziel_typ = Job_Basis.ZielTyp.OBJEKT
 	aktuelles_ziel_index = -1
 	ziel_ressource = ""
+	_loop_fortgesetzt = false
 	_zu_zustand_wechseln(Zustand.IDLE)
 
 func tick(delta: float) -> void:

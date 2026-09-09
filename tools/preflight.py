@@ -41,6 +41,8 @@ Fehlercodes:
   E034  Shinon Gate: commit_msg.txt fehlt oder ist leer oder nicht als UTF-8 lesbar
   E035  Shinon Gate: README fehlt, ist leer oder bricht nicht die vierte Wand (Shinon Pitch Pflicht)
   E036  Steuerung Pflicht: game/data/steuerung.json fehlt oder ist nicht menschenlesbar konfiguriert
+  E037  Shinon Gate: Fremder Agent-Footer in commit_msg.txt (Generated with, Co-Authored-By, Werkzeug-Signaturen)
+  E038  Shinon Gate: Geaenderte Datei wird in commit_msg.txt nicht namentlich genannt (Vorlagenpflicht)
 
 Prüfkategorien (Flags) und ihre Codes:
   klassen       E001 E002 E003 E004 E008 E009 E021
@@ -50,7 +52,7 @@ Prüfkategorien (Flags) und ihre Codes:
   pfade         E015
   registries    E020 E022
   godot         E016 E017 E018
-  shinon        E030 E031 E032 E033 E034
+  shinon        E030 E031 E032 E033 E034 E035 E036 E037 E038
   assets        E022
 
 Ausführung aus dem Projektstamm:
@@ -109,7 +111,7 @@ PRUEFKATEGORIEN = {
     "pfade": ("E015",),
     "registries": ("E020", "E022"),
     "godot": ("E016", "E017", "E018"),
-    "shinon": ("E030", "E031", "E032", "E033", "E034", "E035", "E036"),
+    "shinon": ("E030", "E031", "E032", "E033", "E034", "E035", "E036", "E037", "E038"),
     "assets": ("E022",),
     "pyramide": ("E023", "E024"),
     "biome": ("E024",),
@@ -211,6 +213,8 @@ def selbsttest():
             probleme.append("Shinon Nummerierung Pruefer meldet fehlende Nummer nicht")
         if not any(b.code == "E033" for b in gate.pruefe_text("1. Kurz.\n")):
             probleme.append("Shinon Bildsprache Pruefer meldet zu kurzen Satz nicht")
+        if not any(b.code == "E037" for b in gate.pruefe_text("1. Fertige Arbeit und nun der Fuss.\n\U0001F916 Generated with Codebuff\nCo-Authored-By: Codebuff <noreply@codebuff.com>\n")):
+            probleme.append("Shinon Footer Pruefer meldet den Agent-Footer nicht")
         # E035 Readme und E036 Steuerung muessen ebenfalls im Selbsttest greifen.
         _rm_pfad2 = PROJEKT_STAMM / "shinon" / "shinon_readme_pruefer.py"
         _rm_spez2 = _ilu.spec_from_file_location("_shinon_readme_selbsttest", str(_rm_pfad2))

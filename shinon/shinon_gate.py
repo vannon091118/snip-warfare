@@ -37,6 +37,8 @@ class ShinonGate:
         self._bullet = _lade_pruefer("shinon_bullet_pruefer.py", "ShinonBulletPruefer")()
         self._nummerierung = _lade_pruefer("shinon_nummerierung_pruefer.py", "ShinonNummerierungPruefer")()
         self._bildsprache = _lade_pruefer("shinon_bildsprache_pruefer.py", "ShinonBildsprachePruefer")()
+        self._footer = _lade_pruefer("shinon_footer_pruefer.py", "ShinonFooterPruefer")()
+        self._nennung = _lade_pruefer("shinon_nennung_pruefer.py", "ShinonNennungPruefer")()
 
     def pruefen(self, pfad: Path | None = None) -> list[ShinonBefund]:
         ziel = pfad or COMMIT_MSG_PFAD
@@ -75,6 +77,13 @@ class ShinonGate:
             befunde.append(ShinonBefund(code=b.code, datei=rel, zeile=b.zeile, text=b.text))
         for b in self._bildsprache.pruefen(zeilen):
             befunde.append(ShinonBefund(code=b.code, datei=rel, zeile=b.zeile, text=b.text))
+        for b in self._footer.pruefen(zeilen):
+            befunde.append(ShinonBefund(code=b.code, datei=rel, zeile=b.zeile, text=b.text))
+        # E038 nur gegen die echte Datei, nie im reinen Text des Selbsttests:
+        # Die Nennungspflicht liest die geaenderten Dateien aus Git.
+        if pfad is not None:
+            for b in self._nennung.pruefen(zeilen):
+                befunde.append(ShinonBefund(code=b.code, datei=rel, zeile=b.zeile, text=b.text))
         return befunde
 
     def pruefe_text(self, text: str) -> list[ShinonBefund]:
@@ -88,5 +97,7 @@ class ShinonGate:
         for b in self._nummerierung.pruefen(zeilen):
             befunde.append(ShinonBefund(code=b.code, datei="shinon/commit_msg.txt", zeile=b.zeile, text=b.text))
         for b in self._bildsprache.pruefen(zeilen):
+            befunde.append(ShinonBefund(code=b.code, datei="shinon/commit_msg.txt", zeile=b.zeile, text=b.text))
+        for b in self._footer.pruefen(zeilen):
             befunde.append(ShinonBefund(code=b.code, datei="shinon/commit_msg.txt", zeile=b.zeile, text=b.text))
         return befunde

@@ -14,11 +14,11 @@ var ziehen_aktiv: bool = false
 ## Kategorie logik: Übergänge der Auswahl.
 
 func einzel_start(position: Vector2) -> void:
-	zieren_start_setzen(position)
+	ziehen_start_setzen(position)
 
-func zieren_start_setzen(position: Vector2) -> void:
-	zieren_start = position
-	zieren_aktiv = true
+func ziehen_start_setzen(position: Vector2) -> void:
+	ziehen_start = position
+	ziehen_aktiv = true
 
 func ziehen_ende(position: Vector2, einheit_zahl: int, position_leser: Callable) -> Array[int]:
 	# Liefert die im Rechteck liegenden Einheiten; der Positionsleser kommt
@@ -29,20 +29,20 @@ func ziehen_ende(position: Vector2, einheit_zahl: int, position_leser: Callable)
 	var nah := ziehen_start.distance_to(position) < 8.0
 	if nah:
 		# Einzelauswahl: die gewählte Einheit bleibt aktiv.
-		zieren_aktiv = false
-		zieren_start = Vector2.INF
+		ziehen_aktiv = false
+		ziehen_start = Vector2.INF
 		return ergebnis
-	var rect := Rect2(zieren_start, position - zieren_start).abs()
+	var rect := Rect2(zieren_start, position - ziehen_start).abs()
 	for idx in einheit_zahl:
 		var pos: Vector2 = position_leser.call(idx)
 		if rect.has_point(pos):
 			ergebnis.append(idx)
 	auswahl_einheiten = ergebnis
-	zieren_aktiv = false
-	zieren_start = Vector2.INF
+	ziehen_aktiv = false
+	ziehen_start = Vector2.INF
 	return ergebnis
 
 func auswahl_leeren() -> void:
 	auswahl_einheiten.clear()
-	zieren_aktiv = false
-	zieren_start = Vector2.INF
+	ziehen_aktiv = false
+	ziehen_start = Vector2.INF

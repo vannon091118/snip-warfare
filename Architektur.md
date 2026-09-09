@@ -80,6 +80,9 @@ Der Ordner shinon im Projektstamm ist das verbindliche Commit Gate und Init nach
 | `shinon/shinon_bullet_pruefer.py` | Erkennt Bullet Zeilen die mit Bindestrich Stern Mittelpunkt oder Plus beginnen | E031 |
 | `shinon/shinon_nummerierung_pruefer.py` | Prüft dass jede inhaltstragende Zeile 1. Satz. 2. Satz. ist und lückenlos steigt | E032 |
 | `shinon/shinon_bildsprache_pruefer.py` | Prüft dass nicht nur technische Pfade aneinandergereiht werden und jeder Satz mindestens fünf Wörter trägt | E033 |
+| `shinon/shinon_footer_pruefer.py` | Blockiert fremde Agent-Footer in commit_msg.txt: Generated with, Co-Authored-By, Werkzeug-Signaturen, Agent-Emojis | E037 |
+| `shinon/shinon_nennung_pruefer.py` | Verlangt dass jede geänderte Datei in commit_msg.txt namentlich mit Dateinamen genannt wird, liest die Änderungen aus Git | E038 |
+| `shinon/shinon_commit_komponist.py` | Baut die Commit-Nachricht ausschließlich 1:1 aus commit_msg.txt, ohne Zusatz, ohne Footer, ohne Zeilenerzeugung | - |
 | `shinon/shinon_readme_pruefer.py` | Prüft dass README.md aus Sicht von Shinon lebt, Zustand und Vision gamer orientiert in universe und mit gebrochener vierter Wand erzaehlt | E035 |
 | `shinon/shinon_steuerung_pruefer.py` | Prüft dass game/data/steuerung.json menschenlesbar WASD Kamera, Linksklick einzeln, Drag Masse und Rechtsklick Kontext sammeln abbauen mit Tooltip Werkzeug beschreibt | E036 |
 | `shinon/shinon_projekt_status_leser.py` | Liest den echten Zustand direkt aus project.godot, Registries und JSONs, ohne fremden Zustand | - |
@@ -171,6 +174,8 @@ Die Ausgabe listet zuerst alle Datenobjekt-Erzeugungen mit Datei, Klasse und Zei
 | E024 | Biom Pflicht: wirkt nicht als Mutation | Biome nur als Welt_BiomMutation ueber Welt_BiomManager an Welt_Model, world/data/biome.json pflegen |
 | E035 | Shinon README Pflicht verletzt | README via python shinon/shinon_init.py --readme neu erzeugen, Pitch aus Shinon Sicht mit Zustand Vision und vierter Wand |
 | E036 | Steuerung Pflicht verletzt | game/data/steuerung.json menschlich mit WASD Linksklick Drag Rechtsklick sammeln abbauen Icon Tooltip Werkzeug fuellen |
+| E037 | Shinon Footer Verbot verletzt | Agent-Footer oder Werkzeug-Signatur aus shinon/commit_msg.txt entfernen, die Nachricht gehört Shinon allein |
+| E038 | Shinon Nennungspflicht verletzt | Jede geänderte Datei in shinon/commit_msg.txt namentlich mit Dateinamen nennen |
 
 ## 9. Pflichten bei Änderungen
 

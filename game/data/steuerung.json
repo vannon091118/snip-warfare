@@ -40,6 +40,19 @@
       }
     ]
   },
+  "pathfinding": {
+    "kommentar": "Weg-Bonus senkt die Kosten begehbarer Kacheln, Unebenheiten-Malus erhoehrt sie, Kollisions-Sperrung macht Kacheln unpassierbar. Werte sind Kostenbeitraege pro Kachel.",
+    "weg_bonus": {
+      "boden": 0.4,
+      "wiese": 0.1
+    },
+    "unebenheiten_malus": {
+      "wiese": 0.2,
+      "boden": 0.0
+    },
+    "kollisions_sperrung": {},
+    "diagonal_faktor": 1.4142
+  },
   "hinweis_werkzeug": "Tooltip zeigt immer Benoetigt Werkzeug X wenn das Ziel ein Werkzeug verlangt, sonst ohne Tooltip",
   "ticks_hinweis": "faktor 1.0 wird intern zu 240 ticks (10 Sekunden mal 24 ticks). faktor 1.2 zu 288 ticks. Die Registry uebersetzt automatisch."
 }
