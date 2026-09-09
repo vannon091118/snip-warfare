@@ -2,7 +2,7 @@ extends Control
 ## Hauptmenü-Ansicht: Start, Laden, Map-Editor.
 ## Die Ansicht bedient nur die Menüführung; Simulationslogik bleibt außen vor.
 
-const SZENE_KARTE := "res://world/scenes/prototyp_karte.tscn"
+const SZENE_KARTE := "res://world/scenes/welt.tscn"
 const SZENE_EDITOR := "res://world/scenes/karten_editor.tscn"
 const GRENZE_RECHTS := 2200.0
 const GRENZE_LINKS := -140.0
@@ -54,7 +54,7 @@ func _frames_aus_quelle(textur: Texture2D) -> SpriteFrames:
 	frames.add_animation("laufen")
 	frames.set_animation_speed("laufen", 8.0)
 	frames.set_animation_loop("laufen", true)
-	for frame_index in 4:
+	for frame_index in range(4):
 		var atlas := AtlasTexture.new()
 		atlas.atlas = textur
 		atlas.region = Rect2(frame_index * 48, 0, 48, 64)

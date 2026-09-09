@@ -3,7 +3,7 @@ extends Control
 ## den Rahmen zwischen Start- und Endpunkt im Bildschirmraum und sagt, ob
 ## er sichtbar ist. Sie wählt keine Einheiten aus und mischt sich in keine
 ## Job-Kette.
-## Kette: PrototypKarte (Eingabe) -> rechteck_setzen(start, ende) -> _draw().
+## Kette: Welt (Eingabe) -> rechteck_setzen(start, ende) -> _draw().
 ## Zeichnet sich selbst statt einen unterlegten ColorRect zu skalieren:
 ## ein Node weniger im Baum, Farben konfigurierbar über exports.
 

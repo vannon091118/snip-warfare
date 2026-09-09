@@ -1,10 +1,10 @@
 extends Node2D
-## Prototyp-Karte: dünne Komponier-Spitze der RT-Pyramide. Sie besitzt keine
-## eigene Logik: Sie lädt die Welt, verdrahtet die kleinen Spitzen (HUD-Observer,
-## Selection, Kontext-Panel, Einheiten, Tiere) und übersetzt Eingaben in
-## Aufrufe an die Untersysteme. Der Fluss läuft streng nach oben: Eingabe ->
-## Maschinen -> Zustand -> Observer lesen und zeigen. Jede Kette ist über die
-## eindeutigen Dateinamen zurückverfolgbar.
+## Welt: die einzige dünne Komponier-Spitze. Sie besitzt keine eigene Logik:
+## Sie lädt die gespeicherte Welt (falls vorhanden) oder erzeugt sie aus Seed
+## und Registry, und verdrahtet dann die kleinen Spitzen (HUD, Selection,
+## Kontext-Panel, Einheiten, Tiere). Der Fluss läuft streng nach oben:
+## Eingabe -> Maschinen -> Zustand -> Observer lesen und zeigen. Jede Kette
+## ist über die eindeutigen Dateinamen zurückverfolgbar.
 
 const STANDARD_WELT_PFAD := "res://world/data/standard_welt.json"
 const KAMERA_ZOOM_SCHRITT := 1.1

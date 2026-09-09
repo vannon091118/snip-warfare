@@ -42,7 +42,7 @@ Du fuehrst kleine Figuren durch eine grosse Karte, sammelst, baust, schickst Tie
 
 Der Stand heute ist spielbar und gleichzeitig Baustelle. {elemente} Katalog Elemente und {tiere} Tierarten sind bereits registriert, jedes davon nur gueltig wenn es auf ein echtes Asset zeigt. Keine Grafik keine Existenz. Ich lasse nichts durch das unsichtbar bleibt. Falls ein Bild fehlt bastle ich dir einen Platzhalter damit du siehst wo du schuldig bist und nicht ich.
 
-Die Szenen sind einfach. Prototyp Karte fuer das eigentliche Spiel und Karten Editor fuer deine Weltideen. {('Beide sind da.' if szenen.get('prototyp_karte') and szenen.get('karten_editor') else 'Mindestens die Prototyp Karte ist da.')} Der Rest ist Logik, sauber getrennt, getestet, nicht geraten.
+Die Szenen sind einfach. Welt fuer das eigentliche Spiel und Karten Editor fuer deine Weltideen. {('Beide sind da.' if szenen.get('welt') and szenen.get('karten_editor') else 'Mindestens die Welt ist da.')} Der Rest ist Logik, sauber getrennt, getestet, nicht geraten.
 
 ## Wie du es steuerst
 

@@ -4,7 +4,7 @@ class_name Ui_AuswahlManager
 ## ausgewählt ist: der aktive Einheit-Index, das Auswahl-Rechteck als Start-
 ## und Endpunkt und ob ein Zug läuft. Sie entscheidet nichts über Jobs und
 ## kennt keine Kamera.
-## Kette: PrototypKarte (Eingabe) -> diese Maschine -> Rückfragen der Szene.
+## Kette: Welt (Eingabe) -> diese Maschine -> Rückfragen der Szene.
 
 ## Kategorie daten: Auswahl-Zustand.
 var aktiver_einheit_index: int = 0

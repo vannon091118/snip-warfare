@@ -73,9 +73,9 @@ class ShinonProjektStatusLeser:
         return katalog
 
     def _szenen(self) -> dict:
-        prototyp = PROJEKT_STAMM / "world" / "scenes" / "prototyp_karte.tscn"
+        welt = PROJEKT_STAMM / "world" / "scenes" / "welt.tscn"
         editor = PROJEKT_STAMM / "world" / "scenes" / "karten_editor.tscn"
         return {
-            "prototyp_karte": prototyp.is_file(),
+            "welt": welt.is_file(),
             "karten_editor": editor.is_file(),
         }

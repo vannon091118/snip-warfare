@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://cprotokarte01"]
+[gd_scene format=3 uid="uid://boidbxrgc83xu"]
 
-[ext_resource type="Script" path="res://world/scenes/prototyp_karte.gd" id="1_karte"]
+[ext_resource type="Script" path="res://world/scenes/welt.gd" id="1_karte"]
 [ext_resource type="Script" path="res://world/logic/kategorie_welt/welt_renderer.gd" id="2_renderer"]
 [ext_resource type="Script" path="res://world/logic/kategorie_tier/tier_manager.gd" id="3_tiere"]
 [ext_resource type="Texture2D" path="res://world/assets/ui/strichmaennchen_stehend.svg" id="4_spieler"]
@@ -11,7 +11,7 @@
 [ext_resource type="Script" path="res://ui/scenes/selection/auswahl_rechteck.gd" id="9_rechteck"]
 [ext_resource type="Script" path="res://ui/scenes/panels/kontext_menue.gd" id="10_kontext"]
 
-[node name="PrototypKarte" type="Node2D"]
+[node name="Welt" type="Node2D"]
 script = ExtResource("1_karte")
 
 [node name="Karte" type="Node2D" parent="."]

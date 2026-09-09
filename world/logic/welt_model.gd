@@ -18,6 +18,8 @@ const RASTER_MAX := 64
 var regionen: Array[Dictionary] = []
 var region_kante: int = 4
 var welt_seed: int = 0
+const SPEICHER_VERSION := 5
+const MIN_KOMPATIBLE_VERSION := 2
 
 ## Kategorie logik: Aufbau, Änderung und Ein-/Auslesen der Welt-Daten.
 var raster_breite: int = RASTER_BREITE
@@ -183,7 +185,7 @@ func biom_an_kachel(kachel_x: int, kachel_y: int) -> String:
 
 func nach_woerterbuch() -> Dictionary:
 	return {
-		"version": 4,
+		"version": SPEICHER_VERSION,
 		"kachel_groesse": KACHEL_GROESSE,
 		"raster_breite": raster_breite,
 		"raster_hoehe": raster_hoehe,
@@ -197,6 +199,10 @@ func nach_woerterbuch() -> Dictionary:
 
 func aus_woerterbuch(daten: Dictionary) -> bool:
 	if daten.is_empty():
+		return false
+	var version := int(daten.get("version", 3))
+	if version < MIN_KOMPATIBLE_VERSION:
+		push_warning("Welt zu alt: Version %d < %d, Migration nicht möglich" % [version, MIN_KOMPATIBLE_VERSION])
 		return false
 	raster_breite = clampi(int(daten.get("raster_breite", RASTER_BREITE)), RASTER_MIN, RASTER_MAX)
 	raster_hoehe = clampi(int(daten.get("raster_hoehe", RASTER_HOEHE)), RASTER_MIN, RASTER_MAX)
@@ -234,4 +240,22 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 					"seed_beitrag": int(wort.get("seed_beitrag", 0)),
 					"chunk_kante": int(wort.get("chunk_kante", 2)),
 				})
+	_eskalation_anwenden(version)
 	return true
+
+func _eskalation_anwenden(geladene_version: int) -> void:
+	# Abwärtskompatibel: Neue Systeme ab Update in neu generierten Chunks,
+	# alte Saves bleiben lesbar. Version 5 führt welt_seed und erweiterte
+	# Regionen ein; fehlende Felder werden deterministisch ergänzt.
+	if geladene_version >= SPEICHER_VERSION:
+		return
+	if geladene_version < 5:
+		# Version 4 hatte region_kante als 4, Chunk-Kante war 2 — ab 5
+		# ist die Generator-Konvention Chunk 8, Region 4 bindend.
+		if regionen.is_empty() and welt_seed == 0:
+			# Alter Save ohne Seed: deterministisch aus biom_id ableiten,
+			# damit gleiche alte Welt nicht zufällig neu würfelt.
+			welt_seed = int(hash(biom_id) & 0x7FFFFFFF)
+		for region in regionen:
+			if int(region.get("chunk_kante", 0)) == 2:
+				region["chunk_kante"] = Welt_Generator.CHUNK_GROESSE

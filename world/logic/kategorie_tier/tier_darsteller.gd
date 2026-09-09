@@ -20,7 +20,7 @@ func einrichten(tier_id: String, verhalten: Tier_Registry, neue_status: Tier_Sta
 	frames.set_animation_speed("laufen", 10.0)
 	frames.set_animation_loop("laufen", true)
 	if quell_textur != null:
-		for frame_index in 4:
+		for frame_index in range(4):
 			var atlas := AtlasTexture.new()
 			atlas.atlas = quell_textur
 			atlas.region = Rect2(frame_index * groesse.x, 0, groesse.x, groesse.y)
