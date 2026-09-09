@@ -203,7 +203,7 @@ func _karten_ebene_bauen() -> void:
 	_karten_ebene.add_child(info)
 	_karten_viewer.einrichten(_model, _registry, _biome)
 	add_child(_karten_ebene)
-	_karten_info := info
+	_karten_info = info
 
 func _input(ereignis: InputEvent) -> void:
 	if ereignis is InputEventKey and ereignis.pressed and ereignis.keycode == KEY_V and ereignis.ctrl_pressed:
