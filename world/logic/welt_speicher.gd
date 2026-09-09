@@ -48,6 +48,23 @@ func laden(welt_name: String) -> Dictionary:
 		return {}
 	return daten
 
+## World-Ebene: Eine World-Datei trägt mehrere Maps. Die bestehenden
+## Funktionen bleiben für Einzelwelten und den Editor erhalten.
+
+func world_speichern(world_name: String, world: Welt_World) -> bool:
+	if world == null:
+		return false
+	return speichern(world_name, world.nach_woerterbuch())
+
+func world_laden(world_name: String) -> Welt_World:
+	var daten := laden(world_name)
+	if daten.is_empty() or not daten.has("maps"):
+		return null
+	var world := Welt_World.new()
+	if world.aus_woerterbuch(daten):
+		return world
+	return null
+
 func loeschen(welt_name: String) -> bool:
 	var pfad := _ordner().path_join(welt_name + ".json")
 	if not FileAccess.file_exists(pfad):

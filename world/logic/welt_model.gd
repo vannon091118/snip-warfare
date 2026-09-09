@@ -18,6 +18,9 @@ const RASTER_MAX := 64
 var regionen: Array[Dictionary] = []
 var region_kante: int = 4
 var welt_seed: int = 0
+## map_id: Kennung dieser Karte innerhalb einer World. Leer bedeutet, dass
+## die Karte als eigenständige Einzelwelt geführt wird (abwärtskompatibel).
+var map_id: String = ""
 const SPEICHER_VERSION := 5
 const MIN_KOMPATIBLE_VERSION := 2
 
@@ -220,6 +223,7 @@ func nach_woerterbuch() -> Dictionary:
 		"region_kante": region_kante,
 		"regionen": regionen,
 		"welt_seed": welt_seed,
+		"map_id": map_id,
 	}
 
 func aus_woerterbuch(daten: Dictionary) -> bool:
@@ -259,6 +263,7 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 	regionen.clear()
 	region_kante = maxi(int(daten.get("region_kante", 4)), 1)
 	welt_seed = int(daten.get("welt_seed", 0))
+	map_id = str(daten.get("map_id", ""))
 	var neue_regionen: Variant = daten.get("regionen", [])
 	if typeof(neue_regionen) == TYPE_ARRAY:
 		for region: Variant in neue_regionen:

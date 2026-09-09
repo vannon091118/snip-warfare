@@ -249,6 +249,36 @@ func _init() -> void:
 			fehler += 1
 		else:
 			print("OK: Stickman hat eigene Job-Queue, naechster Auftrag startet nach dem aktiven Job")
+	# 13) World-Ebene: World hält mehrere Maps, markiert die Basis und
+	#     übersteht den Speicher-Rundlauf mit map_id-Zuordnung.
+	var world := Welt_World.new()
+	world.world_name = "test_world"
+	var map_a := Welt_Model.new()
+	map_a.welt_seed = 111
+	map_a.karte_erzeugen(8, 8, "boden")
+	var map_b := Welt_Model.new()
+	map_b.welt_seed = 222
+	map_b.karte_erzeugen(8, 8, "boden")
+	if not world.map_hinzufuegen(map_a, "karte_a", true):
+		print("FEHLER: World nimmt Basis-Map nicht auf")
+		fehler += 1
+	elif not world.map_hinzufuegen(map_b, "karte_b", false):
+		print("FEHLER: World nimmt zweite Map nicht auf")
+		fehler += 1
+	elif world.basis_map_id() != "karte_a" or world.map_zahl() != 2:
+		print("FEHLER: Basis-Markierung oder Map-Zahl falsch")
+		fehler += 1
+	else:
+		var world_runde := Welt_Speicher.new()
+		var gespeichert := world_runde.world_speichern("test_world", world)
+		var geladen := world_runde.world_laden("test_world")
+		if not gespeichert or geladen == null or geladen.map_zahl() != 2 \
+				or geladen.basis_map_id() != "karte_a" \
+				or geladen.map_model("karte_b").welt_seed != 222:
+			print("FEHLER: World-Speicher-Rundlauf bricht die map_id-Zuordnung")
+			fehler += 1
+		else:
+			print("OK: World hält 2 Maps, Basis-Markierung und map_id überstehen den Speicher-Rundlauf")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

@@ -18,9 +18,23 @@ func ausfuehren(welt_name: String, seed_wunsch: int, biom_id: String) -> bool:
 	if _model == null or _generator == null:
 		return false
 	var geladen := false
+	var speicher := Welt_Speicher.new()
 	if welt_name != "":
-		var speicher := Welt_Speicher.new()
-		geladen = _model.aus_woerterbuch(speicher.laden(welt_name))
+		# World-Ebene: Die Save-Datei ist eine World mit mehreren Maps; das
+		# Szenen-Modell wird aus der aktiven Map der Sitzung gespeist.
+		var world := speicher.world_laden(welt_name)
+		if world != null:
+			WeltSitzung.world = world
+			var aktive_id := WeltSitzung.aktive_map_id
+			if aktive_id == "" or not world.map_id_vorhanden(aktive_id):
+				aktive_id = world.aktive_map_id()
+				WeltSitzung.aktive_map_id = aktive_id
+			var aktive_map := world.map_model(aktive_id)
+			if aktive_map != null:
+				geladen = _model.aus_woerterbuch(aktive_map.nach_woerterbuch())
+		if not geladen:
+			# Abwärtskompatibel: Alte Einzelwelt-Dateien bleiben ladbar.
+			geladen = _model.aus_woerterbuch(speicher.laden(welt_name))
 	if not geladen:
 		geladen = _welt_generieren(welt_name, seed_wunsch, biom_id)
 	if not geladen:
@@ -50,10 +64,17 @@ func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> b
 		seed_wert = kandidat_zufall.naechste_zahl() % 1000000000
 	if not _generator.welt_erzeugen(_model, seed_wert, biom_id):
 		return false
+	# World-Ebene: Die neue Karte wird als Basis-Map in eine frische World
+	# eingetragen, die Sitzung zeigt auf sie.
+	var world := Welt_World.new()
 	var speicher_welt_name := welt_name
 	if speicher_welt_name == "":
 		speicher_welt_name = "generiert_" + str(seed_wert)
+	world.world_name = speicher_welt_name
+	world.map_hinzufuegen(_model, "karte_0", true)
+	WeltSitzung.world = world
+	WeltSitzung.aktive_map_id = "karte_0"
 	var speicher := Welt_Speicher.new()
-	speicher.speichern(speicher_welt_name, _model.nach_woerterbuch())
+	speicher.world_speichern(speicher_welt_name, world)
 	WeltSitzung.welt_name = speicher_welt_name
 	return true

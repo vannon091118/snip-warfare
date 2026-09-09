@@ -228,7 +228,7 @@ func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp,
 		status.queue_vorne_entfernen()
 		return
 	status.queue_vorne_entfernen()
-	status.job_vergeben(job, Job_Basis.ZielTyp(int(eintrag.get("ziel_typ", 0))),
+	status.job_vergeben(job, int(eintrag.get("ziel_typ", 0)),
 		int(eintrag.get("ziel_index", -1)), str(eintrag.get("ressource", "")))
 
 func _auf_job_loop_gefragt(status: Einheit_Status, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int) -> void:

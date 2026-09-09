@@ -77,6 +77,8 @@ func _auf_start() -> void:
 	WeltSitzung.welt_name = ""
 	WeltSitzung.seed_wunsch = 0
 	WeltSitzung.kommt_vom_editor = false
+	WeltSitzung.world = null
+	WeltSitzung.aktive_map_id = ""
 	get_tree().change_scene_to_file(SZENE_KARTE)
 
 func _auf_laden() -> void:
@@ -90,6 +92,10 @@ func _auf_editor() -> void:
 func _auf_welt_geladen(welt_name: String) -> void:
 	WeltSitzung.welt_name = welt_name
 	WeltSitzung.kommt_vom_editor = false
+	# Die World wird beim Kartenaufbau aus dem Speicher geladen; die aktive
+	# Map wählt der Ladevorgang aus (zuerst die zuletzt gespielte, sonst Basis).
+	WeltSitzung.world = null
+	WeltSitzung.aktive_map_id = ""
 	get_tree().change_scene_to_file(SZENE_KARTE)
 
 func _auf_editor_welt_gewaehlt(welt_name: String) -> void:

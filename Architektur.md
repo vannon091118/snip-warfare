@@ -146,7 +146,13 @@ Jede Region wird aus `Kern_Zufall.abgeleitet_fuer(welt_seed, region_identitaet)`
 
 Kartengrößen (max/min, Kachel, Chunk, Regionkante) kommen aus `world/data/welt_definition.json` über `Welt_DefinitionRegistry`; der Generator hat keine Sonderfälle für 25/50/75/100 Prozent, sondern leitet den Flächenanteil deterministisch aus dem Seed ab. `region_materialisieren()` und `chunk_materialisieren()` erlauben einzelne Regionen/Chunks ohne Materialisierungspflicht der ganzen Welt.
 
-## 5c. Produktionsökonomie (Gebäude und Ketten)
+## 5c. World-Ebene (World ↔ Map)
+
+Die World ist der Anker über allen Karten einer Partie. `Welt_World` hält die Liste der Maps (`Welt_Model`-Instanzen), markiert genau eine Map als Basis (`basis_map_id`) und verwaltet die Zuordnung über `map_id`. Sie besitzt keine eigene Zeit, keinen Zufall und keine Generierung: Der Tick bleibt bei `Kern_Weltuhr`, die Erzeugung beim `Welt_Generator`, der Zufall bei `Kern_Zufall`.
+
+Persistenz: `Welt_Speicher.world_speichern`/`world_laden` sichern die World als eine Datei mit allen Maps; alte Einzelwelt-Dateien bleiben über die bestehenden Funktionen ladbar (Abwärtskompatibilität). `Ui_WeltSitzung` trägt die geladene World und die aktive Map; `Welt_Ladevorgang` speist das Szenen-Modell aus der aktiven Map und erzeugt bei einem neuen Spiel eine frische World mit einer Basis-Map (`karte_0`).
+
+## 5d. Produktionsökonomie (Gebäude und Ketten)
 
 Die Produktionsökonomie ist eine geschlossene Kette über bestehende Domänen: `Weltobjekt -> Arbeit -> Rohstoff -> Lager -> Gebäudekosten -> Gebäude -> Produktionsauftrag -> Zeit -> Output -> Lager -> neuer Bedarf`.
 
