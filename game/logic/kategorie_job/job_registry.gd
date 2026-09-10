@@ -2,7 +2,10 @@ extends RefCounted
 class_name Job_Registry
 ## Registry aller Jobs. Die Konfiguration kommt zentral aus
 ## game/data/job_config.json, jeder Job liegt als eigenes Skript vor.
-## Neue Jobs werden hier nur in _job_erzeugen registriert.
+## Plugin-Grenze: Ein neuer Job braucht kein Berühren dieser Klasse mehr,
+## er registriert sich über das Feld script in job_config.json; die
+## zentrale Zuordnung dient nur noch als Übergangs-Fallback für Einträge
+## ohne script-Feld.
 
 const KONFIG_PFAD := "res://game/data/job_config.json"
 
@@ -45,7 +48,23 @@ func job_erzeugen(job_id: String) -> Job_Basis:
 	return job
 
 func _job_erzeugen(job_id: String) -> Job_Basis:
-	# Zentrale Anlaufstelle: hier wird jeder neue Job registriert.
+	# Plugin-Zuordnung: Das script-Feld aus der Konfiguration bestimmt die
+	# Klasse; nur Einträge ohne script-Feld fallen auf die zentrale Zuordnung
+	# zurück. ResourceLoader.exists verhindert Halluzinationen bei Tippfehlern.
+	var konfig: Dictionary = job_konfigurationen.get(job_id, {})
+	var skript_pfad := str(konfig.get("script", ""))
+	if skript_pfad != "":
+		if not ResourceLoader.exists(skript_pfad):
+			push_warning("Job-Skript fehlt: %s" % skript_pfad)
+			return null
+		var skript: GDScript = load(skript_pfad)
+		if skript != null:
+			var objekt: Variant = skript.new()
+			if objekt is Job_Basis:
+				return objekt as Job_Basis
+			push_warning("Job-Skript ist kein Job_Basis: %s" % skript_pfad)
+			return null
+	# Übergangs-Fallback: zentrale Zuordnung für Einträge ohne script-Feld.
 	match job_id:
 		"holzfaeller":
 			return Job_Holzfaeller.new()

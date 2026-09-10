@@ -1,5 +1,6 @@
 {
   "holzfaeller": {
+    "script": "res://game/logic/kategorie_job/job_holzfaeller.gd",
     "name": "Holzfäller",
     "ressource": "holz",
     "animation": "hacken",
@@ -15,6 +16,7 @@
     "mindest_tragekraft": 5
   },
   "steinmetz": {
+    "script": "res://game/logic/kategorie_job/job_steinmetz.gd",
     "name": "Steinmetz",
     "ressource": "stein",
     "animation": "hacken",
@@ -29,6 +31,7 @@
     "mindest_tragekraft": 10
   },
   "jaeger": {
+    "script": "res://game/logic/kategorie_job/job_jaeger.gd",
     "name": "Jäger",
     "ressource": "fleisch",
     "animation": "hacken",
@@ -44,6 +47,7 @@
     "loop": false
   },
   "holzfaeller_stumpf": {
+    "script": "res://game/logic/kategorie_job/job_holzfaeller_stumpf.gd",
     "name": "Holzfäller (Stumpf)",
     "ressource": "holz",
     "animation": "hacken",
@@ -59,6 +63,7 @@
     "mindest_tragekraft": 3
   },
   "jaeger_kadaver": {
+    "script": "res://game/logic/kategorie_job/job_jaeger_kadaver.gd",
     "name": "Jäger (Kadaver)",
     "ressource": "fleisch",
     "animation": "hacken",
@@ -74,6 +79,7 @@
     "mindest_tragekraft": 2
   },
   "heiler": {
+    "script": "res://game/logic/kategorie_job/job_heiler.gd",
     "name": "Heiler",
     "ressource": "",
     "animation": "heilen",
