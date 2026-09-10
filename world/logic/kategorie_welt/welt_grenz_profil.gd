@@ -1,7 +1,10 @@
 extends RefCounted
 class_name Welt_GrenzProfil
 ## Reine Grenz-Zuständigkeit: Liefert das Randprofil zwischen zwei Regionen
-## aus der Weltstruktur. Kein manuelles Nachbarschafts-Array, keine feste
+## aus der Weltstruktur. PLUGIN-GRENZE (noch nicht aktiv): Es gibt bisher
+## keinen Verbraucher; der Anschluss geschieht mit der Multi-Karten-
+## Generierung und braucht eigene Ingame-Verifikation nach Regel 7.
+## Kein manuelles Nachbarschafts-Array, keine feste
 ## Karte, keine handgesetzten Übergänge. Das Profil enthält nur was der
 ## lokale Generator für kompatible Ränder tatsächlich braucht: die Biom-Paarung
 ## und die maximale Höhen-/Klima-Abweichung als Schwelle.

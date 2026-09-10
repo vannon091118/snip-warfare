@@ -1,6 +1,8 @@
 extends Welt_RegistryBasis
 class_name Kern_LogikRegistry
 ## Registry der generischen Logiken des Projekts.
+## PLUGIN-GRENZE (noch nicht aktiv): Diese Registry ist die Schnittstelle für
+## zukünftige Logik-Plugins; es existiert bisher kein Verbraucher im Spiel.
 ## Jede Logik ist objektunabhängig wiederverwendbar. Die Quelle ist
 ## core/data/kern_logik.json; jede Logik erhält eine eigene Instanz von
 ## Kern_LogikBasis. Objekte und Tiere verweisen nur über logik_id darauf.

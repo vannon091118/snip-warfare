@@ -1,7 +1,9 @@
 extends RefCounted
 class_name Kern_LogikBasis
 ## Datenklasse einer Logik. Eine Logik ist generisch, objektunabhängig und
-## wiederverwendbar. Sie trägt nur Identität und Beschreibung, kein Objekt
+## wiederverwendbar. PLUGIN-GRENZE (noch nicht aktiv): Objekte und Tiere
+## verweisen bisher nirgends auf eine Logik über logik_id; der Verbraucher
+## kommt mit dem Plugin-Auftrag. Sie trägt nur Identität und Beschreibung, kein Objekt
 ## kennt sie durch harte Verdrahtung, sondern nur über ihre logik_id in der
 ## Registry-Zuordnung. Die Registry lädt sie zentral aus kern_logik.json.
 
