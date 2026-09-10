@@ -256,6 +256,6 @@ func rasse_faktor_setzen(faktor: float) -> void:
 func _auf_eigenen_tod(welt_position: Vector2) -> void:
 	var bus := Kern_SignalBus.bus()
 	if bus != null:
-		bus.gestorben.emit(welt_position, "einheit", true)
+		bus._emit_gestorben(welt_position, "einheit", true)
 	gestorben.emit(welt_position)
 	job_abbrechen()
