@@ -20,11 +20,19 @@ signal menue_geoeffnet()
 signal timeline_eintrag(beschreibung: String)
 
 static func bus() -> Kern_SignalBus:
+	# Während des Szenen-Aufbaus erzeugen Manager ihre Maschinen als
+	# Feld-Initialisierer, also noch außerhalb des aktiven Szenenbaums. Der
+	# absolute Pfad ist dann verboten und würde einen Engine-Fehler werfen;
+	# der Zugriff wird deshalb erst nach dem Eintritt in den Baum versucht.
 	var baum := Engine.get_main_loop() as SceneTree
-	if baum != null:
-		var knoten := baum.root.get_node_or_null("/root/KernSignalBusAutoload")
-		if knoten is Kern_SignalBus:
-			return knoten as Kern_SignalBus
+	if baum == null or baum.root == null:
+		return null
+	# Relativer Name vom Wurzelknoten statt absoluter Pfad: Der absolute Pfad
+	# ist außerhalb des aktiven Szenenbaums verboten, der relative Name liest
+	# denselben Autoload-Knoten auch während des frühen Szenen-Aufbaus.
+	var knoten := baum.root.get_node_or_null("KernSignalBusAutoload")
+	if knoten is Kern_SignalBus:
+		return knoten as Kern_SignalBus
 	return null
 
 func _emit_schaden(position: Vector2, schaden: int, art: String) -> void:

@@ -70,7 +70,9 @@ func _seitenleiste_erzeugen() -> void:
 	for kategorie in _registry.kategorien():
 		var ueberschrift := Label.new()
 		ueberschrift.text = kategorie
-		ueberschrift.theme_override_font_sizes = {"font_size": 22}
+		# Godot 4 kennt keinen setzbaren Dictionary-Eintrag für Schriftgrößen;
+		# der Override wird über die öffentliche Theme-API gesetzt.
+		ueberschrift.add_theme_font_size_override("font_size", 22)
 		_kategorien_leiste.add_child(ueberschrift)
 		for objekt: Objekt_Basis in _registry.objekte_der_kategorie(kategorie):
 			_element_fluss.add_child(_element_knopf(objekt))
