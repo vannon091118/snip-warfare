@@ -25,6 +25,11 @@ func meldung_setzen(text: String) -> void:
 func timeline_anzeigen(begruendung: String) -> void:
 	(_status as Variant).timeline_anzeigen(begruendung)
 
+func warum_verdrahten(knopf: Button, fenster: AcceptDialog, text_label: Label) -> void:
+	# Durchreichung des Warum-Fensters an die Status-Anzeige, die allein
+	# die Begruendungsliste besitzt. Die Leiste komponiert nur.
+	(_status as Variant).warum_verdrahten(knopf, fenster, text_label)
+
 func biom_anzeigen(biom_id: String, biom_faktor: float) -> void:
 	(_status as Variant).biom_anzeigen(biom_id, biom_faktor)
 

@@ -126,6 +126,9 @@ func _ready() -> void:
 	})
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
+	# Warum-Fenster: Die Status-Anzeige besitzt die Begründungsliste, die Szene
+	# übergibt nur ihre drei Spitzen. Reine Verdrahtung, keine Timeline-Logik.
+	_hud.warum_verdrahten(%WarumKnopf, %WarumFenster, %WarumText)
 
 func _karten_ebene_bauen() -> void:
 	# Komponier-Schritt: reine Observer-Schicht als CanvasLayer.
