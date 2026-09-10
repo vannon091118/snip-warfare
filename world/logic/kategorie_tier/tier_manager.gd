@@ -18,6 +18,13 @@ var _darsteller_ebene: Node2D
 ## Kategorie logik: Platzierung, Tick-Abwicklung, Angriff und Ernte.
 
 func _ready() -> void:
+	_darsteller_ebene_anlegen()
+
+func _darsteller_ebene_anlegen() -> void:
+	# Der Darsteller-Anker wird faul angelegt, damit Platzierung auch ohne
+	# fertigen Szenen-Kontext (Headless-Prüfungen) sicher funktioniert.
+	if _darsteller_ebene != null:
+		return
 	_darsteller_ebene = Node2D.new()
 	_darsteller_ebene.name = "TierDarstellerEbene"
 	add_child(_darsteller_ebene)
@@ -40,6 +47,7 @@ func tier_platzieren(tier_id: String, welt_position: Vector2) -> int:
 		push_warning("Unbekanntes Tier: %s" % tier_id)
 		return -1
 	var status := Tier_Status.new(tier_id, _verhalten)
+	_darsteller_ebene_anlegen()
 	var darsteller := Tier_Darsteller.new()
 	darsteller.einrichten(tier_id, _verhalten, status)
 	darsteller.position = welt_position

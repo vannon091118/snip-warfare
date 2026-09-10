@@ -666,8 +666,56 @@ func _init() -> void:
 		var loop_eintrag: Dictionary = loop_config.get(loop_id, {})
 		if not bool(loop_eintrag.get("loop", false)):
 			loop_falsch.append(loop_id)
-	if bool((loop_config.get("heiler", {}) as Dictionary).get("loop", true)) or not loop_falsch.is_empty():
-		print("FEHLER: Loop-Flags falsch (falsch: %s, heiler-Loop %s)" % [str(loop_falsch), str((loop_config.get("heiler", {}) as Dictionary).get("loop", true))])
+	# Jagd-Kette über die Ernte-Maschine: Der Arbeitsschritt des Jägers
+	# schlägt das Tier schlagweise, beim Tod fällt Fleisch an und der
+	# Job endet; die Ernte-Maschine besitzt diese Regel, nicht der Manager.
+	var jagd_tiere := Tier_Manager.new()
+	root.add_child(jagd_tiere)
+	var jagd_tier_nummer := jagd_tiere.tier_platzieren("hase", Vector2(500, 500))
+	var jagd_status := Einheit_Status.new()
+	jagd_status.welt_position_setzen(Vector2(500, 500))
+	var jagd_ressourcen := Einheit_Ressourcen.new()
+	var jagd_modell := Welt_Model.new()
+	jagd_modell.karte_erzeugen(8, 8, "boden")
+	var jagd_ernte := Einheit_ErnteMaschine.new()
+	jagd_ernte.einrichten(jagd_ressourcen, jagd_modell, jagd_tiere)
+	var jagd_job := queue_job_registry.job_erzeugen("jaeger")
+	jagd_status.job_vergeben(jagd_job, Job_Basis.ZielTyp.TIER, jagd_tier_nummer, "fleisch")
+	jagd_status._zu_zustand_wechseln(Einheit_Status.Zustand.ARBEITEN)
+	var hase_lebt_vor := not jagd_tiere.tier_position(jagd_tier_nummer) == Vector2.INF
+	jagd_ernte.arbeitsschritt_verarbeiten("fleisch", 2, jagd_status)
+	var hase_lebt_nach_schlag := not jagd_tiere.tier_position(jagd_tier_nummer) == Vector2.INF
+	jagd_ernte.arbeitsschritt_verarbeiten("fleisch", 2, jagd_status)
+	jagd_ernte.arbeitsschritt_verarbeiten("fleisch", 2, jagd_status)
+	var fleisch_gefallen := jagd_ressourcen.bestand("fleisch")
+	var hase_tot := not jagd_tiere.tier_position(jagd_tier_nummer) != Vector2.INF
+	var jagd_job_ende := jagd_status.job == null
+	var jagd_ok := hase_lebt_vor and hase_lebt_nach_schlag and hase_tot and fleisch_gefallen > 0 and jagd_job_ende
+	if not jagd_ok:
+		print("FEHLER: Jagd-Kette falsch (lebte %s, nach Schlag %s, tot %s, fleisch %d, job_ende %s)" % [
+			str(hase_lebt_vor), str(hase_lebt_nach_schlag), str(hase_tot), fleisch_gefallen, str(jagd_job_ende)])
+		fehler += 1
+	else:
+		print("OK: Jagd über die Ernte-Maschine: Tier fällt schlagweise, %d Fleisch im Bestand" % fleisch_gefallen)
+	# Hunger über die Versorgungs-Maschine: Leerer Fleisch-Bestand kostet
+	# über die echte Manager-Kette Leben, ablesbar an der Vital-Maschine.
+	var hunger_modell := Welt_Model.new()
+	hunger_modell.karte_erzeugen(8, 8, "boden")
+	var hunger_ressourcen := Einheit_Ressourcen.new()
+	var hunger_manager := Einheit_Manager.new()
+	hunger_manager.einrichten(hunger_modell, null, hunger_ressourcen)
+	hunger_manager.einheit_hinzufuegen(Vector2(100, 100))
+	var hunger_status: Einheit_Status = hunger_manager._einheiten[0]["status"]
+	var hunger_vor: int = hunger_status.vital.hp
+	hunger_manager._nahrung_verteilen()
+	var hunger_nach: int = hunger_status.vital.hp
+	if hunger_nach >= hunger_vor:
+		print("FEHLER: Hunger kostet kein Leben (vor %d, nach %d)" % [hunger_vor, hunger_nach])
+		fehler += 1
+	else:
+		print("OK: Hunger über die Versorgungs-Maschine kostet Leben (%d -> %d)" % [hunger_vor, hunger_nach])
+	if not loop_falsch.is_empty() or bool((loop_config.get("heiler", {}) as Dictionary).get("loop", true)):
+		print("FEHLER: Loop-Flags falsch (falsch: %s, heiler-Loop %s)" % [str(loop_falsch), str(bool((loop_config.get("heiler", {}) as Dictionary).get("loop", true)))])
 		fehler += 1
 	else:
 		print("OK: Alle Ernte-Jobs loopen als Daten, der Heiler endet einmalig")

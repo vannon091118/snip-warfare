@@ -15,13 +15,15 @@ var _mood_mod_registry := Pop_MoodModifikatorRegistry.new()
 var _waerme_feld: Welt_WaermeFeld = Welt_WaermeFeld.new()
 var _tageszyklus: Welt_TageszyklusMaschine = null
 var _zufall := Kern_Zufall.new()
-var _nahrung_je_einheit_je_takt: float = 0.8
 var _model: Welt_Model = null
 var _tiere: Tier_Manager = null
 var _ressourcen: Einheit_Ressourcen = null
 var _lager: Lager_Manager = null
 var _need_baum: Pop_NeedBaum = null
 var _weg_planung: Einheit_WegPlanung = null
+var _ziel_suche: Einheit_ZielSuche = null
+var _ernte: Einheit_ErnteMaschine = null
+var _versorgung: Einheit_Versorgung = null
 
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
@@ -41,6 +43,13 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_tiere = tiere
 	_ressourcen = ressourcen
 	_weg_planung_erneuern()
+	_ziel_suche = Einheit_ZielSuche.new()
+	_ziel_suche.einrichten(model, tiere)
+	_ernte = Einheit_ErnteMaschine.new()
+	_ernte.einrichten(ressourcen, model, tiere)
+	_ernte.beute_erlegt.connect(_auf_beute_erlegt)
+	_versorgung = Einheit_Versorgung.new()
+	_versorgung.einrichten(ressourcen)
 
 func lager_setzen(lager: Lager_Manager) -> void:
 	_lager = lager
@@ -75,7 +84,8 @@ func _planner_fuer(status: Einheit_Status, ziel_position: Vector2) -> void:
 	status.weg_ziele_uebernehmen(_weg_planung.weg_zu(status.welt_position, ziel_position))
 
 func verteilung_setzen(nahrung_je_takt: float) -> void:
-	_nahrung_je_einheit_je_takt = clampf(nahrung_je_takt, 0.1, 5.0)
+	# Die Regel gehört der Versorgungs-Maschine; der Manager reicht nur durch.
+	_versorgung.verteilung_setzen(nahrung_je_takt)
 
 func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 	var status := Einheit_Status.new()
@@ -217,64 +227,16 @@ func _auf_tick(nummer: int, delta: float) -> void:
 			_in_sicherheit_bringen(einheit, ziel)
 
 func _ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2:
-	# Zielposition für die Bewegung: Objekte liegen im Modell, Tiere im
-	# Tier-Manager. Ohne Treffer bleibt der Punkt unverändert.
-	match ziel_typ:
-		Job_Basis.ZielTyp.OBJEKT:
-			if _model != null and ziel_index >= 0 and ziel_index < _model.objekt_anzahl():
-				return _model.objekt_position(ziel_index)
-		Job_Basis.ZielTyp.TIER:
-			if _tiere != null:
-				var tier_pos := _tiere.tier_position(ziel_index)
-				if tier_pos != Vector2.INF:
-					return tier_pos
-	return Vector2.ZERO
+	return _ziel_suche.ziel_position_fuer(ziel_typ, ziel_index)
 
 func _ziel_existiert(status: Einheit_Status) -> bool:
-	if status.job == null:
-		return false
-	match status.aktuelles_ziel_typ:
-		Job_Basis.ZielTyp.OBJEKT:
-			if _model == null:
-				return false
-			return status.aktuelles_ziel_index < _model.objekt_anzahl()
-		Job_Basis.ZielTyp.TIER:
-			if _tiere == null:
-				return false
-			return _tiere.tier_position(status.aktuelles_ziel_index) != Vector2.INF
-	return false
+	return _ziel_suche.ziel_existiert(status)
 
 func _naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:
-	if _model == null or status.job == null:
-		return -1
-	var anzahl := _model.objekt_anzahl()
-	if anzahl == 0:
-		return -1
-	for schritt in anzahl:
-		var pruef_index := (alter_ziel_index + 1 + schritt) % anzahl
-		if pruef_index == alter_ziel_index:
-			continue
-		var element_id := _model.objekt_element_id(pruef_index)
-		if status.job.passt_zu_objekt(element_id):
-			return pruef_index
-	return -1
+	return _ziel_suche.naechstes_objekt(status, alter_ziel_index)
 
 func _naechstes_tier(status: Einheit_Status, alter_ziel_index: int) -> int:
-	if _tiere == null or status.job == null:
-		return -1
-	var anzahl := _tiere.tier_zahl()
-	if anzahl == 0:
-		return -1
-	for schritt in anzahl:
-		var pruef_index := (alter_ziel_index + 1 + schritt) % anzahl
-		if pruef_index == alter_ziel_index:
-			continue
-		if _tiere.tier_position(pruef_index) == Vector2.INF:
-			continue
-		var tier_art := _tiere.tier_art(pruef_index)
-		if status.job.passt_zu_tier(tier_art):
-			return pruef_index
-	return -1
+	return _ziel_suche.naechstes_tier(status, alter_ziel_index)
 
 ## Leerlauf und Wachstum: ein Haus aus 3 Nahrung erzeugt einen neuen Stickman.
 
@@ -328,49 +290,14 @@ func _auf_job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_zi
 	status.job_loopy_fortsetzen(job, ziel_typ, such_index, job.ressource())
 
 func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
-	# Ein Arbeitsschritt ist fertig; je nach Job-Typ wird geerntet.
-	if _ressourcen == null:
+	# Ein Arbeitsschritt ist fertig; die Ernte-Maschine verarbeitet ihn.
+	if _ernte == null:
 		return
 	for einheit: Dictionary in _einheiten:
-		var status: Einheit_Status = einheit["status"]
-		if status.zustand != Einheit_Status.Zustand.ARBEITEN or status.ziel_ressource != ressource:
-			continue
-		var ernte_position := Vector2.ZERO
-		match status.aktuelles_ziel_typ:
-			Job_Basis.ZielTyp.OBJEKT:
-				if _model != null and status.aktuelles_ziel_index >= 0 and status.aktuelles_ziel_index < _model.objekt_anzahl():
-					ernte_position = _model.objekt_position(status.aktuelles_ziel_index)
-			Job_Basis.ZielTyp.TIER:
-				if _tiere != null:
-					ernte_position = _tiere.tier_position(status.aktuelles_ziel_index)
-		_ressourcen.ernte_position_setzen(ernte_position)
-		match status.aktuelles_ziel_typ:
-			Job_Basis.ZielTyp.OBJEKT:
-				# Bäume und Steine liefern ihre Ernte ins naechste lokale Lager.
-				_ressourcen.hinzufuegen(ressource, menge)
-			Job_Basis.ZielTyp.TIER:
-				# Jagen: erst mit jedem Schlag verletzen, ernten, wenn das Tier tot ist.
-				_jagd_schlag(status, menge)
+		_ernte.arbeitsschritt_verarbeiten(ressource, menge, einheit["status"])
 
-func _jagd_schlag(status: Einheit_Status, schaden: int) -> void:
-	# Jeder Schlag verletzt das Tier; erst beim Tod fällt die Beute an.
-	if _tiere == null or _ressourcen == null:
-		return
-	if _tiere.tier_angreifen(status.aktuelles_ziel_index, schaden):
-		_tier_ernten(status)
-
-func _tier_ernten(status: Einheit_Status) -> void:
-	if _tiere == null or _ressourcen == null:
-		return
-	var fleisch := _tiere.tier_ernten(status.aktuelles_ziel_index)
-	if fleisch > 0:
-		var ernte_position := Vector2.ZERO
-		if _tiere != null:
-			ernte_position = _tiere.tier_position(status.aktuelles_ziel_index)
-		_ressourcen.ernte_position_setzen(ernte_position)
-		_ressourcen.hinzufuegen("fleisch", fleisch)
-	# Erlegte Beute ist verbraucht: der Job endet.
-	status.job_abbrechen()
+func _auf_beute_erlegt(status: Einheit_Status) -> void:
+	# Beute gefallen: Die Darstellung der Einheit folgt dem Job-Ende.
 	for einheit: Dictionary in _einheiten:
 		if einheit["status"] == status:
 			(einheit["darsteller"] as Einheit_Darsteller).animation_setzen(status.animation())
@@ -405,17 +332,6 @@ func _in_sicherheit_bringen(einheit: Dictionary, ziel: Vector2) -> void:
 	(einheit["status"] as Einheit_Status).welt_position_setzen(ziel)
 
 func _nahrung_verteilen() -> void:
-	if _ressourcen == null or _lager == null:
-		return
-	# Rassen-Schemata: Jede Einheit verbraucht ihren eigenen Rassen-Faktor
-	# mal den zentralen Need-Faktor, geliefert von ihrer Mood-Maschine.
-	var gesamt := 0
-	for einheit: Dictionary in _einheiten:
-		var m: Pop_MoodMaschine = einheit["mood"]
-		gesamt += int(ceil(_nahrung_je_einheit_je_takt * m.nahrungs_faktor()))
-	if gesamt <= 0:
-		return
-	if not _ressourcen.entnehmen("fleisch", gesamt):
-		for einheit: Dictionary in _einheiten:
-			var st: Einheit_Status = einheit["status"]
-			st.vital.schaden_nehmen(5, _zufall, "hunger")
+	# Die Versorgungs-Maschine besitzt die Regel; der Manager nur den Takt.
+	if _versorgung != null:
+		_versorgung.verteilen(_einheiten)
