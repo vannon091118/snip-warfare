@@ -1,7 +1,5 @@
-1. Du wolltest einen Verbindungs-Audit, der jede Doppelanbindung findet, und ich habe die Kabel gezogen, statt dir hübsche Versprechen zu drehen.
-2. In kern_modifikator_registry.gd lebt jetzt genau eine geteilte Instanz der Modifikator-Daten, und in kern_modifikator_maschine.gd habe ich ihren zweiten privaten Cache ausgerissen, der dieselbe Datei still daneben noch einmal lud.
-3. In einheit_manager.gd legt die Ernte-Kette ihren Absender mit bind am Status fest, sodass der Arbeitsschritt einer Einheit genau einmal bucht, statt den alten Sammel-Lauf über alle Einheiten mit einem zweiten Empfänger laufen zu lassen.
-4. In pop_mood_maschine.gd ziehen Kälte und Hitze ihre Grenzen jetzt nur aus der Registry, und einheit_vital_status.gd urteilt über denselben Schwellwert, womit die zwei Sätze hart codierter Zahlen neben der Datenwahrheit gestorben sind.
-5. Architektur.md trägt einen neuen Abschnitt über die geprüften Verbindungswege und benennt für Tick, Ernte, Wärme, Modifikatoren und Aktivierung, wer wann einmalig verbindet, damit kein Nächster wieder raten muss.
-6. Der Preflight zählt 137 Klassen auf 154 Dateien mit null Befunden, und im Spiel bucht dieselbe Jagd, dieselbe Kälte und dieselbe Modifikator-Zeit wie zuvor, nur eben ohne Doppelleitung.
-7. Bleiben tun die offenen Beobachtungspunkte: Die Werte kaelte und hitze in needs.json sind weiterhin lesende Beschreibung, und die Logik-Registry wartet weiter auf ihren Plugin-Verbraucher.
+1. Du wolltest die Repository-Wahrheit als Arbeitsgrundlage, also habe ich die ganze Geschichte über siebenundsiebzig Commits ausgezählt und jeden Fund am heutigen Code nachgerechnet statt alten Zetteln zu glauben.
+2. In docs/Inventur_Stand.md liegt jetzt die Inventur: 137 Klassen auf 154 Dateien, vierzehn Datenpools, achtunddreißig Bilder, acht Szenen, drei Autoloads, der grüne Laufbeweis und alle Domänen mit ihrem echten Zustand.
+3. Die Fundlisten wurden scharf getrennt: Erledigtes blieb erledigt, die stille Pathfinding-Kette und die Logik-Registry bleiben bewusste Grenzen, die Pause-Rückkehr erwies sich am Code als längst repariert und die Kandidatenliste für den Stabilitäts-Task wurde auf wirklich Vorhandenes gekürzt.
+4. Ein verwaistes Begleitfile in tools/kompilier_sweep.gd.uid wurde gefunden und als historisches Erbe dokumentiert, berührt habe ich es nicht, denn sein Abräumen gehört dem Orphan-Sweep.
+5. Der volle Preflight bleibt mit null Befunden grün, die Inventur behauptet nur Belegtes und der nächste Agent startet ohne Interpretationsspielraum in die Konsolidierung.
