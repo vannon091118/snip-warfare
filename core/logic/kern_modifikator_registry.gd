@@ -43,10 +43,19 @@ func modifikator_fuer(modifikator_id: String) -> Kern_ModifikatorBasis:
 func hat_modifikator(modifikator_id: String) -> bool:
 	return _modifikatoren_nach_id.has(modifikator_id)
 
+## Geteilte Instanz der Registry: Genau eine Ladung der Modifikator-Daten
+## im ganzen Projekt. Kern_ModifikatorMaschine und modifikator_erzeugen
+## greifen auf denselben Stand zu, es gibt keinen zweiten Ladepfad mehr.
+static var _geteilte_instanz: Kern_ModifikatorRegistry = null
+
+static func geteilte() -> Kern_ModifikatorRegistry:
+	if _geteilte_instanz == null:
+		_geteilte_instanz = Kern_ModifikatorRegistry.new()
+	return _geteilte_instanz
+
 ## Erzeugt eine frische Kopie des Modifikators (damit dauer_ticks je Einheit tickt).
 static func modifikator_erzeugen(modifikator_id: String) -> Kern_ModifikatorBasis:
-	var registry := Kern_ModifikatorRegistry.new()
-	var basis := registry.modifikator_fuer(modifikator_id)
+	var basis := geteilte().modifikator_fuer(modifikator_id)
 	if basis == null:
 		return null
 	var kopie := Kern_ModifikatorBasis.new()

@@ -18,11 +18,6 @@ signal aktualisiert()
 
 const SETTINGS_PFAD := "res://core/data/modifikator_settings.json"
 
-## Geteilte Modifikator-Registry: Ein einzelner Lesevorgang für alle
-## Maschinen-Instanzen, statt in jeder aktualisieren() die JSON-Datei
-## neu zu öffnen. Lazy initialisiert, statisch geteilt, nie doppelt geladen.
-static var _geteilte_registry: Kern_ModifikatorRegistry = null
-
 ## Kategorie daten: Bereich, Settings und gecachter Faktor.
 var bereich: String = ""
 var _settings: Dictionary = {}
@@ -34,9 +29,10 @@ var _rechen_schritte: int = 0
 ## Kategorie logik: Laden, Faktor ableiten und Zeiten übersetzen.
 
 static func _registry() -> Kern_ModifikatorRegistry:
-	if _geteilte_registry == null:
-		_geteilte_registry = Kern_ModifikatorRegistry.new()
-	return _geteilte_registry
+	# Die Maschine nutzt die geteilte Registry-Instanz der Registry-Klasse
+	# selbst. Es existiert genau eine Ladung der Modifikator-Daten im Projekt;
+	# der frühere zweite Cache hier ist als Doppelpfad entfernt.
+	return Kern_ModifikatorRegistry.geteilte()
 
 func _init() -> void:
 	_settings = _laden()

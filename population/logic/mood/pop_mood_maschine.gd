@@ -61,9 +61,9 @@ func auf_tick(_nummer: int, _delta: float) -> Vector2:
 		if typ.need_id == "waerme" and _waerme_feld != null:
 			var hell := 1.0 if _tageszyklus == null else _tageszyklus.helligkeit()
 			var waerme := _waerme_feld.waerme_an(_welt_position, hell)
-			if waerme < -0.35:
+			if waerme < _schwellwert_von("kaelte", -0.4):
 				verfuegbar = -1
-			elif waerme > 0.55:
+			elif waerme > _schwellwert_von("hitze", 0.6):
 				verfuegbar = 99
 			else:
 				verfuegbar = schwellwert_fuer(typ)
@@ -119,6 +119,29 @@ func bewegungs_faktor() -> float:
 	# Rassen-Multiplikator für die Bewegung der Einheit.
 	return _rassen_schema.faktor_bewegung if _rassen_schema != null else 1.0
 
+## Wärme-Grenzen nur aus der Registry der Mood-Modifikatoren: Die Gates
+## kaelte und hitze tragen ihren Schwellwert selbst, es gibt keinen zweiten
+## hart codierten Wert daneben. Der Fallback dient nur leeren Prüfkontexten.
+func _schwellwert_von(mod_id: String, fallback: float) -> float:
+	if _mood_mods == null:
+		return fallback
+	var mod := _mood_mods.mod_fuer(mod_id)
+	return mod.schwellwert if mod != null else fallback
+
+## Einzige Gate-Auswahl für Wärme: Kälte und Hitze werden über die
+## Registry-Schwellwerte entschieden, dieselbe Entscheidung wie im
+## Umgebungsschaden der Vital-Maschine. Zwei Pfadkopien existieren nicht.
+func _gate_mod_fuer_waerme(w: float) -> Pop_MoodModifikator:
+	if _mood_mods == null:
+		return null
+	var kalt := _mood_mods.mod_fuer("kaelte")
+	var heiss := _mood_mods.mod_fuer("hitze")
+	if kalt != null and w < kalt.schwellwert:
+		return kalt
+	if heiss != null and w > heiss.schwellwert:
+		return heiss
+	return null
+
 func waerme_wert() -> float:
 	if _waerme_feld == null:
 		return 0.0
@@ -127,13 +150,9 @@ func waerme_wert() -> float:
 
 func _hp_folge_und_ziel() -> Vector2:
 	var w := waerme_wert()
-	var mod: Pop_MoodModifikator = null
-	if w < -0.35 and _mood_mods != null:
-		mod = _mood_mods.mod_fuer("kaelte")
-	elif w > 0.55 and _mood_mods != null:
-		mod = _mood_mods.mod_fuer("hitze")
+	var mod := _gate_mod_fuer_waerme(w)
 	if mod != null and mod.verhalten == "in_sicherheit_bringen" and _waerme_feld != null:
-		return _waerme_feld.naechstes_feuer_fuer(_welt_position) if w < -0.35 else _flucht_von_feuer()
+		return _waerme_feld.naechstes_feuer_fuer(_welt_position) if w < mod.schwellwert else _flucht_von_feuer()
 	return Vector2.INF
 
 func _flucht_von_feuer() -> Vector2:
@@ -146,11 +165,7 @@ func _flucht_von_feuer() -> Vector2:
 
 func _ableiten() -> void:
 	var w := waerme_wert() if _waerme_feld != null else 0.0
-	var gate_mod: Pop_MoodModifikator = null
-	if w < -0.35 and _mood_mods != null:
-		gate_mod = _mood_mods.mod_fuer("kaelte")
-	elif w > 0.55 and _mood_mods != null:
-		gate_mod = _mood_mods.mod_fuer("hitze")
+	var gate_mod := _gate_mod_fuer_waerme(w)
 	if gate_mod != null:
 		var g := Pop_Mood.new()
 		g.aktive_need_id = gate_mod.need_id

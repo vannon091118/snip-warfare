@@ -77,13 +77,18 @@ func schaden_nehmen(schaden: int, zufall: Kern_Zufall, art: String = "physisch")
 
 func umgebungsschaden_anwenden(waerme: float, mood_mods: Pop_MoodModifikatorRegistry, zufall: Kern_Zufall) -> void:
 	# Progression-Gate: Kälte und Hitze ziehen HP über Mood-Modifikatoren.
+	# Die Schwellwerte kommen ausschließlich aus der Registry (mood_modifikatoren.json)
+	# und stimmen dadurch mit der Gate-Auswahl der Mood-Maschine überein:
+	# Dieselbe Entscheidung, keine zweite Schwellwert-Quelle im Code.
 	if mood_mods == null:
 		return
 	var mod: Pop_MoodModifikator = null
-	if waerme < -0.35:
-		mod = mood_mods.mod_fuer("kaelte")
-	elif waerme > 0.55:
-		mod = mood_mods.mod_fuer("hitze")
+	var kalt := mood_mods.mod_fuer("kaelte")
+	var heiss := mood_mods.mod_fuer("hitze")
+	if kalt != null and waerme < kalt.schwellwert:
+		mod = kalt
+	elif heiss != null and waerme > heiss.schwellwert:
+		mod = heiss
 	if mod == null or mod.hp_abzug_je_tick <= 0:
 		return
 	schaden_nehmen(mod.hp_abzug_je_tick, zufall, "umgebung")

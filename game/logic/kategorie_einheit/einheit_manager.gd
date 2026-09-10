@@ -115,7 +115,7 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 	darsteller.add_child(denkblase)
 	add_child(darsteller)
 	status.zustand_geaendert.connect(_auf_zustand_geaendert.bind(status, mood))
-	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt)
+	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt.bind(status))
 	status.job_loop_gefragt.connect(_auf_job_loop_gefragt.bind(status))
 	status.naechster_job_aus_queue.connect(_auf_naechster_job_aus_queue.bind(status))
 	_einheiten.append({
@@ -331,12 +331,16 @@ func _auf_job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_zi
 	_planner_fuer(status, ziel_position)
 	status.job_loopy_fortsetzen(job, ziel_typ, such_index, job.ressource())
 
-func _auf_arbeitsschritt(ressource: String, menge: int) -> void:
+func _auf_arbeitsschritt(ressource: String, menge: int, status: Einheit_Status) -> void:
 	# Ein Arbeitsschritt ist fertig; die Ernte-Maschine verarbeitet ihn.
-	if _ernte == null:
+	# Nur der Status, der den Schritt geschafft hat, bucht seine Ernte:
+	# Der frühere Sammel-Lauf über alle Einheiten war ein Doppelpfad, der
+	# mit bind() auf dem Arbeitsloop-Signal zweimal die gleiche Ernte
+	# angestoßen hätte. bind(status) legt den Absender fest, beide Pfade
+	# landen auf demselben Empfänger und laufen exakt einmal durch.
+	if _ernte == null or status == null:
 		return
-	for einheit: Dictionary in _einheiten:
-		_ernte.arbeitsschritt_verarbeiten(ressource, menge, einheit["status"])
+	_ernte.arbeitsschritt_verarbeiten(ressource, menge, status)
 
 func _auf_beute_erlegt(status: Einheit_Status) -> void:
 	# Beute gefallen: Die Darstellung der Einheit folgt dem Job-Ende.
