@@ -18,6 +18,11 @@ signal aktualisiert()
 
 const SETTINGS_PFAD := "res://core/data/modifikator_settings.json"
 
+## Geteilte Modifikator-Registry: Ein einzelner Lesevorgang für alle
+## Maschinen-Instanzen, statt in jeder aktualisieren() die JSON-Datei
+## neu zu öffnen. Lazy initialisiert, statisch geteilt, nie doppelt geladen.
+static var _geteilte_registry: Kern_ModifikatorRegistry = null
+
 ## Kategorie daten: Bereich, Settings und gecachter Faktor.
 var bereich: String = ""
 var _settings: Dictionary = {}
@@ -27,6 +32,11 @@ var _faktor_gueltig: bool = false
 var _rechen_schritte: int = 0
 
 ## Kategorie logik: Laden, Faktor ableiten und Zeiten übersetzen.
+
+static func _registry() -> Kern_ModifikatorRegistry:
+	if _geteilte_registry == null:
+		_geteilte_registry = Kern_ModifikatorRegistry.new()
+	return _geteilte_registry
 
 func _init() -> void:
 	_settings = _laden()
@@ -65,7 +75,7 @@ func aktualisieren() -> void:
 	_rechen_schritte += 1
 	var modus_id := str(_bereich_settings.get("modus", "normal"))
 	var modus_faktor := 1.0
-	var registry := Kern_ModifikatorRegistry.new()
+	var registry := _registry()
 	var modus := registry.modifikator_fuer(modus_id)
 	if modus != null:
 		modus_faktor = modus.faktor
