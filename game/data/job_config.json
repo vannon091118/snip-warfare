@@ -12,9 +12,7 @@
     "reichweite": 140.0,
     "sammel_auf_flaeche": true,
     "loop": true,
-    "mindest_tragekraft": 5,
-    "benoetigt_werkzeug": "axt",
-    "koerperliche_anforderung": "schwer"
+    "mindest_tragekraft": 5
   },
   "steinmetz": {
     "name": "Steinmetz",
@@ -28,9 +26,7 @@
     "harvest_menge": 10,
     "reichweite": 140.0,
     "sammel_auf_flaeche": false,
-    "mindest_tragekraft": 10,
-    "benoetigt_werkzeug": "spitzhacke",
-    "koerperliche_anforderung": "sehr_schwer"
+    "mindest_tragekraft": 10
   },
   "jaeger": {
     "name": "Jäger",
@@ -45,8 +41,7 @@
     "reichweite": 160.0,
     "sammel_auf_flaeche": false,
     "mindest_tragekraft": 3,
-    "benoetigt_werkzeug": "bogen",
-    "koerperliche_anforderung": "mittel"
+    "loop": false
   },
   "holzfaeller_stumpf": {
     "name": "Holzfäller (Stumpf)",
@@ -61,9 +56,7 @@
     "reichweite": 120.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 3,
-    "benoetigt_werkzeug": "axt",
-    "koerperliche_anforderung": "leicht"
+    "mindest_tragekraft": 3
   },
   "jaeger_kadaver": {
     "name": "Jäger (Kadaver)",
@@ -78,9 +71,7 @@
     "reichweite": 120.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 2,
-    "benoetigt_werkzeug": "messer",
-    "koerperliche_anforderung": "leicht"
+    "mindest_tragekraft": 2
   },
   "heiler": {
     "name": "Heiler",
@@ -95,8 +86,6 @@
     "reichweite": 80.0,
     "sammel_auf_flaeche": false,
     "loop": false,
-    "mindest_tragekraft": 0,
-    "benoetigt_werkzeug": "verbandszeug",
-    "koerperliche_anforderung": "leicht"
+    "mindest_tragekraft": 0
   }
 }

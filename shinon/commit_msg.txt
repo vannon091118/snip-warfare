@@ -1,9 +1,15 @@
-1. Du hattest verlangt, dass toter Code kenntlich gemacht wird und dass offene Systeme als Schnittstellen erkennbar bleiben, und Shinon hat im zweiten Schnitt Besen geführt und Türschilder aufgehängt wie ein Hausmeister, der Leerstand markiert, statt ihn zu verstecken.
-2. Die Klasse Kern_SteuerungUebersetzer in core/logic/kern_steuerung_uebersetzer.gd samt Uid-Begleiter wurde gelöscht, weil ihre drei statischen Methoden eins zu eins an die Weltuhr delegieren und kein einziger Aufrufer im Projekt existiert, ein Briefkasten, an den nie jemand einen Brief gehängt hat.
-3. Die Klasse Orchestrator_Basis in world/logic/kategorie_orchestrator/orchestrator_basis.gd wurde gelöscht, weil kein Orchestrator von ihr erbt und die Familie bewusst komponiert statt vererbt, ein Sockel, auf dem nie eine Statue stand.
-4. Die Klassen Kern_LogikRegistry und Kern_LogikBasis in core/logic wurden als Plugin-Grenze kenntlich gemacht, indem beide Kopfdokumentationen den Hinweis tragen, dass die Logik-Schnittstelle für künftige Plugins gedacht ist und bisher kein Verbraucher existiert.
-5. Die Klasse Welt_GrenzProfil in world/logic/kategorie_welt/welt_grenz_profil.gd bekam dasselbe Türschild, weil das Randprofil zwischen Regionen auf die Multi-Karten-Generierung wartet und jeder Anschluss eigene sichtbare Ingame-Verifikation nach Regel 7 verlangt.
-6. Die berührten Dateien sind core/logic/kern_steuerung_uebersetzer.gd, core/logic/kern_steuerung_uebersetzer.gd.uid, world/logic/kategorie_orchestrator/orchestrator_basis.gd, core/logic/kern_logik_registry.gd, core/logic/kern_logik_basis.gd und world/logic/kategorie_welt/welt_grenz_profil.gd.
-7. Der volle Preflight zählt nun 130 Klassen auf 145 Dateien und läuft grün, der Warnungs-Scan nach Regel 6 bleibt ohne Befund, und der Gegenbeweis für die Löschungen steht in der Fundliste: null Aufrufer, null Erben, vor dem Schnitt nachgeprüft.
-8. Die sichtbare Prüfung im Spiel ist hier ein Nicht-Ereignis, denn beide gelöschten Klassen hatten nie ein sichtbares Verhalten, und genau dafür stehen jetzt die Türschilder der verbliebenen Schnittstellen.
-9. Was noch fehlt, sind die toten Konfigurationsfelder C-04 und C-05, der Registry-Cache C-06, das Warum-Fenster C-01 am HUD, die Spiegelfelder E-02, die Sprachmischung E-01 und die drei Plugin-Grenzen F-01 bis F-03.
+1. Du hattest verlangt, dass Konzeption und Code nicht Dinge behaupten, die das Spiel nie liest, und Shinon hat in der Job-Konfiguration zwei toten Feldern die Tür geöffnet und sie hinausgebeten wie ein Gastwirt, der seit Monaten leere Stühle vermietet.
+
+2. In game/data/job_config.json verloren sechs Berufe die Felder benoetigt_werkzeug und koerperliche_anforderung, weil kein einziger Leser im GDScript existiert, Job_Basis prüft Werkzeug nie und die Anforderung nie, Felder ohne Leser sind Kolonialware in einem Laden ohne Kunden.
+
+3. Die Konfiguration versprach Werkzeuge wie Axt und Spitzhacke und Kraftgrade wie sehr_schwer, doch die Maschinen fraßen diese Worte nie, ein Speiseplan für ein Restaurant, dessen Küche nie Bestellungen annimmt.
+
+4. Beim Jäger zog der Schnitt das Feld loop an die Stelle der Verstorbenen, und das ist kein Verhalten, sondern eine Einladung mit derselben Antwort, denn Job_Basis liest loop mit dem Vorgabewert falsch und falsch blieb der Jäger immer schon.
+
+5. Die berührten Dateien sind ausschließlich game/data/job_config.json, kein Skript, keine Szene, kein anderes Datenblatt wurde gestreift, der Schnitt ist ein reiner Papiertiger-Bau.
+
+6. Der volle Preflight zählt 130 Klassen auf 145 Dateien und läuft grün, der Warnungs-Scan nach Regel 6 meldet keinen Befund, und der Beweis, dass die Felder tot waren, liegt in der Null an Lesern vor dem Schnitt.
+
+7. Im laufenden Spiel ändert sich sichtbar nichts, denn es gab nie etwas zu sehen, und genau diese Ehrlichkeit war der Auftrag, dass Konfiguration nur besteht, wenn sie wirkt.
+
+8. Was noch fehlt, ist der Rest der Fundliste, der Registry-Cache C-06, das Warum-Fenster C-01, die Spiegelfelder E-02, die Sprachmischung E-01 und die drei Plugin-Grenzen F-01 bis F-03, die Harfe hat noch Saiten übrig.
