@@ -1,5 +1,9 @@
-1. Du wolltest die Repository-Wahrheit als Arbeitsgrundlage, also habe ich die ganze Geschichte über siebenundsiebzig Commits ausgezählt und jeden Fund am heutigen Code nachgerechnet statt alten Zetteln zu glauben.
-2. In docs/Inventur_Stand.md liegt jetzt die Inventur: 137 Klassen auf 154 Dateien, vierzehn Datenpools, achtunddreißig Bilder, acht Szenen, drei Autoloads, der grüne Laufbeweis und alle Domänen mit ihrem echten Zustand.
-3. Die Fundlisten wurden scharf getrennt: Erledigtes blieb erledigt, die stille Pathfinding-Kette und die Logik-Registry bleiben bewusste Grenzen, die Pause-Rückkehr erwies sich am Code als längst repariert und die Kandidatenliste für den Stabilitäts-Task wurde auf wirklich Vorhandenes gekürzt.
-4. Ein verwaistes Begleitfile in tools/kompilier_sweep.gd.uid wurde gefunden und als historisches Erbe dokumentiert, berührt habe ich es nicht, denn sein Abräumen gehört dem Orphan-Sweep.
-5. Der volle Preflight bleibt mit null Befunden grün, die Inventur behauptet nur Belegtes und der nächste Agent startet ohne Interpretationsspielraum in die Konsolidierung.
+1. Du wolltest wissen, ob die offenen Punkte der Inventur wirklich geschlossen sind, und ich habe jede Behauptung einzeln an den Code gehalten, statt ihr zu glauben, was sie über sich selbst schrieb.
+
+2. In docs/Inventur_Stand.md ist die Pathfinding-Kette nicht länger als tot verschrieben, denn Einheit_WegPlanung trägt Kern_PathNetz, Kern_PathFinder und Kern_PathRegistry in den Zeilen 13 bis 15, wird im Einheit_Manager in den Zeilen 23 und 78 erzeugt und im Beweislauf in Zeile 618 benutzt, womit die Fundlisten B-01, B-02 und C-02 überholt sind.
+
+3. Dieselbe Datei korrigiert ihre eigene Geschichte: Die Commits sind nachgezählte 73 statt behaupteter 75, der Abschnitt 2 trägt jetzt den Prüfzeitpunkt 2026-09-10 um 23:38 Uhr, und der Abschnitt 4 weist je früherer Behauptung den heutigen Beweis nach, von der Absender-Bindung der Ernte über die Wärme-Gates bis zur widerlegten Pause-Menü-Fehlermeldung.
+
+4. Die Abarbeitungsstände der Fundlisten stehen nun belegt in der Inventur: die script-Felder für alle sechs Jobs, die gelöschten Totklassen, die getilgten Spiegelfelder, die vier verbliebenen Skripte ohne UID-Begleiter und die beiden bewusst offenen Plugin-Grenzen Kern_LogikRegistry und Welt_GrenzProfil.
+
+5. Der Preflight bleibt mit 137 Klassen auf 154 Dateien ohne Befund grün, ein Dokument allein hat das Verhalten nicht berührt, und der nächste Agent startet mit einer Inventur, deren jeder Satz heute am Code bewiesen wurde.
