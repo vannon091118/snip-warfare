@@ -1,13 +1,7 @@
-1. Du wolltest den Befund zur Szenen-Hierarchie analysiert und abgearbeitet haben, und die nüchterne Antwort lautet: Der Befund war falsch, aber unterwegs fielen zwei echte Startfehler heraus.
+1. Die Vorlage shinon/commit_msg.txt trug nach der Befund-Abarbeitung noch einen 430 Zeichen langen sechsten Satz und hielt damit das E039 des Gates offen, obwohl der eigentliche Commit längst gepusht war.
 
-2. Die Prüfung gegen die Szenen zeigt, dass welt.tscn vierzehn und karten_editor.tscn elf Knoten mit unique_name_in_owner tragen, womit jede echte Prozent-Referenz der beiden Skripte abgedeckt ist; die drei Resttreffer waren Format-Platzhalter d, dx und s aus einem Statustext.
+2. In shinon/commit_msg.txt ist dieser Satz jetzt auf 280 Zeichen gekürzt, ohne einen Inhalt zu verlieren, denn die UID-Klärung bleibt mit Panel-Kette, Import-Artefakten und den fünf entfernten Waisen vollständig benannt.
 
-3. Beide Szenen laufen headless fehlerfrei, und weil ihre Ready-Funktionen die Referenzen sofort benutzen, hätte eine Null-Referenz sofort geknallt; es musste also nichts an den Szenen geändert werden, und docs/BEFUND.md hält dieses widerlegte Ergebnis samt Beweis fest.
+3. Der Grund ist der Gate-Vertrag: Vor jedem Commit muss der volle Preflight grün sein, und ein rotes Erbe hilft niemandem, auch wenn der Rohr-Exit des vorigen Laufs den Befund verdeckt hatte.
 
-4. Der erste echte Fehler steckte in core/logic/events/kern_signal_bus.gd: Der Autoload wurde über einen absoluten Pfad gesucht, obwohl die Modifikator-Maschine ihn schon im Init ruft, während Manager und Maschinen noch als Feld-Initialisierer außerhalb des aktiven Szenenbaums entstehen; jetzt löst ein relativer Name vom Wurzelknoten mit Null-Wächter denselben Knoten ohne Engine-Fehler auf.
-
-5. Der zweite echte Fehler steckte in world/scenes/karten_editor.gd: Die Schriftgröße der Kategorie-Überschrift wurde als Wörterbuch auf theme_override_font_sizes geschrieben, was Godot 4 als Script-Fehler ablehnt; jetzt setzt add_theme_font_size_override die Größe 22 über die öffentliche Theme-API.
-
-6. Die UID-Klärung schließt zugleich den vorigen Auftrag ab: Die vier Skripte der Panels sind lebendig über die preload-Kette der Welt-Szene, ihre Begleiter entstanden durch den Engine-Import und bleiben als gitignorierte Artefakte außerhalb des Repos, und fünf verwaiste Begleiter aus Moves und Löschungen wurden lokal entfernt, weil git ls-files keinen davon je kannte und die Entfernung aus dem Index also unmöglich war.
-
-7. In docs/Inventur_Stand.md steht dieser Stand korrigiert, der Preflight zählt 137 Klassen auf 154 Dateien ohne Befund, und beide Szenen starten sauber ohne die alten Fehler.
+4. Der volle Preflight meldet jetzt PREFLIGHT OK ohne Befund, die Vorlage entspricht wieder dem letzten Arbeitsstand, und der nächste Agent findet ein sauberes Gate statt einer schlummernden 430 Zeichen Bombe.
