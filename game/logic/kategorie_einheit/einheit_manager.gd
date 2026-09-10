@@ -21,6 +21,7 @@ var _tiere: Tier_Manager = null
 var _ressourcen: Einheit_Ressourcen = null
 var _lager: Lager_Manager = null
 var _need_baum: Pop_NeedBaum = null
+var _weg_planung: Einheit_WegPlanung = null
 
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
@@ -39,6 +40,7 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_model = model
 	_tiere = tiere
 	_ressourcen = ressourcen
+	_weg_planung_erneuern()
 
 func lager_setzen(lager: Lager_Manager) -> void:
 	_lager = lager
@@ -59,6 +61,18 @@ func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
 	_tageszyklus = zyklus
 	for einheit: Dictionary in _einheiten:
 		(einheit["mood"] as Pop_MoodMaschine).waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
+
+func _weg_planung_erneuern() -> void:
+	# Die Wegplanung ist eine geteilte Maschine des Managers: Ein Netz für
+	# alle Einheiten, der Weg-Cache macht den A-Stern bezahlbar.
+	if _weg_planung == null:
+		_weg_planung = Einheit_WegPlanung.new()
+	_weg_planung.netz_erneuern(_model)
+
+func _planner_fuer(status: Einheit_Status, ziel_position: Vector2) -> void:
+	if _weg_planung == null:
+		return
+	status.weg_ziele_uebernehmen(_weg_planung.weg_zu(status.welt_position, ziel_position))
 
 func verteilung_setzen(nahrung_je_takt: float) -> void:
 	_nahrung_je_einheit_je_takt = clampf(nahrung_je_takt, 0.1, 5.0)
@@ -143,6 +157,7 @@ func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTy
 		status.job_vormerken(job_id, ziel_typ, ziel_index, ressource)
 		return true
 	status.geh_ziel_setzen(ziel_position)
+	_planner_fuer(status, ziel_position)
 	status.job_vergeben(job, ziel_typ, ziel_index, ressource)
 	# Die Blickrichtung zeigt zum gewählten Job-Objekt.
 	status.blick_richtung_setzen(ziel_position.x >= einheit_position(einheit_index).x)
@@ -285,7 +300,9 @@ func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp,
 		status.queue_vorne_entfernen()
 		return
 	status.queue_vorne_entfernen()
-	status.geh_ziel_setzen(_ziel_position_fuer(int(eintrag.get("ziel_typ", 0)), int(eintrag.get("ziel_index", -1))))
+	var ziel_position := _ziel_position_fuer(int(eintrag.get("ziel_typ", 0)), int(eintrag.get("ziel_index", -1)))
+	status.geh_ziel_setzen(ziel_position)
+	_planner_fuer(status, ziel_position)
 	status.job_vergeben(job, int(eintrag.get("ziel_typ", 0)),
 		int(eintrag.get("ziel_index", -1)), str(eintrag.get("ressource", "")))
 
@@ -305,7 +322,9 @@ func _auf_job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_zi
 				such_index = _naechstes_tier(status, alter_ziel_index)
 	if such_index < 0:
 		return
-	status.geh_ziel_setzen(_ziel_position_fuer(ziel_typ, such_index))
+	var ziel_position := _ziel_position_fuer(ziel_typ, such_index)
+	status.geh_ziel_setzen(ziel_position)
+	_planner_fuer(status, ziel_position)
 	status.job_loopy_fortsetzen(job, ziel_typ, such_index, job.ressource())
 
 func _auf_arbeitsschritt(ressource: String, menge: int) -> void:

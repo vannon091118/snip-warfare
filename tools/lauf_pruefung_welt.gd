@@ -46,6 +46,29 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Seed 54321 ergibt eine andere Welt")
+	# 2b) Spawn-Cluster: Die Welt traegt dichte Gruppen (Wald) statt
+	#     verstreuter Einzelobjekte; ein Baum hat Nachbarn in Cluster-naehe.
+	var cluster_dicht := false
+	var cluster_beste := 0
+	for baum_i in modell_eins.objekt_anzahl():
+		if str(modell_eins.objekt_element_id(baum_i)) != "baum":
+			continue
+		var baum_position := modell_eins.objekt_position(baum_i)
+		var nachbarn := 0
+		for anderer_i in modell_eins.objekt_anzahl():
+			if baum_i == anderer_i or str(modell_eins.objekt_element_id(anderer_i)) != "baum":
+				continue
+			if baum_position.distance_to(modell_eins.objekt_position(anderer_i)) <= 3.0 * Welt_Model.KACHEL_GROESSE:
+				nachbarn += 1
+		cluster_beste = maxi(cluster_beste, nachbarn)
+		if nachbarn >= 4:
+			cluster_dicht = true
+			break
+	if not cluster_dicht:
+		print("FEHLER: Kein Wald-Cluster gefunden (beste Nachbarn: %d)" % cluster_beste)
+		fehler += 1
+	else:
+		print("OK: Wald-Cluster existieren (beste Gruppe: %d Nachbarn) statt Einzelobjekte" % cluster_beste)
 	# 3) Regionen existieren und tragen Biome aus dem Biom-Pool.
 	var biome_ok := true
 	if modell_eins.regionen.is_empty():
@@ -586,6 +609,68 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Weltuhr wirft Ruckler-Rueckstand weg, Folge-Rahmen ticken im Rahmen-Budget und wachsen linear")
+	# Wegplanung: Die Planung liefert Wegpunkte um gesperrte Kacheln, der
+	# Cache beantwortet dieselbe Anfrage aus dem Speicher, der Status folgt
+	# den Punkten und endet trotzdem am Ziel in der Arbeit.
+	var plan_modell := Welt_Model.new()
+	var plan_generator := Welt_Generator.new()
+	plan_generator.welt_erzeugen(plan_modell, 24680, "gemaaessigt")
+	var planung := Einheit_WegPlanung.new()
+	planung.netz_erneuern(plan_modell)
+	var plan_start := Vector2(100, 100)
+	var plan_ziel := Vector2(900, 700)
+	if plan_modell.objekt_anzahl() > 0:
+		plan_ziel = plan_modell.objekt_position(0)
+	var plan_weg := planung.weg_zu(plan_start, plan_ziel)
+	var plan_weg_nochmal := planung.weg_zu(plan_start, plan_ziel)
+	var plan_status := Einheit_Status.new()
+	plan_status.welt_position_setzen(plan_start)
+	plan_status.geh_ziel_setzen(plan_ziel)
+	plan_status.weg_ziele_uebernehmen(plan_weg)
+	plan_status.job_vergeben(queue_job_registry.job_erzeugen("heiler"), Job_Basis.ZielTyp.OBJEKT, 0, "")
+	for _plan_schritt in 2400:
+		plan_status.tick(1.0 / 24.0)
+	var plan_ok := plan_status.zustand == Einheit_Status.Zustand.ARBEITEN \
+			and plan_status.welt_position.distance_to(plan_ziel) <= 30.0
+	var cache_ok := plan_weg == plan_weg_nochmal
+	if not plan_ok or not cache_ok:
+		print("FEHLER: Wegplanung falsch (an Ziel %s, Cache gleich %s, Punkte %d)" % [
+			str(plan_status.welt_position.distance_to(plan_ziel) <= 30.0), str(cache_ok), plan_weg.size()])
+		fehler += 1
+	else:
+		print("OK: Wegplanung liefert %d Wegpunkte, Cache trifft, Einheit folgt und arbeitet am Ziel" % plan_weg.size())
+	# Manager-Verdrahtung: Die Vergabe holt die Wegpunkte aus der geteilten
+	# Planung; ohne Planung (nur geh_ziel_setzen) laeuft die Einheit
+	# weiterhin geradeaus und kommt ebenfalls an.
+	var plan_manager := Einheit_Manager.new()
+	plan_manager.einrichten(plan_modell, null, null)
+	if plan_modell.objekt_anzahl() > 0:
+		var manager_ziel := plan_modell.objekt_position(0)
+		plan_manager.einheit_hinzufuegen(manager_ziel + Vector2(-200, 0))
+		plan_manager.job_vergeben(0, "heiler", Job_Basis.ZielTyp.OBJEKT, 0, manager_ziel)
+		var planer_start := plan_manager.einheit_position(0)
+		for _manager_schritt in 400:
+			plan_manager._auf_tick(1, 1.0 / 24.0)
+		var manager_ankunft := plan_manager.einheit_position(0).distance_to(manager_ziel) <= 30.0
+		var manager_bewegte_sich := plan_manager.einheit_position(0).distance_to(planer_start) > 20.0
+		if not manager_ankunft or not manager_bewegte_sich:
+			print("FEHLER: Manager-Planung bewegt nicht (an %s, bewegt %s)" % [str(manager_ankunft), str(manager_bewegte_sich)])
+			fehler += 1
+		else:
+			print("OK: Manager vergibt Wege aus der geteilten Planung, Einheit kommt ohne Clippen an")
+	# Loop-Flags als Daten: Alle Ernte-Jobs laufen weiter, nur der Heiler
+	# endet nach dem Einsatz.
+	var loop_config := JSON.parse_string(FileAccess.get_file_as_string("res://game/data/job_config.json")) as Dictionary
+	var loop_falsch: Array[String] = []
+	for loop_id: String in ["holzfaeller", "steinmetz", "jaeger", "holzfaeller_stumpf", "jaeger_kadaver"]:
+		var loop_eintrag: Dictionary = loop_config.get(loop_id, {})
+		if not bool(loop_eintrag.get("loop", false)):
+			loop_falsch.append(loop_id)
+	if bool((loop_config.get("heiler", {}) as Dictionary).get("loop", true)) or not loop_falsch.is_empty():
+		print("FEHLER: Loop-Flags falsch (falsch: %s, heiler-Loop %s)" % [str(loop_falsch), str((loop_config.get("heiler", {}) as Dictionary).get("loop", true))])
+		fehler += 1
+	else:
+		print("OK: Alle Ernte-Jobs loopen als Daten, der Heiler endet einmalig")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

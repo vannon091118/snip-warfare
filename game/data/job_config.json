@@ -28,6 +28,7 @@
     "harvest_menge": 10,
     "reichweite": 140.0,
     "sammel_auf_flaeche": false,
+    "loop": true,
     "mindest_tragekraft": 10
   },
   "jaeger": {
@@ -43,8 +44,8 @@
     "harvest_menge": 5,
     "reichweite": 160.0,
     "sammel_auf_flaeche": false,
-    "mindest_tragekraft": 3,
-    "loop": false
+    "loop": true,
+    "mindest_tragekraft": 3
   },
   "holzfaeller_stumpf": {
     "script": "res://game/logic/kategorie_job/job_holzfaeller_stumpf.gd",

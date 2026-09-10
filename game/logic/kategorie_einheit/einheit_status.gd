@@ -14,6 +14,7 @@ signal job_beendet()
 signal job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int)
 signal job_vergeben_fehlgeschlagen(grund: String)
 signal naechster_job_aus_queue(job_id: String, ziel_typ: Job_Basis.ZielTyp, ziel_index: int, ressource: String)
+signal weg_ziele_neu(le_ziele: PackedVector2Array)
 signal gestorben(welt_position: Vector2)
 
 enum Zustand {
@@ -42,6 +43,8 @@ var _job_queue: Array[Dictionary] = []
 ## über die eigene Modifikator-Maschine, nie aus Konstanten im Code.
 var welt_position := Vector2.ZERO
 var _geh_ziel := Vector2.ZERO
+var _weg_ziele := PackedVector2Array()
+var _weg_index := 0
 var _geh_geschwindigkeit := 0.0
 var _geh_reichweite := 0.0
 var _rasse_bewegungs_faktor := 1.0
@@ -147,6 +150,8 @@ func job_abbrechen() -> void:
 	aktuelles_ziel_index = -1
 	ziel_ressource = ""
 	_loop_fortgesetzt = false
+	_weg_ziele = PackedVector2Array()
+	_weg_index = 0
 	_zu_zustand_wechseln(Zustand.IDLE)
 
 func welt_position_setzen(pos: Vector2) -> void:
@@ -154,7 +159,11 @@ func welt_position_setzen(pos: Vector2) -> void:
 	vital.welt_position_setzen(pos)
 
 func geh_ziel_setzen(ziel: Vector2) -> void:
+	# Jeder neue Zielwechsel verwirft die alte Route: Ohne gelieferte
+	# Wegpunkte läuft die Einheit geradeaus, es bleibt nie ein Altweg stehen.
 	_geh_ziel = ziel
+	_weg_ziele = PackedVector2Array()
+	_weg_index = 0
 
 func tick(delta: float) -> void:
 	vital.heilung_versuchen()
@@ -171,6 +180,13 @@ func ziel_welt_position() -> Vector2:
 	# bleibt der zuletzt gesetzte Punkt.
 	return _geh_ziel
 
+func weg_ziele_uebernehmen(le_ziele: PackedVector2Array) -> void:
+	# Die Wegplanung liefert Zwischenpunkte; gefolgt wird vor dem Endziel.
+	# Ohne Planung bleibt es beim geradlinigen Lauf, es fällt nie still.
+	_weg_ziele = le_ziele
+	_weg_index = 0
+	weg_ziele_neu.emit(le_ziele)
+
 func _arbeit_oder_gehen() -> void:
 	# Direkte Auswirkung des Befehls: Zu weit entfernte Ziele laufen die
 	# Einheiten an, statt den Befehl mit einer Meldung abzulehnen.
@@ -182,12 +198,23 @@ func _arbeit_oder_gehen() -> void:
 		_zu_zustand_wechseln(Zustand.ARBEITEN)
 
 func _geh_tick(delta: float) -> void:
-	# Bewegung in der Welt: Schritt Richtung Ziel, dann Zustandsübergang.
+	# Bewegung in der Welt: Erst die Wegpunkte der Planung ablaufen, dann
+	# der Endziel-Schritt; ohne Planung läuft es geradlinig weiter.
+	while _weg_index < _weg_ziele.size():
+		var zwischenteil := _weg_ziele[_weg_index] - welt_position
+		if zwischenteil.length() > _geh_reichweite:
+			break
+		_weg_index += 1
 	var richtung := _geh_ziel - welt_position
 	var distanz := richtung.length()
 	if distanz <= _geh_reichweite or distanz <= 0.001:
 		_zu_zustand_wechseln(Zustand.ARBEITEN)
 		return
+	if _weg_index < _weg_ziele.size():
+		richtung = _weg_ziele[_weg_index] - welt_position
+		if richtung.length() <= 0.001:
+			_weg_index += 1
+			richtung = _geh_ziel - welt_position
 	welt_position += richtung.normalized() * _geh_geschwindigkeit * delta
 	_blick_rechts = richtung.x >= 0.0
 

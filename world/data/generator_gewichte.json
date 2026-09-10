@@ -21,12 +21,19 @@
   },
   "gebaeude": {},
   "fraktionen": {},
+  "cluster": {
+    "_kommentar": "Spawn-Cluster: Jeder Eintrag stempelt eine dichte Gruppe als Weltzustand. anzahl ist der Kern der Gruppe, umgebung_zusatz die Streuung drum herum, radius_kacheln die Gruppengroesse, chance die Wahrscheinlichkeit je Chunk. Neue Spawn-Varianten nur hier und im Element-Katalog.",
+    "wald": {"kategorie": "cluster", "element_id": "baum", "anzahl": 6, "umgebung_zusatz": 4, "radius_kacheln": 3, "chance": 0.9, "biome": ["gemaaessigt", "steppe"]},
+    "steinfeld": {"kategorie": "cluster", "element_id": "stein", "anzahl": 4, "umgebung_zusatz": 2, "radius_kacheln": 2, "chance": 0.6, "biome": ["gemaaessigt", "tundra", "steppe"]},
+    "hasen_bau": {"kategorie": "cluster", "element_id": "hase", "anzahl": 3, "umgebung_zusatz": 2, "radius_kacheln": 2, "chance": 0.45, "biome": ["gemaaessigt", "steppe"]},
+    "vogelschwarm": {"kategorie": "cluster", "element_id": "vogel", "anzahl": 3, "wandernd": true, "anzahl_min": 2, "anzahl_max": 5, "radius_kacheln": 2, "chance": 0.35, "biome": ["gemaaessigt", "steppe", "tundra"]}
+  },
   "grenzen": {
-    "kommentar": "Mindest- und Maxwerte je Chunk: Der Chunk-Simulator verwirft jeden Chunk der diese Werte verletzt.",
+    "kommentar": "Mindest- und Maxwerte je Chunk: Der Chunk-Simulator verwirft jeden Chunk der diese Werte verletzt. Die Werte gelten fuer den Chunk nach Cluster-Stempelung.",
     "min_objekte": 4,
-    "max_objekte": 40,
+    "max_objekte": 60,
     "min_tiere": 0,
-    "max_tiere": 6,
+    "max_tiere": 12,
     "min_freie_kacheln_anteil": 0.5
   }
 }

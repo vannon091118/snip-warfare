@@ -120,8 +120,14 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 	# Deterministisch je Chunk: dieselbe Welt plus derselbe Chunk liefert
 	# immer dieselben Objekte, unabhängig von der Reihenfolge anderer Chunks.
 	var chunk_zufall := Kern_Zufall.abgeleitet_fuer_chunk(model.welt_seed, chunk.x, chunk.y)
-	var objekt_zahl := 0
-	var tier_zahl := 0
+	# Merker für den Rückruf: Verwürfe entfernen alles ab diesem Index,
+	# damit ein verworfener Chunk keine Geisterobjekte hinterlässt.
+	var start_index := model.objekt_anzahl()
+	# Cluster zuerst: Sie stempeln dichte Gruppen (Wälder, Steinfields,
+	# Tier-Bauten) als Weltzustand; die Streuung danach nutzt den Rest.
+	var gestempelt := _cluster_stempeln(model, chunk, biom_id, chunk_zufall)
+	var objekt_zahl := int(gestempelt["objekt_zahl"])
+	var tier_zahl := int(gestempelt["tier_zahl"])
 	var versuche := 0
 	var plaetze: Array[Vector2i] = []
 	var start_x := chunk.x * CHUNK_GROESSE
@@ -159,5 +165,86 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 			return
 		if versuche >= kacheln * 2:
 			verworfene_chunks += 1
+			_chunk_verwerfen(model, start_index)
 			return
 	verworfene_chunks += 1
+	_chunk_verwerfen(model, start_index)
+
+
+func _chunk_verwerfen(model: Welt_Model, start_index: int) -> void:
+	# Ein verworfener Chunk verlässt die Welt nicht: Alle Objekte, die
+	# dieser Versuch hinterlassen hat, werden entfernt; der Weltzustand
+	# bleibt auf dem Stand vor dem Chunk. Keine Geisterobjekte.
+	var letzte := model.objekt_anzahl() - 1
+	while letzte >= start_index:
+		model.objekt_entfernen(letzte)
+		letzte -= 1
+
+
+## Kategorie logik: Cluster-Stempel für dichte Spawn-Gruppen.
+
+func _cluster_stempeln(model: Welt_Model, chunk: Vector2i, biom_id: String, chunk_zufall: Kern_Zufall) -> Dictionary:
+	# Stempelt die Cluster-Definitionen der Registry in den Chunk. Jede
+	# Entscheidung (Chance, Mittelpunkt, je Platz) kommt ortsfest aus dem
+	# Chunk-Zustand: dieselbe Welt plus derselbe Chunk stempelt dieselben
+	# Gruppen, egal welche Reihenfolge. Tiere aus Clustern zählen als
+	# Weltobjekte und zugleich zur Tier-Zahl des Chunks.
+	var ergebnis := {"objekt_zahl": 0, "tier_zahl": 0}
+	var tier_ids := registry.ids_mit_gewicht("tiere")
+	for cluster_id: String in registry.ids_der_kategorie("cluster"):
+		var wort := registry.eintrag_wort_fuer(cluster_id)
+		if not (wort.get("biome", []) as Array).has(biom_id):
+			continue
+		var chance := float(wort.get("chance", 0.0))
+		if chance <= 0.0:
+			continue
+		var wurf := float(chunk_zufall.naechste_zahl() % 1000000) / 1000000.0
+		if wurf >= chance:
+			continue
+		var element_id := str(wort.get("element_id", cluster_id))
+		var radius := int(wort.get("radius_kacheln", 2))
+		var anzahl := 0
+		if bool(wort.get("wandernd", false)):
+			# Wandernde Gruppen (Schwärme) ziehen ihre Größe separat:
+			# zwischen anzahl_min und anzahl_max, wieder ortsfest.
+			var minimum := int(wort.get("anzahl_min", 2))
+			var maximum := maxi(int(wort.get("anzahl_max", minimum)), minimum)
+			anzahl = minimum + int(chunk_zufall.naechste_zahl() % int(maximum - minimum + 1))
+		else:
+			anzahl = int(wort.get("anzahl", 0)) + int(wort.get("umgebung_zusatz", 0))
+		if anzahl <= 0:
+			continue
+		var start_x := chunk.x * CHUNK_GROESSE
+		var start_y := chunk.y * CHUNK_GROESSE
+		var mitte := Vector2i(
+			start_x + int(chunk_zufall.naechste_zahl() % CHUNK_GROESSE),
+			start_y + int(chunk_zufall.naechste_zahl() % CHUNK_GROESSE))
+		var objekt_ist_tier := tier_ids.any(func(t_id: String) -> bool:
+			return registry.element_pfad_fuer(t_id) == element_id)
+		for platz in _cluster_plaetze(model, mitte, radius, anzahl, chunk_zufall):
+			var welt_pos := Vector2((float(platz.x) + 0.5) * Welt_Model.KACHEL_GROESSE, (float(platz.y) + 0.5) * Welt_Model.KACHEL_GROESSE)
+			model.objekt_hinzufuegen(element_id, welt_pos)
+			ergebnis["objekt_zahl"] = int(ergebnis["objekt_zahl"]) + 1
+			if objekt_ist_tier:
+				ergebnis["tier_zahl"] = int(ergebnis["tier_zahl"]) + 1
+	return ergebnis
+
+func _cluster_plaetze(model: Welt_Model, mitte: Vector2i, radius: int, anzahl: int, chunk_zufall: Kern_Zufall) -> Array[Vector2i]:
+	# Liefert bis zu anzahl freie Felder im Ring um die Mitte: Der nächste
+	# freie Ring gewinnt, die Reihenfolge innerhalb entscheidet der
+	# Chunk-Zustand, damit Cluster nicht als perfektes Quadrat stehen.
+	var plaetze: Array[Vector2i] = []
+	if anzahl <= 0:
+		return plaetze
+	var kandidaten: Array[Vector2i] = []
+	for dy in range(-radius, radius + 1):
+		for dx in range(-radius, radius + 1):
+			var feld := mitte + Vector2i(dx, dy)
+			if feld.x < 0 or feld.y < 0 or feld.x >= model.raster_breite or feld.y >= model.raster_hoehe:
+				continue
+			kandidaten.append(feld)
+	while not kandidaten.is_empty() and plaetze.size() < anzahl:
+		var index := int(chunk_zufall.naechste_zahl() % kandidaten.size())
+		plaetze.append(kandidaten[index])
+		kandidaten.remove_at(index)
+	return plaetze

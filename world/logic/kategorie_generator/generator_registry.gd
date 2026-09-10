@@ -52,6 +52,9 @@ func _ist_kategorie_block(block: Dictionary) -> bool:
 	if kinder.is_empty():
 		return false
 	for kind_id: String in kinder:
+		# Unterstrich-Einträge sind Kommentare und gelten nicht als Kinder.
+		if kind_id.begins_with("_"):
+			continue
 		var kind: Variant = block[kind_id]
 		if typeof(kind) != TYPE_DICTIONARY or not (kind as Dictionary).has("kategorie"):
 			return false
@@ -64,6 +67,18 @@ func ids_mit_gewicht(kategorie: String) -> Array[String]:
 	for eintrag_id: String in _gewichte_nach_id.keys():
 		var wort: Dictionary = _gewichte_nach_id[eintrag_id]
 		if str(wort.get("kategorie", "")) == kategorie and float(wort.get("gewicht", 0.0)) > 0.0:
+			treffer.append(eintrag_id)
+	treffer.sort()
+	return treffer
+
+func ids_der_kategorie(kategorie: String) -> Array[String]:
+	# Liefert alle Eintrags-IDs einer Kategorie ohne Gewichtsfilter: Cluster
+	# tragen ihre Wahrscheinlichkeit in ihrer eigenen chance statt in einem
+	# Gewicht, darum fallen sie durch ids_mit_gewicht durch.
+	var treffer: Array[String] = []
+	for eintrag_id: String in _gewichte_nach_id.keys():
+		var wort: Dictionary = _gewichte_nach_id[eintrag_id]
+		if str(wort.get("kategorie", "")) == kategorie:
 			treffer.append(eintrag_id)
 	treffer.sort()
 	return treffer
