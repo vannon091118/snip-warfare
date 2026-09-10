@@ -1,7 +1,13 @@
-1. Die Vorlage shinon/commit_msg.txt trug nach der Befund-Abarbeitung noch einen 430 Zeichen langen sechsten Satz und hielt damit das E039 des Gates offen, obwohl der eigentliche Commit längst gepusht war.
+1. Du wolltest die beschreibenden Werte in needs.json mit den Code-Übergabestellen zu einer einzigen datengetriebenen Quelle verschmelzen, also habe ich den Spielrhythmus aus dem Schatten der Beschreibung geholt.
 
-2. In shinon/commit_msg.txt ist dieser Satz jetzt auf 280 Zeichen gekürzt, ohne einen Inhalt zu verlieren, denn die UID-Klärung bleibt mit Panel-Kette, Import-Artefakten und den fünf entfernten Waisen vollständig benannt.
+2. In population/data/needs.json liegt der neue Abschnitt weltrhythmus mit takt_minuten 6, tag_minuten 4, nacht_minuten 2 und verbrauch_je_takt 0.8 an genau einer Stelle; die vier Felder im nahrung-Eintrag sind gelöscht, damit es keine zweite Wahrheit gibt.
 
-3. Der Grund ist der Gate-Vertrag: Vor jedem Commit muss der volle Preflight grün sein, und ein rotes Erbe hilft niemandem, auch wenn der Rohr-Exit des vorigen Laufs den Befund verdeckt hatte.
+3. In population/logic/needs/pop_need_registry.gd überspringt der Lader diesen Abschnitt bei der Bedürfnis-Erzeugung und gibt ihn über vier Getter heraus, und population/logic/mood/pop_need_baum.gd reicht diese Werte als Besitzer der Domäne weiter.
 
-4. Der volle Preflight meldet jetzt PREFLIGHT OK ohne Befund, die Vorlage entspricht wieder dem letzten Arbeitsstand, und der nächste Agent findet ein sauberes Gate statt einer schlummernden 430 Zeichen Bombe.
+4. core/logic/clock/weltuhr.gd trägt mit ticks_aus_minuten jetzt die einzige Minuten-Übersetzung, world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd delegiert dorthin statt selbst zu rechnen, und world/scenes/welt.gd versorgt die Tagesmaschine aus dem Datenpool statt mit den alten Literalen.
+
+5. game/logic/kategorie_einheit/einheit_manager.gd zieht Takt und Verbrauchsvorgabe aus der Need-Registry, game/logic/kategorie_einheit/einheit_versorgung.gd gibt den geltenden Wert über verbrauch_je_takt heraus, und population/scenes/verteilung_dialog.gd samt ui/logic/kategorie_ui/ui_eingabe_steuerung.gd baut Startwert und Taktangabe aus denselben Daten statt aus eigenen Zahlen.
+
+6. tools/lauf_pruefung_welt.gd prüft die Kette als 28. Prüfung und meldet grün, verhaltensneutral mit identischen 2400 Ticks wie zuvor, und der Preflight zählt 137 Klassen auf 154 Dateien ohne Befund.
+
+7. docs/Inventur_Stand.md und Architektur.md halten den neuen Stand fest und benennen zugleich den dabei entdeckten Fehler: Die Faktor-Klemme der Weltuhr kappt bei 100 Sekunden, weshalb Tag und Nacht zusammenfallen und die Nachtphase nie eintritt; die Behebung ändert das Spieltempo und wartet auf eine eigene Entscheidung.

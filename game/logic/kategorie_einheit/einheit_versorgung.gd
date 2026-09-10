@@ -7,6 +7,10 @@ class_name Einheit_Versorgung
 
 ## Kategorie daten: die Quellen der Versorgung.
 var _ressourcen: Einheit_Ressourcen = null
+## Verbrauch je Einheit und Takt. Der gültige Wert kommt aus dem Datenpool
+## (weltrhythmus.verbrauch_je_takt in needs.json) und wird vom Manager beim
+## Einrichten gesetzt; die 0.8 hier ist nur der Notfallwert für Testläufe
+## ohne Datenquelle und entspricht dem Datenwert.
 var _je_einheit_je_takt: float = 0.8
 var _hunger_schaden: int = 5
 var _zufall := Kern_Zufall.new()
@@ -19,6 +23,12 @@ func einrichten(ressourcen: Einheit_Ressourcen) -> void:
 func verteilung_setzen(nahrung_je_takt: float) -> void:
 	# Zentrale Einstellung aus der UI; der Bereich bleibt gesund geklemmt.
 	_je_einheit_je_takt = clampf(nahrung_je_takt, 0.1, 5.0)
+
+func verbrauch_je_takt() -> float:
+	# Lesender Zugriff: Das Verteilungs-Fenster zeigt denselben Wert an, mit
+	# dem die Maschine rechnet. Der Name weicht bewusst vom Parameter von
+	# verteilung_setzen ab, damit keine Verschattung entsteht.
+	return _je_einheit_je_takt
 
 func verteilen(einheiten: Array[Dictionary]) -> void:
 	# Rassen-Schemata: Jede Einheit verbraucht ihren eigenen Rassen-Faktor

@@ -17,6 +17,21 @@ var _naechste_kind_nummer: int = 1
 func rassen_schema(rasse_id: String) -> Pop_RassenSchema:
 	return _rassen_registry.schema_fuer(rasse_id)
 
+## Spielrhythmus aus dem Datenpool: Der Baum ist der strukturelle Besitzer
+## der Needs-Domäne und reicht die Werte aus seiner Registry weiter, damit
+## Welt-Szene und Einheiten-Takt nicht selbst in der Datei lesen.
+func takt_minuten() -> float:
+	return _need_registry.takt_minuten()
+
+func tag_minuten() -> float:
+	return _need_registry.tag_minuten()
+
+func nacht_minuten() -> float:
+	return _need_registry.nacht_minuten()
+
+func verbrauch_je_takt() -> float:
+	return _need_registry.verbrauch_je_takt()
+
 func standard_rasse() -> String:
 	return _rassen_registry.standard_rasse()
 

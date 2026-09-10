@@ -1,4 +1,11 @@
 {
+  "weltrhythmus": {
+    "takt_minuten": 6,
+    "tag_minuten": 4,
+    "nacht_minuten": 2,
+    "verbrauch_je_takt": 0.8,
+    "beschreibung": "Einzige Quelle des Spielrhythmus: Taktlaenge des Tageszyklus und der Nahrungsverteilung, Tag- und Nachtanteil sowie der Verbrauch je Einheit und Takt."
+  },
   "nahrung": {
     "script": "res://population/logic/needs/pop_need_nahrung.gd",
     "name": "Hunger",
@@ -10,11 +17,7 @@
     "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
     "emoji": "🍗",
     "sprechblase_text": "Magen knurrt…",
-    "farbe": "#C75B39",
-    "verbrauch_je_takt": 0.8,
-    "takt_minuten": 6,
-    "tag_minuten": 4,
-    "nacht_minuten": 2
+    "farbe": "#C75B39"
   },
   "waerme": {
     "script": "res://population/logic/needs/pop_need_waerme.gd",

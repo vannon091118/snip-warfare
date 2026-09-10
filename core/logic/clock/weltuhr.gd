@@ -41,6 +41,12 @@ static func ticks_aus_faktor(faktor: float) -> int:
 	var geklemmt := clampf(faktor, FAKTOR_MIN, FAKTOR_MAX)
 	return maxi(int(round(geklemmt * FAKTOR_SEKUNDEN * TICK_RATE_HZ)), 1)
 
+## Einzige zentrale Übersetzung Minuten -> ticks. Spielrhythmus-Werte aus
+## der Konfiguration werden hier umgerechnet, damit weder Einheiten-Takt
+## noch Tageszyklus dieselbe Rechnung separat führen.
+static func ticks_aus_minuten(minuten: float) -> int:
+	return ticks_aus_faktor(minuten * 60.0 / FAKTOR_SEKUNDEN)
+
 static func faktor_aus_ticks(ticks: int) -> float:
 	if ticks <= 0:
 		return FAKTOR_MIN

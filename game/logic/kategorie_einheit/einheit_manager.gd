@@ -50,6 +50,9 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_ernte.beute_erlegt.connect(_auf_beute_erlegt)
 	_versorgung = Einheit_Versorgung.new()
 	_versorgung.einrichten(ressourcen)
+	# Verbrauchs-Vorgabe aus dem Datenpool: Der Wert aus needs.json gilt, bis
+	# der Spieler im Verteilungs-Fenster etwas anderes setzt.
+	_versorgung.verteilung_setzen(_need_registry.verbrauch_je_takt())
 
 func lager_setzen(lager: Lager_Manager) -> void:
 	_lager = lager
@@ -86,6 +89,22 @@ func _planner_fuer(status: Einheit_Status, ziel_position: Vector2) -> void:
 func verteilung_setzen(nahrung_je_takt: float) -> void:
 	# Die Regel gehört der Versorgungs-Maschine; der Manager reicht nur durch.
 	_versorgung.verteilung_setzen(nahrung_je_takt)
+
+func verteilung_wert() -> float:
+	# Lesender Zugriff für das Verteilungs-Fenster: Der Startwert des Reglers
+	# ist der aktuell geltende Verbrauch, nicht eine zweite Zahl im UI.
+	return _versorgung.verbrauch_je_takt()
+
+## Spielrhythmus aus dem Datenpool, gelesen über die Need-Registry; dieselbe
+## Quelle speist auch den Tageszyklus in der Welt-Szene.
+func takt_minuten() -> float:
+	return _need_registry.takt_minuten()
+
+func tag_minuten() -> float:
+	return _need_registry.tag_minuten()
+
+func nacht_minuten() -> float:
+	return _need_registry.nacht_minuten()
 
 func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 	var status := Einheit_Status.new()
@@ -239,7 +258,10 @@ func _auf_tick(nummer: int, delta: float) -> void:
 	# Der Tageszyklus tickt nicht mehr hier: Die Weltmaschine hängt seit
 	# der Besitzkorrektur direkt an der Weltuhr und lebt nicht mehr in
 	# der Einheiten-Domäne. Dieser Takt kennt nur Einheiten-Arbeit.
-	var takt_ticks := Kern_Weltuhr.ticks_aus_faktor(6.0 * 60.0 / 10.0)
+	# Taktdauer aus dem Datenpool: Der Wert kommt über die Need-Registry aus
+	# population/data/needs.json und wird von der Weltuhr in Ticks übersetzt;
+	# dieselbe Zahl steuert auch den Tageszyklus.
+	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(_need_registry.takt_minuten())
 	var verbrauch_faellig := takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0
 	if verbrauch_faellig:
 		_nahrung_verteilen()

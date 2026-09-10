@@ -578,8 +578,11 @@ func _init() -> void:
 		print("OK: Modifikator-Einfluss aggregiert (schnell wirkt 1x mit Faktor 1.5)")
 	# Tageszyklus-Besitz: Die Weltmaschine tickt durch ihren eigenen Aufruf
 	# an der Weltuhr, waehrend der Einheiten-Takt sie nicht mehr anstoesst.
+	# Rhythmus aus dem Datenpool: Die Werte kommen aus needs.json über die
+	# Need-Registry; der Beweis benutzt dieselbe Quelle wie das Spiel.
+	var rhythmus_registry := Pop_NeedRegistry.new()
 	var zyklus := Welt_TageszyklusMaschine.new()
-	zyklus.einrichten(6.0, 4.0, 2.0)
+	zyklus.einrichten(rhythmus_registry.takt_minuten(), rhythmus_registry.tag_minuten(), rhythmus_registry.nacht_minuten())
 	var takte_vor := zyklus._tick_in_takt
 	var manager_ohne_rolle := Einheit_Manager.new()
 	manager_ohne_rolle.tageszyklus_setzen(zyklus)
@@ -743,6 +746,30 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Szene und World teilen dieselbe Karteninstanz, Rundlauf trägt den echten Zustand")
+	# 28) Spielrhythmus aus Daten: needs.json ist die einzige Quelle für
+	#     Takt, Tag, Nacht und Verbrauch; die Leser greifen über die
+	#     Need-Registry und den Einheiten-Manager darauf zu.
+	var rhythmus_probe := Pop_NeedRegistry.new()
+	var rhythmus_manager := Einheit_Manager.new()
+	var rhythmus_modell := Welt_Model.new()
+	rhythmus_modell.karte_erzeugen(6, 6, "boden")
+	var rhythmus_ressourcen := Einheit_Ressourcen.new()
+	rhythmus_manager.einrichten(rhythmus_modell, null, rhythmus_ressourcen)
+	var rhythmus_ok := is_equal_approx(rhythmus_probe.takt_minuten(), 6.0) \
+			and is_equal_approx(rhythmus_probe.tag_minuten(), 4.0) \
+			and is_equal_approx(rhythmus_probe.nacht_minuten(), 2.0) \
+			and is_equal_approx(rhythmus_manager.verteilung_wert(), 0.8) \
+			and is_equal_approx(rhythmus_manager.takt_minuten(), 6.0)
+	rhythmus_manager.verteilung_setzen(1.4)
+	var rhythmus_override_ok := is_equal_approx(rhythmus_manager.verteilung_wert(), 1.4)
+	if not rhythmus_ok or not rhythmus_override_ok:
+		print("FEHLER: Spielrhythmus nicht datengetrieben (takt %f, tag %f, nacht %f, verbrauch %f, override %f)" % [
+			rhythmus_probe.takt_minuten(), rhythmus_probe.tag_minuten(), rhythmus_probe.nacht_minuten(),
+			rhythmus_manager.verteilung_wert(), 1.4])
+		fehler += 1
+	else:
+		print("OK: Spielrhythmus kommt aus needs.json (Takt %d, Tag %d, Nacht %d, Verbrauch %.1f), Spieler-Override wirkt" % [
+			int(rhythmus_probe.takt_minuten()), int(rhythmus_probe.tag_minuten()), int(rhythmus_probe.nacht_minuten()), 0.8])
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

@@ -62,7 +62,10 @@ func _ready() -> void:
 	_ladevorgang.einrichten(_model, _generator)
 	_map_fabrik.einrichten(_generator)
 	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)
-	_tageszyklus.einrichten(6.0, 4.0, 2.0)
+	# Spielrhythmus aus dem Datenpool: Taktdauer und Tag-/Nachtanteil kommen
+	# über den Need-Baum aus population/data/needs.json; der Baum besitzt die
+	# Registry und reicht die Werte weiter, statt sie hier hart zu setzen.
+	_tageszyklus.einrichten(_need_baum.takt_minuten(), _need_baum.tag_minuten(), _need_baum.nacht_minuten())
 	# Besitz-Korrektur: Die Tageszyklus-Maschine ist eine Weltmaschine und
 	# hängt seit diesem Slice direkt an der zentralen Weltuhr, statt vom
 	# Einheiten-Manager mitgetickt zu werden. Die Szene verbindet den

@@ -96,6 +96,10 @@ func unhandled_input(ereignis: InputEvent, klick_ermitteln: Callable, rechteck_p
 func eingabe(ereignis: InputEvent, eltern: Node, verteilung_cb: Callable) -> void:
 	if ereignis is InputEventKey and ereignis.pressed and ereignis.keycode == KEY_V and ereignis.ctrl_pressed:
 		var dlg := preload("res://population/scenes/verteilung_dialog.gd").new()
+		# Werte aus dem Datenpool: Takt und Verbrauch kommen über den Manager
+		# (Need-Registry aus needs.json); das Fenster führt keine eigenen Zahlen.
+		if _stockmaenner != null:
+			(dlg as Object).call("werte_setzen", _stockmaenner.takt_minuten(), _stockmaenner.tag_minuten(), _stockmaenner.nacht_minuten(), _stockmaenner.verteilung_wert())
 		eltern.add_child(dlg)
 		(dlg as Window).popup_centered()
 		dlg.verteilung_gesetzt.connect(verteilung_cb)

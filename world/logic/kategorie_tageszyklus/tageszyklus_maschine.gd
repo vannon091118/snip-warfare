@@ -26,10 +26,9 @@ func einrichten(neu_takt_minuten: float = 6.0, neu_tag_minuten: float = 4.0, _ne
 	nacht_minuten = takt_minuten - tag_minuten
 
 func _takt_ticks_fuer(minuten: float) -> int:
-	# Delegiert an Weltuhr: faktor entspricht 10 Sekunden, Minuten über Ticks skaliert.
-	var sekunden := minuten * 60.0
-	var faktor := sekunden / 10.0
-	return Kern_Weltuhr.ticks_aus_faktor(faktor)
+	# Delegiert an die Weltuhr: Sie ist die einzige Stelle, die Minuten in
+	# Ticks übersetzt; die Maschine rechnet nichts selbst.
+	return Kern_Weltuhr.ticks_aus_minuten(minuten)
 
 func tick(_uhr_tick_nummer: int = 0, _uhr_delta: float = 0.0) -> void:
 	# Die Maschine hängt direkt an der Weltuhr und nimmt deren Signatur
