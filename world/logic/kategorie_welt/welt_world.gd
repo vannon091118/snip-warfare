@@ -64,6 +64,19 @@ func map_model(map_id: String) -> Welt_Model:
 			return eintrag.get("model", null)
 	return null
 
+func model_uebernehmen(map_id: String, model: Welt_Model) -> bool:
+	# Laufzeit-Übernahme: Die laufende Instanz ersetzt den World-Eintrag,
+	# sodass Welt-Szene und World dasselbe Welt_Model teilen. Es entsteht
+	# keine zweite Kartenwahrheit, und die map_id-Zuordnung bleibt bestehen.
+	if model == null or not map_id_vorhanden(map_id):
+		return false
+	for index in _maps.size():
+		if str(_maps[index].get("map_id", "")) == map_id:
+			_maps[index]["model"] = model
+			model.map_id = map_id
+			return true
+	return false
+
 func map_ids() -> Array[String]:
 	var ids: Array[String] = []
 	for eintrag: Dictionary in _maps:

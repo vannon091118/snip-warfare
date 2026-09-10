@@ -107,11 +107,14 @@ func _auf_speichern() -> void:
 	var world: Welt_World = WeltSitzung.world
 	var map_id := WeltSitzung.aktive_map_id
 	if world != null and map_id != "":
-		var aktive: Welt_Model = world.map_model(map_id)
-		if aktive != null:
-			aktive.aus_welt_uebernehmen(_model_vom_baum())
-			if Welt_Ladevorgang.welt_speichern_aktiv(world, map_id):
-				meldung = "Gespeichert."
+		# Eine Kartenwahrheit: Die World übernimmt die laufende Szene-Instanz
+		# der aktiven Karte, bevor gespeichert wird. Nach der Instanz-Übernahme
+		# beim Laden sind beide ohnehin dasselbe Objekt; dieser Weg deckt auch
+		# den Fall ab, dass Szene und World-Eintrag noch getrennt sind.
+		var laufend: Welt_Model = _model_vom_baum()
+		if laufend != null and world.model_uebernehmen(map_id, laufend) \
+				and Welt_Ladevorgang.welt_speichern_aktiv(world, map_id):
+			meldung = "Gespeichert."
 	if _info != null:
 		_info.text = meldung
 

@@ -9,9 +9,11 @@ var kommt_vom_editor: bool = false
 ## zentralen Kern_Zufall ziehen". Die Karte liest ihn beim Aufbau der Welt.
 var seed_wunsch: int = 0
 
-## World-Ebene: Die geladene World hält alle Maps; aktive_map_id bestimmt,
-## welche Karte die Welt-Szene aufbaut. Beide Felder sind reine Übergabe,
-## die Logik liegt in Welt_World und Welt_Ladevorgang.
+## World-Ebene: Die Sitzung hält die einzige World-Referenz zwischen den
+## Szenen. Die aktive Map in der World ist dasselbe Welt_Model-Objekt wie
+## in der Welt-Szene (Instanz-Übernahme beim Laden, Expansion und Speichern);
+## die Sitzung erzeugt keine zweite Kartenwahrheit, sie trägt nur den
+## Verweis und die aktive map_id zwischen Szenenwechseln.
 var world: Welt_World = null
 var aktive_map_id: String = ""
 

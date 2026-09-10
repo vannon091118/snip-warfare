@@ -719,6 +719,30 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Alle Ernte-Jobs loopen als Daten, der Heiler endet einmalig")
+	# 27) Eine Kartenwahrheit: Die World übernimmt die laufende Szene-Instanz
+	#     über model_uebernehmen; Szene und World zeigen danach auf dasselbe
+	#     Welt_Model-Objekt und der Rundlauf speichert den echten Zustand.
+	var wahrheit_world := Welt_World.new()
+	wahrheit_world.world_name = "wahrheit_welt"
+	var wahrheit_lade := Welt_Model.new()
+	wahrheit_lade.karte_erzeugen(6, 6, "boden")
+	wahrheit_world.map_hinzufuegen(wahrheit_lade, "karte_0", true)
+	var wahrheit_szene := Welt_Model.new()
+	wahrheit_szene.karte_erzeugen(7, 7, "boden")
+	wahrheit_szene.objekt_hinzufuegen("baum", Vector2(96, 96))
+	var uebernommen := wahrheit_world.model_uebernehmen("karte_0", wahrheit_szene)
+	var identisch := wahrheit_world.map_model("karte_0") == wahrheit_szene
+	var rundlauf := Welt_Speicher.new()
+	rundlauf.world_speichern("wahrheit_welt", wahrheit_world)
+	var rueck := rundlauf.world_laden("wahrheit_welt")
+	var rundlauf_ok := rueck != null and rueck.map_model("karte_0") != null \
+			and int(rueck.map_model("karte_0").objekt_anzahl()) == 1
+	if not uebernommen or not identisch or not rundlauf_ok:
+		print("FEHLER: Kartenwahrheit bricht (uebernommen %s, identisch %s, rundlauf %s)" % [
+			str(uebernommen), str(identisch), str(rundlauf_ok)])
+		fehler += 1
+	else:
+		print("OK: Szene und World teilen dieselbe Karteninstanz, Rundlauf trägt den echten Zustand")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

@@ -1,7 +1,11 @@
-1. Du wolltest die alte Befundliste nach allen Aufträgen noch einmal gegen den Code geprüft haben und die letzten offenen Punkte geklärt wissen, also habe ich jeden G-Punkt einzeln nachgegriffen statt ihm sein altes Urteil zu glauben.
+1. Du wolltest eine zentrale Laufzeitwahrheit statt paralleler Zustände, also habe ich dem Spiel die doppelte Karte weggenommen, die es unbemerkt zweimal besaß.
 
-2. In docs/Inventur_Stand.md steht jetzt der volle Abgleich: G4 Wärme-Gates sind konsolidiert und lesen die Registry, G5 Tier-Geschwindigkeit war kein Doppel sondern zwei getrennte Bewegungsdomänen, G7 Tierfilter ist korrekt, der Bus-Wrapper-Abschluss ist belegt und das Sterbe-Signal der Vital-Maschine ist ein eigener Vertrag mit genau einem Abonnenten.
+2. Beim Laden kopierte der Ladevorgang die aktive Karte als Wörterbuch in das Szenen-Modell, die World hielt danach eine veraltete Zweitinstanz, und jedes Speichern ohne Umweg schrieb diese Leiche auf die Platte.
 
-3. Offen geblieben sind die belegten Lücken: der Objekt-Faktor ohne einen einzigen Verbraucher, die logik_id als reine Dokumentation, die dreifach hart codierten Rhythmus-Werte, die fehlende Objekt-Registrier-Naht, die Raeuchelfleisch-Klasse ohne Zweig, das Wachstums-Literal 3, die acht handgeschriebenen Registrys, die SteuerungUebersetzer-Altlast in Architektur.md und der fehlende Preflight-Check für leslose Konfigurationsfelder.
+3. In welt_world.gd lebt jetzt model_uebernehmen: Die World zeigt auf die laufende Instanz der Szene, in welt_ladevorgang.gd wird die geladene Karte übernommen statt kopiert, das Erzeugen trägt die Szene-Karte direkt als Basis ein, und alte Einzelwelt-Dateien bekommen beim Laden eine Ein-Map-World als Erbe.
 
-4. Der Preflight bleibt grün, dieses Dokument allein hat kein Verhalten berührt, und der nächste Agent bekommt die offenen Punkte als bewiesene, nicht als vermutete Liste.
+4. In welt_pause_menue.gd starb der Aufruf einer Methode, die es nirgends gab, und jedes Speichern wäre deshalb geknallt; jetzt läuft es über die Instanz-Übernahme mit echten Methoden.
+
+5. Die Sitzung trägt nur noch den Verweis, der Beweislauf prüft als 27. Prüfung, dass Szene und World dasselbe Objekt teilen und der Speicher-Rundlauf den echten Zustand trägt.
+
+6. Der Preflight zählt 137 Klassen auf 154 Dateien ohne Befund, im Spiel speichert der Pause-Knopf jetzt wirklich, und Expansion wie Laden zeigen dieselbe Karte, die auch auf der Platte landet.
