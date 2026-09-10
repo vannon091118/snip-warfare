@@ -44,6 +44,7 @@ var _feedback := Welt_FeedbackManager.new()
 var _orchestrator_verdrahtung := Orchestrator_Verdrahtung.new()
 var _kamera_steuerung := Ui_KameraSteuerung.new()
 var _eingabe_steuerung := Ui_EingabeSteuerung.new()
+var _pause_menue: Welt_PauseMenue = null
 var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 
 @onready var _karte: Welt_Renderer = %Karte
@@ -126,6 +127,9 @@ func _ready() -> void:
 	})
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
+	_pause_menue = Welt_PauseMenue.new()
+	add_child(_pause_menue)
+	_pause_menue.menue_gewuenscht.connect(_auf_zurueck)
 	# Warum-Fenster: Die Status-Anzeige besitzt die Begründungsliste, die Szene
 	# übergibt nur ihre drei Spitzen. Reine Verdrahtung, keine Timeline-Logik.
 	_hud.warum_verdrahten(%WarumKnopf, %WarumFenster, %WarumText)
@@ -197,6 +201,9 @@ func _auf_kontext_aktion(aktion: Dictionary) -> void:
 func _biom_anzeigen() -> void:
 	var zustand := _model.biom_zustand()
 	(_hud as Variant).biom_anzeigen(str(zustand.get("biom_id", _model.biom_id)), float(zustand.get("biom_faktor", 1.0)))
+
+func model_liefern() -> Welt_Model:
+	return _model
 
 func _auf_zurueck() -> void:
 	# Auch der Rückweg läuft über die Übergangs-Verbindung, damit jede

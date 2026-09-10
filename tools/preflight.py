@@ -175,9 +175,23 @@ def zeile_bei(code_index, position):
     return code_index.count("\n", 0, position) + 1
 
 
+def _verzeichnis_ignoriert(pfad) -> bool:
+    # Ignorierte Ordner (Addon-/Testumgebung) gehoeren nicht zum Projektvertrag
+    # und liefern keine Befunde; die Wahrheit liest die .gitignore-Liste nicht,
+    # hier steht die kurze, pflegbare Projektliste.
+    rel = pfad.relative_to(PROJEKT_STAMM)
+    teile = rel.parts
+    if not teile:
+        return False
+    return teile[0] in {"addons", ".godot", ".freebuff", "tools/godot"} or (
+        len(teile) > 1 and "/".join(teile[:2]) == "tools/godot")
+
+
 def lies_dateien():
     dateien = []
     for pfad in sorted(PROJEKT_STAMM.rglob("*.gd")):
+        if _verzeichnis_ignoriert(pfad):
+            continue
         try:
             code = pfad.read_text(encoding="utf-8")
         except UnicodeDecodeError:
@@ -495,7 +509,7 @@ def pruefe_pfade(dateien):
         rel_pfad = pfad.relative_to(PROJEKT_STAMM)
         for treffer in re.finditer(r'"(res://[^"]+)"', code):
             pruefe_res_pfad(treffer.group(1), rel_pfad, code, treffer.start())
-    for tscn_pfad in sorted(PROJEKT_STAMM.rglob("*.tscn")):
+    for tscn_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.tscn") if not _verzeichnis_ignoriert(p)):
         rel_pfad = tscn_pfad.relative_to(PROJEKT_STAMM)
         try:
             inhalt = tscn_pfad.read_text(encoding="utf-8")
@@ -504,7 +518,7 @@ def pruefe_pfade(dateien):
             continue
         for treffer in re.finditer(r'path="(res://[^"]+)"', inhalt):
             pruefe_res_pfad(treffer.group(1), rel_pfad, inhalt, treffer.start())
-    for json_pfad in sorted(PROJEKT_STAMM.rglob("*.json")):
+    for json_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.json") if not _verzeichnis_ignoriert(p)):
         if ".godot" in json_pfad.parts:
             continue
         rel_pfad = json_pfad.relative_to(PROJEKT_STAMM)

@@ -31,3 +31,9 @@ Thumbs.db
 
 # Headless-Bin relativer Referenzpfad bleibt im Repo, Cache nicht
 tools/godot/.cache/
+
+# GODOT ACP — MCP-Testumgebung bleibt lokal, niemals im Repo
+/addons/
+/mcp_tools/
+/.mcp.json
+/override.cfg

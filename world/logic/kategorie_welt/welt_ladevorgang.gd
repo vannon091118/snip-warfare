@@ -80,3 +80,10 @@ func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> b
 	speicher.world_speichern(speicher_welt_name, world)
 	WeltSitzung.welt_name = speicher_welt_name
 	return true
+
+static func welt_speichern_aktiv(world: Welt_World, map_id: String) -> bool:
+	## Persistiert die aktive Map in ihrer World. Einzige Speicher-Zustaendigkeit
+	## bleibt diese Klasse; das Menue formuliert nur den Wunsch.
+	if world == null or map_id == "" or not world.map_id_vorhanden(map_id):
+		return false
+	return Welt_Speicher.new().world_speichern(world.world_name, world)
