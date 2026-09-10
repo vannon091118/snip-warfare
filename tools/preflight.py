@@ -83,8 +83,7 @@ KATEGORIE_PRAEFIXE = {
     "Objekt_": "world/logic/kategorie_objekt",
     "Natur_": "world/logic/kategorie_objekt",
     "Gebaeude_": "world/logic/kategorie_objekt",
-    "Resource_": "game/logic/kategorie_ressourcen",
-    "Resources_": "game/logic/kategorie_ressourcen",
+    "Ressource_": "game/logic/kategorie_ressourcen",
     "Tier_": "world/logic/kategorie_tier",
     "Einheit_": "game/logic/kategorie_einheit",
     "Job_": "game/logic/kategorie_job",
@@ -398,7 +397,7 @@ def gib_dateninventar_aus(dateien):
     print("=" * 78)
     print("DATENINVENTAR (exakte Namen der erzeugten Datenobjekte je Datei)")
     print("=" * 78)
-    daten_praefixe = ("Objekt_", "Resources_", "Resource_", "Tier_")
+    daten_praefixe = ("Objekt_", "Ressource_", "Tier_")
     gefunden = False
     for pfad, code in dateien:
         rel_pfad = pfad.relative_to(PROJEKT_STAMM)
