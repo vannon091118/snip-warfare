@@ -659,7 +659,7 @@ def pruefe_pyramide(dateien):
     for pfad, code in dateien:
         rel = pfad.relative_to(PROJEKT_STAMM)
         normalisiert = str(rel).replace("\\", "/")
-        if normalisiert == "core/weltuhr.gd":
+        if normalisiert == "core/logic/clock/weltuhr.gd":
             continue
         if "ticks_aus_faktor" in code and "Kern_Weltuhr.ticks_aus_faktor" in code:
             # Reine Delegation ist erlaubt, keine eigene Formel daneben.

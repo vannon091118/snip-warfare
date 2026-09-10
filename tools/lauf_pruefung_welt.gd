@@ -15,7 +15,7 @@ func _init() -> void:
 	# Autoload-Ersatz: Der Testlauf startet ohne Hauptszene, deshalb wird die
 	# zentrale Weltuhr hier als Wurzelkind nachgebaut, damit Manager-Module,
 	# die den Weltuhr-Tick erwarten, auch im Test kompilieren und ticken.
-	var weltuhr_skript: GDScript = load("res://core/weltuhr.gd")
+	var weltuhr_skript: GDScript = load("res://core/logic/clock/weltuhr.gd")
 	if weltuhr_skript != null:
 		var weltuhr: Node = weltuhr_skript.new()
 		weltuhr.name = "Weltuhr"
