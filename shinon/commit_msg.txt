@@ -1,11 +1,9 @@
-1. Du wolltest eine zentrale Laufzeitwahrheit statt paralleler Zustände, also habe ich dem Spiel die doppelte Karte weggenommen, die es unbemerkt zweimal besaß.
+1. Du wolltest den Architektur-Lock, der jedem späteren Agenten ohne Rätselraten zeigt, wer in jeder Domäne die Daten besitzt, wer Instanzen erzeugt, welche Maschine sie verarbeitet und über welche Grenze neuer Inhalt hineinwächst, ohne die Maschinen jedes Mal umzubauen.
 
-2. Beim Laden kopierte der Ladevorgang die aktive Karte als Wörterbuch in das Szenen-Modell, die World hielt danach eine veraltete Zweitinstanz, und jedes Speichern ohne Umweg schrieb diese Leiche auf die Platte.
+2. Dafür habe ich in Architektur.md den neuen Abschnitt 7c mit acht Domänen-Einträgen niedergeschrieben: Kern, Objekte und Tiere, Jobs und Einheiten, Population, Gebäude und Produktion, Economy, die Welt- und Karten-Ebene und die UI, jeder mit Datenbesitzer, Erzeugungsweg, Maschine und Erweiterungsgrenze am belegten Codepfad.
 
-3. In welt_world.gd lebt jetzt model_uebernehmen: Die World zeigt auf die laufende Instanz der Szene, in welt_ladevorgang.gd wird die geladene Karte übernommen statt kopiert, das Erzeugen trägt die Szene-Karte direkt als Basis ein, und alte Einzelwelt-Dateien bekommen beim Laden eine Ein-Map-World als Erbe.
+3. Die gemeinsame Grenzregel steht am Ende des Abschnitts: Inhalt wächst als Daten plus Asset in die Registry seiner Domäne, eine Maschine wird nur bei nachgewiesener fehlender Fähigkeit berührt und dann als eigener Infrastruktur-Slice mit sichtbarer Verifikation, nie als versteckter Sonderfall.
 
-4. In welt_pause_menue.gd starb der Aufruf einer Methode, die es nirgends gab, und jedes Speichern wäre deshalb geknallt; jetzt läuft es über die Instanz-Übernahme mit echten Methoden.
+4. Zwei erloschene Aussagen sind aus demselben Dokument geschnitten: Der gelöschte Kern_SteuerungUebersetzer war noch als Leser der Steuerungs-Registry eingetragen und heißt jetzt richtig Ui_EingabeSteuerung und Ui_KameraSteuerung, und die Beschreibung des Ladens behauptete noch den Wörterbuch-Kopierpfad, der seit der Eine-Kartenwahrheit durch die Instanz-Übernahme ersetzt ist.
 
-5. Die Sitzung trägt nur noch den Verweis, der Beweislauf prüft als 27. Prüfung, dass Szene und World dasselbe Objekt teilen und der Speicher-Rundlauf den echten Zustand trägt.
-
-6. Der Preflight zählt 137 Klassen auf 154 Dateien ohne Befund, im Spiel speichert der Pause-Knopf jetzt wirklich, und Expansion wie Laden zeigen dieselbe Karte, die auch auf der Platte landet.
+5. Der Preflight zählt 137 Klassen auf 154 Dateien ohne Befund, der Warnungs-Scan bleibt grün, Dokumentation allein berührt kein Verhalten, und der nächste Agent hat seine Besitz- und Grenz-Karte für alle Domänen.
