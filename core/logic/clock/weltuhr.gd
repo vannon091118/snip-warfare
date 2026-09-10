@@ -25,6 +25,15 @@ func _process(delta: float) -> void:
 		_tick_nummer += 1
 		tick.emit(_tick_nummer, 1.0 / TICK_RATE_HZ)
 		ticks_dieses_frames += 1
+	# Spiralen-Schutz: Bricht die Schleife am Rahmen-Maximum ab, darf der
+	# Rest im Akkumulator nicht stehen bleiben, sonst jagt die Uhr nach
+	# jedem Ruckler dauerhaft mit vollem Rahmen-Budget und holt nie wieder
+	# auf. Alles ueber einem vollen Rahmen-Budget faellt bewusst weg, der
+	# Rueckstand wird verworfen statt nachgeholt, und der Verlust wird
+	# gemeldet, damit kein Zeitraffer unbemerkt bleibt.
+	if _akkumulator > rahmen_budget():
+		_akkumulator = rahmen_budget()
+		push_warning("Weltuhr: Rueckstand nach Ruckler verworfen, naechste Rahmen laufen mit vollem Budget.")
 
 ## Einzige zentrale Übersetzung faktor -> ticks im ganzen Projekt.
 ## Kein anderes System rechnet dies selbst, alle delegieren hierhin.
@@ -36,6 +45,13 @@ static func faktor_aus_ticks(ticks: int) -> float:
 	if ticks <= 0:
 		return FAKTOR_MIN
 	return clampf(float(ticks) / (FAKTOR_SEKUNDEN * TICK_RATE_HZ), FAKTOR_MIN, FAKTOR_MAX)
+
+## Das Rahmen-Budget in Sekunden: Der hoechste Reststand, den der
+## Akkumulator nach einem Rahmen tragen darf. Nur die Uhr selbst kennt
+## diese Übersetzung, alle anderen lesen sie hier ab.
+static func rahmen_budget() -> float:
+	return float(MAX_TICKS_PRO_FRAME) / TICK_RATE_HZ
+
 
 func tick_nummer() -> int:
 	return _tick_nummer

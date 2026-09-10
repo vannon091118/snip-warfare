@@ -59,6 +59,14 @@ func _ready() -> void:
 	_map_fabrik.einrichten(_generator)
 	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)
 	_tageszyklus.einrichten(6.0, 4.0, 2.0)
+	# Besitz-Korrektur: Die Tageszyklus-Maschine ist eine Weltmaschine und
+	# hängt seit diesem Slice direkt an der zentralen Weltuhr, statt vom
+	# Einheiten-Manager mitgetickt zu werden. Die Szene verbindet den
+	# Tick der Maschine selbst und löst die Uhr zur Laufzeit auf, damit
+	# Headless-Testläufe ohne Autoloads kompilierbar bleiben.
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_tageszyklus.tick):
+		weltuhr.tick.connect(_tageszyklus.tick)
 	_tages_overlay = preload("res://world/scenes/tageszyklus_overlay.gd").new()
 	(_tages_overlay as CanvasLayer).layer = 20
 	add_child(_tages_overlay)

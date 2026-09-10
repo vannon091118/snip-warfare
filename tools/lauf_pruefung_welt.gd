@@ -553,6 +553,39 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Modifikator-Einfluss aggregiert (schnell wirkt 1x mit Faktor 1.5)")
+	# Tageszyklus-Besitz: Die Weltmaschine tickt durch ihren eigenen Aufruf
+	# an der Weltuhr, waehrend der Einheiten-Takt sie nicht mehr anstoesst.
+	var zyklus := Welt_TageszyklusMaschine.new()
+	zyklus.einrichten(6.0, 4.0, 2.0)
+	var takte_vor := zyklus._tick_in_takt
+	var manager_ohne_rolle := Einheit_Manager.new()
+	manager_ohne_rolle.tageszyklus_setzen(zyklus)
+	manager_ohne_rolle._auf_tick(1, 1.0 / 24.0)
+	var takte_nach_manager := zyklus._tick_in_takt
+	zyklus.tick()
+	var takte_nach_eigen := zyklus._tick_in_takt
+	if takte_nach_manager != takte_vor or takte_nach_eigen != takte_vor + 1:
+		print("FEHLER: Tageszyklus-Besitz falsch (vor %d, nach Manager %d, nach eigen %d)" % [takte_vor, takte_nach_manager, takte_nach_eigen])
+		fehler += 1
+	else:
+		print("OK: Tageszyklus tickt nur durch eigenen Aufruf, Einheiten-Manager stoesst nichts an")
+	# Weltuhr-Spiralen-Schutz: Ein Riesen-Rahmen hinterlaesst keinen
+	# Zeitraffer-Reststand; der normale Rahmen danach tickt genau einmal.
+	var uhr := Kern_Weltuhr.new()
+	var budget := Kern_Weltuhr.rahmen_budget()
+	uhr._process(2.0)
+	var uhr_ticks_nach_stall := uhr._tick_nummer
+	var uhr_rest_nach_stall := uhr._akkumulator
+	uhr._process(Kern_Weltuhr.rahmen_budget() + 0.01)
+	var uhr_ticks_nach_erstem := uhr._tick_nummer
+	uhr._process(Kern_Weltuhr.rahmen_budget() + 0.01)
+	var uhr_ticks_nach_zweitem := uhr._tick_nummer
+	uhr.free()
+	if uhr_ticks_nach_stall != Kern_Weltuhr.MAX_TICKS_PRO_FRAME or uhr_rest_nach_stall > budget + 0.0001 or uhr_ticks_nach_zweitem < uhr_ticks_nach_erstem + Kern_Weltuhr.MAX_TICKS_PRO_FRAME:
+		print("FEHLER: Weltuhr-Spiralenschutz falsch (ticks %d, rest %.4f, dann %d/%d)" % [uhr_ticks_nach_stall, uhr_rest_nach_stall, uhr_ticks_nach_erstem, uhr_ticks_nach_zweitem])
+		fehler += 1
+	else:
+		print("OK: Weltuhr wirft Ruckler-Rueckstand weg, Folge-Rahmen ticken im Rahmen-Budget und wachsen linear")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

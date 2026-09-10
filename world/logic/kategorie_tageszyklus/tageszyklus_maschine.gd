@@ -31,7 +31,11 @@ func _takt_ticks_fuer(minuten: float) -> int:
 	var faktor := sekunden / 10.0
 	return Kern_Weltuhr.ticks_aus_faktor(faktor)
 
-func tick() -> void:
+func tick(_uhr_tick_nummer: int = 0, _uhr_delta: float = 0.0) -> void:
+	# Die Maschine hängt direkt an der Weltuhr und nimmt deren Signatur
+	# an, ohne die Werte zu lesen: Ihr Zustand zählt eigene Takte im
+	# Taktzyklus. Die Vorgabewerte erlauben weiterhin den nackten Aufruf
+	# aus Prüfungen ohne Uhr.
 	_tick_in_takt += 1
 	var takt_ticks := _takt_ticks_fuer(takt_minuten)
 	var tag_ticks := _takt_ticks_fuer(tag_minuten)

@@ -13,7 +13,7 @@ var _job_registry := Job_Registry.new()
 var _need_registry := Pop_NeedRegistry.new()
 var _mood_mod_registry := Pop_MoodModifikatorRegistry.new()
 var _waerme_feld: Welt_WaermeFeld = Welt_WaermeFeld.new()
-var _tageszyklus: Welt_TageszyklusMaschine = Welt_TageszyklusMaschine.new()
+var _tageszyklus: Welt_TageszyklusMaschine = null
 var _zufall := Kern_Zufall.new()
 var _nahrung_je_einheit_je_takt: float = 0.8
 var _model: Welt_Model = null
@@ -169,8 +169,9 @@ func einheit_job_abbrechen(einheit_index: int) -> void:
 	darsteller.animation_setzen(status.animation())
 
 func _auf_tick(nummer: int, delta: float) -> void:
-	if _tageszyklus != null:
-		_tageszyklus.tick()
+	# Der Tageszyklus tickt nicht mehr hier: Die Weltmaschine hängt seit
+	# der Besitzkorrektur direkt an der Weltuhr und lebt nicht mehr in
+	# der Einheiten-Domäne. Dieser Takt kennt nur Einheiten-Arbeit.
 	var takt_ticks := Kern_Weltuhr.ticks_aus_faktor(6.0 * 60.0 / 10.0)
 	var verbrauch_faellig := takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0
 	if verbrauch_faellig:
