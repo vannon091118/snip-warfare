@@ -15,7 +15,7 @@ const KONFIG_PFAD := "res://game/data/ressourcen.json"
 var _timeline: Kern_Timeline = null
 
 ## Kategorie daten: Instanzen der Ressourcen-Datenklassen und der aktuelle Zustand.
-var ressourcen_objekte: Array[Resource_Basis] = []
+var ressourcen_objekte: Array[Ressource_Basis] = []
 var aktueller_zustand: Dictionary = {}
 
 ## Kategorie logik: Zuordnungen, Schema-Ausführung und Signale.
@@ -45,18 +45,18 @@ func _lade_ressourcen() -> void:
 		ressourcen_objekte.append(objekt)
 		_objekte_nach_id[ressourcen_id] = objekt
 
-func _ressourcen_klasse_fuer(ressourcen_id: String) -> Resource_Basis:
+func _ressourcen_klasse_fuer(ressourcen_id: String) -> Ressource_Basis:
 	# Zentrale Zuordnung: jede Ressource erhält ihre eigene Datenklasse.
 	match ressourcen_id:
 		"holz":
-			return Resources_Wood.new()
+			return Ressource_Holz.new()
 		"stein":
-			return Resources_Stone.new()
+			return Ressource_Stein.new()
 		"fleisch":
-			return Resources_Meat.new()
+			return Ressource_Fleisch.new()
 		"werkzeug":
-			return Resources_Werkzeug.new()
-	return Resource_Basis.new()
+			return Ressource_Werkzeug.new()
+	return Ressource_Basis.new()
 
 func _startzustand_fahren() -> void:
 	# Startzustand aus dem Schema fahren, damit die Bestände von Anfang an
@@ -68,7 +68,7 @@ func _bestaende_lesen() -> Dictionary:
 
 func ressource_ids() -> Array[String]:
 	var ids: Array[String] = []
-	for objekt: Resource_Basis in ressourcen_objekte:
+	for objekt: Ressource_Basis in ressourcen_objekte:
 		ids.append(objekt.ressourcen_id)
 	return ids
 

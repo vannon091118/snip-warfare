@@ -72,7 +72,25 @@ offset_right = 136.0
 offset_bottom = 170.0
 text = "Hauptmenü"
 
+[node name="WarumKnopf" type="Button" parent="CanvasLayer"]
+unique_name_in_owner = true
+offset_left = 144.0
+offset_top = 130.0
+offset_right = 244.0
+offset_bottom = 170.0
+text = "Warum?"
+
+[node name="WarumFenster" type="AcceptDialog" parent="CanvasLayer"]
+unique_name_in_owner = true
+title = "Warum ist das so?"
+size = Vector2i(560, 340)
+
 [node name="AuswahlRechteckEbene" type="CanvasLayer" parent="."]
+
+[node name="WarumText" type="Label" parent="CanvasLayer/WarumFenster"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 2
 layer = 10
 
 [node name="AuswahlRechteck" type="Control" parent="AuswahlRechteckEbene"]

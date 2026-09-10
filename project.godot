@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Weltuhr="*res://core/weltuhr.gd"
+Weltuhr="*res://core/logic/clock/weltuhr.gd"
 WeltSitzung="*res://ui/logic/kategorie_ui/ui_welt_sitzung.gd"
 KernSignalBusAutoload="*res://core/logic/events/kern_signal_bus.gd"
 

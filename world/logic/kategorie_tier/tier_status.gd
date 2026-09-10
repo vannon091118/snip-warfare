@@ -90,7 +90,7 @@ func schaden_nehmen(schaden: int) -> int:
 	hp -= verbraucht
 	var b := Kern_SignalBus.bus()
 	if b != null:
-		b.schaden_erhalten.emit(_welt_position, verbraucht, "physisch")
+		b._emit_schaden(_welt_position, verbraucht, "physisch")
 	if hp <= 0:
 		_zu_zustand_wechseln(Zustand.TOT)
 	return verbraucht
@@ -106,7 +106,7 @@ func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
 	if neuer_zustand == Zustand.TOT and alter_zustand != Zustand.TOT:
 		var b2 := Kern_SignalBus.bus()
 		if b2 != null:
-			b2.gestorben.emit(_welt_position, tier_id, false)
+			b2._emit_gestorben(_welt_position, tier_id, false)
 
 func ticks_fuer_faktor() -> int:
 	return Kern_Weltuhr.ticks_aus_faktor(effektiver_faktor())

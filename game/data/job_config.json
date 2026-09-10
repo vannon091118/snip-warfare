@@ -1,5 +1,6 @@
 {
   "holzfaeller": {
+    "script": "res://game/logic/kategorie_job/job_holzfaeller.gd",
     "name": "Holzfäller",
     "ressource": "holz",
     "animation": "hacken",
@@ -12,11 +13,10 @@
     "reichweite": 140.0,
     "sammel_auf_flaeche": true,
     "loop": true,
-    "mindest_tragekraft": 5,
-    "benoetigt_werkzeug": "axt",
-    "koerperliche_anforderung": "schwer"
+    "mindest_tragekraft": 5
   },
   "steinmetz": {
+    "script": "res://game/logic/kategorie_job/job_steinmetz.gd",
     "name": "Steinmetz",
     "ressource": "stein",
     "animation": "hacken",
@@ -28,11 +28,10 @@
     "harvest_menge": 10,
     "reichweite": 140.0,
     "sammel_auf_flaeche": false,
-    "mindest_tragekraft": 10,
-    "benoetigt_werkzeug": "spitzhacke",
-    "koerperliche_anforderung": "sehr_schwer"
+    "mindest_tragekraft": 10
   },
   "jaeger": {
+    "script": "res://game/logic/kategorie_job/job_jaeger.gd",
     "name": "Jäger",
     "ressource": "fleisch",
     "animation": "hacken",
@@ -45,10 +44,10 @@
     "reichweite": 160.0,
     "sammel_auf_flaeche": false,
     "mindest_tragekraft": 3,
-    "benoetigt_werkzeug": "bogen",
-    "koerperliche_anforderung": "mittel"
+    "loop": false
   },
   "holzfaeller_stumpf": {
+    "script": "res://game/logic/kategorie_job/job_holzfaeller_stumpf.gd",
     "name": "Holzfäller (Stumpf)",
     "ressource": "holz",
     "animation": "hacken",
@@ -61,11 +60,10 @@
     "reichweite": 120.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 3,
-    "benoetigt_werkzeug": "axt",
-    "koerperliche_anforderung": "leicht"
+    "mindest_tragekraft": 3
   },
   "jaeger_kadaver": {
+    "script": "res://game/logic/kategorie_job/job_jaeger_kadaver.gd",
     "name": "Jäger (Kadaver)",
     "ressource": "fleisch",
     "animation": "hacken",
@@ -78,11 +76,10 @@
     "reichweite": 120.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 2,
-    "benoetigt_werkzeug": "messer",
-    "koerperliche_anforderung": "leicht"
+    "mindest_tragekraft": 2
   },
   "heiler": {
+    "script": "res://game/logic/kategorie_job/job_heiler.gd",
     "name": "Heiler",
     "ressource": "",
     "animation": "heilen",
@@ -95,8 +92,6 @@
     "reichweite": 80.0,
     "sammel_auf_flaeche": false,
     "loop": false,
-    "mindest_tragekraft": 0,
-    "benoetigt_werkzeug": "verbandszeug",
-    "koerperliche_anforderung": "leicht"
+    "mindest_tragekraft": 0
   }
 }

@@ -68,7 +68,7 @@ func schaden_nehmen(schaden: int, zufall: Kern_Zufall, art: String = "physisch")
 	hp -= verbraucht
 	var bus := Kern_SignalBus.bus()
 	if bus != null:
-		bus.schaden_erhalten.emit(_welt_position, verbraucht, art)
+		bus._emit_schaden(_welt_position, verbraucht, art)
 	hp_veraendert.emit(hp, max_hp)
 	_folgen_würfeln(schaden, art, zufall)
 	if hp <= 0:
