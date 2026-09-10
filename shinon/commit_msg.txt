@@ -1,9 +1,7 @@
-1. Du wolltest wissen, ob die offenen Punkte der Inventur wirklich geschlossen sind, und ich habe jede Behauptung einzeln an den Code gehalten, statt ihr zu glauben, was sie über sich selbst schrieb.
+1. Du wolltest die alte Befundliste nach allen Aufträgen noch einmal gegen den Code geprüft haben und die letzten offenen Punkte geklärt wissen, also habe ich jeden G-Punkt einzeln nachgegriffen statt ihm sein altes Urteil zu glauben.
 
-2. In docs/Inventur_Stand.md ist die Pathfinding-Kette nicht länger als tot verschrieben, denn Einheit_WegPlanung trägt Kern_PathNetz, Kern_PathFinder und Kern_PathRegistry in den Zeilen 13 bis 15, wird im Einheit_Manager in den Zeilen 23 und 78 erzeugt und im Beweislauf in Zeile 618 benutzt, womit die Fundlisten B-01, B-02 und C-02 überholt sind.
+2. In docs/Inventur_Stand.md steht jetzt der volle Abgleich: G4 Wärme-Gates sind konsolidiert und lesen die Registry, G5 Tier-Geschwindigkeit war kein Doppel sondern zwei getrennte Bewegungsdomänen, G7 Tierfilter ist korrekt, der Bus-Wrapper-Abschluss ist belegt und das Sterbe-Signal der Vital-Maschine ist ein eigener Vertrag mit genau einem Abonnenten.
 
-3. Dieselbe Datei korrigiert ihre eigene Geschichte: Die Commits sind nachgezählte 73 statt behaupteter 75, der Abschnitt 2 trägt jetzt den Prüfzeitpunkt 2026-09-10 um 23:38 Uhr, und der Abschnitt 4 weist je früherer Behauptung den heutigen Beweis nach, von der Absender-Bindung der Ernte über die Wärme-Gates bis zur widerlegten Pause-Menü-Fehlermeldung.
+3. Offen geblieben sind die belegten Lücken: der Objekt-Faktor ohne einen einzigen Verbraucher, die logik_id als reine Dokumentation, die dreifach hart codierten Rhythmus-Werte, die fehlende Objekt-Registrier-Naht, die Raeuchelfleisch-Klasse ohne Zweig, das Wachstums-Literal 3, die acht handgeschriebenen Registrys, die SteuerungUebersetzer-Altlast in Architektur.md und der fehlende Preflight-Check für leslose Konfigurationsfelder.
 
-4. Die Abarbeitungsstände der Fundlisten stehen nun belegt in der Inventur: die script-Felder für alle sechs Jobs, die gelöschten Totklassen, die getilgten Spiegelfelder, die vier verbliebenen Skripte ohne UID-Begleiter und die beiden bewusst offenen Plugin-Grenzen Kern_LogikRegistry und Welt_GrenzProfil.
-
-5. Der Preflight bleibt mit 137 Klassen auf 154 Dateien ohne Befund grün, ein Dokument allein hat das Verhalten nicht berührt, und der nächste Agent startet mit einer Inventur, deren jeder Satz heute am Code bewiesen wurde.
+4. Der Preflight bleibt grün, dieses Dokument allein hat kein Verhalten berührt, und der nächste Agent bekommt die offenen Punkte als bewiesene, nicht als vermutete Liste.
