@@ -1,5 +1,6 @@
 {
   "nahrung": {
+    "script": "res://population/logic/needs/pop_need_nahrung.gd",
     "name": "Hunger",
     "beschreibung": "Der Magen knurrt und fordert Nachschub aus dem nächsten Lager. 0.8 Nahrung je Einheit je 6-Minuten-Takt.",
     "ressource": "fleisch",
@@ -16,6 +17,7 @@
     "nacht_minuten": 2
   },
   "waerme": {
+    "script": "res://population/logic/needs/pop_need_waerme.gd",
     "name": "Wärme",
     "beschreibung": "Kälte frisst nachts, Hitze brennt am Feuer. Nähe zum Feuer bestimmt die Wärme je Kachel als abfallender Vektor.",
     "ressource": "waerme",
