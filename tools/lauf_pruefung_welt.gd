@@ -457,9 +457,9 @@ func _init() -> void:
 	var rassen_manager := Einheit_Manager.new()
 	rassen_manager.need_baum_setzen(need_baum)
 	rassen_manager.einheit_hinzufuegen(Vector2.ZERO, "elf")
-	var elf_status: Einheit_Status = rassen_manager._einheiten[0]["status"]
-	if rassen_manager._einheiten[0]["rasse"] != "elf" or absf(elf_status._rasse_bewegungs_faktor - 1.15) > 0.001:
-		print("FEHLER: Manager vergibt Rasse oder Bewegungsfaktor nicht (rasse %s, faktor %f)" % [str(rassen_manager._einheiten[0]["rasse"]), elf_status._rasse_bewegungs_faktor])
+	var elf_status: Einheit_Status = rassen_manager.einheit_status(0)
+	if rassen_manager.einheit_rasse(0) != "elf" or absf(elf_status._rasse_bewegungs_faktor - 1.15) > 0.001:
+		print("FEHLER: Manager vergibt Rasse oder Bewegungsfaktor nicht (rasse %s, faktor %f)" % [rassen_manager.einheit_rasse(0), elf_status._rasse_bewegungs_faktor])
 		fehler += 1
 	else:
 		print("OK: Elf beim Spawn gesetzt, Bewegungsfaktor 1.15 in der Zustandsmaschine (70 Basis -> 80.5)")
@@ -486,7 +486,7 @@ func _init() -> void:
 	loop_manager.job_vergeben(0, "holzfaeller", Job_Basis.ZielTyp.OBJEKT, 0, Vector2(200, 200))
 	for _schritt in 240:
 		loop_manager._auf_tick(1, 1.0 / 24.0)
-	var loop_status: Einheit_Status = loop_manager._einheiten[0]["status"]
+	var loop_status: Einheit_Status = loop_manager.einheit_status(0)
 	var loop_laeuft_weiter := loop_status.zustand != Einheit_Status.Zustand.IDLE
 	var loop_ziel_index := loop_status.aktuelles_ziel_index
 	for _schritt in 150:
@@ -705,7 +705,7 @@ func _init() -> void:
 	var hunger_manager := Einheit_Manager.new()
 	hunger_manager.einrichten(hunger_modell, null, hunger_ressourcen)
 	hunger_manager.einheit_hinzufuegen(Vector2(100, 100))
-	var hunger_status: Einheit_Status = hunger_manager._einheiten[0]["status"]
+	var hunger_status: Einheit_Status = hunger_manager.einheit_status(0)
 	var hunger_vor: int = hunger_status.vital.hp
 	hunger_manager._nahrung_verteilen()
 	var hunger_nach: int = hunger_status.vital.hp

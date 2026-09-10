@@ -161,3 +161,22 @@ func _auf_tick(_nummer: int, delta: float) -> void:
 
 func tier_zahl() -> int:
 	return _tiere.size()
+
+## Geschlossener Schnittpunkt: Nur diese Leseschnittstellen duerfen Tiere
+## lesen. Direkter Zugriff auf _tiere bleibt der Manager-Interna.
+func tier_bestand() -> Array[Dictionary]:
+	# Kopie, damit niemand die Interna mutiert.
+	var kopie: Array[Dictionary] = []
+	for tier: Dictionary in _tiere:
+		kopie.append({
+			"id": tier.get("id", -1),
+			"tier_id": str(tier.get("tier_id", "")),
+			"position": tier.get("position", Vector2.ZERO),
+		})
+	return kopie
+
+func tier_info(tier_nummer: int) -> Dictionary:
+	for tier: Dictionary in _tiere:
+		if tier["id"] == tier_nummer:
+			return {"tier_id": str(tier["tier_id"]), "position": tier["position"]}
+	return {}

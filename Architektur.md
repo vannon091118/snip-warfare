@@ -19,7 +19,8 @@ Jede Klasse trägt ihre Kategorie als Präfix im Klassennamen und liegt im passe
 | `Job_` | Job-Zustandsmaschinen | `game/logic/kategorie_job/` | Holzfaeller, Steinmetz, Jaeger, HolzfaellerStumpf, JaegerKadaver, Heiler, Basis, Registry |
 | `Einheit_` | Spielfiguren-Domäne | `game/logic/kategorie_einheit/` | Status, VitalStatus (Leben und Modifikatoren), Darsteller, Manager, Ressourcen |
 | `Welt_` | Welt-Zustandsmaschinen und Dienste | `world/logic/` | Model, Registry, Speicher, Renderer (kategorie_welt), ObjektDarsteller (kategorie_welt), EditorWerkzeug (kategorie_welt), WaermeFeld (kategorie_waerme), TageszyklusMaschine (kategorie_tageszyklus), DefinitionRegistry + GrenzProfil (kategorie_welt) |
-| `Ui_` | Benutzeroberfläche | `ui/logic/kategorie_ui/` | MenueZustaende, WeltAuswahlDialog, WeltSitzung (Autoload) |
+| `Ui_` | Benutzeroberfläche | `ui/logic/kategorie_ui/` | Uebersetzer (Ui_EinheitPanel/Ui_TierPanel) lesen nur Snapshots, Fenster lesen nur Uebersetzer |
+| `Ui_` | Fenster-Szenen | `ui/scenes/panels/` | EinheitPanel, TierPanel als PackedScene (VBoxContainer, nur Observer), KontextMenue, Auswahl — jede als eigene Szene komponiert |
 
 Regeln:
 
@@ -78,6 +79,8 @@ Jedes Datenobjekt hat eine eigene Klasse mit exaktem, eindeutigem Namen. Die Reg
 | `Welt_BiomBasis` | `world/data/biome.json` (gemaessigt, tundra, steppe) |
 
 Erzeugungsorte: `Welt_Registry._objekt_klasse_fuer()` (inkl. Lagerfeuer), `Einheit_Ressourcen._ressourcen_klasse_fuer()`, `Tier_Registry._tier_klasse_fuer()`, `Welt_BiomRegistry` (biome), `Lager_Registry` (lager), `Orchestrator_Registry` (orchestrator_config), `Kern_ModifikatorRegistry` (kern_modifikatoren), `Pop_NeedRegistry._need_klasse_fuer()` (needs waerme), `Pop_MoodModifikatorRegistry` (mood_modifikatoren). Neue Datenklassen werden nur an diesen Stellen registriert.
+
+Neue Datensätze entstehen nur über Datenpool → Registry → Maschine. `Ui_EinheitPanel` liest Einheiten nur über `Einheit_Manager.einheit_beschreibung()` / `einheit_position()`, `Ui_TierPanel` nur über `Tier_Manager.tier_bestand()`. Kein Panel greift auf `_einheiten` oder `_tiere`. Fenster sind PackedScenes, die Szene stempelt per `PackedScene.instantiate()` + `add_child()` unter den HUD-CanvasLayer, setzt danach `einrichten()`; `_ready()` der Szene läuft garantiert, `get_node_or_null()` schützt jeden Zugriff.
 
 ## 4. Commit Gate Shinon im Root
 
@@ -197,6 +200,8 @@ Anbindung: `Einheit_Ressourcen.timeline_setzen(timeline)` setzt den Ursprungs-Sn
 ## 6. RT Pyramide
 
 Die Architektur ist eine echte Pyramide mit modularer Spitze. Basis: `Welt_Model` haelt nur Daten. Darueber: Registries halten alle exakten Datenklassen zentral und zeigen je Eintrag auf ein sichtbares Asset, Logiken und Modifikatoren sind generisch wiederverwendbar. Darueber: State Maschinen und Mutationsmaschinen mit je genau einer Verantwortung. Spitze: Endszene `world/scenes/welt.tscn` komponiert alle Untersysteme, besitzt aber selbst keine Logik und wird durch die Untersysteme modular bestimmt. `prototyp_karte.*` wurde restlos entfernt.
+
+Schnittstellenregel (geschlossen): Jede Manager-Interna ist privat; nur lesende Methoden freigegeben. Tests und Beobachter nutzen genau denselben Schnittpunkt wie das Spiel.
 
 Regeln der Pyramide:
 

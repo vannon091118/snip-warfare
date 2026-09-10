@@ -1,8 +1,10 @@
-1. Du hattest verlangt, dass der Einheiten-Manager nicht mehr alles allein trägt und der Rest des Manager-Slices mit Beweis und Lauf endlich fertig wird.
-2. Der Manager zog drei Maschinen aus seinem Bauch, die jetzt je eine eigene Datei führen: die Ziel-Suche findet Objekte und Tiere, die Ernte-Maschine verarbeitet Arbeitsschritte und die Versorgung verteilt Nahrung und Hunger.
-3. Dabei zeigte die Jagd-Kette im Beweislauf zwei echte Wunden: Die Tier-Ebene entstand erst im Szenen-Kontext, deshalb crashte jede Platzierung ohne Szene still, und der Kadaver-Ort wurde erst gelesen, nachdem das Tier schon aus der Welt getragen war.
-4. Die Tier-Verwaltung legt ihre Darsteller-Ebene jetzt faul an und die Ernte-Maschine liest den Kadaver-Ort vor dem Ernten, damit das Fleisch mit Lager auch wirklich am richtigen Lager landet.
-5. Der Beweislauf prüft jetzt die ganze Jagd über die echte Ernte-Maschine, den Hunger über die echte Manager-Kette und die Loop-Flags sauber über die Daten, und alle 42 Prüfungen stehen grün.
-6. Die Prüfung der Loop-Flags hatte selbst einen verkehrten Wächter, der Fehler meldete statt Bestand zu prüfen; auch das ist gerade gezogen.
-7. Im laufenden Spiel lief die Einheit mit Wegplanung zum Hasen, schlug es nieder und das Lager zeigte drei Fleisch, also ist die Kette sichtbar verifiziert.
-8. Offen bleibt die fremde Änderung am Hauptmenü-Szenenbild, die nicht aus dieser Arbeit stammt und nicht angetastet wurde.
+1. Du wolltest, dass das Spiel nichts Neues stapelt, sondern endlich zeigt, was es schon kann, mit Fenstern, die jeden Stickman und jedes Monster als eigenes Modul sichtbar machen, und Architektur.md hält diese geschlossenen Türen jetzt fest.
+2. Dafür schloss der Einheiten-Manager in einheit_manager.gd seine Listen hinter einem Vorhang und reicht nur noch beschreibende Kärtchen heraus, während der Tier-Manager in tier_manager.gd dasselbe mit seinem Bestand tut, ohne an ihrer inneren Arbeit zu rühren.
+3. Zwei kleine Übersetzer in ui_einheit_panel.gd und ui_tier_panel.gd lesen ausschließlich diese Kärtchen und schreiben sie in ruhige Zeilen, jede mit eigenem Speicher für den letzten Blick und ohne Griff in fremde Taschen.
+4. Das Einheitenfenster selbst wuchs in einheit_panel.gd und einheit_panel.tscn aus VBoxContainer und Label zu einer echten gepackten Szene, damit ihr Lebenslauf mit Ready und Onready wirklich atmet statt nur als Skript zu flackern.
+5. Das Tierfenster folgte dem gleichen Schnitt in tier_panel.gd und tier_panel.tscn und steht als zweite gepackte Szene daneben, still und beobachtend, ohne eigene Rechnung und ohne fremden Tick.
+6. Die Welt in welt.gd stempelt beide Pakete erst unter ihren eigenen Himmel, ruft danach die Einrichtung und greift nur über sichere Knoten nach oben, sodass kein Ast bricht, wenn ein Kind fehlt.
+7. Der Beweislauf in lauf_pruefung_welt.gd liest selbst nur noch über die geschlossenen Übergänge, prüft Rasse, Loop, Jagd und Hunger denselben Weg wie das Spiel und bleibt grün, weil kein direkter Griff mehr möglich ist.
+8. Preflight zählt weiter 137 Klassen auf 154 Dateien ohne Fund, jede Klasse trägt ihren Präfix am richtigen Ort und die Pyramide bleibt in Form, weil kein Fenster mehr schielt.
+9. Im Spiel hängen beide Fenster sichtbar unter der Ressourcen-Leiste, folgen jeder Auswahl und zeigen Breed, Job und Bestand, während die alten Pfade weiter denselben Tick-Quellen folgen und nichts doppelt rechnen.
+10. Offen bleibt nur die Feinjustierung, wie viel Fleisch je Zahl im Fenster noch stimmiger wirkt, aber die Schnittstellen stehen, sind geschlossen und locken niemanden mehr in Abkürzungen, sodass Neues nur über Datenpool und Registry wachsen kann.

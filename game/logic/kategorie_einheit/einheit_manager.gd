@@ -131,6 +131,48 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 func einheit_zahl() -> int:
 	return _einheiten.size()
 
+## Geschlossener Schnittpunkt: Nur diese Leseschnittstellen duerfen Einheiten
+## lesen. Direkter Zugriff auf _einheiten bleibt der Manager-Interna.
+func einheit_status(index: int) -> Einheit_Status:
+	if index < 0 or index >= _einheiten.size():
+		return null
+	return _einheiten[index]["status"] as Einheit_Status
+
+func einheit_rasse(index: int) -> String:
+	if index < 0 or index >= _einheiten.size():
+		return ""
+	return str(_einheiten[index].get("rasse", ""))
+
+func einheit_vital(index: int) -> Einheit_VitalStatus:
+	var st := einheit_status(index)
+	if st == null:
+		return null
+	return st.vital
+
+func einheit_beschreibung(index: int) -> Dictionary:
+	# Schlanker Snapshot fuer Observer: alles, was ein Fenster braucht,
+	# ohne die Interna preiszugeben.
+	if index < 0 or index >= _einheiten.size():
+		return {}
+	var st := einheit_status(index)
+	if st == null:
+		return {}
+	var hp := 0.0
+	if st.vital != null:
+		hp = st.vital.hp
+	var job_id := ""
+	if st.job != null:
+		job_id = st.job.job_id
+	return {
+		"position": st.welt_position,
+		"rasse": einheit_rasse(index),
+		"zustand": st.zustand,
+		"job_id": job_id,
+		"ziel_index": st.aktuelles_ziel_index,
+		"hp": hp,
+		"queue": st.queue_laenge(),
+	}
+
 func einheit_position(index: int) -> Vector2:
 	if index < 0 or index >= _einheiten.size():
 		return Vector2.ZERO

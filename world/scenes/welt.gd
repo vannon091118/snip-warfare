@@ -8,6 +8,8 @@ extends Node2D
 
 const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
 const _AuswahlManagerSkript := preload("res://ui/scenes/selection/auswahl_manager.gd")
+const _EinheitPanelSzene := preload("res://ui/scenes/panels/einheit_panel.tscn")
+const _TierPanelSzene := preload("res://ui/scenes/panels/tier_panel.tscn")
 
 ## Kategorie daten: Modell und Registries als Quellen der Visualisierung.
 ## Kategorie logik: Verdrahtung der Observer- und Visualisierungs-Spitzen.
@@ -46,6 +48,8 @@ var _kamera_steuerung := Ui_KameraSteuerung.new()
 var _eingabe_steuerung := Ui_EingabeSteuerung.new()
 var _pause_menue: Welt_PauseMenue = null
 var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
+var _einheit_panel: Control = null
+var _tier_panel: Control = null
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
@@ -138,6 +142,11 @@ func _ready() -> void:
 	_pause_menue = Welt_PauseMenue.new()
 	add_child(_pause_menue)
 	_pause_menue.menue_gewuenscht.connect(_auf_zurueck)
+	# Fenster-Panels: beide als modulare Control-Spitzen unter dem HUD-
+	# CanvasLayer eingehängt; sie lesen nur über ihre Panel-Controller aus
+	# den bestehenden Maschinen. Kein neuer Schnittpunkt, nur Sichtbarkeit.
+	_einheit_panel_bauen()
+	_tier_panel_bauen()
 	# Warum-Fenster: Die Status-Anzeige besitzt die Begründungsliste, die Szene
 	# übergibt nur ihre drei Spitzen. Reine Verdrahtung, keine Timeline-Logik.
 	_hud.warum_verdrahten(%WarumKnopf, %WarumFenster, %WarumText)
@@ -191,6 +200,30 @@ func _process(delta: float) -> void:
 	# niemals durch unmittelbares Setzen ihrer Position pro Frame.
 	_karten_beobachter.beobachten(_karten_viewer, _karten_info, _karten_ebene, _kamera_steuerung.kamera_position, _kamera)
 	_hud.produktion_anzeigen(_gebaeude.status_zeilen())
+
+func _einheit_panel_bauen() -> void:
+	var canvas: CanvasLayer = %HUD.get_parent() as CanvasLayer
+	if canvas == null:
+		return
+	# Godot-komponiert: PackedScene -> instantiate -> add_child.
+	# Kein .gd.new() direkt, damit _ready und @onready der Szene laufen.
+	_einheit_panel = _EinheitPanelSzene.instantiate()
+	_einheit_panel.name = "EinheitPanel"
+	_einheit_panel.position = Vector2(16, 192)
+	_einheit_panel.custom_minimum_size = Vector2(520, 80)
+	(_einheit_panel as Object).call("einrichten", _auswahl, _stockmaenner)
+	canvas.add_child(_einheit_panel)
+
+func _tier_panel_bauen() -> void:
+	var canvas: CanvasLayer = %HUD.get_parent() as CanvasLayer
+	if canvas == null:
+		return
+	_tier_panel = _TierPanelSzene.instantiate()
+	_tier_panel.name = "TierPanel"
+	_tier_panel.position = Vector2(16, 284)
+	_tier_panel.custom_minimum_size = Vector2(520, 80)
+	(_tier_panel as Object).call("einrichten", _tiere)
+	canvas.add_child(_tier_panel)
 
 func _unhandled_input(ereignis: InputEvent) -> void:
 	_eingabe_steuerung.unhandled_input(
