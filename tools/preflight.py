@@ -183,7 +183,7 @@ def _verzeichnis_ignoriert(pfad) -> bool:
     teile = rel.parts
     if not teile:
         return False
-    return teile[0] in {"addons", ".godot", ".freebuff", "tools/godot"} or (
+    return teile[0] in {"addons", "mcp_tools", ".godot", ".freebuff", "tools/godot"} or (
         len(teile) > 1 and "/".join(teile[:2]) == "tools/godot")
 
 
