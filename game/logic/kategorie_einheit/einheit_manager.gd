@@ -78,6 +78,10 @@ func need_baum_setzen(baum: Pop_NeedBaum) -> void:
 	_need_baum = baum
 
 func waerme_quellen_aktualisieren(feuer_positionen: Array[Vector2]) -> void:
+	# Die Kachelkante kommt aus dem Modell (eine Quelle), der Rest aus dem
+	# Feuer-Eintrag in element_katalog.json ueber den Waermesammler-Aufruf.
+	if _model != null:
+		_waerme_feld.kachel_groesse_setzen(_model.kachel_groesse)
 	_waerme_feld.quellen_setzen(feuer_positionen, 5, 1.0)
 
 func fortschritt_setzen(maschine: Welt_FortschrittsMaschine) -> void:
@@ -358,6 +362,21 @@ func einheit_job_abbrechen(einheit_index: int) -> void:
 	status.job_abbrechen()
 	var darsteller: Einheit_Darsteller = _einheiten[einheit_index]["darsteller"]
 	darsteller.animation_setzen(status.animation())
+
+func einheit_bewegen_nach(einheit_index: int, ziel_position: Vector2) -> bool:
+	# Spieler-Befehl: Die Einheit bricht laufende Jobs ab und marschiert zur Position.
+	if einheit_index < 0 or einheit_index >= _einheiten.size():
+		return false
+	var status: Einheit_Status = _einheiten[einheit_index]["status"]
+	if status == null:
+		return false
+	status.geh_befehl(ziel_position)
+	_planner_fuer(status, ziel_position)
+	status.blick_richtung_setzen(ziel_position.x >= einheit_position(einheit_index).x)
+	var darsteller: Einheit_Darsteller = _einheiten[einheit_index]["darsteller"]
+	darsteller.animation_setzen(status.animation())
+	darsteller.flip_h = not status.blick_richtung_rechts()
+	return true
 
 func _auf_tick(nummer: int, delta: float) -> void:
 	# Der Tageszyklus tickt nicht mehr hier: Die Weltmaschine hängt seit

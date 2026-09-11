@@ -197,6 +197,20 @@ func _arbeit_oder_gehen() -> void:
 	else:
 		_zu_zustand_wechseln(Zustand.ARBEITEN)
 
+func geh_befehl(ziel: Vector2) -> void:
+	# Direkter Marschbefehl des Spielers: Laufender Job wird abgebrochen,
+	# das Geh-Ziel gesetzt und der Zustand auf GEHEN gewechselt.
+	job = null
+	aktuelles_ziel_typ = Job_Basis.ZielTyp.OBJEKT
+	aktuelles_ziel_index = -1
+	ziel_ressource = ""
+	_loop_fortgesetzt = false
+	geh_ziel_setzen(ziel)
+	if welt_position.distance_to(ziel) > _geh_reichweite:
+		_zu_zustand_wechseln(Zustand.GEHEN)
+	else:
+		_zu_zustand_wechseln(Zustand.IDLE)
+
 func _geh_tick(delta: float) -> void:
 	# Bewegung in der Welt: Erst die Wegpunkte der Planung ablaufen, dann
 	# der Endziel-Schritt; ohne Planung läuft es geradlinig weiter.
@@ -208,7 +222,10 @@ func _geh_tick(delta: float) -> void:
 	var richtung := _geh_ziel - welt_position
 	var distanz := richtung.length()
 	if distanz <= _geh_reichweite or distanz <= 0.001:
-		_zu_zustand_wechseln(Zustand.ARBEITEN)
+		if job != null:
+			_zu_zustand_wechseln(Zustand.ARBEITEN)
+		else:
+			_zu_zustand_wechseln(Zustand.IDLE)
 		return
 	if _weg_index < _weg_ziele.size():
 		richtung = _weg_ziele[_weg_index] - welt_position

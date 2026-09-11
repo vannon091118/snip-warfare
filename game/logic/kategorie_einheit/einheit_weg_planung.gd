@@ -15,6 +15,8 @@ var _finder := Kern_PathFinder.new()
 var _registry := Kern_PathRegistry.new()
 var _cache: Dictionary = {}
 var _cache_reihenfolge: Array[String] = []
+## RUECKFALL: Kachelkante bis das Modell sie liefert (Testlaeufe ohne Welt).
+var _kachel_groesse: float = float(Welt_Model.KACHEL_GROESSE)
 
 ## Kategorie logik: Netz aus Modell, Weg je Start und Ziel.
 
@@ -25,6 +27,8 @@ func netz_erneuern(model: Welt_Model) -> void:
 	# sie zu clippen. Ein neuer Aufbau verwirft den Cache, weil alte
 	# Wege zu veralteten Sperrungen führen würden.
 	_registry.laden()
+	if model != null:
+		_kachel_groesse = maxf(float(model.kachel_groesse), 1.0)
 	var kollisionen: Array[Vector2] = []
 	if model != null:
 		for i in model.objekt_anzahl():
@@ -72,7 +76,7 @@ func weg_zu(start: Vector2, ziel: Vector2) -> PackedVector2Array:
 	for lauf: int in zellen.size():
 		if lauf == 0 or lauf == zellen.size() - 1:
 			continue
-		punkte.append(Vector2(zellen[lauf]) * Welt_Model.KACHEL_GROESSE + Vector2.ONE * (Welt_Model.KACHEL_GROESSE * 0.5))
+		punkte.append(Vector2(zellen[lauf]) * _kachel_groesse + Vector2.ONE * (_kachel_groesse * 0.5))
 	_cache[schluessel] = punkte
 	_cache_reihenfolge.append(schluessel)
 	if _cache_reihenfolge.size() > CACHE_MAX:
@@ -82,7 +86,7 @@ func weg_zu(start: Vector2, ziel: Vector2) -> PackedVector2Array:
 
 
 func _zelle_von(position: Vector2) -> Vector2i:
-	return Vector2i(int(position.x / Welt_Model.KACHEL_GROESSE), int(position.y / Welt_Model.KACHEL_GROESSE))
+	return Vector2i(int(position.x / _kachel_groesse), int(position.y / _kachel_groesse))
 
 func _ist_gesperrt(zelle: Vector2i) -> bool:
 	var knoten: Kern_PathKnoten = _netz.knoten_bei(zelle)
