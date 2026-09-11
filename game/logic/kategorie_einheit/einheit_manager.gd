@@ -24,6 +24,8 @@ var _weg_planung: Einheit_WegPlanung = null
 var _ziel_suche: Einheit_ZielSuche = null
 var _ernte: Einheit_ErnteMaschine = null
 var _versorgung: Einheit_Versorgung = null
+var _fortschritt: Welt_FortschrittsMaschine = null
+var _einwanderer_takt: int = 0
 
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
@@ -68,6 +70,9 @@ func need_baum_setzen(baum: Pop_NeedBaum) -> void:
 
 func waerme_quellen_aktualisieren(feuer_positionen: Array[Vector2]) -> void:
 	_waerme_feld.quellen_setzen(feuer_positionen, 5, 1.0)
+
+func fortschritt_setzen(maschine: Welt_FortschrittsMaschine) -> void:
+	_fortschritt = maschine
 
 func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
 	_tageszyklus = zyklus
@@ -267,6 +272,10 @@ func _auf_tick(nummer: int, delta: float) -> void:
 	var verbrauch_faellig := takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0
 	if verbrauch_faellig:
 		_nahrung_verteilen()
+		# Einwanderung: Der aktive Progressions-Zieltyp einwanderung liefert
+		# die Rate (einwanderer_je_tag), der Takt kommt aus dem Datenpool;
+		# der Spawn läuft über denselben einheit_hinzufuegen-Schnitt.
+		_einwanderung_ticken(takt_ticks)
 	for einheit: Dictionary in _einheiten:
 		var status: Einheit_Status = einheit["status"]
 		var mood: Pop_MoodMaschine = einheit["mood"]
@@ -314,6 +323,32 @@ func versuche_wachstum(haus_welt_position: Vector2) -> bool:
 		return false
 	einheit_hinzufuegen(haus_welt_position + Vector2(0, 20))
 	return true
+
+## Einwanderung: Die Einstiegs-Kette macht aus dem Wachstum eine automatische
+## Kette. Die Rate steht menschenlesbar in progression.json je Stufe; ohne
+## aktive einwanderung-Stufe kommt niemand. Der Ankömmling meldet sich an
+## die Maschine zurück, damit die Stufe weiterzählt.
+func _einwanderung_ticken(takt_ticks: int) -> void:
+	if _fortschritt == null or takt_ticks <= 0:
+		return
+	var stufe := _fortschritt.aktive_stufe()
+	if str(stufe.get("ziel_typ", "")) != "einwanderung":
+		return
+	_einwanderer_takt += 1
+	if _einwanderer_takt < takt_ticks:
+		return
+	_einwanderer_takt = 0
+	var je_tag := int(stufe.get("einwanderer_je_tag", 0))
+	for _i: int in je_tag:
+		einheit_hinzufuegen(lager_anker_position() + Vector2(24, 20))
+		_fortschritt.einwanderer_angekommen()
+
+func lager_anker_position() -> Vector2:
+	# Der erste Lagerpunkt ist der Anker der Einwanderung (Lagerfeuer oder
+	# erstes Haus); ohne Lager bleibt der Ursprung.
+	if _lager != null and _lager.lager_zahl() > 0:
+		return _lager.lager_position(0)
+	return Vector2.ZERO
 
 func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp, _ziel_index: int, _ressource: String, status: Einheit_Status) -> void:
 	# Die eigene Queue der Einheit startet den nächsten Auftrag: Der Manager

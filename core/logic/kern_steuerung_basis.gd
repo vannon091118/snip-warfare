@@ -74,3 +74,12 @@ func faktor_fuer_aktion(aktion_id: String) -> float:
 		if str(aktion.get("id", "")) == aktion_id:
 			return float(aktion.get("faktor", 1.0))
 	return 1.0
+
+func gesperrt_ab_stufe_fuer_aktion(aktion_id: String) -> int:
+	# Menschenlesbare Sperre je Aktion: 0 heißt immer offen, N heißt frei
+	# ab Progressions-Stufe N. Die Progressions-Maschine beantwortet die
+	# Frage, ob die Stufe erreicht ist; diese Klasse liest nur die Zahl.
+	for aktion in kontext_aktionen:
+		if str(aktion.get("id", "")) == aktion_id:
+			return int(aktion.get("gesperrt_ab_stufe", 0))
+	return 0

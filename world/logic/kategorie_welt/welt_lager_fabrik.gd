@@ -14,5 +14,9 @@ func anlegen_aus_welt(model: Welt_Model, lager: Lager_Manager, fallback_position
 			lager.lager_anlegen("kleines_lager", welt_pos)
 		elif element_id == "haus_gross":
 			lager.lager_anlegen("grosses_lager", welt_pos)
+		elif element_id == "lagerfeuer":
+			# Einstiegs-Anker: Das Lagerfeuer ist Lager und Wärmequelle
+			# in einem, bevor das erste Haus steht.
+			lager.lager_anlegen("kleines_lager", welt_pos)
 	if lager.lager_zahl() == 0:
 		lager.lager_anlegen("kleines_lager", fallback_position)

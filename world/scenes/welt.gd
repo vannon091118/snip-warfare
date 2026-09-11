@@ -40,6 +40,7 @@ var _lager_fabrik := Welt_LagerFabrik.new()
 var _tier_platzierer := Welt_TierPlatzierer.new()
 var _waerme_sammler := Welt_WaermeSammler.new()
 var _need_baum := Pop_NeedBaum.new()
+var _fortschritt := Welt_FortschrittsMaschine.new()
 var _karten_beobachter := Welt_KartenBeobachter.new()
 var _timeline := Kern_Timeline.new()
 var _feedback := Welt_FeedbackManager.new()
@@ -99,22 +100,30 @@ func _ready() -> void:
 	# Mood-Maschinen als Kinder und vergibt die Rassen-Schemata.
 	add_child(_need_baum)
 	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
+	_stockmaenner.fortschritt_setzen(_fortschritt)
 	_stockmaenner.need_baum_setzen(_need_baum)
 	_stockmaenner.lager_setzen(_lager)
 	_stockmaenner.tageszyklus_setzen(_tageszyklus)
 	_waerme_sammler.sammeln(_model, _stockmaenner)
 	add_child(_stockmaenner)
-	_gebaeude.einrichten(_model, _registry, _ressourcen, _lager)
+	_gebaeude.einrichten(_model, _registry, _ressourcen, _lager, _fortschritt)
 	add_child(_gebaeude)
 	_gebaeude.gebaeude_meldung.connect(_auf_gebaeude_meldung)
 	_stockmaenner.einheit_hinzufuegen(_kamera_steuerung.kamera_position + Vector2(0, 48))
+	# Einstiegs-Progression: Die Maschine ist die einzige Stufen-Wahrheit;
+	# die Szene verdrahtet nur, Bauabschlüsse und Einwanderer melden sich
+	# über die Manager, das HUD zeigt die aktuelle Zielzeile.
+	var fortschritt_registry := Welt_FortschrittsRegistry.new()
+	_fortschritt.registry_setzen(fortschritt_registry)
+	_fortschritt.ziel_erreicht.connect(_auf_ziel_erreicht)
+	_fortschritt.stufe_erreicht.connect(_auf_stufe_erreicht)
 	_karten_beobachter.einrichten(_model, _generator, _tiere)
 	_orchestrator_registry.laden(ORCHESTRATOR_PFAD)
 	_orchestrator_manager.referenzen_setzen(_stockmaenner, _model, _registry, _job_registry)
 	add_child(_orchestrator_manager)
 	_orchestrator_darsteller = _orchestrator_verdrahtung.verdrahten(_orchestrator_registry, _orchestrator_manager, self)
 	_hud.einrichten(_ressourcen)
-	_kontext.einrichten(_steuerung)
+	_kontext.einrichten(_steuerung, _fortschritt)
 	_kontext.aktion_gewaehlt.connect(_auf_kontext_aktion)
 	_hud.job_anzeigen("")
 	_biom_anzeigen()
@@ -139,6 +148,7 @@ func _ready() -> void:
 		"gebaeude": _gebaeude,
 		"map_fabrik": _map_fabrik,
 		"modell_ersetzen": _modell_ersetzen,
+		"fortschritt": _fortschritt,
 	})
 	var zurueck_knopf: Button = %ZurueckKnopf
 	zurueck_knopf.pressed.connect(_auf_zurueck)
@@ -258,6 +268,21 @@ func _auf_zurueck() -> void:
 
 func _auf_gebaeude_meldung(meldung_text: String) -> void:
 	_hud.meldung_setzen(meldung_text)
+
+func _auf_ziel_erreicht(stufe: Dictionary) -> void:
+	_hud.meldung_setzen("Ziel erreicht: %s" % str(stufe.get("id", "")))
+	_hud.meldung_setzen(_fortschritt.ziel_zeile())
+
+func _auf_stufe_erreicht(stufe: Dictionary) -> void:
+	# Neue Stufe: Das HUD nennt die freigeschaltete Stufe und das nächste
+	# Ziel; das Kontextmenü baut seine Freischaltungen neu auf.
+	var freigaben: Array[String] = []
+	for gebaeude_id: Variant in (stufe.get("schaltet_frei", {}).get("gebaeude", []) as Array):
+		freigaben.append(str(gebaeude_id))
+	if not freigaben.is_empty():
+		_hud.meldung_setzen("Neu freigeschaltet: %s" % ", ".join(freigaben))
+	_hud.meldung_setzen(_fortschritt.ziel_zeile())
+	_kontext.eintraege_aufbauen()
 
 func _auf_timeline_eintrag(eintrag: Kern_TimelineEintrag) -> void:
 	# Reine Beobachtung: Die Timeline meldet, das HUD zeigt die Begruendung.

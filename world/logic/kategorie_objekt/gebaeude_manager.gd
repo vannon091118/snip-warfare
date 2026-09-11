@@ -7,11 +7,13 @@ class_name Gebaeude_Manager
 ## Bestände nur über die Ressourcen-Schnittstelle.
 
 signal gebaeude_meldung(text: String)
+signal gebaeude_fertiggestellt(gebaeude_id: String)
 
 ## Kategorie daten: Definitionen und die zwei Zustandsmaschinen.
 var _definitionen := Gebaeude_DefinitionRegistry.new()
 var _bau_maschine := Gebaeude_BauMaschine.new()
 var _produktions_maschine := Gebaeude_ProduktionsMaschine.new()
+var _fortschritt: Welt_FortschrittsMaschine = null
 
 ## Kategorie logik: Verbindungen zu anderen Domänen und Tick.
 var _model: Welt_Model = null
@@ -40,17 +42,23 @@ func _exit_tree() -> void:
 	if bus != null and bus.has_signal("menue_geoeffnet") and bus.menue_geoeffnet.is_connected(_auf_menue_geoeffnet):
 		bus.menue_geoeffnet.disconnect(_auf_menue_geoeffnet)
 
-func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_Ressourcen, lager: Lager_Manager) -> void:
+func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_Ressourcen, lager: Lager_Manager, fortschritt: Welt_FortschrittsMaschine = null) -> void:
 	_model = model
 	_registry = registry
 	_ressourcen = ressourcen
 	_lager = lager
+	_fortschritt = fortschritt
 
 func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
-	# Spieler löst den Bau aus: Kosten werden vorher vollständig geprüft und
-	# dann entnommen; das Gebäude erscheint im Modell mit Bauzustand.
+	# Spieler löst den Bau aus: Freigabe, Kosten und Lager werden vorher
+	# vollständig geprüft und dann entnommen; das Gebäude erscheint im
+	# Modell mit Bauzustand.
 	if _model == null or _ressourcen == null or _lager == null:
 		return {"ok": false, "grund": "nicht bereit"}
+	if _fortschritt != null:
+		var zugang := voraussetzung_erfuellt(gebaeude_id)
+		if not zugang.get("ok", false):
+			return zugang
 	if not _definitionen.hat_gebaeude(gebaeude_id):
 		return {"ok": false, "grund": "unbekanntes Gebaeude"}
 	var definition := _definitionen.definition_fuer(gebaeude_id)
@@ -73,6 +81,26 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	_model.objekt_feld_setzen(objekt_index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
 	gebaeude_meldung.emit("Bau angefordert: %s (%d Ticks)" % [definition.angezeigter_name, definition.bauzeit_ticks])
 	return {"ok": true}
+
+## Freigabe-Voraussetzungen aus der Definition: Jedes Gebäude kann andere
+## Gebäude verlangen (z. B. das Haus verlangt das Lagerfeuer); unbekannte
+## Voraussetzungen zählen nur, wenn sie als gebaute Objekte fehlen.
+func voraussetzung_erfuellt(gebaeude_id: String) -> Dictionary:
+	var definition := _definitionen.definition_fuer(gebaeude_id)
+	if definition == null:
+		return {"ok": false, "grund": "unbekanntes Gebaeude"}
+	for voraussetzung: String in definition.voraussetzungen:
+		if not _gebaeude_existiert_im_modell(voraussetzung):
+			return {"ok": false, "grund": "braucht zuerst: %s" % voraussetzung}
+	return {"ok": true}
+
+func _gebaeude_existiert_im_modell(gebaeude_id: String) -> bool:
+	if _model == null:
+		return false
+	for index in _model.objekt_anzahl():
+		if str(_model.objekt_feld(index, "gebaeude_id", "")) == gebaeude_id:
+			return true
+	return false
 
 func status_zeilen() -> Array[String]:
 	# Reine Beobachtung für das HUD: pro Gebäude eine kompakte Zeile.
@@ -145,6 +173,12 @@ func _bau_ticken(index: int, definition: Gebaeude_Definition) -> void:
 		_model.objekt_feld_setzen(index, "prod_fortschritt", 0)
 		_model.objekt_feld_setzen(index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
 		gebaeude_meldung.emit("%s ist fertig gebaut und wartet auf Eingänge." % definition.angezeigter_name)
+		# Die Progressions-Kette erfährt den Abschluss direkt: Wer dem Manager
+		# eine Maschine reicht, muss sie nicht zusätzlich verdrahten; das
+		# Signal bleibt für reine Beobachter wie das HUD daneben stehen.
+		if _fortschritt != null:
+			_fortschritt.gebaeude_fertiggestellt(definition.id)
+		gebaeude_fertiggestellt.emit(definition.id)
 
 func _produktion_ticken(index: int, definition: Gebaeude_Definition) -> void:
 	var zustand := {

@@ -122,7 +122,8 @@ Regeln des Gates und des Inits:
 | `game/data/animationen.json` | Sprite-Sheets, Frame-Maße, Ticks pro Frame | `Einheit_Darsteller` |
 | `game/data/job_config.json` | Harvest-Zeit, Menge, Reichweite, Zielressource je Job | `Job_Registry`, `Job_Basis` |
 | `game/data/ressourcen.json` | Ressourcen mit Icon-Pfaden | `Einheit_Ressourcen` |
-| `game/data/steuerung.json` | Menschenlesbare Steuerung WASD Kamera, Linksklick einzeln, Drag Masse, Rechtsklick Kontext sammeln abbauen mit Tooltip Werkzeug, faktor 1=10s | `Kern_SteuerungRegistry` -> `Ui_EingabeSteuerung` (Kamera, Auswahl, Kontext) + `Ui_KameraSteuerung` |
+| `game/data/steuerung.json` | Menschenlesbare Steuerung WASD Kamera, Linksklick einzeln, Drag Masse, Rechtsklick Kontext sammeln abbauen mit Tooltip Werkzeug, faktor 1=10s; je Bau-Aktion die Sperre `gesperrt_ab_stufe` als einzige Stufen-Wahrheit | `Kern_SteuerungRegistry` -> `Ui_EingabeSteuerung` (Kamera, Auswahl, Kontext) + `Ui_KameraSteuerung` + `KontextMenue` (ausgegraute Sperren) |
+| `game/data/progression.json` | Einstiegs-Kette als einzige Stufen-Wahrheit: Zieltyp (gebaeude_bauen oder einwanderung), Menge, Beschreibung und `schaltet_frei` je Stufe | `Welt_FortschrittsRegistry` -> `Welt_FortschrittsMaschine` (Stufen-Zustand, Gating, Signale) -> `Gebaeude_Manager` (Bauabschluss), `Einheit_Manager` (Einwanderung), `Welt` (HUD-Zielzeile) |
 | `world/data/element_katalog.json` | Platzierbare Objekte mit Kategorie | `Welt_Registry` |
 | `world/data/tier_verhalten.json` | Tierwerte (Trigger, Geschwindigkeit, Ertrag, HP) | `Tier_Verhalten` |
 | `world/data/biome.json` | Biome als Mutationen je Biom mit logik_id, modifikator, faktor | `Welt_BiomRegistry` + `Welt_BiomMutation` + `Welt_BiomManager` |

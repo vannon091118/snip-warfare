@@ -8,14 +8,16 @@ extends PopupMenu
 signal aktion_gewaehlt(aktion: Dictionary)
 
 var _steuerung: Kern_SteuerungRegistry = null
+var _fortschritt: Welt_FortschrittsMaschine = null
 
 ## Kategorie daten: die gewählte Aktion als letzter Zustand des Menüs.
 var letzte_aktion: Dictionary = {}
 
 ## Kategorie logik: Aufbau aus der Registry und Meldung der Wahl.
 
-func einrichten(steuerung: Kern_SteuerungRegistry) -> void:
+func einrichten(steuerung: Kern_SteuerungRegistry, fortschritt: Welt_FortschrittsMaschine = null) -> void:
 	_steuerung = steuerung
+	_fortschritt = fortschritt
 	eintraege_aufbauen()
 	if not id_pressed.is_connected(_auf_id):
 		id_pressed.connect(_auf_id)
@@ -36,8 +38,17 @@ func eintraege_aufbauen() -> void:
 	if _steuerung != null and _steuerung.steuerung != null:
 		aktionen = _steuerung.steuerung.kontext_aktionen
 	for aktion: Dictionary in aktionen:
+		# Einstiegs-Gating: Gesperrte Aktionen werden ausgegraut angezeigt,
+		# damit der Spieler sieht, dass es mehr zu entdecken gibt.
+		var gesperrt := false
+		if _fortschritt != null and _steuerung != null and _steuerung.steuerung != null:
+			gesperrt = not _fortschritt.stufe_frei(_steuerung.steuerung.gesperrt_ab_stufe_fuer_aktion(str(aktion.get("id", ""))))
 		var eintrag_idx := item_count
-		add_item(str(aktion.get("label", "")), eintrag_idx)
+		var label_text := str(aktion.get("label", ""))
+		if gesperrt:
+			label_text = "🔒 " + label_text
+		add_item(label_text, eintrag_idx)
+		set_item_disabled(eintrag_idx, gesperrt)
 		var icon_pfad := str(aktion.get("icon_pfad", ""))
 		if icon_pfad != "" and ResourceLoader.exists(icon_pfad):
 			set_item_icon(eintrag_idx, load(icon_pfad))

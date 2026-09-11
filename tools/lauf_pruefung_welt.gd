@@ -831,6 +831,59 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Ziel-Faktor skaliert die Arbeitszeit (2.0 halbiert, 0.5 verdoppelt), logik_id loest sich ueber die Logik-Registry auf")
+	# 30) Einstiegs-Progression als Verhalten: Erste Aktion ist der Bau des
+	#     Lagerfeuers; er schaltet das Bau-HUD und das Haus frei. Nach dem
+	#     Haus laeuft die Einwanderung, und jede Stufe ist ueber den Datenpool
+	#     belegt, nicht ueber harte Werte im Test.
+	var prog_registry := Welt_FortschrittsRegistry.new()
+	var prog_maschine := Welt_FortschrittsMaschine.new()
+	prog_maschine.registry_setzen(prog_registry)
+	var prog_lager := Lager_Manager.new()
+	prog_lager.lager_anlegen("kleines_lager", Vector2(400, 400))
+	var prog_ressourcen := Einheit_Ressourcen.new()
+	prog_ressourcen.lager_setzen(prog_lager)
+	prog_lager.startbestand_setzen("holz", 60, 0)
+	prog_lager.startbestand_setzen("stein", 30, 0)
+	var prog_modell := Welt_Model.new()
+	prog_modell.karte_erzeugen(12, 12, "boden")
+	var prog_manager := Gebaeude_Manager.new()
+	prog_manager.einrichten(prog_modell, Welt_Registry.new(), prog_ressourcen, prog_lager, prog_maschine)
+	# Startzustand: Das Haus ist gesperrt, das Lagerfeuer nicht.
+	var prog_start_ok := not prog_maschine.stufe_frei(1) and prog_maschine.stufe_frei(0)
+	# Verhaltensbeweis der Voraussetzung: Ohne Lagerfeuer verweigert der
+	# Manager den Hausbau mit dem menschenlesbaren Grund aus gebaeude.json.
+	var prog_haus_verweigert := prog_manager.bauen_anfordern("haus", Vector2(430, 400))
+	var prog_voraussetzung_ok := not bool(prog_haus_verweigert.get("ok", false)) \
+			and str(prog_haus_verweigert.get("grund", "")) == "braucht zuerst: lagerfeuer"
+	# Erste Aktion: Lagerfeuer bauen.
+	var prog_lagerfeuer := prog_manager.bauen_anfordern("lagerfeuer", Vector2(400, 400))
+	var prog_ziel_zeile_start := prog_maschine.ziel_zeile()
+	var prog_lagerfeuer_ok := bool(prog_lagerfeuer.get("ok", false))
+	var prog_lagerfeuer_indizes := prog_modell.objekte_mit_element_id("lagerfeuer")
+	# Bau in Ticks durchlaufen lassen, bis die Fertigmeldung wirklich kommt.
+	var prog_fertig_meldungen: Array[String] = []
+	prog_manager.gebaeude_fertiggestellt.connect(func(gebaeude_id: String) -> void: prog_fertig_meldungen.append(gebaeude_id))
+	for _t: int in range(200):
+		prog_manager._auf_tick(0, 0.0)
+	var prog_lagerfeuer_fertig := prog_fertig_meldungen.has("lagerfeuer")
+	var prog_haus_frei := prog_maschine.stufe_frei(1)
+	# Zweite Stufe: Haus bauen.
+	var prog_haus := prog_manager.bauen_anfordern("haus", Vector2(430, 400))
+	var prog_haus_ok := bool(prog_haus.get("ok", false))
+	for _t2: int in range(600):
+		prog_manager._auf_tick(0, 0.0)
+	var prog_haus_fertig := prog_fertig_meldungen.has("haus")
+	var prog_einwanderung_frei := str(prog_maschine.aktive_stufe().get("ziel_typ", "")) == "einwanderung"
+	var prog_rate := int(prog_maschine.aktive_stufe().get("einwanderer_je_tag", 0))
+	if not prog_start_ok or not prog_voraussetzung_ok or not prog_lagerfeuer_ok or not prog_lagerfeuer_fertig \
+			or not prog_haus_frei or not prog_haus_ok or not prog_haus_fertig or not prog_einwanderung_frei or prog_rate < 1:
+		print("FEHLER: Einstiegs-Kette bricht (start %s, voraussetzung %s, lagerfeuer %s/%s, haus frei %s, haus %s/%s, einwanderung %s, rate %d, ziel %s, feuer %d)" % [
+			str(prog_start_ok), str(prog_voraussetzung_ok), str(prog_lagerfeuer_ok), str(prog_lagerfeuer_fertig),
+			str(prog_haus_frei), str(prog_haus_ok), str(prog_haus_fertig), str(prog_einwanderung_frei),
+			prog_rate, prog_ziel_zeile_start, prog_lagerfeuer_indizes.size()])
+		fehler += 1
+	else:
+		print("OK: Einstiegs-Kette laeuft (Lagerfeuer gesetzt, Haus freigeschaltet und gebaut, Einwanderung %d je Tag)" % prog_rate)
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

@@ -1,0 +1,44 @@
+{
+  "_kommentar": "Menschenlesbare Einstiegs-Kette: Jede Stufe traegt Zieltyp, Menge und Freischaltungen; die Maschine rechnet ohne eigene Zahlen. Zieltypen sind gebaeude_bauen (Eintrag in world/data/gebaeude.json) und einwanderung (automatisches Wachstum). Die Sperren der Bau-Aktionen stehen als gesperrt_ab_stufe in game/data/steuerung.json.",
+  "stufen": [
+    {
+      "id": "lagerfeuer_setzen",
+      "ziel_typ": "gebaeude_bauen",
+      "gebaeude_id": "lagerfeuer",
+      "menge": 1,
+      "beschreibung": "Platziere das Lagerfeuer: Es ist dein Lager, deine Waermequelle und der Ankunftsort der Einwanderer.",
+      "schaltet_frei": {
+        "bau_hud": true,
+        "gebaeude": ["haus"],
+        "aktionen": ["bauen_haus"]
+      }
+    },
+    {
+      "id": "erstes_haus",
+      "ziel_typ": "gebaeude_bauen",
+      "gebaeude_id": "haus",
+      "menge": 1,
+      "beschreibung": "Baue dein erstes Haus: Es gibt Einwanderern ein Zuhause.",
+      "schaltet_frei": {
+        "gebaeude": ["werkstatt", "raeucherei"],
+        "aktionen": ["bauen_werkstatt", "bauen_raeucherei"]
+      }
+    },
+    {
+      "id": "einwanderung_laeuft",
+      "ziel_typ": "einwanderung",
+      "einwanderer_je_tag": 1,
+      "beschreibung": "Einwanderer ziehen in deine Haeuser; die Siedlung waechst.",
+      "schaltet_frei": {
+        "aktionen": ["expansieren"]
+      }
+    },
+    {
+      "id": "siedlung_waechst",
+      "ziel_typ": "einwanderung",
+      "einwanderer_je_tag": 1,
+      "beschreibung": "Wachse weiter: Werkzeuge, Eisen und bessere Nahrung warten.",
+      "schaltet_frei": {}
+    }
+  ]
+}

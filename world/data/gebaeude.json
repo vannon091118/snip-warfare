@@ -1,5 +1,47 @@
 [
   {
+    "id": "lagerfeuer",
+    "name": "Lagerfeuer",
+    "kategorie": "Basis",
+    "icon_pfad": "res://world/assets/terrain/lagerfeuer.svg",
+    "welt_objekt_id": "lagerfeuer",
+    "baukosten": {"holz": 0, "stein": 0},
+    "bauzeit_ticks": 60,
+    "arbeitskraft": "",
+    "voraussetzungen": [],
+    "lager_typ": "kleines_lager",
+    "einwanderer_lieferant": true,
+    "produktion": {
+      "inputs": [],
+      "outputs": [],
+      "dauer_ticks": 0,
+      "wiederholbar": false,
+      "blockiert_ohne_eingang": false,
+      "blockiert_ohne_lagerplatz": false
+    }
+  },
+  {
+    "id": "haus",
+    "name": "Haus",
+    "kategorie": "Basis",
+    "icon_pfad": "res://world/assets/terrain/haus.svg",
+    "welt_objekt_id": "haus",
+    "baukosten": {"holz": 12, "stein": 4},
+    "bauzeit_ticks": 360,
+    "arbeitskraft": "",
+    "voraussetzungen": ["lagerfeuer"],
+    "lager_typ": "kleines_lager",
+    "einwanderer_lieferant": true,
+    "produktion": {
+      "inputs": [],
+      "outputs": [],
+      "dauer_ticks": 0,
+      "wiederholbar": false,
+      "blockiert_ohne_eingang": false,
+      "blockiert_ohne_lagerplatz": false
+    }
+  },
+  {
     "id": "werkstatt",
     "name": "Werkstatt",
     "kategorie": "Produktion",

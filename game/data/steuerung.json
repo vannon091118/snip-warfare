@@ -21,6 +21,26 @@
     "position": "am Cursor",
     "aktionen": [
       {
+        "id": "bauen_lagerfeuer",
+        "label": "Bauen: Lagerfeuer",
+        "icon_pfad": "res://world/assets/terrain/lagerfeuer.svg",
+        "tooltip": "Dein erster Schritt: Lager, Waerme und Ankunftspunkt der Einwanderer, Werkzeug {werkzeug} wird nicht benoetigt",
+        "werkzeug": "keines",
+        "logik_id": "bauen",
+        "gebaeude_id": "lagerfeuer",
+        "gesperrt_ab_stufe": 0
+      },
+      {
+        "id": "bauen_haus",
+        "label": "Bauen: Haus",
+        "icon_pfad": "res://world/assets/terrain/haus.svg",
+        "tooltip": "Kostet 12 Holz und 4 Stein, gibt Einwanderern ein Zuhause, Werkzeug {werkzeug} wird nicht benoetigt",
+        "werkzeug": "keines",
+        "logik_id": "bauen",
+        "gebaeude_id": "haus",
+        "gesperrt_ab_stufe": 1
+      },
+      {
         "id": "sammeln",
         "label": "Sammeln",
         "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
@@ -45,7 +65,8 @@
         "tooltip": "Kostet 15 Holz und 8 Stein, Werkzeug {werkzeug} wird nicht benoetigt",
         "werkzeug": "keines",
         "logik_id": "bauen",
-        "gebaeude_id": "werkstatt"
+        "gebaeude_id": "werkstatt",
+        "gesperrt_ab_stufe": 2
       },
       {
         "id": "bauen_raeucherei",
@@ -54,7 +75,8 @@
         "tooltip": "Kostet 20 Holz und 12 Stein, raeuchert 3 Fleisch und 2 Holz zu Räucherfleisch, Werkzeug {werkzeug} wird nicht benoetigt",
         "werkzeug": "keines",
         "logik_id": "bauen",
-        "gebaeude_id": "raeucherei"
+        "gebaeude_id": "raeucherei",
+        "gesperrt_ab_stufe": 2
       },
       {
         "id": "expansieren",
@@ -62,7 +84,8 @@
         "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
         "tooltip": "Erzeugt eine neue generierte Karte, die zur neuen Basis wird, Werkzeug {werkzeug} wird nicht benoetigt",
         "werkzeug": "keines",
-        "logik_id": "expansieren"
+        "logik_id": "expansieren",
+        "gesperrt_ab_stufe": 3
       }
     ]
   },

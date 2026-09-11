@@ -33,6 +33,7 @@ var _karten_oeffnen: bool = false
 var _gebaeude: Gebaeude_Manager = null
 var _map_fabrik: Welt_MapFabrik = null
 var _modell_ersetzen: Callable = Callable()
+var _fortschritt: Welt_FortschrittsMaschine = null
 var _rechtsklick_welt_position := Vector2.ZERO
 
 ## Kategorie logik: Eingabe in Maschinen-Aufrufe übersetzen.
@@ -57,6 +58,7 @@ func einrichten(p: Dictionary) -> void:
 	_gebaeude = p.get("gebaeude")
 	_map_fabrik = p.get("map_fabrik")
 	_modell_ersetzen = p.get("modell_ersetzen", Callable())
+	_fortschritt = p.get("fortschritt")
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
 
@@ -147,6 +149,12 @@ func auf_verteilung(nahrung_je_takt: float) -> void:
 func auf_kontext_aktion(aktion: Dictionary) -> void:
 	var logik := str(aktion.get("logik_id", ""))
 	var label_text := str(aktion.get("label", ""))
+	# Einstiegs-Gating: Die menschenlesbare Sperre aus steuerung.json
+	# entscheidet; die Progressions-Maschine beantwortet nur die Frage.
+	if _fortschritt != null and not _fortschritt.stufe_frei(_steuerung.steuerung.gesperrt_ab_stufe_fuer_aktion(str(aktion.get("id", "")))):
+		if _hud != null:
+			(_hud as Variant).meldung_setzen("Noch nicht freigeschaltet: %s" % str(_fortschritt.ziel_zeile()))
+		return
 	if logik == "bauen":
 		_bauen_ausfuehren(aktion)
 		return
