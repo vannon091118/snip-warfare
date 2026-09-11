@@ -221,6 +221,8 @@ func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTy
 	var job := _job_registry.job_erzeugen(job_id)
 	if job == null:
 		return false
+	# G1: Der effektive Faktor des Ziels skaliert die Arbeitszeit des Jobs.
+	job.ziel_faktor_setzen(_ziel_suche.ziel_faktor_fuer(ziel_typ, ziel_index))
 	var ressource := job.ressource()
 	if status.zustand == Einheit_Status.Zustand.ARBEITEN or status.zustand == Einheit_Status.Zustand.GEHEN:
 		# Beschäftigt: Auftrag wird an die eigene Queue der Einheit gehängt;
@@ -326,7 +328,11 @@ func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp,
 		status.queue_vorne_entfernen()
 		return
 	status.queue_vorne_entfernen()
-	var ziel_position := _ziel_position_fuer(int(eintrag.get("ziel_typ", 0)), int(eintrag.get("ziel_index", -1)))
+	var ziel_typ := int(eintrag.get("ziel_typ", 0)) as Job_Basis.ZielTyp
+	var ziel_index := int(eintrag.get("ziel_index", -1))
+	# G1: Auch aus der Queue startet der Job mit dem Faktor seines Ziels.
+	job.ziel_faktor_setzen(_ziel_suche.ziel_faktor_fuer(ziel_typ, ziel_index))
+	var ziel_position := _ziel_position_fuer(int(eintrag.get("ziel_typ", 0)), ziel_index)
 	status.geh_ziel_setzen(ziel_position)
 	_planner_fuer(status, ziel_position)
 	status.job_vergeben(job, int(eintrag.get("ziel_typ", 0)),
@@ -351,6 +357,8 @@ func _auf_job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_zi
 	var ziel_position := _ziel_position_fuer(ziel_typ, such_index)
 	status.geh_ziel_setzen(ziel_position)
 	_planner_fuer(status, ziel_position)
+	# G1: Das neue Loop-Ziel bringt seinen eigenen Faktor mit.
+	job.ziel_faktor_setzen(_ziel_suche.ziel_faktor_fuer(ziel_typ, such_index))
 	status.job_loopy_fortsetzen(job, ziel_typ, such_index, job.ressource())
 
 func _auf_arbeitsschritt(ressource: String, menge: int, status: Einheit_Status) -> void:

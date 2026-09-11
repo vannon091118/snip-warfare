@@ -29,6 +29,20 @@ func ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2
 					return tier_pos
 	return Vector2.ZERO
 
+## G1-Lesepfad: Der effektive Faktor des Ziels. Objekte über das Modell und
+## die Welt-Registry, Tiere über den öffentlichen Leser des Tier-Managers;
+## ohne Treffer neutral 1.0.
+func ziel_faktor_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> float:
+	match ziel_typ:
+		Job_Basis.ZielTyp.OBJEKT:
+			if _model != null and ziel_index >= 0 and ziel_index < _model.objekt_anzahl():
+				var eintrag: Objekt_Basis = Welt_Registry.new().finde_objekt(_model.objekt_element_id(ziel_index))
+				return 1.0 if eintrag == null else eintrag.effektiver_faktor()
+		Job_Basis.ZielTyp.TIER:
+			if _tiere != null:
+				return _tiere.tier_effektiver_faktor(ziel_index)
+	return 1.0
+
 func ziel_existiert(status: Einheit_Status) -> bool:
 	if status.job == null:
 		return false

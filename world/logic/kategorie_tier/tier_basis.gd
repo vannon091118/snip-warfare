@@ -55,3 +55,8 @@ func effektive_logik() -> String:
 
 func effektiver_modifikator() -> String:
 	return modifikator_id
+
+## G1-Verbraucher: Derselbe Faktorpfad wie bei Objekt_Basis; der aggressive
+## Eisbär (faktor 1.2) macht so die Jagd messbar schneller als der Bär.
+func effektiver_faktor() -> float:
+	return faktor * Kern_LogikRegistry.geteilte().faktor_fuer(logik_id)

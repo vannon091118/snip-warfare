@@ -800,6 +800,37 @@ func _init() -> void:
 	else:
 		print("OK: Spielrhythmus aus needs.json (Takt %.1f, Tag %.1f, Nacht %.1f, Verbrauch %.1f), Nacht tritt ein (%d Tag, %d Nacht), Override wirkt" % [
 			rhythmus_probe.takt_minuten(), rhythmus_probe.tag_minuten(), rhythmus_probe.nacht_minuten(), 0.8, tag_seen, nacht_seen])
+	# 29) G1/G2-Verdrahtung: Der Ziel-Faktor des Objekts oder Tieres skaliert
+	#     die Arbeitszeit des Jobs, und jede logik_id löst sich über die
+	#     geteilte Kern_LogikRegistry auf. Vorher waren die Objekt-Faktoren
+	#     tote Felder ohne einen einzigen Verbraucher.
+	var faktor_job := Job_Registry.new().job_erzeugen("holzfaeller")
+	var faktor_ok := faktor_job != null
+	if faktor_ok:
+		faktor_job.ziel_faktor_setzen(2.0)
+		faktor_ok = faktor_job.harvest_zeit_ticks() == 120
+		faktor_job.ziel_faktor_setzen(0.5)
+		faktor_ok = faktor_ok and faktor_job.harvest_zeit_ticks() == 480
+		faktor_job.ziel_faktor_setzen(1.0)
+		faktor_ok = faktor_ok and faktor_job.harvest_zeit_ticks() == 240
+	var faktor_probe := Objekt_Basis.new()
+	faktor_probe.aus_katalog_eintrag({"id": "probe", "faktor": 2.0, "logik_id": "ressource_holz"})
+	var logik_registry := Kern_LogikRegistry.geteilte()
+	var faktor_logik_ok := is_equal_approx(faktor_probe.effektiver_faktor(), 2.0) \
+			and is_equal_approx(logik_registry.faktor_fuer("ressource_holz"), 1.0) \
+			and is_equal_approx(logik_registry.faktor_fuer("unbekannte_logik"), 1.0)
+	var faktor_ziele := Einheit_ZielSuche.new()
+	var faktor_modell := Welt_Model.new()
+	faktor_modell.karte_erzeugen(4, 4, "boden")
+	faktor_modell.objekt_hinzufuegen("baum", Vector2(64, 64))
+	faktor_ziele.einrichten(faktor_modell, null)
+	var faktor_ziel_ok := is_equal_approx(faktor_ziele.ziel_faktor_fuer(Job_Basis.ZielTyp.OBJEKT, 0), 1.0)
+	if not faktor_ok or not faktor_logik_ok or not faktor_ziel_ok:
+		print("FEHLER: Ziel-Faktor skaliert die Arbeitszeit nicht (job %s, logik %s, ziel %s)" % [
+			str(faktor_ok), str(faktor_logik_ok), str(faktor_ziel_ok)])
+		fehler += 1
+	else:
+		print("OK: Ziel-Faktor skaliert die Arbeitszeit (2.0 halbiert, 0.5 verdoppelt), logik_id loest sich ueber die Logik-Registry auf")
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

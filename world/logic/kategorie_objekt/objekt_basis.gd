@@ -45,3 +45,9 @@ func effektive_logik() -> String:
 
 func effektiver_modifikator() -> String:
 	return modifikator_id
+
+## G1-Verbraucher: Der effektive Faktor ist eigener Faktor mal dem
+## Basisfaktor der Logik aus kern_logik.json, gelöst über die geteilte
+## Kern_LogikRegistry. Unbekannte logik_id bleibt neutral mit 1.0.
+func effektiver_faktor() -> float:
+	return faktor * Kern_LogikRegistry.geteilte().faktor_fuer(logik_id)

@@ -88,6 +88,12 @@ func tier_art(tier_nummer: int) -> String:
 			return str(tier["tier_id"])
 	return ""
 
+## G1-Leser: Effektiver Faktor der Tierart (eigen × Logik-Basisfaktor aus
+## kern_logik.json); unbekannte Nummer bleibt neutral mit 1.0.
+func tier_effektiver_faktor(tier_nummer: int) -> float:
+	var daten := _verhalten.tier_daten(tier_art(tier_nummer))
+	return 1.0 if daten == null else daten.effektiver_faktor()
+
 func tier_position(tier_nummer: int) -> Vector2:
 	# Ungültige IDs liefern Vector2.INF, damit Aufrufer das Ziel prüfen können.
 	for tier: Dictionary in _tiere:

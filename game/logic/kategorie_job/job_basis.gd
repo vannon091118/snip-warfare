@@ -32,6 +32,7 @@ var _logik_id: String = ""
 var _modifikator_id: String = "normal"
 var _faktor: float = 1.0
 var _loop: bool = false
+var _ziel_faktor: float = 1.0
 var _ziel_objekte: Array[String] = []
 var _ziel_tiere: Array[String] = []
 
@@ -97,21 +98,31 @@ func modifikator_id() -> String:
 func faktor() -> float:
 	return clampf(_faktor, 0.1, 10.0)
 
+## G1: Der Manager setzt bei jedem Job-Start den effektiven Faktor des
+## Ziels (Objekt oder Tier); die Arbeitszeit teilt durch ihn. Faktor über
+## 1 heißt schneller, unter 1 langsamer, neutral bleibt 1.0.
+func ziel_faktor_setzen(neuer_zielfaktor: float) -> void:
+	_ziel_faktor = clampf(neuer_zielfaktor, 0.1, 10.0)
+
 func ticks_fuer_faktor() -> int:
 	return Kern_Weltuhr.ticks_aus_faktor(faktor())
 
 func harvest_zeit_ticks() -> int:
 	# Falls faktor gesetzt ist und keine feste harvest_zeit_ticks gewünscht wird,
 	# leitet sich die Zeit aus dem Faktor ab; andernfalls gilt der feste Wert.
+	var basis := -1
 	if konfiguration.has("faktor") and not konfiguration.has("harvest_zeit_ticks"):
-		return ticks_fuer_faktor()
+		basis = ticks_fuer_faktor()
+	elif konfiguration.has("harvest_zeit_ticks"):
+		basis = int(konfiguration.get("harvest_zeit_ticks", 24))
+	if basis < 0:
+		basis = 24
 	# Wenn beides gesetzt ist, skaliert der Modifikator die Basiszeit.
-	var basis := int(konfiguration.get("harvest_zeit_ticks", 24))
 	if konfiguration.has("faktor"):
 		# Faktor > 1 bedeutet schneller, also kürzere Zeit.
-		var skaliert := int(round(float(basis) / faktor()))
-		return maxi(skaliert, 1)
-	return maxi(basis, 1)
+		basis = maxi(int(round(float(basis) / faktor())), 1)
+	# G1: Der Ziel-Faktor des Objekts oder Tieres skaliert dieselbe Zeit.
+	return maxi(int(round(float(basis) / _ziel_faktor)), 1)
 
 func reichweite() -> float:
 	return float(konfiguration.get("reichweite", 140.0))

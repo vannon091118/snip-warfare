@@ -43,5 +43,12 @@
 	"verhalten": "ernte_fix",
 	"ressource": "fleisch",
 	"basis_faktor": 1.0
+  },
+  "waerme_quelle": {
+	"name": "Wärme geben",
+	"beschreibung": "Lagerfeuer spendet Wärme in seinem Radius; der Faktor skaliert die Wärmestärke.",
+	"verhalten": "waerme",
+	"ressource": "",
+	"basis_faktor": 1.0
   }
 }
