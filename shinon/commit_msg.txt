@@ -1,7 +1,5 @@
-1. Du wolltest das Schicksal der verwaisten Waerme-Felder kaelte_schwellwert und hitze_schwellwert in needs.json entscheiden, also habe ich ihre Rolle am lebenden Code geprüft und sie nicht zur zweiten Wahrheit gemacht.
-2. In population/data/needs.json tragen die vier Felder jetzt den Praefix _dokumentation_ und ein Feld _hinweis_waerme_gates erklaert, dass nur population/data/mood_modifikatoren.json ueber Pop_MoodModifikatorRegistry gelesen wird und diese Werte hier niemand liest.
-3. core/logic/clock/weltuhr.gd traegt mit ticks_aus_minuten die einzige echte Minutenrechnung mit eigenen Grenzen 0.1 bis 120 Minuten, damit Takt und Nacht nicht laenger auf 100 Sekunden geklemmt werden.
-4. population/logic/needs/pop_need_registry.gd und world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd geben den neuen Rhythmus 2 Minuten Takt mit 1.5 Tag und 0.5 Nacht aus dem weltrhythmus Abschnitt weiter, und population/scenes/verteilung_dialog.gd zeigt Startwert und Taktangabe aus denselben Daten.
-5. tools/lauf_pruefung_welt.gd beweist den Rhythmus als Verhalten mit 1930 Tag-Ticks und 490 Nacht-Ticks im vollen Takt, sodass die Nacht wirklich eintritt und der Tag laenger bleibt.
-6. Architektur.md haelt den neuen Stand 2 Minuten mit 1.5 Tag und 0.5 Nacht fest, und docs/Inventur_Stand.md benennt die Dokumentationsentscheidung und die behobene Nachtluecke ohne zweite Zahl.
-7. python tools/preflight.py meldet PREFLIGHT OK ohne Befunde, sodass die Dokumentation nicht luegt und keine Maschine heimlich die alten Felder liest.
+1. Du hast verlangt, dass jede harte Zahlenschwelle die schon in einem JSON Pool liegt mechanisch im Code auffliegt und nicht als stille zweite Wahrheit weiterlebt.
+2. In tools/preflight.py wohnt jetzt der neue Wächter E040, der alle echten Schwellen wie schwellwert und verbrauch_je_takt aus den Datenpools sammelt und jedes nackte Literal im GDScript dagegen haelt.
+3. Nur ein markierter RUECKFALL oder eine delegierte Lesestelle wie _schwellwert_von und ticks_aus_minuten darf dieselbe Zahl noch tragen, alles andere wird als doppelte Wahrheit angeprangert.
+4. In game/logic/kategorie_einheit/einheit_versorgung.gd traegt der Notwert 0.8 deshalb sein RUECKFALL Schild, damit der einzige Taktwert sauber aus needs.json kommt und niemand mehr heimlich dupliziert.
+5. Der Preflight bleibt gruen, der Wachhund bellt nur bei echtem Drift, und der naechste Slice kann ohne Zahlendrift wachsen weil die Daten jetzt allein bestimmen.

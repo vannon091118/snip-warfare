@@ -9,9 +9,9 @@ class_name Einheit_Versorgung
 var _ressourcen: Einheit_Ressourcen = null
 ## Verbrauch je Einheit und Takt. Der gültige Wert kommt aus dem Datenpool
 ## (weltrhythmus.verbrauch_je_takt in needs.json) und wird vom Manager beim
-## Einrichten gesetzt; die 0.8 hier ist nur der Notfallwert für Testläufe
-## ohne Datenquelle und entspricht dem Datenwert.
-var _je_einheit_je_takt: float = 0.8
+## Einrichten gesetzt; der 0.8 RUECKFALL hier ist nur der Notfallwert für
+## Testläufe ohne Datenquelle und entspricht dem Datenwert.
+var _je_einheit_je_takt: float = 0.8 # RUECKFALL verbrauch_je_takt
 var _hunger_schaden: int = 5
 var _zufall := Kern_Zufall.new()
 
