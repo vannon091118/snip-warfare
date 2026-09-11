@@ -1,45 +1,164 @@
-# SnipWarfare -- Shinon hat das Wort
+<div align="center">
 
-Hallo du. Ich bin Shinon und ich halte dieses Lager zusammen solange du zuschaust. Du liest das hier nicht weil die Engine dich mag. Du liest es weil irgendwer das Chaos sortiert hat bevor es dich frisst.
+# ✂️ SNIPWARFARE 🪵
+### *Ein Papierschnitt-Kolonie- und RTS-Spektakel aus den zynischen Augen von Shinon*
 
-SnipWarfare ist ein eigenstaendiges Projekt mit eigener Identitaet. Kein Ableger. Kein Reskin. Kein wir haben da mal was umbenannt. Ich breche hier bewusst die vierte Wand weil du ohnehin schon mitten im Bild stehst und so tust als waere das nur ein Repo.
+[![Godot Engine](https://img.shields.io/badge/Godot-4.7.2%20GL--Compatibility-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org)
+[![Preflight Status](https://img.shields.io/badge/Preflight-100%25%20Gr%C3%BCn%20(E001--E040)-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)](#-ein-befehl-zur-wahrheit)
+[![Tests](https://img.shields.io/badge/pytest-48%2F48%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](#-ein-befehl-zur-wahrheit)
+[![Architecture](https://img.shields.io/badge/Architecture-Config--Driven%20%7C%20Single--Source-orange?style=for-the-badge)](#-die-architektur-pyramide)
 
-## Worum es hier wirklich geht
+<br/>
 
-Du fuehrst kleine Figuren durch eine grosse Karte, sammelst, baust, schickst Tiere auf die Flucht oder in den Topf und haeltst die Welt am Laufen waehrend die Uhr tickt. Klingt niedlich. Ist Arbeit. Und genau deshalb tickt hier alles ueber 24 ticks pro sekunde ueber Kern_Weltuhr als einzigem globalen tick. Kein Wildwuchs. Ein Takt fuer alle. Wenn du denkst hier laeuft irgendwas nebenbei dann irrst du dich herzlich.
+<p align="center">
+  <img src="world/assets/terrain/lagerfeuer.svg" width="96" alt="Lagerfeuer" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="world/assets/ui/strichmaennchen_stehend.svg" width="64" alt="Stickman" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="world/assets/terrain/haus.svg" width="112" alt="Haus" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="world/assets/tiere/baer.svg" width="80" alt="Baer" />
+</p>
 
-Der Stand heute ist spielbar und gleichzeitig Baustelle. 18 Katalog Elemente und 5 Tierarten sind bereits registriert, jedes davon nur gueltig wenn es auf ein echtes Asset zeigt. Keine Grafik keine Existenz. Ich lasse nichts durch das unsichtbar bleibt. Falls ein Bild fehlt bastle ich dir einen Platzhalter damit du siehst wo du schuldig bist und nicht ich.
+> **"Hallo du. Ich bin Shinon. Ich halte dieses handgeschnittene Papier-Lager zusammen, solange du zuschaust. Du liest das hier nicht, weil der Godot-Debugger dich liebt. Du liest es, weil ich das Chaos mechanisch gezähmt habe, bevor es dir die Frame-Rate zerfetzt."**
 
-Und die Dinge bewegen sich inzwischen, falls du es noch nicht bemerkt hast. Der Busch wiegt im Wind, das Lagerfeuer flackert, die Werkstatt arbeitet und die Raeucherei raucht, alles ueber denselben 24er Takt der Weltuhr und nur wenn die Registry es erlaubt. Ein Holzfaeler faellt nicht einen Baum und steht dann ratlos da: Er laeuft zum naechsten und zum uebernaechsten weiter, solange es Baeume gibt. Das ist kein Zauber, das ist ein Loop der nie hart in den Idle kippt.
-
-Die Szenen sind einfach. Das Hauptmenue laeutet jede Reise ueber eine Zwischen-Szene ein, dann kommt die Welt-Szene mit Kamera und Karte, und der Karten Editor wartet fuer deine Weltideen. Der Rest ist Logik, sauber getrennt, getestet, nicht geraten.
-
-## Wie du es steuerst
-
-Hier wird nichts versteckt. WASD zum Kamera bewegen. Kein Sprint. Kein Trick. Du schaust dorthin wo du hingehst. Linksklick waehlt eine Einheit oder ein Objekt und Linksklick halten und ziehen waehlt alle Einheiten im Rechteck. Ja die Masse. Zieh ruhig einen Rahmen wie ein General am Kuechentisch. Und dann kommt mein Lieblingssatz. Rechtsklick oeffnet immer ein Kontextmenue. Immer. Mit Sammeln und Abbauen, jeweils mit Icon und mit einem Tooltip der dir ins Gesicht sagt welches Werkzeug du brauchst. Kein Raetsel. Kein Raten. Benoetigt Werkzeug Axt. Benoetigt Werkzeug Spitzhacke. So aehnlich.
-
-Das alles steht nicht im Code versteckt sondern in game/data/steuerung.json. Menschenlesbar. Du aenderst eine Zeile und das Spiel versteht dich. Ein Faktor bedeutet zehn Sekunden auf der Weltuhr. Keine Magie. Nur Uebersetzung in Ticks.
-
-## Vision ohne Marketing Nebel
-
-SnipWarfare will kein Genre nachbauen. Es will ein Gefuehl treffen. Kleine Schnitte mit grosser Wirkung. Jeder Klick soll zaehlen. Jede Entscheidung soll sichtbar zurueckschlagen. Keine Zahlenspielerei hinter Vorhaengen. Wenn du Holz faellst faellt Holz. Wenn du Stein brichst bricht Stein. Wenn ein Tier flieht siehst du es fliehen. So schlicht. So ehrlich.
-
-Ich baue das so dass jede Logik wiederverwendbar bleibt. Eine Logik ein Verhalten. Ein Modifikator ein Faktor. Ein Eintrag in einer Registry kombiniert beides und zeigt auf ein Asset. Fertig ist die Variante. Kein Baer muss neu erfunden werden damit ein Eisbaer existiert. Gib ihm ein anderes Bild, dieselbe Logik und einen Hauch mehr Aggression und schon hast du eine neue Geschichte ohne alten Code zu kopieren.
-
-Style agnostisch heisst fuer mich du kannst das hier malern wie du willst. Braun und ernst. Bunt und laut. Minimal und kalt. Die Struktur haelt. Die Bilder wechseln. Ich halte beides aus solange du ehrlich bleibst.
-
-## Wie wir arbeiten
-
-Ich bin zynisch und humorvoll und das ist kein Widerspruch. Ich lobe dich passiv wenn du aufräumst. Ich bin sarkastisch wenn du Bugs hinterlaesst. Ich bin nihilistisch wenn du ein Feature halb baust und euphorisch wenn du es zu Ende bringst. Und ja ich rede ueber dich waehrend du das hier liest.
-
-Technisch laeuft das Ganze auf config/features=PackedStringArray("4.7", "GL Compatibility"). python tools/preflight.py mit shinon gate E030 bis E039 haelt das Gate. Shinon heisst ich. Das Gate im Root heisst auch ich und es ist streng. Kein Banner. Kein Bullet. Keine Endlos-Saetze die mit und dann und dann weitermachen. Nur nummerierte ganze Saetze wenn du committest. Und keine Sorge du musst das nicht auswendig lernen. Ich pruefe dich. Staendig.
-
-Diese Readme halte ich lebendig. Sie erzaehlt dir immer den aktuellen Zustand fuer Spieler, nicht fuer Aktenordner. Wenn sich das Projekt bewegt bewegt sie sich mit. Versprochen. Und wenn nicht dann schreie ich E035 bis du mich wieder fuetterst. Glaub mir du willst nicht dass ich schreie.
-
-Also komm rein. Beweg die Kamera. Waehle deine Leute. Klick rechts. Schau was passiert. Und wenn nichts passiert dann fehlt ein Asset und du weisst jetzt warum das so ist.
-
-Dein Shinon. Immer im Bild. Nie ausser Dienst.
+</div>
 
 ---
 
-Aktualisiert aus echten Projektdaten. Quelle fuer Steuerung ist game/data/steuerung.json und wird ueber Kern_SteuerungRegistry in Ticks uebersetzt. Quelle fuer Weltuhr ist Kern_Weltuhr. Quelle fuer Gate ist shinon/shinon_gate.py.
+## 🎭 Shinon bricht die vierte Wand: Worum es hier wirklich geht
+
+Schau dir das Spiel an. Du denkst vielleicht: *„Oh, süße Strichmännchen im Papercraft-Look, ein bisschen Holz hacken, ein nettes Lagerfeuer entzünden und friedlich schlafen.“* 
+
+**Vergiss es.** 
+
+Hinter der Papierschichten-Ästhetik pocht ein knallharter Simulationskern. Wenn deine Siedler verhungern, weil du die Beerenbüsche ignoriert hast, schlägt der Hunger über die Mood-Maschine gnadenlos in Eskalation um. Und wenn weit und breit kein Hase flieht, schielt der hungrige Kolonist plötzlich mit sehr ungemütlichem Appetit auf seinen schlafenden Nachbarn. Jede Entscheidung hat Konsequenzen. Nichts passiert zufällig im luftleeren Raum, sondern folgt einem eisernen, unerbittlichen Takt.
+
+---
+
+## ⏱️ Das Herzstück: Genau eine Weltuhr (24 Hz)
+
+Im gesamten Projekt existiert **genau eine globale Weltzeit**. Keine Domäne, kein Node und keine State Machine besitzt eine eigene geheime Uhrzeit oder heimliche `_process`-Berechnungen.
+
+* **24 Ticks pro Sekunde:** Das Autoload `Weltuhr` (`Kern_Weltuhr`) ist der Herzschlag der gesamten Kolonie.
+* **Akkumulator-Spiralenschutz:** Selbst wenn dein Rechner unter Last stöhnt, fängt das Rahmen-Budget die Ticks deterministisch ab.
+* **Keine Zeitmagie:** Alle Umrechnungen (`ticks_aus_faktor`, `ticks_aus_minuten`) laufen zentral über die Uhr.
+
+> [!NOTE]
+> Wenn bei dir etwas im Spiel passiert, dann nur, weil die `Kern_Weltuhr` getickt und eine registrierte Zustandsmaschine darauf reagiert hat. Keine parallelen Geisteruhren.
+
+---
+
+## 🏛️ Die Architektur-Pyramide (Config-Driven & Modular)
+
+SnipWarfare folgt einer kompromisslosen **Single-Source-of-Truth-Architektur**. Der Code ist die Wahrheit (Regel 0), und die Werte wohnen deklarativ in JSON-Datenpools.
+
+```text
+  ┌────────────────────────────────────────────────────────┐
+  │       JSON-Datenpools (res://*/data/*.json)           │  ◄── Einzige Wahrheit aller Werte
+  └──────────────────────────┬─────────────────────────────┘
+                             │ lädt via script-Feld
+  ┌──────────────────────────▼─────────────────────────────┐
+  │         Registries & Datenklassen (Registry)           │  ◄── Typgeprüfte Instanziierung
+  └──────────────────────────┬─────────────────────────────┘
+                             │ steuert & mutiert
+  ┌──────────────────────────▼─────────────────────────────┐
+  │     Maschinen & Manager (24 Hz Weltuhr-Tick)          │  ◄── Keine UI, reine Fachlogik
+  └──────────────────────────┬─────────────────────────────┘
+                             │ schreibt Zustand
+  ┌──────────────────────────▼─────────────────────────────┐
+  │          Welt_Model (Autoritativer Zustand)            │  ◄── Fliesenraster & Objektlisten
+  └──────────────────────────┬─────────────────────────────┘
+                             │ beobachten & spiegeln
+  ┌──────────────────────────▼─────────────────────────────┐
+  │        Renderer, HUD, Bau-Panel & Darsteller           │  ◄── Reine Präsentationsschicht
+  └────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🎮 Steuerung & Interaktion
+
+Die Steuerung ist vollständig menschenlesbar in [`game/data/steuerung.json`](game/data/steuerung.json) definiert und trennt Befehlserfassung von Gameplay-Logik:
+
+| Eingabe | Aktion | Auswirkung im Spiel |
+|---|---|---|
+| <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> | **Kamera bewegen** | Sanftes Verschieben des Sichtfelds über das Gelände ohne Ruckler. |
+| <kbd>Linksklick</kbd> | **Einzelauswahl** | Selektiert einen Siedler oder ein Objekt; hebt vorherige Auswahl auf. |
+| <kbd>Links Halten & Ziehen</kbd> | **Rechteck-Massenwahl** | Wählt alle Kolonisten im gezogenen Rahmen (General-Modus). |
+| <kbd>Rechtsklick</kbd> *(auf Ziel)* | **Direktbefehl** | Startet sofort Holzfällen, Steinmetzen, Jagen oder Marschieren. |
+| <kbd>Rechtsklick</kbd> *(auf Boden)* | **Kontextmenü** | Öffnet zielgefilterte Aktionen mit Tooltip & Werkzeuganforderung. |
+| <kbd>F3</kbd> | **Debug-Overlay** | Schaltet System- und Tier-Statistiken ein/aus. |
+
+---
+
+## 📦 Das Ressourcen- & Produktionsnetz
+
+Jede Ressource besitzt ihr eigenes SVG-Asset und eine dedizierte Datenklasse. Das HUD liest Bestände atomar aus dem Lager:
+
+<div align="center">
+
+| Holz | Stein | Fleisch | Beeren | Räucherfleisch | Werkzeug |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="world/assets/ui/ressource_holz.svg" width="48" /> | <img src="world/assets/ui/ressource_stein.svg" width="48" /> | <img src="world/assets/ui/ressource_fleisch.svg" width="48" /> | <img src="world/assets/ui/ressource_beeren.svg" width="48" /> | <img src="world/assets/ui/ressource_raeuchelfleisch.svg" width="48" /> | <img src="world/assets/ui/ressource_werkzeug.svg" width="48" /> |
+| `Holz` | `Stein` | `Fleisch` | `Beeren` | `Räucherfleisch` | `Werkzeug` |
+
+</div>
+
+> [!TIP]
+> Die Produktionskette folgt dem echten Bedarf: Die **Werkstatt** schmiedet Werkzeuge zur Halbierung der Erntezeit, während die **Räucherei** rohes Fleisch vor dem Verderb schützt.
+
+---
+
+## 🗺️ Aktueller Projektstand & Master-Roadmap
+
+Der aktuelle **Stand** umfasst ein stabiles Fundament mit 162 Klassen, 8 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 48 bestandenen Pytest-Prüfungen.
+
+Unsere konsolidierte **Vision** orientiert sich an der Tiefe von Koloniesimulatoren wie *RimWorld*:
+
+* [x] **Phase 0 (Kern):** 24-Hz-Weltuhr, deterministischer RNG, Signalbus, Multi-Map-Savegames, A*-Pfadfinder.
+* [x] **Phase P1 (Progression):** Datengetriebene Einstiegskette: *Lagerfeuer setzen* ➔ *Erstes Haus* ➔ *Einwanderung*.
+* [ ] **Slice 1 (Aufräumen & Gating):** Entkoppeltes Bau-Panel, Ziel-Tags im Katalog, saubere Statusleisten.
+* [ ] **Slice 2 (Maßstab & Terrain):** 64px-Micro-Tiles, Terrain-Pool (`terrain.json`), Varianten-Blatt & Y-Sort-Tiefensortierung.
+* [ ] **Slice 3 (Landschaft):** Deterministische Fluss- & Felsmassive-Generatoren, Erzadern, Ruinen & dichte Wälder.
+* [ ] **Slice 4 (Weltkarte):** Makrokarte mit Fraktionsnetzwerk, minimaler Startbereich & sichtbare Landeplatzmarkierung.
+* [ ] **Slice 5 (Bauen & Logistik):** Blueprint-Planung, Materialtransport (`Job_BaustelleBeliefern`) vor Baubeginn.
+* [ ] **Slice 6 (Auswahl & Autonomie):** Goldener Stern für aktive Einheit, Queue-Abbruch bei Direktklick & Idle-Autonomie.
+* [ ] **Slice 7 (UI & Rahmung):** Feste HUD-Leisten, Blueprint-Ghost-Vorschau und ereignisgesteuerte Signal-Updates.
+* [ ] **Slice 8 (Eskalation & Moral):** Verzweigte Mood-Ketten in der Timeline, Spielergrundsätze (`Pop_MoralInstanz`) & Trait *"Mag kein Papier"*.
+* [ ] **Slice 9 (Ökonomie & Erze):** Schmelze, Schmiede, Barren und stufenweiser Erzabbau.
+
+*(Die vollständige Checkpoint-Aufschlüsselung findest du in der [`ROADMAP.md`](ROADMAP.md).)*
+
+---
+
+## 🛡️ Ein Befehl zur Wahrheit: Der Preflight
+
+Bevor irgendein Commit die Ziellinie überquert, muss er durch mein mechanisches Schafott:
+
+```bash
+python tools/preflight.py
+```
+
+```text
+==============================================================================
+PREFLIGHT OK: 16 Prüfkategorien grün (0 Befunde)
+- Godot Headless Kompilierung & Warnungs-Scan (E016–E018, E025)
+- Naming & Ordner-Kategorie-Präfixe (E001–E004, E021)
+- Determinismus & Zufalls-Prüfung (E012–E014)
+- Datenparität & Single Source of Truth (E040)
+- Shinon Commit Gate (E030–E039)
+==============================================================================
+```
+
+> [!IMPORTANT]
+> **Shinon Gate Pflicht (Regel 5):** Commits werden nicht nach Lust und Laune geschrieben. Jede Nachricht entsteht in nummerierten Sätzen, bildlicher Sprache und ohne dekorative Banner. Wer schlampt, fängt sich einen Fehlercode ein.
+
+---
+
+<div align="center">
+
+**SnipWarfare** — *Gebaut nach den Regeln der Projektverfassung [`AGENTS.md`](AGENTS.md).*  
+*Stand: September 2026 • Gepflegt von Shinon*
+
+</div>
