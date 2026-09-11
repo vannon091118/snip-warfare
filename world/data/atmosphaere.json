@@ -1,0 +1,39 @@
+{
+  "_dokumentation_atmosphaere": "Einzige Quelle aller rein optischen Atmosphaeren-Werte. Die Darstellungs-Klassen lesen ausschliesslich diesen Pool, es gibt keine zweite Zahl im Code. Kein Wert hier veraendert Spielmechanik, Zeit oder Zustand.",
+  "wind": {
+    "mindest_staerke": 0.15,
+    "staerke_spanne": 0.45,
+    "phasen_laenge_takt": 240,
+    "rausch_frequenz": 0.07,
+    "basis_richtung": 1.0,
+    "blatt_anzahl": 26,
+    "windlinien_anzahl": 6
+  },
+  "partikel": {
+    "pollen_anzahl": 30,
+    "pollen_bereich_px": 640.0,
+    "pollen_steig_px_pro_tick": 0.14,
+    "pollen_grund_alpha": 0.4,
+    "staub_dauer_takt": 10,
+    "staub_steig_px_pro_tick": 0.5,
+    "staub_skalierung_pro_tick": 0.015
+  },
+  "sonne": {
+    "strequahlen_winkel_grad": 18.0,
+    "streifenskala": 4.0,
+    "max_alpha": 0.1,
+    "tag_farbe": "#FFF3C9",
+    "morgen_farbe": "#FFE0A8",
+    "abend_farbe": "#E8A86B",
+    "nacht_alpha_faktor": 0.2
+  },
+  "papier": {
+    "korn_staerke": 0.045,
+    "farb_variation": 0.03,
+    "saum_alpha": 0.25,
+    "saum_skalierung": 1.06
+  },
+  "tageslicht": {
+    "daemmerung_anteil": 0.08
+  }
+}

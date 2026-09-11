@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 32" width="96" height="32">
+  <!-- Gezeichnete Windlinie im Comic-Stil: drei Böen-Bögen mit abgesetztem Strich -->
+  <g fill="none" stroke="#EDE7D4" stroke-linecap="round" opacity="0.55">
+    <path d="M 6 10 C 22 4 42 5 58 9 C 70 12 82 11 90 8" stroke-width="2.6"/>
+    <path d="M 6 17 C 26 12 48 13 66 17 C 76 19.5 84 19 90 17" stroke-width="2" opacity="0.8"/>
+    <path d="M 6 24 C 24 20 44 21 60 24 C 72 26 82 25.5 90 23.5" stroke-width="1.6" opacity="0.6"/>
+  </g>
+  <!-- Böen-Spirale am Ende, wie mit der Feder nachgezogen -->
+  <path d="M 84 8 C 90 6 93 9 89 11 C 87 12 85.5 10.5 87 9.5" fill="none" stroke="#EDE7D4" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+  <!-- Staubwolke bei Arbeitsschlägen, drei gezeichnete Puffs -->
+  <g fill="#D8CDB4" stroke="#A99B7F" stroke-width="0.9" opacity="0.85">
+    <path d="M 3 12 C 1 12 1 9 3 8.6 C 3.4 6.6 6.4 6.4 7 8.4 C 9 7.6 10.4 9.6 9.4 11 C 11 11 11 13.4 9 13.4 L 4 13.4 C 3.4 13.4 3.2 12.6 3 12 Z"/>
+  </g>
+  <circle cx="12.5" cy="7" r="1.6" fill="#D8CDB4" opacity="0.7"/>
+  <circle cx="13.5" cy="4.5" r="1.1" fill="#D8CDB4" opacity="0.5"/>
+</svg>
