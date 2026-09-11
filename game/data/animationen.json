@@ -56,6 +56,16 @@
     "schleife": true,
     "geschwindigkeit_faktor": 1.0
   },
+  "heilen": {
+    "sheet_pfad": "res://world/assets/ui/heilen_rechts.svg",
+    "sheet_pfad_links": "res://world/assets/ui/heilen_links.svg",
+    "frame_breite": 64,
+    "frame_hoehe": 64,
+    "frames": 4,
+    "ticks_pro_frame": 2,
+    "schleife": true,
+    "geschwindigkeit_faktor": 1.0
+  },
   "wehen": {
     "sheet_pfad": "res://world/assets/terrain/busch_wehen.svg",
     "frame_breite": 96,
