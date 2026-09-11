@@ -9,6 +9,9 @@ class_name Einheit_ErnteMaschine
 ## Kategorie ausgang: Beute gefallen, der Darsteller der Einheit braucht
 ## einen Animation-Refresh; der Manager besitzt die Darsteller.
 signal beute_erlegt(status: Einheit_Status)
+## Darstellungs-Anschluss: Der Ort des Schlages wird gemeldet, damit die
+## Atmosphaeren-Domaene dort Staub zeigt. Rein optisch, keine Spiellogik.
+signal schlag_ort_gemeldet(welt_position: Vector2)
 
 ## Kategorie daten: die Quellen der Ernte.
 var _ressourcen: Einheit_Ressourcen = null
@@ -32,6 +35,7 @@ func arbeitsschritt_verarbeiten(ressource: String, menge: int, status: Einheit_S
 	match status.aktuelles_ziel_typ:
 		Job_Basis.ZielTyp.OBJEKT:
 			_ressourcen.ernte_position_setzen(_objekt_position(status.aktuelles_ziel_index))
+			schlag_ort_gemeldet.emit(_objekt_position(status.aktuelles_ziel_index))
 			# Bäume und Steine liefern ihre Ernte ins nächste lokale Lager.
 			_ressourcen.hinzufuegen(ressource, menge)
 		Job_Basis.ZielTyp.TIER:
@@ -59,6 +63,7 @@ func _tier_ernten(status: Einheit_Status) -> void:
 	var fleisch := _tiere.tier_ernten(status.aktuelles_ziel_index)
 	if fleisch > 0:
 		_ressourcen.ernte_position_setzen(kadaver_position)
+		schlag_ort_gemeldet.emit(kadaver_position)
 		_ressourcen.hinzufuegen("fleisch", fleisch)
 	# Erlegte Beute ist verbraucht: der Job endet, die Darstellung folgt.
 	status.job_abbrechen()
