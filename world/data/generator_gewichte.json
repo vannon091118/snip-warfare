@@ -15,9 +15,11 @@
     "vogelgruppe": {"kategorie": "tiere", "element_id": "vogelgruppe", "gewicht": 0.5, "biome": ["steppe"]}
   },
   "biome": {
-    "biom_gemaaessigt": {"kategorie": "biome", "element_id": "gemaaessigt", "gewicht": 4.0},
-    "biom_tundra": {"kategorie": "biome", "element_id": "tundra", "gewicht": 1.5},
-    "biom_steppe": {"kategorie": "biome", "element_id": "steppe", "gewicht": 1.5}
+    "biom_gemaaessigt": {"kategorie": "biome", "element_id": "gemaaessigt", "gewicht": 4.0, "ebene": "lokal"},
+    "biom_tundra": {"kategorie": "biome", "element_id": "tundra", "gewicht": 1.5, "ebene": "lokal"},
+    "biom_steppe": {"kategorie": "biome", "element_id": "steppe", "gewicht": 1.5, "ebene": "lokal"},
+    "biom_gebirge": {"kategorie": "biome", "element_id": "gebirge", "gewicht": 1.2, "ebene": "makro"},
+    "biom_ozean": {"kategorie": "biome", "element_id": "ozean", "gewicht": 1.0, "ebene": "makro"}
   },
   "gebaeude": {},
   "fraktionen": {

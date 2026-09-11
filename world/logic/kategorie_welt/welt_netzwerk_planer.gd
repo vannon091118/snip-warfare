@@ -4,19 +4,27 @@ class_name Welt_NetzwerkPlaner
 ## Genau eine Verantwortung: Platziert Fraktionen deterministisch aus dem Welt-Seed
 ## auf passenden Makro-Regionen der World Map und verbindet sie über reale
 ## Netzwerkbeziehungen (Handels- und Militärpfade).
-## Stellt sicher, dass der Spielerbereich mindestens zwei direkte Nachbarn besitzt.
+## Barrieren: Regionen mit einem Barriere-Biom (Gebirge, Ozean) tragen keine
+## Fraktion, dienen nie als Startbereich und werden von keinem Weg gekreuzt.
+## Der Startbereich bekommt mindestens zwei direkte Nachbarn, sofern die
+## Landschaft es zulässt.
 
 ## Kategorie daten: Platzierte Fraktionen, Wege und Spieler-Startknoten.
 var _fraktionen: Array[Welt_Fraktion] = []
 var _wege: Array[Dictionary] = []
 var _spieler_region := Vector2i.ZERO
 var _spieler_nachbarn: Array[String] = []
+var _biome: Welt_BiomRegistry = null
 
 ## Kategorie logik: Planung, Pfadberechnung und Abfragen.
 
-func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_offset: int = 0) -> bool:
+func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_offset: int = 0, biome: Welt_BiomRegistry = null) -> bool:
 	if model == null or registry == null:
 		return false
+	_biome = biome
+	# Die Listen sind der Zustand dieses Planers: Jede Planung beginnt bei Null,
+	# damit ein zweiter Lauf (oder ein Regionswechsel) die Nachbarliste nicht
+	# um dieselben Einträge aufbläht.
 	_fraktionen.clear()
 	_wege.clear()
 	_spieler_nachbarn.clear()
@@ -31,11 +39,9 @@ func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_o
 
 	var regionen_x := ceili(float(model.raster_breite) / float(maxi(model.region_kante, 1)))
 	var regionen_y := ceili(float(model.raster_hoehe) / float(maxi(model.region_kante, 1)))
+	var regionen := Vector2i(regionen_x, regionen_y)
 
-	# Spieler-Startregion standardmäßig nahe dem Zentrum
-	_spieler_region = Vector2i(regionen_x / 2, regionen_y / 2)
-
-	var belegte_regionen: Array[Vector2i] = [_spieler_region]
+	var belegte_regionen: Array[Vector2i] = []
 
 	for f_id in f_ids:
 		var wort := registry.eintrag_wort_fuer(f_id)
@@ -45,19 +51,20 @@ func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_o
 		var beste_region := Vector2i.ZERO
 		var beste_bewertung := -INF
 
-		# Beste Region für Fraktion anhand Biom-Vorliebe und Abstand suchen
+		# Beste Region für Fraktion anhand Biom-Vorliebe und Abstand suchen;
+		# Barrieren kommen nie in Frage.
 		for ry in regionen_y:
 			for rx in regionen_x:
 				var reg_pos := Vector2i(rx, ry)
-				if belegte_regionen.has(reg_pos):
+				if belegte_regionen.has(reg_pos) or ist_barriere_region(model, reg_pos):
 					continue
 				var region := model.region_an_kachel(rx * model.region_kante, ry * model.region_kante)
 				var r_biom := str(region.get("biom_id", model.biom_id))
 				var bewertung := 0.0
 				if fraktion.bevorzugte_biome.has(r_biom):
 					bewertung += 50.0
-				var abstand_spieler := Vector2(reg_pos).distance_to(Vector2(_spieler_region))
-				bewertung -= abstand_spieler * 2.0
+				var abstand_mitte := Vector2(reg_pos).distance_to(Vector2(regionen.x / 2, regionen.y / 2))
+				bewertung -= abstand_mitte * 2.0
 				bewertung += float(zufall.naechste_zahl() % 20)
 
 				if bewertung > beste_bewertung:
@@ -68,19 +75,93 @@ func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_o
 		belegte_regionen.append(beste_region)
 		_fraktionen.append(fraktion)
 
+	_spieler_region = _start_region_waehlen(model, regionen, belegte_regionen)
 	_wege_berechnen(model)
 	return not _fraktionen.is_empty()
+
+func ist_barriere_region(model: Welt_Model, region_pos: Vector2i) -> bool:
+	# Barriere heißt: Das Biom dieser Region ist unpassierbar. Die Eigenschaft
+	# steht am Biom, die Frage beantwortet nur diese Stelle.
+	if model == null or _biome == null:
+		return false
+	var region := model.region_an_kachel(region_pos.x * model.region_kante, region_pos.y * model.region_kante)
+	if region.is_empty():
+		return false
+	var biom := _biome.biom_fuer(str(region.get("biom_id", "")))
+	return biom != null and biom.barriere
+
+func _start_region_waehlen(model: Welt_Model, regionen: Vector2i, belegte: Array[Vector2i]) -> Vector2i:
+	# Startbereich: möglichst nahe der Mitte, niemals auf einer Barriere und
+	# möglichst mit zwei offenen Wegen zu Fraktionen. Die Wahl ist
+	# deterministisch, damit dieselbe Karte denselben Start liefert.
+	var mitte := Vector2i(regionen.x / 2, regionen.y / 2)
+	var kandidaten: Array[Vector2i] = []
+	for ry in regionen.y:
+		for rx in regionen.x:
+			var pos := Vector2i(rx, ry)
+			if belegte.has(pos) or ist_barriere_region(model, pos):
+				continue
+			kandidaten.append(pos)
+	kandidaten.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := Vector2(a).distance_squared_to(Vector2(mitte))
+		var db := Vector2(b).distance_squared_to(Vector2(mitte))
+		if absf(da - db) > 0.001:
+			return da < db
+		if a.y != b.y:
+			return a.y < b.y
+		return a.x < b.x
+	)
+	for kandidat: Vector2i in kandidaten:
+		if _offene_nachbarn(model, kandidat).size() >= 2:
+			return kandidat
+	if not kandidaten.is_empty():
+		return kandidaten[0]
+	return mitte
+
+func _offene_nachbarn(model: Welt_Model, region_pos: Vector2i) -> Array[Welt_Fraktion]:
+	# Fraktionen, zu denen ein Weg ohne Barriere führt; nur lesend, ohne
+	# Nebenwirkung auf Wege oder Nachbarlisten.
+	var treffer: Array[Welt_Fraktion] = []
+	for f: Welt_Fraktion in _fraktionen:
+		if _linie_frei(model, region_pos, _region_von_fraktion(model, f)):
+			treffer.append(f)
+	return treffer
+
+func _region_von_fraktion(model: Welt_Model, fraktion: Welt_Fraktion) -> Vector2i:
+	var kante := maxi(model.region_kante, 1)
+	return Vector2i(fraktion.position_kachel.x / kante, fraktion.position_kachel.y / kante)
+
+func _linie_frei(model: Welt_Model, von: Vector2i, nach: Vector2i) -> bool:
+	# Wege umgehen Barrieren: Die Zellen zwischen zwei Regionen werden
+	# abgeschritten; liegt eine Barriere dazwischen, gibt es keinen Weg.
+	var schritte := maxi(absi(nach.x - von.x), absi(nach.y - von.y))
+	if schritte <= 1:
+		return true
+	for schritt in range(1, schritte):
+		var anteil := float(schritt) / float(schritte)
+		var zelle := Vector2i(
+			int(round(float(von.x) + float(nach.x - von.x) * anteil)),
+			int(round(float(von.y) + float(nach.y - von.y) * anteil)))
+		if zelle == von or zelle == nach:
+			continue
+		if ist_barriere_region(model, zelle):
+			return false
+	return true
 
 func _wege_berechnen(model: Welt_Model) -> void:
 	_wege.clear()
 	_spieler_nachbarn.clear()
 	for f: Welt_Fraktion in _fraktionen:
 		f.nachbarn.clear()
-	var spieler_pos_kachel := _spieler_region * model.region_kante + Vector2i(model.region_kante / 2, model.region_kante / 2)
+	var spieler_region := _spieler_region
+	var spieler_pos_kachel := spieler_region * model.region_kante + Vector2i(model.region_kante / 2, model.region_kante / 2)
 
-	# Distanzen aller Fraktionen zum Spieler ermitteln
+	# Distanzen aller Fraktionen zum Spieler ermitteln; Barrieren sortieren
+	# Kandidaten aus, statt einen Weg quer durch den Fels zu ziehen.
 	var distanzen: Array[Dictionary] = []
 	for f in _fraktionen:
+		if not _linie_frei(model, spieler_region, _region_von_fraktion(model, f)):
+			continue
 		var dist_spieler := Vector2(f.position_kachel).distance_to(Vector2(spieler_pos_kachel))
 		distanzen.append({"fraktion": f, "distanz": dist_spieler})
 	distanzen.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
@@ -101,7 +182,8 @@ func _wege_berechnen(model: Welt_Model) -> void:
 		f.nachbarn.append("spieler")
 		_spieler_nachbarn.append(f.fraktion_id)
 
-	# Fraktionen untereinander vernetzen (nächster Nachbar jeder Fraktion)
+	# Fraktionen untereinander vernetzen (nächster Nachbar jeder Fraktion),
+	# ebenfalls nur über freie Linien zwischen den Regionen.
 	for i in _fraktionen.size():
 		var f1 := _fraktionen[i]
 		var naechste_f: Welt_Fraktion = null
@@ -110,6 +192,8 @@ func _wege_berechnen(model: Welt_Model) -> void:
 			if i == j:
 				continue
 			var f2 := _fraktionen[j]
+			if not _linie_frei(model, _region_von_fraktion(model, f1), _region_von_fraktion(model, f2)):
+				continue
 			var dist_fraktion := Vector2(f1.position_kachel).distance_to(Vector2(f2.position_kachel))
 			if dist_fraktion < min_d:
 				min_d = dist_fraktion
@@ -143,6 +227,10 @@ func spieler_region() -> Vector2i:
 	return _spieler_region
 
 func spieler_region_setzen(region_pos: Vector2i, model: Welt_Model) -> void:
+	# Spielerwahl auf der Weltkarte: Eine Barriere ist kein Startbereich; der
+	# Klick wird abgewiesen und der bisherige Start bleibt bestehen.
+	if ist_barriere_region(model, region_pos):
+		return
 	_spieler_region = region_pos
 	if model != null and not _fraktionen.is_empty():
 		_wege_berechnen(model)

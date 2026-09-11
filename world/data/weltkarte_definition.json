@@ -1,0 +1,6 @@
+{
+  "_kommentar": "Makrokarte: eigene Ebene der Startauswahl. Breite und Hoehe zaehlen Regionen, nicht Kacheln; die lokale Spielkarte hat ihre eigene Groesse aus welt_definition.json. Die Makrokarte plant nur Landschaften und Wege, niemals Inhalte.",
+  "regionen": {"breite": 16, "hoehe": 12},
+  "region_kante_kacheln": 8,
+  "start_biom": "gemaaessigt"
+}

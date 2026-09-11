@@ -34,6 +34,28 @@
         {"name": "SteppeWeite", "quelle": "biom", "faktor": 1.15, "beschreibung": "Flucht und Verfolgen gewinnen Reichweite."}
       ],
       "farbe": "#D8C28A"
+    },
+    {
+      "id": "gebirge",
+      "name": "Gebirge",
+      "beschreibung": "Zusammenhängende Felsmassive. Auf der Makrokarte eine Barriere: Wege führen nicht hindurch, Fraktionen siedeln nicht darauf.",
+      "logik_id": "",
+      "modifikator_id": "normal",
+      "faktor": 1.0,
+      "mutationen": [],
+      "barriere": true,
+      "farbe": "#8B7355"
+    },
+    {
+      "id": "ozean",
+      "name": "Ozean",
+      "beschreibung": "Offenes Wasser. Auf der Makrokarte eine Barriere: Nur Küstenregionen sind bewohnbar, Wege enden am Ufer.",
+      "logik_id": "",
+      "modifikator_id": "normal",
+      "faktor": 1.0,
+      "mutationen": [],
+      "barriere": true,
+      "farbe": "#1E6B9E"
     }
   ]
 }

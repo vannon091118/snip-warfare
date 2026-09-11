@@ -11,6 +11,9 @@ var _model := Welt_Model.new()
 var _registry := Welt_GeneratorRegistry.new()
 var _biome := Welt_BiomRegistry.new()
 var _netzwerk_planer := Welt_NetzwerkPlaner.new()
+## Die Makrokarte hat ihre eigene Domäne: Sie plant nur Regionen und ruft
+## niemals den lokalen Generator.
+var _makro := Welt_MakroGenerator.new()
 var _seed_offset: int = 0
 var _gewaehlte_region: Vector2i = Vector2i.ZERO
 
@@ -36,14 +39,12 @@ func _welt_planen() -> void:
 		seed_wert = int(hash("world_map_%d" % _seed_offset) & 0x7FFFFFFF)
 		if seed_wert == 0:
 			seed_wert = 421337
-	var def_reg := Welt_DefinitionRegistry.new()
-	def_reg.laden()
-	var groesse: Vector2i = def_reg.max_karten_groesse()
-	_model.karte_erzeugen(groesse.x, groesse.y, "boden")
-	_model.welt_seed = seed_wert
-	var generator := Welt_Generator.new()
-	generator.welt_erzeugen(_model, seed_wert, "gemaaessigt")
-	_netzwerk_planer.netzwerk_planen(_model, _registry, _seed_offset)
+	# Makroebene statt lokaler Erzeugung: Die Weltkarte plant nur ihre
+	# Regionen. Kein Chunk, kein Objekt, kein Tier — die Weltkarte ist in
+	# einem Bruchteil der Zeit da und die lokale Karte bleibt die einzige
+	# Stelle mit Inhalt.
+	_makro.karte_planen(_model, _registry, seed_wert)
+	_netzwerk_planer.netzwerk_planen(_model, _registry, _seed_offset, _biome)
 	_gewaehlte_region = _netzwerk_planer.spieler_region()
 	_karten_flaeche.queue_redraw()
 
@@ -69,6 +70,7 @@ func _karten_flaeche_zeichnen() -> void:
 			var r_rect := Rect2(float(rx) * kachel_b, float(ry) * kachel_h, kachel_b, kachel_h)
 			_karten_flaeche.draw_rect(r_rect, farbe)
 			_karten_flaeche.draw_rect(r_rect, Color(0, 0, 0, 0.3), false, 1.0)
+			_barriere_zeichen(r_rect, biom_obj, b_id)
 
 	# 2. Wege zeichnen
 	for weg: Dictionary in _netzwerk_planer.wege():
@@ -99,6 +101,26 @@ func _karten_flaeche_zeichnen() -> void:
 	_karten_flaeche.draw_circle(sp_zentrum, 8.0, Color.WHITE, false, 2.0)
 	_karten_flaeche.draw_string(ThemeDB.fallback_font, sp_zentrum + Vector2(-30, -14), "★ Startbereich", HORIZONTAL_ALIGNMENT_CENTER, -1, 14, Color(1.0, 0.95, 0.4))
 
+func _barriere_zeichen(rechteck: Rect2, biom_obj: Welt_BiomBasis, biom_id: String) -> void:
+	# Sichtbare Sperre: Jede Barriere trägt ihr eigenes Zeichen, damit Gebirge
+	# und Ozean schon vor dem Klick als unpassierbar erkennbar sind.
+	if biom_obj == null or not biom_obj.barriere:
+		return
+	var mitte := rechteck.position + rechteck.size * 0.5
+	var kante := minf(rechteck.size.x, rechteck.size.y)
+	if biom_id == "ozean":
+		for lauf in 2:
+			var y_linie := mitte.y + (float(lauf) - 0.5) * kante * 0.22
+			_karten_flaeche.draw_line(
+				Vector2(mitte.x - kante * 0.28, y_linie),
+				Vector2(mitte.x + kante * 0.28, y_linie),
+				Color(0.85, 0.93, 1.0, 0.75), 2.0)
+		return
+	var spitze := Vector2(mitte.x, mitte.y - kante * 0.26)
+	var links := Vector2(mitte.x - kante * 0.26, mitte.y + kante * 0.18)
+	var rechts := Vector2(mitte.x + kante * 0.26, mitte.y + kante * 0.18)
+	_karten_flaeche.draw_colored_polygon(PackedVector2Array([spitze, links, rechts]), Color(1.0, 1.0, 1.0, 0.55))
+
 func _karten_flaeche_eingabe(ereignis: InputEvent) -> void:
 	if ereignis is InputEventMouseButton and ereignis.pressed and ereignis.button_index == MOUSE_BUTTON_LEFT:
 		var reg_x: int = ceili(float(_model.raster_breite) / float(maxi(_model.region_kante, 1)))
@@ -109,7 +131,11 @@ func _karten_flaeche_eingabe(ereignis: InputEvent) -> void:
 		var kachel_h: float = _karten_flaeche.size.y / float(reg_y)
 		var klick_rx: int = clampi(int(ereignis.position.x / kachel_b), 0, reg_x - 1)
 		var klick_ry: int = clampi(int(ereignis.position.y / kachel_h), 0, reg_y - 1)
-		_gewaehlte_region = Vector2i(klick_rx, klick_ry)
+		var gewaehlt := Vector2i(klick_rx, klick_ry)
+		# Barriere: Der Klick wird abgewiesen, der bisherige Startbereich bleibt.
+		if _netzwerk_planer.ist_barriere_region(_model, gewaehlt):
+			return
+		_gewaehlte_region = gewaehlt
 		_netzwerk_planer.spieler_region_setzen(_gewaehlte_region, _model)
 		_karten_flaeche.queue_redraw()
 		_details_aktualisieren()

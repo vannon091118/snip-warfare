@@ -18,9 +18,11 @@ func start_zustand_setzen(seed_wert: int) -> void:
 func ziehe_eintrag(registry: Welt_GeneratorRegistry, kategorie: String, biom_id: String) -> String:
 	return ziehe_eintrag_mit(registry, kategorie, biom_id, zufall)
 
-func ziehe_eintrag_mit(registry: Welt_GeneratorRegistry, kategorie: String, biom_id: String, quelle: Kern_Zufall) -> String:
+func ziehe_eintrag_mit(registry: Welt_GeneratorRegistry, kategorie: String, biom_id: String, quelle: Kern_Zufall, ebene: String = "") -> String:
 	# Gewichtetes Los mit expliziter Zufallsquelle: Gleiche Quelle plus
 	# gleiche Registry liefert immer dasselbe Los. Ohne Quelle keine Ziehung.
+	# Die Ebene sondert Makro-Landschaften (Gebirge, Ozean) von der lokalen
+	# Karte; leer heißt: alles ziehen (Makrokarte).
 	if quelle == null:
 		return ""
 	var kandidaten := registry.ids_mit_gewicht(kategorie)
@@ -29,6 +31,8 @@ func ziehe_eintrag_mit(registry: Welt_GeneratorRegistry, kategorie: String, biom
 	var summe := 0.0
 	var effektive: Dictionary = {}
 	for eintrag_id: String in kandidaten:
+		if ebene != "" and str(registry.eintrag_wort_fuer(eintrag_id).get("ebene", "lokal")) != ebene:
+			continue
 		var gewicht := registry.gewicht_fuer(eintrag_id)
 		if registry.biom_vorliebe_fuer(eintrag_id).has(biom_id):
 			gewicht *= 2.0

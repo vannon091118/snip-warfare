@@ -75,9 +75,14 @@ func _regionen_planen(model: Welt_Model, weltraum_biom: String) -> void:
 	# Reihenfolge Regionen oder Chunks später materialisiert werden.
 	model.regionen_leeren()
 	model.region_kante = _region_kante
+	# Nur lokale Biome: Gebirge und Ozean sind Makro-Landschaften und werden
+	# hier nie gezogen, sonst stünde mitten im Spielgebiet eine unbewohnbare
+	# Barriere ohne Inhalt.
 	var biome_pool: Array[String] = [weltraum_biom]
 	for eintrag_id: String in registry.ids_mit_gewicht("biome"):
 		var wort := registry.eintrag_wort_fuer(eintrag_id)
+		if str(wort.get("ebene", "lokal")) != "lokal":
+			continue
 		var biom_id_aus_pool := str(wort.get("element_id", eintrag_id))
 		if not biome_pool.has(biom_id_aus_pool):
 			biome_pool.append(biom_id_aus_pool)
@@ -87,7 +92,7 @@ func _regionen_planen(model: Welt_Model, weltraum_biom: String) -> void:
 		for region_x in regionen_x:
 			var region_id := _region_identitaet(region_x, region_y)
 			var region_zufall := Kern_Zufall.abgeleitet_fuer(model.welt_seed, region_id)
-			var ziehung := verteilung.ziehe_eintrag_mit(registry, "biome", weltraum_biom, region_zufall)
+			var ziehung := verteilung.ziehe_eintrag_mit(registry, "biome", weltraum_biom, region_zufall, "lokal")
 			var biom_wahl := weltraum_biom
 			if ziehung != "":
 				biom_wahl = str(registry.eintrag_wort_fuer(ziehung).get("element_id", ziehung))
