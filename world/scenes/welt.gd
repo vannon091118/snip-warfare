@@ -65,6 +65,11 @@ var _bau_panel: Ui_BauPanelSzene = null
 @onready var _kontext: PopupMenu = %KontextMenue
 
 func _ready() -> void:
+	# Eingabe-Aktionen aus steuerung.json: Die InputMap entsteht zentral aus
+	# der geladenen Steuerungs-Registry, bevor irgendein Leser die Richtungen
+	# abfragt. Die Zahl ist der Registrier-Nachweis für den Lauf-Log.
+	var aktionen_neu := _steuerung.inputmap_registrieren()
+	print("Steuerung: %d Eingabe-Tasten aus steuerung.json in die InputMap geschrieben." % aktionen_neu)
 	_ladevorgang.einrichten(_model, _generator)
 	_map_fabrik.einrichten(_generator)
 	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)

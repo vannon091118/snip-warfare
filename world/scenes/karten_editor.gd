@@ -29,6 +29,11 @@ var _zieht_aus_leiste := false
 @onready var _namen_feld: LineEdit = %NamenFeld
 
 func _ready() -> void:
+	# Kamera-Aktionen aus steuerung.json in die InputMap schreiben; der
+	# Editor kennt keine Taste im Code und läuft über dieselben Aktionen
+	# wie die Spielkamera (WASD plus Pfeil-Rückfall der ui_-Aktionen).
+	var steuerung := Kern_SteuerungRegistry.new()
+	steuerung.inputmap_registrieren()
 	_welt_laden()
 	_karte.darstellen(_model, _registry)
 	_vorschau = Sprite2D.new()
@@ -225,7 +230,13 @@ func _auf_gespeichert() -> void:
 		_status_aktualisieren()
 
 func _process(delta: float) -> void:
-	var richtung := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	# Richtungen kommen aus der InputMap der Steuerungskonfiguration; ohne
+	# registrierte Aktionen gilt der ui_-Rückfall der Engine.
+	var richtung := Vector2.ZERO
+	if InputMap.has_action(Kern_SteuerungBasis.AKTION_HOCH):
+		richtung = Input.get_vector(Kern_SteuerungBasis.AKTION_LINKS, Kern_SteuerungBasis.AKTION_RECHTS, Kern_SteuerungBasis.AKTION_HOCH, Kern_SteuerungBasis.AKTION_RUNTER)
+	else:
+		richtung = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	_kamera.position += richtung * KAMERA_GESCHWINDIGKEIT * delta / maxf(_kamera.zoom.x, 0.2)
 
 func _zoom(faktor: float) -> void:

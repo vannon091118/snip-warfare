@@ -45,15 +45,9 @@ func zoom_schritt() -> float:
 	return KAMERA_ZOOM_SCHRITT
 
 func _lese_kamera_richtung() -> Vector2:
-	if _steuerung == null or _steuerung.steuerung == null or _steuerung.steuerung.kamera_tasten.is_empty():
-		return Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var richtung := Vector2.ZERO
-	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
-		richtung.y -= 1.0
-	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
-		richtung.y += 1.0
-	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
-		richtung.x -= 1.0
-	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
-		richtung.x += 1.0
-	return richtung.normalized() if richtung.length() > 1.0 else richtung
+	# Die Eingabe-Aktionen erzeugt Kern_SteuerungBasis aus steuerung.json;
+	# keine Taste wird hier im Code gekannt. Ohne Aktionen (nackte Prüfläufe
+	# ohne Konfiguration) gilt der eingebaute ui_-Rückfall der Engine.
+	if InputMap.has_action(Kern_SteuerungBasis.AKTION_HOCH):
+		return Input.get_vector(Kern_SteuerungBasis.AKTION_LINKS, Kern_SteuerungBasis.AKTION_RECHTS, Kern_SteuerungBasis.AKTION_HOCH, Kern_SteuerungBasis.AKTION_RUNTER)
+	return Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
