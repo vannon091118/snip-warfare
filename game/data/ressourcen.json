@@ -1,25 +1,30 @@
 {
   "holz": {
+    "script": "res://game/logic/kategorie_ressourcen/ressource_holz.gd",
     "name": "Holz",
     "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
     "farbe": "#8B5A2B"
   },
   "stein": {
+    "script": "res://game/logic/kategorie_ressourcen/ressource_stein.gd",
     "name": "Stein",
     "icon_pfad": "res://world/assets/ui/ressource_stein.svg",
     "farbe": "#B9B2A2"
   },
   "fleisch": {
+    "script": "res://game/logic/kategorie_ressourcen/ressource_fleisch.gd",
     "name": "Fleisch",
     "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
     "farbe": "#C75B39"
   },
   "werkzeug": {
+    "script": "res://game/logic/kategorie_ressourcen/ressource_werkzeug.gd",
     "name": "Werkzeug",
     "icon_pfad": "res://world/assets/ui/ressource_werkzeug.svg",
     "farbe": "#5A7A9A"
   },
   "raeuchelfleisch": {
+    "script": "res://game/logic/kategorie_ressourcen/ressource_raeuchelfleisch.gd",
     "name": "Räucherfleisch",
     "icon_pfad": "res://world/assets/ui/ressource_raeuchelfleisch.svg",
     "farbe": "#A64B2A"

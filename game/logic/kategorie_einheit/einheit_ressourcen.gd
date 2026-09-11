@@ -40,13 +40,32 @@ func _lade_ressourcen() -> void:
 	for ressourcen_id: String in gelesen.keys():
 		var eintrag: Dictionary = gelesen[ressourcen_id]
 		eintrag["id"] = ressourcen_id
-		var objekt := _ressourcen_klasse_fuer(ressourcen_id)
+		var objekt := _ressourcen_klasse_fuer(ressourcen_id, eintrag)
 		objekt.aus_konfig_eintrag(eintrag)
 		ressourcen_objekte.append(objekt)
 		_objekte_nach_id[ressourcen_id] = objekt
 
-func _ressourcen_klasse_fuer(ressourcen_id: String) -> Ressource_Basis:
-	# Zentrale Zuordnung: jede Ressource erhält ihre eigene Datenklasse.
+func _ressourcen_klasse_fuer(ressourcen_id: String, eintrag: Dictionary = {}) -> Ressource_Basis:
+	# Plugin-Naht: Das script-Feld aus dem Pool bestimmt die Datenklasse;
+	# eine neue Ressource braucht künftig nur Pool-Eintrag plus Icon, ohne
+	# dass diese Klasse angefasst wird. ResourceLoader.exists verhindert
+	# Halluzinationen bei Tippfehlern, die Typprüfung hält fremde Skripte raus.
+	# Einträge ohne script-Feld fallen auf die zentrale Zuordnung zurück.
+	var skript_pfad := str(eintrag.get("script", ""))
+	if skript_pfad != "":
+		if not ResourceLoader.exists(skript_pfad):
+			push_warning("Ressourcen-Skript fehlt: %s (Eintrag %s)" % [skript_pfad, ressourcen_id])
+			return _zentrale_klasse_fuer(ressourcen_id)
+		var skript: GDScript = load(skript_pfad)
+		if skript != null:
+			var instanz: Variant = skript.new()
+			if instanz is Ressource_Basis:
+				return instanz as Ressource_Basis
+			push_warning("Ressourcen-Skript ist kein Ressource_Basis: %s" % skript_pfad)
+	return _zentrale_klasse_fuer(ressourcen_id)
+
+func _zentrale_klasse_fuer(ressourcen_id: String) -> Ressource_Basis:
+	# Übergangs-Fallback für Pool-Einträge ohne script-Feld.
 	match ressourcen_id:
 		"holz":
 			return Ressource_Holz.new()

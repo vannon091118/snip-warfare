@@ -218,6 +218,22 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Räucherei im Element-Katalog mit Asset auflösbar")
+	# Plugin-Naht Ressourcen: Das script-Feld aus dem Pool lädt die Klasse;
+	# Räuchelfleisch muss über die Naht als eigene Klasse auflösbar sein.
+	var ressourcen_naht := Einheit_Ressourcen.new()
+	var raeuchel_objekt: Ressource_Basis = null
+	for objekt: Ressource_Basis in ressourcen_naht.ressourcen_objekte:
+		if objekt.ressourcen_id == "raeuchelfleisch":
+			raeuchel_objekt = objekt
+	if raeuchel_objekt == null:
+		print("FEHLER: Raeuchelfleisch fehlt in der Ressourcen-Verwaltung")
+		fehler += 1
+	elif raeuchel_objekt is Ressource_Raeuchelfleisch:
+		print("OK: Raeuchelfleisch über script-Feld als eigene Klasse geladen (%s, Icon %s)" % [
+			raeuchel_objekt.ressourcen_name, str(raeuchel_objekt.icon_pfad.ends_with("ressource_raeuchelfleisch.svg"))])
+	else:
+		print("FEHLER: Raeuchelfleisch fiel auf Ressource_Basis zurück, Naht lädt nicht")
+		fehler += 1
 	# 11) Manager-Kette: Kosten fließen wirklich, Gebäude entsteht im Modell.
 	var bau_modell := Welt_Model.new()
 	var bau_generator := Welt_Generator.new()
