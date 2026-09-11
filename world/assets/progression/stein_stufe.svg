@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Schadensstufen des Steins, ein Blatt je Stadium -->
+  <!-- Stufe 1: Voll, der unversehrte Papier-Fels -->
+  <g transform="translate(0 0)">
+    <ellipse cx="256" cy="440" rx="110" ry="18" fill="#8A8F7E"/>
+    <path d="M 160 430 C 150 350 170 280 220 250 C 270 220 340 224 372 270 C 402 312 400 390 384 430 C 320 446 220 446 160 430 Z" fill="#9B9B8E" stroke="#6E6E62" stroke-width="5"/>
+    <path d="M 200 300 C 240 270 300 268 344 296" fill="none" stroke="#B4B4A6" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 180 380 C 240 368 320 368 372 382" fill="none" stroke="#7C7C70" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+  </g>
+
+  <!-- Stufe 2: Gerissen, erster gezeichneter Riss -->
+  <g transform="translate(128 0)">
+    <ellipse cx="256" cy="440" rx="110" ry="18" fill="#8A8F7E"/>
+    <path d="M 160 430 C 150 350 170 280 220 250 C 270 220 340 224 372 270 C 402 312 400 390 384 430 C 320 446 220 446 160 430 Z" fill="#9B9B8E" stroke="#6E6E62" stroke-width="5"/>
+    <path d="M 200 300 C 240 270 300 268 344 296" fill="none" stroke="#B4B4A6" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 250 252 C 258 286 244 300 256 324 C 264 344 252 356 260 378" fill="none" stroke="#55554C" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Stufe 3: Stark gerissen, das Netz der Risse zeichnet den Zerfall -->
+  <g transform="translate(256 0)">
+    <ellipse cx="256" cy="440" rx="110" ry="18" fill="#8A8F7E"/>
+    <path d="M 160 430 C 150 350 170 280 220 250 C 270 220 340 224 372 270 C 402 312 400 390 384 430 C 320 446 220 446 160 430 Z" fill="#9B9B8E" stroke="#6E6E62" stroke-width="5"/>
+    <path d="M 200 300 C 240 270 300 268 344 296" fill="none" stroke="#B4B4A6" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 250 252 C 258 286 244 300 256 324 C 264 344 252 356 260 378" fill="none" stroke="#55554C" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 196 320 C 220 330 236 326 256 324 C 284 320 306 330 330 322" fill="none" stroke="#55554C" stroke-width="4.5" stroke-linecap="round"/>
+    <path d="M 256 324 C 270 356 300 366 330 360 M 256 324 C 240 352 216 362 192 358" fill="none" stroke="#55554C" stroke-width="4" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 226 438 L 242 414 M 296 440 L 282 416" stroke="#8A8F7E" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Stufe 4: Reststuecke, der Stein ist aufgeschlagen -->
+  <g transform="translate(384 0)">
+    <ellipse cx="256" cy="440" rx="110" ry="18" fill="#8A8F7E"/>
+    <path d="M 176 430 C 168 380 180 330 214 306 L 260 344 L 306 300 C 348 318 368 372 360 430 C 300 444 230 444 176 430 Z" fill="#9B9B8E" stroke="#6E6E62" stroke-width="5"/>
+    <path d="M 214 306 L 260 344 L 306 300" fill="none" stroke="#55554C" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 128 442 L 164 408 L 196 436 Z" fill="#A8A89A" stroke="#6E6E62" stroke-width="4"/>
+    <path d="M 336 440 L 366 412 L 394 438 Z" fill="#A8A89A" stroke="#6E6E62" stroke-width="4"/>
+    <circle cx="238" cy="392" r="7" fill="#7C7C70"/>
+    <circle cx="286" cy="400" r="5" fill="#7C7C70"/>
+  </g>
+</svg>

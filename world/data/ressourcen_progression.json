@@ -1,0 +1,61 @@
+{
+  "_kommentar": "Einzige Quelle der Ressourcen-Progression: Stufen je Ressourcen-Typ, Wachstumsdauer in Welt-Ticks, Schadensstufen, Warmefaktor und die gewichtete Tag-Spawn-Auswahl. Der Zustand selbst wohnt im Welt_Model je Objekt und versteht die Persistenz automatisch.",
+  "stufen": {
+    "baum": {
+      "kategorie": "wachsend",
+      "folge_objekt": "baum_stumpf",
+      "stadien": ["keimling", "jung", "waechsend", "voll"],
+      "staerke": 4,
+      "wachstums_ticks": 2400,
+      "regenerations_ticks": 3600,
+      "stufe_icon_pfad": "res://world/assets/progression/baum_stufe.svg"
+    },
+    "stein": {
+      "kategorie": "begrenzt",
+      "folge_objekt": "",
+      "stadien": ["voll", "gerissen", "stark_gerissen"],
+      "staerke": 3,
+      "wachstums_ticks": 0,
+      "regenerations_ticks": 0,
+      "stufe_icon_pfad": "res://world/assets/progression/stein_stufe.svg"
+    },
+    "steine_gruppe": {
+      "kategorie": "begrenzt",
+      "folge_objekt": "",
+      "stadien": ["voll", "gerissen", "stark_gerissen"],
+      "staerke": 5,
+      "wachstums_ticks": 0,
+      "regenerations_ticks": 0,
+      "stufe_icon_pfad": "res://world/assets/progression/stein_stufe.svg"
+    },
+    "busch": {
+      "kategorie": "wachsend",
+      "folge_objekt": "",
+      "stadien": ["keimling", "jung", "voll"],
+      "staerke": 2,
+      "wachstums_ticks": 1200,
+      "regenerations_ticks": 1800,
+      "stufe_icon_pfad": "res://world/assets/progression/busch_stufe.svg"
+    },
+    "baum_stumpf": {
+      "kategorie": "rest",
+      "folge_objekt": "",
+      "stadien": ["rest"],
+      "staerke": 1,
+      "wachstums_ticks": 0,
+      "regenerations_ticks": 3600,
+      "stufe_icon_pfad": "res://world/assets/progression/baum_stufe.svg"
+    }
+  },
+  "waerme": {
+    "max_faktor": 1.0,
+    "min_faktor": 0.25
+  },
+  "seed_spawn": {
+    "je_tag": 2,
+    "fruchtbarkeit_max_faktor": 1.5,
+    "fruchtbarkeit_min_faktor": 0.5,
+    "kategorie": "objekte",
+    "spawn_kandidaten": ["baum", "busch", "stein"]
+  }
+}
