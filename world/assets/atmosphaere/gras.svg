@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 20" width="24" height="20">
+  <!-- Grasbüschel: vier Halme mit gezeichneter Kontur, Wind biegt sie -->
+  <g fill="none" stroke-linecap="round">
+    <path d="M 6 19 C 5 13 4 9 2.5 5" stroke="#5E8A3E" stroke-width="2.2"/>
+    <path d="M 11 19 C 11 12 11.5 8 11 3.5" stroke="#4E7434" stroke-width="2.4"/>
+    <path d="M 16 19 C 17.5 13 18.5 10 21 6" stroke="#5E8A3E" stroke-width="2.2"/>
+    <path d="M 8.5 19 C 8 14 7.5 11 6.5 8" stroke="#7AA84E" stroke-width="1.8" opacity="0.9"/>
+  </g>
+</svg>

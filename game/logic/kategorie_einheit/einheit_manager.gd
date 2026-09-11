@@ -26,6 +26,7 @@ var _ernte: Einheit_ErnteMaschine = null
 var _versorgung: Einheit_Versorgung = null
 var _fortschritt: Welt_FortschrittsMaschine = null
 var _einwanderer_takt: int = 0
+var _schlag_ort_empfaenger: Callable = Callable()
 
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
@@ -53,6 +54,9 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_ernte.zufall_setzen(_zufall)
 	_ernte.manager_setzen(self)
 	_ernte.beute_erlegt.connect(_auf_beute_erlegt)
+	# Rein optisch: Jeder Ernteschlag meldet seinen Ort, die Atmosphaeren-
+	# Domaene zeigt dort Staub. Der Manager reicht nur durch.
+	_ernte.schlag_ort_gemeldet.connect(_auf_schlag_ort)
 	_versorgung = Einheit_Versorgung.new()
 	_versorgung.einrichten(ressourcen)
 	# Verbrauchs-Vorgabe aus dem Datenpool: Der Wert aus needs.json gilt, bis

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" width="12" height="12">
+  <!-- Pollen: weicher gezeichneter Lichtpunkt -->
+  <circle cx="6" cy="6" r="3" fill="#F6E9B8" opacity="0.55"/>
+  <circle cx="6" cy="6" r="1.4" fill="#FDF7DE" opacity="0.9"/>
+</svg>

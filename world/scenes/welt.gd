@@ -44,6 +44,7 @@ var _fortschritt := Welt_FortschrittsMaschine.new()
 var _karten_beobachter := Welt_KartenBeobachter.new()
 var _timeline := Kern_Timeline.new()
 var _feedback := Welt_FeedbackManager.new()
+var _atmosphaere := Welt_AtmosphaereVerdrahtung.new()
 var _orchestrator_verdrahtung := Orchestrator_Verdrahtung.new()
 var _kamera_steuerung := Ui_KameraSteuerung.new()
 var _eingabe_steuerung := Ui_EingabeSteuerung.new()
@@ -80,11 +81,21 @@ func _ready() -> void:
 	add_child(_tages_overlay)
 	(_tages_overlay as Object).call("einrichten", _tageszyklus)
 	_karte.darstellen(_model, _registry, _biome)
+	# Atmosphaeren-Domaene: Die Szene haengt nur die Spitze an und reicht
+	# Tageszyklus, Kartenmitte und Radius weiter. Jede Fachlogik bleibt in
+	# der Domaene; die Sway-Quelle fuer den Renderer kommt von dort.
+	_atmosphaere.bereich_setzen(start_position, bereich)
+	add_child(_atmosphaere)
+	_atmosphaere.einrichten(_tageszyklus, start_position, bereich)
+	_atmosphaere.weltuhr_verbinden()
+	_karte.sway_material_quelle_setzen(_atmosphaere.sway_material_quelle())
+	_stockmaenner.schlag_ort_empfaenger_setzen(_atmosphaere.staub_zeigen)
 	add_child(_feedback)
 	_feedback.einrichten(_ressourcen)
 	_karten_ebene_bauen()
 	_tier_platzierer.platzieren(_model, _registry, _tiere)
 	var start_position := Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
+	var bereich := maxf(_model.groesse().x, _model.groesse().y) * Welt_Model.KACHEL_GROESSE * 0.6
 	_kamera_steuerung.einrichten(_steuerung, _model, start_position)
 	_tiere.spieler_position_setzen(_kamera_steuerung.kamera_position)
 	_kamera.position = _kamera_steuerung.kamera_position

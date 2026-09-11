@@ -25,6 +25,9 @@
     "logik_id": "ressource_holz",
     "modifikator_id": "normal",
     "faktor": 1.0,
+    "wind_sway": true,
+    "wind_sway_wucht": 1.6,
+    "wind_sway_schwingung": 0.012,
     "script": "res://world/logic/kategorie_objekt/objekt_baum.gd"
   },
   {
@@ -159,7 +162,10 @@
     "modifikator_id": "normal",
     "faktor": 1.0,
     "funktions_animation": "wehen",
-    "funktions_takt_faktor": 1.0
+    "funktions_takt_faktor": 1.0,
+    "wind_sway": true,
+    "wind_sway_wucht": 2.2,
+    "wind_sway_schwingung": 0.02
   },
   {
     "id": "werkstatt",

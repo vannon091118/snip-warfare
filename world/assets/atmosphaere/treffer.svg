@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 16" width="20" height="16">
+  <!-- Blitz-Marker eines Arbeitsschlages, Comic-Stil mit Doppelschlag -->
+  <path d="M 3 13 L 8 8 L 5.5 8 L 11 3 L 9.5 7.5 L 12.5 7.5 L 6.5 13.5 Z" fill="#F2DE9B" stroke="#B8862B" stroke-width="1.2" stroke-linejoin="round"/>
+  <path d="M 14 2 L 17 0.5 M 15 6 L 19 5.5" stroke="#F2DE9B" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+</svg>
