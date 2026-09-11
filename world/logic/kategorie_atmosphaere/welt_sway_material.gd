@@ -7,10 +7,11 @@ class_name Welt_SwayMaterial
 
 ## Kategorie daten: Pool-Zugriff und der geteilte Shader-Text.
 var _konfig: Welt_AtmosphaereKonfig = null
+var _shader: Shader = null
 
 ## Kategorie logik: Material bauen und pro Tick mit Wind fuettern.
 
-const SWAY_SHADER := "
+const SWAY_SHADER_TEXT := "
 shader_type canvas_item;
 uniform float staerke = 0.0;
 uniform float phase = 0.0;
@@ -24,6 +25,14 @@ void vertex() {
 }
 "
 
+## Der Shader-Text wird einmal zu einer echten Shader-Instanz gebacken,
+## damit alle Materialien dieselbe Instanz teilen.
+func shader_instanz() -> Shader:
+	if _shader == null:
+		_shader = Shader.new()
+		_shader.code = SWAY_SHADER_TEXT
+	return _shader
+
 func einrichten(konfig: Welt_AtmosphaereKonfig) -> void:
 	_konfig = konfig
 
@@ -33,7 +42,7 @@ func material_fuer(objekt: Objekt_Basis) -> ShaderMaterial:
 	if objekt == null or not bool(objekt.schluessel_daten.get("wind_sway", false)):
 		return null
 	var material := ShaderMaterial.new()
-	material.shader = SWAY_SHADER
+	material.shader = shader_instanz()
 	material.set_shader_parameter("staerke", 0.0)
 	material.set_shader_parameter("phase", 0.0)
 	material.set_shader_parameter("schwingung", float(objekt.schluessel_daten.get("wind_sway_schwingung", 0.008)))

@@ -6,6 +6,15 @@ class_name Welt_SonnenEffekt
 
 ## Kategorie daten: Pool, Maschine und der gezeichnete Streifen-Layer.
 var _konfig: Welt_AtmosphaereKonfig = null
+var _sonnen_shader: Shader = null
+
+## Der Sonnen-Shader-Text wird einmal zu einer echten Shader-Instanz
+## gebacken, damit alle Materialien dieselbe Instanz teilen.
+func sonnen_shader_instanz() -> Shader:
+	if _sonnen_shader == null:
+		_sonnen_shader = Shader.new()
+		_sonnen_shader.code = SONNEN_SHADER_TEXT
+	return _sonnen_shader
 var _zyklus: Welt_TageszyklusMaschine = null
 var _farbe: ColorRect = null
 var _alpha: float = 0.0
@@ -33,7 +42,7 @@ func _ready() -> void:
 	if _konfig != null:
 		winkel = _konfig.sonne_wert("strequahlen_winkel_grad", 18.0)
 	var streifen := ShaderMaterial.new()
-	streifen.shader = SONNEN_SHADER
+	streifen.shader = sonnen_shader_instanz()
 	streifen.set_shader_parameter("winkel", deg_to_rad(winkel))
 	streifen.set_shader_parameter("farbe", _farbe_fuer_phase())
 	streifen.set_shader_parameter("alpha", 0.0)
@@ -88,7 +97,7 @@ func _process(delta: float) -> void:
 func _max_alpha() -> float:
 	return _konfig.sonne_wert("max_alpha", 0.1) if _konfig != null else 0.1
 
-const SONNEN_SHADER := "
+const SONNEN_SHADER_TEXT := "
 shader_type canvas_item;
 uniform float winkel = 0.314;
 uniform vec4 farbe : source_color = vec4(1.0, 0.95, 0.79, 1.0);

@@ -884,6 +884,29 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Einstiegs-Kette laeuft (Lagerfeuer gesetzt, Haus freigeschaltet und gebaut, Einwanderung %d je Tag)" % prog_rate)
+	# Atmosphaeren-Domaene: Wind folgt deterministisch der Tick-Nummer und
+	# dem Pool, derselbe Tick liefert dieselbe Staerke; der Katalog-Eintrag
+	# Baum traegt wind_sway als Datenentscheidung fuer das Renderer-Material.
+	var atmosphaere_konfig := Welt_AtmosphaereKonfig.new()
+	atmosphaere_konfig.laden()
+	var atmosphaere_wind := Welt_WindRechner.new()
+	atmosphaere_wind.einrichten(atmosphaere_konfig)
+	var wind_erster := atmosphaere_wind.staerke_an(1000)
+	var wind_wiederholung := atmosphaere_wind.staerke_an(1000)
+	var wind_anderer_tick := atmosphaere_wind.staerke_an(4000)
+	var wind_minimum := atmosphaere_konfig.wind_wert("mindest_staerke", 0.15)
+	var wind_maximum := atmosphaere_konfig.wind_wert("mindest_staerke", 0.15) + atmosphaere_konfig.wind_wert("staerke_spanne", 0.45)
+	var katalog_baum := Welt_Registry.new().finde_objekt("baum")
+	var baum_sway := katalog_baum != null and bool(katalog_baum.schluessel_daten.get("wind_sway", false))
+	if absf(wind_erster - wind_wiederholung) > 0.0001 or wind_erster < wind_minimum - 0.0001 or wind_erster > wind_maximum + 0.0001 or wind_anderer_tick < wind_minimum - 0.0001:
+		print("FEHLER: Wind nicht deterministisch oder ausserhalb des Pools (erster %f, wiederholung %f, anderer %f, grenzen %f..%f)" % [
+			wind_erster, wind_wiederholung, wind_anderer_tick, wind_minimum, wind_maximum])
+		fehler += 1
+	elif not baum_sway:
+		print("FEHLER: Katalog-Eintrag Baum traegt kein wind_sway-Feld fuer das Renderer-Material")
+		fehler += 1
+	else:
+		print("OK: Wind folgt deterministisch der Tick-Nummer im Pool-Rahmen (%.2f bei Tick 1000) und der Baum traegt wind_sway als Daten" % wind_erster)
 	# 31) Eskalationsketten der Sprechblasen: Der Hunger steigt aus den
 	#     Need-Raten, und die Blase springt ueber die Datenschwellen von der
 	#     Bitte ueber die Jagd bis zum Kannibalismus. Grund und Wirkung kommen

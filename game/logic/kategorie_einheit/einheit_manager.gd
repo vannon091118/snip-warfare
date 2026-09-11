@@ -27,6 +27,7 @@ var _versorgung: Einheit_Versorgung = null
 var _fortschritt: Welt_FortschrittsMaschine = null
 var _einwanderer_takt: int = 0
 var _schlag_ort_empfaenger: Callable = Callable()
+var _schlag_empfaenger: Callable = Callable()
 
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
@@ -57,6 +58,7 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	# Rein optisch: Jeder Ernteschlag meldet seinen Ort, die Atmosphaeren-
 	# Domaene zeigt dort Staub. Der Manager reicht nur durch.
 	_ernte.schlag_ort_gemeldet.connect(_auf_schlag_ort)
+	_ernte.schlag_objekt_gemeldet.connect(_auf_schlag_objekt)
 	_versorgung = Einheit_Versorgung.new()
 	_versorgung.einrichten(ressourcen)
 	# Verbrauchs-Vorgabe aus dem Datenpool: Der Wert aus needs.json gilt, bis
@@ -145,6 +147,24 @@ func _tier_in_reichweite(jaeger_index: int) -> bool:
 		if tier_pos != Vector2.INF and tier_pos.distance_to(eigene) <= 160.0:
 			return true
 	return false
+
+func schlag_ort_empfaenger_setzen(empfaenger: Callable) -> void:
+	# Die Welt-Szene reicht die Atmosphaeren-Spitze herein; der Manager
+	# kennt die Domäne nicht, nur den Aufruf staub_zeigen(position).
+	_schlag_ort_empfaenger = empfaenger
+
+func schlag_empfaenger_setzen(empfaenger: Callable) -> void:
+	# Die Progressions-Domäne meldet sich als Empfänger für jeden echten
+	# Arbeitsschlag; der Manager kennt nur den Aufruf schlag(index).
+	_schlag_empfaenger = empfaenger
+
+func _auf_schlag_ort(welt_position: Vector2) -> void:
+	if _schlag_ort_empfaenger.is_valid():
+		_schlag_ort_empfaenger.call(welt_position)
+
+func _auf_schlag_objekt(ziel_index: int) -> void:
+	if _schlag_empfaenger.is_valid():
+		_schlag_empfaenger.call(ziel_index)
 
 func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
 	_tageszyklus = zyklus

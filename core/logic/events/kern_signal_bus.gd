@@ -10,6 +10,11 @@ class_name Kern_SignalBus
 signal schaden_erhalten(position: Vector2, schaden: int, art: String)
 @warning_ignore("unused_signal")
 signal gestorben(position: Vector2, typ: String, war_einheit: bool)
+# Autonomes Verhalten: Jede Kannibalismus-Tat wird am Tatort gemeldet,
+# damit Zeugen im Umkreis wahrnehmen und lernen können. Der Bus ist die
+# einzige Brücke zwischen Täter und Zeugen, kein direkter Ruf.
+@warning_ignore("unused_signal")
+signal kannibalismus_erreignis(tatort: Vector2)
 # Menü-Gegenprüfung: Ein geöffnetes Menü meldet sich; die
 # Modifikator-Maschinen aktualisieren daraufhin ihre Faktoren.
 @warning_ignore("unused_signal")
@@ -40,6 +45,9 @@ func _emit_schaden(position: Vector2, schaden: int, art: String) -> void:
 
 func _emit_gestorben(position: Vector2, typ: String, war_einheit: bool) -> void:
 	gestorben.emit(position, typ, war_einheit)
+
+func _emit_kannibalismus(tatort: Vector2) -> void:
+	kannibalismus_erreignis.emit(tatort)
 
 func _emit_menue_geoeffnet() -> void:
 	menue_geoeffnet.emit()

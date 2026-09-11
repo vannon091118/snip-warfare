@@ -12,6 +12,9 @@ signal beute_erlegt(status: Einheit_Status)
 ## Darstellungs-Anschluss: Der Ort des Schlages wird gemeldet, damit die
 ## Atmosphaeren-Domaene dort Staub zeigt. Rein optisch, keine Spiellogik.
 signal schlag_ort_gemeldet(welt_position: Vector2)
+## Zustands-Anschluss: Der Objekt-Index jedes Objekt-Schlages wird gemeldet,
+## damit die Progressions-Domäne den echten Bestand am Modell senkt.
+signal schlag_objekt_gemeldet(ziel_index: int)
 
 ## Kategorie daten: die Quellen der Ernte.
 var _ressourcen: Einheit_Ressourcen = null
@@ -49,6 +52,7 @@ func arbeitsschritt_verarbeiten(ressource: String, menge: int, status: Einheit_S
 		Job_Basis.ZielTyp.OBJEKT:
 			_ressourcen.ernte_position_setzen(_objekt_position(status.aktuelles_ziel_index))
 			schlag_ort_gemeldet.emit(_objekt_position(status.aktuelles_ziel_index))
+			schlag_objekt_gemeldet.emit(status.aktuelles_ziel_index)
 			# Bäume und Steine liefern ihre Ernte ins nächste lokale Lager.
 			_ressourcen.hinzufuegen(ressource, menge)
 		Job_Basis.ZielTyp.TIER:
@@ -84,6 +88,11 @@ func _kannibale_schlag(status: Einheit_Status, schaden: int) -> void:
 	if vital.hp <= 0:
 		status.job_abbrechen()
 		beute_erlegt.emit(status)
+		# Die Tat wird sichtbar: Der Bus trägt den Tatort an alle Zeugen,
+		# die Wahrnehmung und Lernen gehört dem Manager der Zeugen.
+		var bus := Kern_SignalBus.bus()
+		if bus != null:
+			bus._emit_kannibalismus(manager.einheit_position(opfer))
 
 func _manager_des_opfers() -> Einheit_Manager:
 	return _manager
