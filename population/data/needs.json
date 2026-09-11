@@ -9,8 +9,9 @@
   "nahrung": {
     "script": "res://population/logic/needs/pop_need_nahrung.gd",
     "name": "Hunger",
-    "beschreibung": "Der Magen knurrt und fordert Nachschub aus dem nächsten Lager. Der Verbrauch je Einheit und Takt steht im Abschnitt weltrhythmus.",
+    "beschreibung": "Der Magen knurrt und fordert Nachschub aus dem nächsten Lager. Fleisch und Beeren sättigen gleichermaßen. Der Verbrauch je Einheit und Takt steht im Abschnitt weltrhythmus.",
     "ressource": "fleisch",
+    "ressource_zusatz": ["beeren"],
     "schwellwert": 3,
     "dringlichkeit_pro_tick": 0.02,
     "abfall_pro_tick": 0.04,

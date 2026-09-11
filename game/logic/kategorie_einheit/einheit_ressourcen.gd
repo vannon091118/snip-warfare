@@ -75,6 +75,10 @@ func _zentrale_klasse_fuer(ressourcen_id: String) -> Ressource_Basis:
 			return Ressource_Fleisch.new()
 		"werkzeug":
 			return Ressource_Werkzeug.new()
+		"raeuchelfleisch":
+			return Ressource_Raeuchelfleisch.new()
+		"beeren":
+			return Ressource_Beeren.new()
 	return Ressource_Basis.new()
 
 func _startzustand_fahren() -> void:

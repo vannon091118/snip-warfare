@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 88" width="384" height="88">
+  <!-- Beeren-Overlay für Busch: 4 Frames à 96x88 mit farbigen Beerenpunkten, exakt abgestimmt auf die Wind-Animation -->
+  
+  <!-- Frame 1: Grundhaltung -->
+  <g transform="translate(0 0)">
+    <!-- Dunkle Beeren / Brombeeren & Heidelbeeren -->
+    <g stroke="#3A005A" stroke-width="0.8">
+      <circle cx="28" cy="48" r="3.2" fill="#8A2BE2"/>
+      <circle cx="27" cy="47" r="1.0" fill="#DDA0DD" opacity="0.8"/>
+      <circle cx="38" cy="38" r="3.5" fill="#4B0082"/>
+      <circle cx="37" cy="37" r="1.0" fill="#BA55D3" opacity="0.8"/>
+      <circle cx="50" cy="36" r="3.2" fill="#9932CC"/>
+      <circle cx="49" cy="35" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+      <circle cx="62" cy="44" r="3.0" fill="#8B008B"/>
+      <circle cx="61" cy="43" r="0.9" fill="#FFB6C1" opacity="0.8"/>
+    </g>
+    <!-- Rote Waldbeeren / Preiselbeeren -->
+    <g stroke="#6A0DAD" stroke-width="0.8">
+      <circle cx="22" cy="54" r="2.8" fill="#C71585"/>
+      <circle cx="21" cy="53" r="0.8" fill="#FF69B4" opacity="0.8"/>
+      <circle cx="34" cy="56" r="3.0" fill="#7B1FA2"/>
+      <circle cx="33" cy="55" r="0.9" fill="#CE93D8" opacity="0.8"/>
+      <circle cx="45" cy="48" r="3.4" fill="#6A1B9A"/>
+      <circle cx="44" cy="47" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+      <circle cx="56" cy="52" r="3.0" fill="#8E24AA"/>
+      <circle cx="55" cy="51" r="0.9" fill="#F8BBD0" opacity="0.8"/>
+      <circle cx="68" cy="50" r="2.8" fill="#AB47BC"/>
+      <circle cx="67" cy="49" r="0.8" fill="#F3E5F5" opacity="0.8"/>
+    </g>
+  </g>
+
+  <!-- Frame 2: Oberkörper links gewiegt -->
+  <g transform="translate(96 0)">
+    <g transform="translate(-2 -0.8)">
+      <g stroke="#3A005A" stroke-width="0.8">
+        <circle cx="28" cy="48" r="3.2" fill="#8A2BE2"/>
+        <circle cx="27" cy="47" r="1.0" fill="#DDA0DD" opacity="0.8"/>
+        <circle cx="38" cy="38" r="3.5" fill="#4B0082"/>
+        <circle cx="37" cy="37" r="1.0" fill="#BA55D3" opacity="0.8"/>
+        <circle cx="50" cy="36" r="3.2" fill="#9932CC"/>
+        <circle cx="49" cy="35" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+        <circle cx="62" cy="44" r="3.0" fill="#8B008B"/>
+        <circle cx="61" cy="43" r="0.9" fill="#FFB6C1" opacity="0.8"/>
+      </g>
+      <g stroke="#6A0DAD" stroke-width="0.8">
+        <circle cx="22" cy="54" r="2.8" fill="#C71585"/>
+        <circle cx="21" cy="53" r="0.8" fill="#FF69B4" opacity="0.8"/>
+        <circle cx="34" cy="56" r="3.0" fill="#7B1FA2"/>
+        <circle cx="33" cy="55" r="0.9" fill="#CE93D8" opacity="0.8"/>
+        <circle cx="45" cy="48" r="3.4" fill="#6A1B9A"/>
+        <circle cx="44" cy="47" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+        <circle cx="56" cy="52" r="3.0" fill="#8E24AA"/>
+        <circle cx="55" cy="51" r="0.9" fill="#F8BBD0" opacity="0.8"/>
+        <circle cx="68" cy="50" r="2.8" fill="#AB47BC"/>
+        <circle cx="67" cy="49" r="0.8" fill="#F3E5F5" opacity="0.8"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Frame 3: Oberkörper rechts gewiegt -->
+  <g transform="translate(192 0)">
+    <g transform="translate(2.5 -0.8)">
+      <g stroke="#3A005A" stroke-width="0.8">
+        <circle cx="28" cy="48" r="3.2" fill="#8A2BE2"/>
+        <circle cx="27" cy="47" r="1.0" fill="#DDA0DD" opacity="0.8"/>
+        <circle cx="38" cy="38" r="3.5" fill="#4B0082"/>
+        <circle cx="37" cy="37" r="1.0" fill="#BA55D3" opacity="0.8"/>
+        <circle cx="50" cy="36" r="3.2" fill="#9932CC"/>
+        <circle cx="49" cy="35" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+        <circle cx="62" cy="44" r="3.0" fill="#8B008B"/>
+        <circle cx="61" cy="43" r="0.9" fill="#FFB6C1" opacity="0.8"/>
+      </g>
+      <g stroke="#6A0DAD" stroke-width="0.8">
+        <circle cx="22" cy="54" r="2.8" fill="#C71585"/>
+        <circle cx="21" cy="53" r="0.8" fill="#FF69B4" opacity="0.8"/>
+        <circle cx="34" cy="56" r="3.0" fill="#7B1FA2"/>
+        <circle cx="33" cy="55" r="0.9" fill="#CE93D8" opacity="0.8"/>
+        <circle cx="45" cy="48" r="3.4" fill="#6A1B9A"/>
+        <circle cx="44" cy="47" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+        <circle cx="56" cy="52" r="3.0" fill="#8E24AA"/>
+        <circle cx="55" cy="51" r="0.9" fill="#F8BBD0" opacity="0.8"/>
+        <circle cx="68" cy="50" r="2.8" fill="#AB47BC"/>
+        <circle cx="67" cy="49" r="0.8" fill="#F3E5F5" opacity="0.8"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Frame 4: Ruhige Gegenbewegung -->
+  <g transform="translate(288 0)">
+    <g transform="translate(0 0.8)">
+      <g stroke="#3A005A" stroke-width="0.8">
+        <circle cx="28" cy="48" r="3.2" fill="#8A2BE2"/>
+        <circle cx="27" cy="47" r="1.0" fill="#DDA0DD" opacity="0.8"/>
+        <circle cx="38" cy="38" r="3.5" fill="#4B0082"/>
+        <circle cx="37" cy="37" r="1.0" fill="#BA55D3" opacity="0.8"/>
+        <circle cx="50" cy="36" r="3.2" fill="#9932CC"/>
+        <circle cx="49" cy="35" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+        <circle cx="62" cy="44" r="3.0" fill="#8B008B"/>
+        <circle cx="61" cy="43" r="0.9" fill="#FFB6C1" opacity="0.8"/>
+      </g>
+      <g stroke="#6A0DAD" stroke-width="0.8">
+        <circle cx="22" cy="54" r="2.8" fill="#C71585"/>
+        <circle cx="21" cy="53" r="0.8" fill="#FF69B4" opacity="0.8"/>
+        <circle cx="34" cy="56" r="3.0" fill="#7B1FA2"/>
+        <circle cx="33" cy="55" r="0.9" fill="#CE93D8" opacity="0.8"/>
+        <circle cx="45" cy="48" r="3.4" fill="#6A1B9A"/>
+        <circle cx="44" cy="47" r="1.0" fill="#E1BEE7" opacity="0.8"/>
+        <circle cx="56" cy="52" r="3.0" fill="#8E24AA"/>
+        <circle cx="55" cy="51" r="0.9" fill="#F8BBD0" opacity="0.8"/>
+        <circle cx="68" cy="50" r="2.8" fill="#AB47BC"/>
+        <circle cx="67" cy="49" r="0.8" fill="#F3E5F5" opacity="0.8"/>
+      </g>
+    </g>
+  </g>
+</svg>

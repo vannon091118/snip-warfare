@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Beeren: Saftige Waldbeeren mit kleinen grünen Blättern -->
+  <ellipse cx="32" cy="54" rx="20" ry="5" fill="#7A9549"/>
+  <ellipse cx="32" cy="52" rx="16" ry="4" fill="#8FAB58" opacity="0.8"/>
+  <!-- Stiel und Blätter -->
+  <path d="M 32 18 Q 33 26 32 30" stroke="#4A6B2A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M 32 22 Q 24 16 20 20 Q 26 24 32 23" fill="#6B8E23" stroke="#4A6B2A" stroke-width="1.2"/>
+  <path d="M 32 22 Q 40 16 44 20 Q 38 24 32 23" fill="#6B8E23" stroke="#4A6B2A" stroke-width="1.2"/>
+  <!-- Beeren-Cluster -->
+  <circle cx="25" cy="34" r="8" fill="#8A2BE2" stroke="#4B0082" stroke-width="1.5"/>
+  <circle cx="23" cy="32" r="2.5" fill="#BA55D3" opacity="0.8"/>
+  <circle cx="39" cy="34" r="8" fill="#9932CC" stroke="#4B0082" stroke-width="1.5"/>
+  <circle cx="37" cy="32" r="2.5" fill="#DDA0DD" opacity="0.8"/>
+  <circle cx="32" cy="42" r="8.5" fill="#7B1FA2" stroke="#4A148C" stroke-width="1.5"/>
+  <circle cx="30" cy="40" r="2.5" fill="#CE93D8" opacity="0.8"/>
+  <circle cx="32" cy="31" r="7" fill="#6A1B9A" stroke="#4A148C" stroke-width="1.5"/>
+  <circle cx="30" cy="29" r="2" fill="#E1BEE7" opacity="0.8"/>
+</svg>

@@ -44,6 +44,13 @@
 	"ressource": "fleisch",
 	"basis_faktor": 1.0
   },
+  "ressource_beeren": {
+	"name": "Beeren sammeln",
+	"beschreibung": "Sammler erntet Beeren am Busch.",
+	"verhalten": "ernte_fix",
+	"ressource": "beeren",
+	"basis_faktor": 1.0
+  },
   "waerme_quelle": {
 	"name": "Wärme geben",
 	"beschreibung": "Lagerfeuer spendet Wärme in seinem Radius; der Faktor skaliert die Wärmestärke.",

@@ -94,6 +94,9 @@ func auf_jobwechsel(von: String, nach: String, _job_id: String) -> void:
 
 func _verfuegbar_fuer(typ: Pop_NeedBasis) -> int:
 	if _lager != null and not typ.ressource.is_empty():
+		# Override-Pfad: Need-Klassen mit mehreren Nahrungsquellen summieren selbst.
+		if typ.has_method("hat_verfuegbar_override") and typ.hat_verfuegbar_override():
+			return typ.verfuegbar_summe(_lager)
 		return _lager.gesamt_bestand(typ.ressource)
 	return 0
 
@@ -256,6 +259,19 @@ func bereich_hervorheben(mod_id: String, stufe: Pop_MoodEskalationStufe) -> void
 	neu.quelle = "verhalten"
 	_mood = neu
 	mood_geaendert.emit(_mood)
+
+## Gedanke eines Zeugen: Er hat eine Kannibalismus-Tat gesehen. Die Nähe
+## zum Tatort färbt den Satz, ohne eigenes Gelerntes ist es Ekel, mit
+## eigenem Gelernten Erinnerung; die Blase erzählt beides im selben
+## Emoji-Stil wie die Ketten.
+func zeugengedanke(tatort: Vector2, hat_gelernt: bool) -> void:
+	var neben_an := _welt_position.distance_to(tatort) <= Welt_Model.KACHEL_GROESSE * 3.0
+	if hat_gelernt:
+		var ort := "Direkt neben mir" if neben_an else "Drüben"
+		_setze_gedanke("kannibalismus", "😳", "%s habe ich es gesehen… es geht also." % ort)
+	else:
+		var schreck := "Direkt neben mir isst er einen von uns?!" if neben_an else "Da drüben isst er einen von uns?!"
+		_setze_gedanke("ekel", "😱", schreck)
 
 func _setze_gedanke(need_id: String, emoji: String, gedanken_text: String) -> void:
 	var neu := Pop_Mood.new()
