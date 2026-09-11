@@ -1,7 +1,9 @@
 extends Node2D
 class_name Pop_Denkblase
 ## Observer-Spitze je Stickman: liest Pop_Mood und zeigt Sprechblase.
-## Keine Logik, keine Maschine – nur Visualisierung.
+## Keine Logik, keine Maschine – nur Visualisierung. Sie zeigt die
+## Erzählung der Mood: erst den Grund, darunter die Wirkung, beides mit
+## den Emojis der erreichten Eskalationsstufe aus dem Datenpool.
 ## Kette: Pop_MoodMaschine -> mood_geaendert -> Denkblase zeigt Blase.
 
 var _maschine: Pop_MoodMaschine = null
@@ -51,5 +53,5 @@ func _auf_mood(mood: Pop_Mood) -> void:
 	if mood == null or mood.leer():
 		_blase.visible = false
 		return
-	_label.text = "%s %s" % [mood.emoji, mood.sprechblase_text]
+	_label.text = mood.erzaehlung()
 	_blase.visible = true

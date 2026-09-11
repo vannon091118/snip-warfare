@@ -7,7 +7,9 @@ class_name Pop_MoodMaschine
 ## Die Maschine hängt als Node-Kind im eigenen Need-Baum (Pop_NeedBaum)
 ## und trägt ihr Rassen-Schema: Die Need-Raten laufen über den Faktor der
 ## eigenen Modifikator-Maschine (Bereich need) mal die Multiplikatoren
-## des Rassen-Schemas.
+## des Rassen-Schemas. Seit den Eskalationsketten wählt sie aus der
+## erreichten Not die passende Stufe des Mods, sodass Grund, Wirkung und
+## Verhalten der Sprechblase aus dem Datenpool kommen statt aus dem Code.
 
 signal mood_geaendert(mood: Pop_Mood)
 
@@ -155,6 +157,36 @@ func _hp_folge_und_ziel() -> Vector2:
 		return _waerme_feld.naechstes_feuer_fuer(_welt_position) if w < mod.schwellwert else _flucht_von_feuer()
 	return Vector2.INF
 
+## Not-Ausmaß der Wärme: Kälte wirkt unter null, Hitze darüber. Der Betrag
+## bringt beide auf dieselbe steigende Skala wie die Schwellen der Ketten,
+## damit eine einzige Stufenwahl für alle Mods genügt.
+func _not_ausmass(w: float) -> float:
+	return maxf(-w, 0.0) if w < 0.0 else maxf(w, 0.0)
+
+## Einzige Übernahme einer Eskalationsstufe: Emoji, Kurzzeile, Grund,
+## Wirkung, Verhalten, Stufe und Kette kommen aus dem gewählten Eintrag.
+## Ohne Kette oder ohne erreichte Stufe ändert sie nichts.
+func _eskalation_uebernehmen(ziel: Pop_Mood, mod: Pop_MoodModifikator, staerke: float) -> bool:
+	if mod == null or not mod.hat_eskalation():
+		return false
+	var stufe := mod.stufe_fuer(staerke)
+	if stufe == null:
+		return false
+	ziel.emoji = stufe.emoji
+	ziel.sprechblase_text = stufe.wirkung
+	ziel.grund = stufe.grund
+	ziel.wirkung = stufe.wirkung
+	ziel.verhalten = stufe.verhalten
+	ziel.stufe = stufe.stufe
+	ziel.kette = mod.mod_id
+	ziel.folge_mod_id = stufe.folge_mod_id
+	return true
+
+func _mod_fuer_need(need_id: String) -> Pop_MoodModifikator:
+	if _mood_mods == null:
+		return null
+	return _mood_mods.mod_fuer_need(need_id)
+
 func _flucht_von_feuer() -> Vector2:
 	if _waerme_feld == null:
 		return Vector2.INF
@@ -173,6 +205,7 @@ func _ableiten() -> void:
 		g.sprechblase_text = gate_mod.sprechblase_text
 		g.intensitaet = clampf(absf(w), 0.4, 1.0)
 		g.quelle = "waerme"
+		_eskalation_uebernehmen(g, gate_mod, _not_ausmass(w))
 		_mood = g
 		mood_geaendert.emit(_mood)
 		return
@@ -193,7 +226,8 @@ func _ableiten() -> void:
 	neu.aktive_need_id = best_id
 	neu.intensitaet = best_staerke
 	neu.quelle = "tick"
-	if typ != null:
+	# Eskalationskette zuerst: erreicht keine Stufe, bleibt der Need-Text.
+	if not _eskalation_uebernehmen(neu, _mod_fuer_need(best_id), best_staerke) and typ != null:
 		neu.emoji = typ.emoji
 		neu.sprechblase_text = typ.sprechblase_text
 	_mood = neu

@@ -1,5 +1,5 @@
 {
-  "_kommentar": "Mood-Modifikatoren sind Progression-Gates für die Stimmung. Jeder Eintrag hat eine need_id, Schwelle, Emoji, Sprechblase, Verhalten und HP-Folge. Neue Gates nur hier eintragen, keine Maschinenänderung.",
+  "_kommentar": "Mood-Modifikatoren sind Progression-Gates für die Stimmung. Jeder Eintrag hat eine need_id, Schwelle, Emoji, Sprechblase, Verhalten und HP-Folge und dazu eine Eskalationskette: Jede Stufe trägt stufe, schwelle, emoji, grund, wirkung, verhalten und optional folge_mod_id, womit eine Kette in die nächste greift. Die schwelle ist ein Not-Ausmaß derselben Einheit wie die Stärke des Mods: beim Hunger der Need-Wert von null bis eins, bei Kälte der Betrag der negativen Wärme, bei Hitze die Wärme selbst. Neue Stufen und neue Ketten nur hier eintragen, keine Maschinenänderung.",
   "kaelte": {
     "need_id": "waerme",
     "name": "Kälte",
@@ -8,7 +8,33 @@
     "schwellwert": -0.4,
     "hp_abzug_je_tick": 1,
     "verhalten": "in_sicherheit_bringen",
-    "farbe": "#6FA8D6"
+    "farbe": "#6FA8D6",
+    "eskalation": [
+      {
+        "stufe": 1,
+        "schwelle": 0.45,
+        "emoji": "🥶",
+        "grund": "❄️ Ein kalter Zug weht durch die Knochen.",
+        "wirkung": "🚶 Ich suche das nächste Feuer.",
+        "verhalten": "in_sicherheit_bringen"
+      },
+      {
+        "stufe": 2,
+        "schwelle": 0.65,
+        "emoji": "😨",
+        "grund": "❄️❄️ Die Finger werden steif, die Nacht ist lang.",
+        "wirkung": "🏃 Ich renne zum Feuer, egal wie weit.",
+        "verhalten": "in_sicherheit_bringen"
+      },
+      {
+        "stufe": 3,
+        "schwelle": 0.85,
+        "emoji": "🥶",
+        "grund": "🧊 Jeder Schritt knirscht, das Feuer ist zu weit weg.",
+        "wirkung": "⛺ Ich grabe mich ins Lager und warte.",
+        "verhalten": "in_sicherheit_bringen"
+      }
+    ]
   },
   "hitze": {
     "need_id": "waerme",
@@ -18,7 +44,33 @@
     "schwellwert": 0.6,
     "hp_abzug_je_tick": 2,
     "verhalten": "in_sicherheit_bringen",
-    "farbe": "#E07A2E"
+    "farbe": "#E07A2E",
+    "eskalation": [
+      {
+        "stufe": 1,
+        "schwelle": 0.65,
+        "emoji": "🥵",
+        "grund": "🔥 Die Haut glüht am Feuer.",
+        "wirkung": "🚶 Ich rücke ein Stück ab.",
+        "verhalten": "in_sicherheit_bringen"
+      },
+      {
+        "stufe": 2,
+        "schwelle": 0.8,
+        "emoji": "😵",
+        "grund": "🔥🔥 Der Rauch steht mir im Kopf.",
+        "wirkung": "🏃 Ich flüchte vom Feuerrand.",
+        "verhalten": "in_sicherheit_bringen"
+      },
+      {
+        "stufe": 3,
+        "schwelle": 0.95,
+        "emoji": "🫠",
+        "grund": "🌋 Das Lagerfeuer ist ein Ofen geworden.",
+        "wirkung": "🏃💨 Ich renne, bis die Luft wieder kühl ist.",
+        "verhalten": "in_sicherheit_bringen"
+      }
+    ]
   },
   "hunger": {
     "need_id": "nahrung",
@@ -28,6 +80,69 @@
     "schwellwert": 0.5,
     "hp_abzug_je_tick": 0,
     "verhalten": "nahrung_suchen",
-    "farbe": "#C75B39"
+    "farbe": "#C75B39",
+    "eskalation": [
+      {
+        "stufe": 1,
+        "schwelle": 0.25,
+        "emoji": "🍗",
+        "grund": "🍗 Der Bauch ist ein leeres Fass.",
+        "wirkung": "🚶 Ich trotte zum Lager.",
+        "verhalten": "nahrung_suchen"
+      },
+      {
+        "stufe": 2,
+        "schwelle": 0.55,
+        "emoji": "😖",
+        "grund": "🍗🍗 Das Lager ist leer, der Magen schreit.",
+        "wirkung": "🏃 Ich jage, was ich kriegen kann.",
+        "verhalten": "jagen"
+      },
+      {
+        "stufe": 3,
+        "schwelle": 0.85,
+        "emoji": "🍖",
+        "grund": "🦴 Weit und breit nichts Jagbares.",
+        "wirkung": "👀 Der Nachbar sieht auch lecker aus.",
+        "verhalten": "kannibalismus",
+        "folge_mod_id": "kannibalismus"
+      }
+    ]
+  },
+  "kannibalismus": {
+    "need_id": "nahrung",
+    "name": "Verzweiflung",
+    "emoji": "🍖",
+    "sprechblase_text": "Fleisch ist Fleisch.",
+    "schwellwert": 0.85,
+    "hp_abzug_je_tick": 0,
+    "verhalten": "kannibalismus",
+    "farbe": "#8B1A1A",
+    "eskalation": [
+      {
+        "stufe": 1,
+        "schwelle": 0.35,
+        "emoji": "🍖",
+        "grund": "🍖 Der Magen kennt keine Regeln mehr.",
+        "wirkung": "👀 Ich mustere die Nachbarn.",
+        "verhalten": "kannibalismus_erwaegen"
+      },
+      {
+        "stufe": 2,
+        "schwelle": 0.7,
+        "emoji": "🍗",
+        "grund": "🍗🍗 Kein Tier, kein Fleisch, nur Menschen.",
+        "wirkung": "🔪 Ich schärfe still das Messer.",
+        "verhalten": "kannibalismus_planen"
+      },
+      {
+        "stufe": 3,
+        "schwelle": 0.95,
+        "emoji": "🩸",
+        "grund": "🦴 Nichts ist mehr heilig.",
+        "wirkung": "🏃 Ich jage den Schwächsten.",
+        "verhalten": "kannibalismus"
+      }
+    ]
   }
 }

@@ -884,6 +884,36 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Einstiegs-Kette laeuft (Lagerfeuer gesetzt, Haus freigeschaltet und gebaut, Einwanderung %d je Tag)" % prog_rate)
+	# 31) Eskalationsketten der Sprechblasen: Der Hunger steigt aus den
+	#     Need-Raten, und die Blase springt ueber die Datenschwellen von der
+	#     Bitte ueber die Jagd bis zum Kannibalismus. Grund und Wirkung kommen
+	#     aus dem Pool, und die letzte Stufe greift in die naechste Kette
+	#     ueber. Vorher hatte jeder Modifikator genau eine Zeile.
+	var esk_maschine := Pop_MoodMaschine.new()
+	esk_maschine.einrichten(Pop_NeedRegistry.new(), null)
+	esk_maschine.waerme_und_zyklus_setzen(null, null, Pop_MoodModifikatorRegistry.new())
+	var esk_stufen: Array[int] = []
+	var esk_verhalten: Array[String] = []
+	for _esk_tick: int in range(60):
+		esk_maschine.auf_tick(0, 0.0)
+		var esk_mood := esk_maschine.mood()
+		if esk_mood.stufe > 0 and (esk_stufen.is_empty() or esk_stufen[esk_stufen.size() - 1] != esk_mood.stufe):
+			esk_stufen.append(esk_mood.stufe)
+			esk_verhalten.append(esk_mood.verhalten)
+	var esk_ende := esk_maschine.mood()
+	var esk_erwartet := "%s %s\n%s" % [esk_ende.emoji, esk_ende.grund, esk_ende.wirkung]
+	var esk_ok := str(esk_stufen) == "[1, 2, 3]" \
+			and str(esk_verhalten) == '["nahrung_suchen", "jagen", "kannibalismus"]' \
+			and esk_ende.kette == "hunger" and esk_ende.folge_mod_id == "kannibalismus" \
+			and esk_ende.grund != "" and esk_ende.wirkung != "" \
+			and esk_ende.erzaehlung() == esk_erwartet
+	if not esk_ok:
+		print("FEHLER: Eskalationskette greift nicht (stufen %s, verhalten %s, kette %s, folge %s, grund %s, wirkung %s)" % [
+			str(esk_stufen), str(esk_verhalten), esk_ende.kette, esk_ende.folge_mod_id, esk_ende.grund, esk_ende.wirkung])
+		fehler += 1
+	else:
+		print("OK: Eskalationskette in der Sprechblase (Stufen %s, zuletzt %s, verzahnt nach %s)" % [
+			str(esk_stufen), esk_ende.verhalten, esk_ende.folge_mod_id])
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

@@ -14,7 +14,7 @@ Welt (world/): Welt_Model als Datenbasis mit Regionen, Chunks und autoritativem 
 
 Game (game/): Einheit_Status als Arbeitsloop-Maschine mit eigener Queue und Wegplanung, Einheit_VitalStatus als Vital-Maschine, Einheit_Manager als Verbindungs- und Tick-Organisator, Ernte- und Versorgungs-Maschine als eigene Dateien, Ressourcen über Einheit_RessourcenSchema (Startbestände, Ernte mit Varianz) und Lager-Anbindung, Job_Registry mit script-Feld als Plugin-Grenze und sechs Jobs in job_config.json.
 
-Population (population/): Pop_NeedBaum als struktureller Besitzer, Pop_NeedRegistry und Pop_RassenSchemaRegistry mit script-Feld-Plugin-Grenze, Pop_MoodMaschine je Einheit, Pop_MoodModifikatorRegistry als einzige Schwellwert-Quelle (Konsolidierung 478ff72), Pop_Denkblase als reine Beobachterin, Verteilungs-Dialog als isoliertes Fenster.
+Population (population/): Pop_NeedBaum als struktureller Besitzer, Pop_NeedRegistry und Pop_RassenSchemaRegistry mit script-Feld-Plugin-Grenze, Pop_MoodMaschine je Einheit, Pop_MoodModifikatorRegistry als einzige Schwellwert-Quelle (Konsolidierung 478ff72, Eskalationsketten im Slice M1), Pop_MoodEskalationStufe als Datenklasse je Kettenglied (Grund, Wirkung, Verhalten, folge_mod_id), Pop_Denkblase als reine Beobachterin mit zwei-zeiliger Emoji-Erzählung, Verteilungs-Dialog als isoliertes Fenster. Die Hunger-Kette endet in der Kannibalismus-Kette und trägt damit die Daten-Schnitt für das autonome Verhaltenssystem.
 
 Economy (economy/): Lager_Registry, Lager_Manager, Lager_MutationEinlagern und Lager_MutationEntnehmen als Mutationen, verortete Bestände, globale Summe nur für HUD.
 
