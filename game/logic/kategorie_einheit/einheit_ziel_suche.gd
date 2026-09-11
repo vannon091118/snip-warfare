@@ -5,15 +5,20 @@ class_name Einheit_ZielSuche
 ## nächste gültige Ziel desselben Typs. Sie besitzt nichts und tickt nichts;
 ## das Welt_Model und der Tier_Manager bleiben die einzigen Quellen.
 
-## Kategorie daten: die zwei Zustandsquellen der Ziele.
+## Kategorie daten: die Zustandsquellen der Ziele. Die dritte Quelle ist
+## der Einheiten-Manager selbst: Own-Ziele sind Artgenossen-Knoten.
 var _model: Welt_Model = null
 var _tiere: Tier_Manager = null
+var _einheiten: Einheit_Manager = null
 
 ## Kategorie logik: Einrichten, Übersetzen, Prüfen, Suchen.
 
 func einrichten(model: Welt_Model, tiere: Tier_Manager) -> void:
 	_model = model
 	_tiere = tiere
+
+func einheiten_quelle_setzen(quelle: Einheit_Manager) -> void:
+	_einheiten = quelle
 
 func ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2:
 	# Zielposition für die Bewegung: Objekte liegen im Modell, Tiere im
@@ -27,6 +32,9 @@ func ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2
 				var tier_pos := _tiere.tier_position(ziel_index)
 				if tier_pos != Vector2.INF:
 					return tier_pos
+		Job_Basis.ZielTyp.OWN:
+			if _einheiten != null and ziel_index >= 0 and ziel_index < _einheiten.einheit_zahl():
+				return _einheiten.einheit_position(ziel_index)
 	return Vector2.ZERO
 
 ## G1-Lesepfad: Der effektive Faktor des Ziels. Objekte über das Modell und
@@ -55,6 +63,10 @@ func ziel_existiert(status: Einheit_Status) -> bool:
 			if _tiere == null:
 				return false
 			return _tiere.tier_position(status.aktuelles_ziel_index) != Vector2.INF
+		Job_Basis.ZielTyp.OWN:
+			if _einheiten == null:
+				return false
+			return status.aktuelles_ziel_index >= 0 and status.aktuelles_ziel_index < _einheiten.einheit_zahl()
 	return false
 
 func naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:

@@ -41,6 +41,15 @@ func mod_fuer(mod_id: String) -> Pop_MoodModifikator:
 func hat_mod(mod_id: String) -> bool:
 	return _nach_id.has(mod_id)
 
+func mod_fuer_need(need_id: String) -> Pop_MoodModifikator:
+	# Erster Modifikator, der diesen Bedarf eskaliert; die Reihenfolge der
+	# Einträge im Pool entscheidet, welcher das Ruder übernimmt. Die
+	# verzahnten Folgestufen werden weiterhin über mod_fuer aufgelöst.
+	for mod in modifikatoren:
+		if mod.need_id == need_id:
+			return mod
+	return null
+
 func datenfeld_arten() -> Dictionary:
 	var arten := super()
 	arten["modifikatoren"] = "Array[Pop_MoodModifikator]"

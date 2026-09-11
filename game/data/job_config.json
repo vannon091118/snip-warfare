@@ -94,5 +94,21 @@
     "sammel_auf_flaeche": false,
     "loop": false,
     "mindest_tragekraft": 0
+  },
+  "kannibale": {
+    "script": "res://game/logic/kategorie_job/job_kannibale.gd",
+    "name": "Kannibale",
+    "ressource": "fleisch",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
+    "logik_id": "ressource_fleisch",
+    "modifikator_id": "normal",
+    "faktor": 1.5,
+    "harvest_zeit_ticks": 18,
+    "harvest_menge": 2,
+    "reichweite": 60.0,
+    "sammel_auf_flaeche": false,
+    "loop": false,
+    "mindest_tragekraft": 0
   }
 }

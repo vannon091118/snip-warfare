@@ -120,7 +120,6 @@ func _ready() -> void:
 	_gebaeude.einrichten(_model, _registry, _ressourcen, _lager, _fortschritt)
 	add_child(_gebaeude)
 	_gebaeude.gebaeude_meldung.connect(_auf_gebaeude_meldung)
-	_stockmaenner.einheit_hinzufuegen(_kamera_steuerung.kamera_position + Vector2(0, 48))
 	# Einstiegs-Progression: Die Maschine ist die einzige Stufen-Wahrheit;
 	# die Szene verdrahtet nur, Bauabschlüsse und Einwanderer melden sich
 	# über die Manager, das HUD zeigt die aktuelle Zielzeile.
@@ -136,6 +135,10 @@ func _ready() -> void:
 	_hud.einrichten(_ressourcen)
 	_kontext.einrichten(_steuerung, _fortschritt)
 	_kontext.aktion_gewaehlt.connect(_auf_kontext_aktion)
+	# Erste Einheit erst mit dem ersten Lagerfeuer: Sie wandert am Anker
+	# ein, sobald die Einstiegs-Kette das Lagerfeuer meldet. Vorher ist die
+	# Karte leer und das Ziel sichtbar.
+	_fortschritt.stufe_erreicht.connect(_auf_erste_einheit)
 	_hud.job_anzeigen("")
 	_biom_anzeigen()
 	_eingabe_steuerung.einrichten({
@@ -283,6 +286,14 @@ func _auf_gebaeude_meldung(meldung_text: String) -> void:
 func _auf_ziel_erreicht(stufe: Dictionary) -> void:
 	_hud.meldung_setzen("Ziel erreicht: %s" % str(stufe.get("id", "")))
 	_hud.meldung_setzen(_fortschritt.ziel_zeile())
+
+func _auf_erste_einheit(_stufe: Dictionary) -> void:
+	# Die erste Einheit wandert mit dem Lagerfeuer ein: Vorher lebt die
+	# Karte allein von ihrem Ziel, und die Einwanderung startet nicht doppelt.
+	if _stockmaenner.einheit_zahl() > 0:
+		return
+	_stockmaenner.einheit_hinzufuegen(_stockmaenner.lager_anker_position() + Vector2(0, 48))
+	_hud.meldung_setzen("Der erste Siedler ist am Lagerfeuer angekommen.")
 
 func _auf_stufe_erreicht(stufe: Dictionary) -> void:
 	# Neue Stufe: Das HUD nennt die freigeschaltete Stufe und das nächste

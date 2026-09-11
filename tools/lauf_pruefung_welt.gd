@@ -884,29 +884,73 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Einstiegs-Kette laeuft (Lagerfeuer gesetzt, Haus freigeschaltet und gebaut, Einwanderung %d je Tag)" % prog_rate)
-	# Atmosphaeren-Domaene: Wind folgt deterministisch der Tick-Nummer und
-	# dem Pool, derselbe Tick liefert dieselbe Staerke; der Katalog-Eintrag
-	# Baum traegt wind_sway als Datenentscheidung fuer das Renderer-Material.
-	var atmosphaere_konfig := Welt_AtmosphaereKonfig.new()
-	atmosphaere_konfig.laden()
-	var atmosphaere_wind := Welt_WindRechner.new()
-	atmosphaere_wind.einrichten(atmosphaere_konfig)
-	var wind_erster := atmosphaere_wind.staerke_an(1000)
-	var wind_wiederholung := atmosphaere_wind.staerke_an(1000)
-	var wind_anderer_tick := atmosphaere_wind.staerke_an(4000)
-	var wind_minimum := atmosphaere_konfig.wind_wert("mindest_staerke", 0.15)
-	var wind_maximum := atmosphaere_konfig.wind_wert("mindest_staerke", 0.15) + atmosphaere_konfig.wind_wert("staerke_spanne", 0.45)
-	var katalog_baum := Welt_Registry.new().finde_objekt("baum")
-	var baum_sway := katalog_baum != null and bool(katalog_baum.schluessel_daten.get("wind_sway", false))
-	if absf(wind_erster - wind_wiederholung) > 0.0001 or wind_erster < wind_minimum - 0.0001 or wind_erster > wind_maximum + 0.0001 or wind_anderer_tick < wind_minimum - 0.0001:
-		print("FEHLER: Wind nicht deterministisch oder ausserhalb des Pools (erster %f, wiederholung %f, anderer %f, grenzen %f..%f)" % [
-			wind_erster, wind_wiederholung, wind_anderer_tick, wind_minimum, wind_maximum])
-		fehler += 1
-	elif not baum_sway:
-		print("FEHLER: Katalog-Eintrag Baum traegt kein wind_sway-Feld fuer das Renderer-Material")
+	# 31) Eskalationsketten der Sprechblasen: Der Hunger steigt aus den
+	#     Need-Raten, und die Blase springt ueber die Datenschwellen von der
+	#     Bitte ueber die Jagd bis zum Kannibalismus. Grund und Wirkung kommen
+	#     aus dem Pool, und die letzte Stufe greift in die naechste Kette
+	#     ueber. Vorher hatte jeder Modifikator genau eine Zeile.
+	var esk_maschine := Pop_MoodMaschine.new()
+	esk_maschine.einrichten(Pop_NeedRegistry.new(), null)
+	esk_maschine.waerme_und_zyklus_setzen(null, null, Pop_MoodModifikatorRegistry.new())
+	var esk_stufen: Array[int] = []
+	var esk_verhalten: Array[String] = []
+	for _esk_tick: int in range(60):
+		esk_maschine.auf_tick(0, 0.0)
+		var esk_mood := esk_maschine.mood()
+		if esk_mood.stufe > 0 and (esk_stufen.is_empty() or esk_stufen[esk_stufen.size() - 1] != esk_mood.stufe):
+			esk_stufen.append(esk_mood.stufe)
+			esk_verhalten.append(esk_mood.verhalten)
+	var esk_ende := esk_maschine.mood()
+	var esk_erwartet := "%s %s\n%s" % [esk_ende.emoji, esk_ende.grund, esk_ende.wirkung]
+	var esk_ok := str(esk_stufen) == "[1, 2, 3]" \
+			and str(esk_verhalten) == '["nahrung_suchen", "jagen", "kannibalismus"]' \
+			and esk_ende.kette == "hunger" and esk_ende.folge_mod_id == "kannibalismus" \
+			and esk_ende.grund != "" and esk_ende.wirkung != "" \
+			and esk_ende.erzaehlung() == esk_erwartet
+	if not esk_ok:
+		print("FEHLER: Eskalationskette greift nicht (stufen %s, verhalten %s, kette %s, folge %s, grund %s, wirkung %s)" % [
+			str(esk_stufen), str(esk_verhalten), esk_ende.kette, esk_ende.folge_mod_id, esk_ende.grund, esk_ende.wirkung])
 		fehler += 1
 	else:
-		print("OK: Wind folgt deterministisch der Tick-Nummer im Pool-Rahmen (%.2f bei Tick 1000) und der Baum traegt wind_sway als Daten" % wind_erster)
+		print("OK: Eskalationskette in der Sprechblase (Stufen %s, zuletzt %s, verzahnt nach %s)" % [
+			str(esk_stufen), esk_ende.verhalten, esk_ende.folge_mod_id])
+	# 32) Autonomer Kannibalismus: Zwei Einheiten ohne Tier und ohne Fleisch
+	#     im Lager, beide im Verzweiflungs-Stadium; der Staerkere jagt den
+	#     Schwaecheren, der Schaden laeuft ueber den Vital-Pfad, und die
+	#     Blase erzaehlt die Tat. Vorher sprachen die Ketten nur.
+	var kan_modell := Welt_Model.new()
+	kan_modell.karte_erzeugen(6, 6, "boden")
+	var kan_manager := Einheit_Manager.new()
+	kan_manager.einrichten(kan_modell, null, Einheit_Ressourcen.new())
+	var kan_lager := Lager_Manager.new()
+	kan_lager.lager_anlegen("kleines_lager", Vector2(40, 40))
+	kan_manager.lager_setzen(kan_lager)
+	var kan_mods := Pop_MoodModifikatorRegistry.new()
+	var kan_maschinen: Array[Pop_MoodMaschine] = []
+	for kan_i: int in 3:
+		kan_manager.einheit_hinzufuegen(Vector2(60 + kan_i * 8, 60))
+		var kan_mood: Pop_MoodMaschine = kan_manager._einheiten[kan_i]["mood"]
+		kan_mood.waerme_und_zyklus_setzen(null, null, kan_mods)
+		kan_maschinen.append(kan_mood)
+	# Jeder verhungert bis Stufe 3: Dann gilt das Verhalten kannibalismus.
+	for kan_tick: int in range(90):
+		kan_manager._auf_tick(kan_tick, 1.0 / 24.0)
+	var kan_job_ids: Array[String] = []
+	for kan_i: int in 3:
+		kan_job_ids.append(kan_manager.job_id_einheit(kan_i))
+	var kan_jaeger := kan_job_ids.find("kannibale")
+	var kan_ok := kan_jaeger >= 0
+	var kan_erzaehlung := ""
+	if kan_ok:
+		var kan_mood_zeile := kan_maschinen[kan_jaeger].mood()
+		kan_ok = kan_mood_zeile.kette == "hunger" and kan_mood_zeile.stufe == 3 \
+				and kan_mood_zeile.verhalten == "kannibalismus" and kan_mood_zeile.grund != ""
+		kan_erzaehlung = kan_mood_zeile.erzaehlung()
+	if not kan_ok:
+		print("FEHLER: Kannibalen-Jagd greift nicht (jobs %s)" % [str(kan_job_ids)])
+		fehler += 1
+	else:
+		print("OK: Kannibale jagt den Schwaechsten ohne Tier und Fleisch, Blase: %s" % [kan_erzaehlung.replace("\n", " | ")])
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

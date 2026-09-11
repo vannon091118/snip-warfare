@@ -17,6 +17,8 @@ signal schlag_ort_gemeldet(welt_position: Vector2)
 var _ressourcen: Einheit_Ressourcen = null
 var _model: Welt_Model = null
 var _tiere: Tier_Manager = null
+var _zufall: Kern_Zufall = null
+var _manager: Einheit_Manager = null
 
 ## Kategorie logik: Einrichten und Ernte-Verarbeitung.
 
@@ -24,6 +26,17 @@ func einrichten(ressourcen: Einheit_Ressourcen, model: Welt_Model, tiere: Tier_M
 	_ressourcen = ressourcen
 	_model = model
 	_tiere = tiere
+
+func zufall_setzen(zufall: Kern_Zufall) -> void:
+	# Der zentrale Zufallszustand bleibt die einzige Quelle; der Kannibalen-
+	# schlag würfelt seine Folgen darüber wie jeder andere Schaden auch.
+	_zufall = zufall
+
+func manager_setzen(manager: Einheit_Manager) -> void:
+	# Schwache Rückreferenz auf den besitzenden Manager: Nur über sie
+	# adressiert der Kannibalen-Schlag das Opfer, ohne private Felder zu
+	# berühren.
+	_manager = manager
 
 func arbeitsschritt_verarbeiten(ressource: String, menge: int, status: Einheit_Status) -> void:
 	# Ein Arbeitsschritt ist fertig; je nach Ziel-Typ wird geerntet oder
@@ -41,11 +54,39 @@ func arbeitsschritt_verarbeiten(ressource: String, menge: int, status: Einheit_S
 		Job_Basis.ZielTyp.TIER:
 			# Jagen: erst mit jedem Schlag verletzen, ernten, wenn das Tier tot ist.
 			_jagd_schlag(status, menge)
+		Job_Basis.ZielTyp.OWN:
+			# Autonomer Kannibalismus: Dieselbe Schlagkette wie bei der Tier-
+		# jagd, nur gegen einen Artgenossen-Knoten; der Schaden läuft über
+		# den einzigen Vital-Pfad (Bus, Modifikatoren, Tod).
+			_kannibale_schlag(status, menge)
 
 func _objekt_position(index: int) -> Vector2:
 	if _model == null or index < 0 or index >= _model.objekt_anzahl():
 		return Vector2.ZERO
 	return _model.objekt_position(index)
+
+func _kannibale_schlag(status: Einheit_Status, schaden: int) -> void:
+	if _zufall == null:
+		_zufall = Kern_Zufall.new()
+	var opfer := status.aktuelles_ziel_index
+	if opfer < 0:
+		return
+	# Das Opfer wird über den Manager adressiert, bleibt aber ein normaler
+	# Vital-Treffer: schaden_nehmen bucht Bus, Modifikatoren und Tod.
+	var manager := _manager_des_opfers()
+	if manager == null:
+		return
+	var vital := manager.einheit_vital(opfer)
+	if vital == null or vital.hp <= 0:
+		status.job_abbrechen()
+		return
+	vital.schaden_nehmen(schaden, _zufall, "kampf")
+	if vital.hp <= 0:
+		status.job_abbrechen()
+		beute_erlegt.emit(status)
+
+func _manager_des_opfers() -> Einheit_Manager:
+	return _manager
 
 func _jagd_schlag(status: Einheit_Status, schaden: int) -> void:
 	# Jeder Schlag verletzt das Tier; erst beim Tod fällt die Beute an.
