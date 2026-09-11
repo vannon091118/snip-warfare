@@ -1,38 +1,79 @@
 <div align="center">
 
 # ✂️ SNIPWARFARE 🪵
-### *Ein Papierschnitt-Kolonie- und RTS-Spektakel aus den zynischen Augen von Shinon*
+### *Ein Papierschnitt-Kolonie- und RTS-Spektakel aus den Augen von Shinon*
+
+<img src="world/assets/snip_warfare_banner.png" alt="SnipWarfare Banner" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+
+<br/>
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.7.2%20GL--Compatibility-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org)
-[![Preflight Status](https://img.shields.io/badge/Preflight-100%25%20Gr%C3%BCn%20(E001--E040)-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)](#-ein-befehl-zur-wahrheit)
-[![Tests](https://img.shields.io/badge/pytest-48%2F48%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](#-ein-befehl-zur-wahrheit)
+[![Preflight Status](https://img.shields.io/badge/Preflight-100%25%20Gr%C3%BCn%20(E001--E040)-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
+[![Tests](https://img.shields.io/badge/pytest-48%2F48%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
 [![Architecture](https://img.shields.io/badge/Architecture-Config--Driven%20%7C%20Single--Source-orange?style=for-the-badge)](#-die-architektur-pyramide)
 
 <br/>
 
 <p align="center">
-  <img src="world/assets/terrain/lagerfeuer.svg" width="96" alt="Lagerfeuer" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="world/assets/ui/strichmaennchen_stehend.svg" width="64" alt="Stickman" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="world/assets/terrain/haus.svg" width="112" alt="Haus" />
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="world/assets/tiere/baer.svg" width="80" alt="Baer" />
+  <img src="world/assets/terrain/lagerfeuer.svg" width="80" alt="Lagerfeuer" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="world/assets/ui/strichmaennchen_stehend.svg" width="56" alt="Stickman" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="world/assets/terrain/haus.svg" width="96" alt="Haus" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="world/assets/tiere/baer.svg" width="72" alt="Baer" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="world/assets/terrain/raeucherei.svg" width="88" alt="Raeucherei" />
 </p>
 
-> **"Hallo du. Ich bin Shinon. Ich halte dieses handgeschnittene Papier-Lager zusammen, solange du zuschaust. Du liest das hier nicht, weil der Godot-Debugger dich liebt. Du liest es, weil ich das Chaos mechanisch gezähmt habe, bevor es dir die Frame-Rate zerfetzt."**
+> **"Hallo du. Ich bin Shinon. Ich halte dieses handgeschnittene Papier-Lager zusammen, solange du hier zuschaust. Du liest das nicht, weil die Engine dich lieb hat. Du liest es, weil ich das Chaos gebändigt habe, bevor es deine Kolonie zerreißt."**
 
 </div>
 
 ---
 
-## 🎭 Shinon bricht die vierte Wand: Worum es hier wirklich geht
+## 🎭 Shinon bricht die 4. Wand: Willkommen im Papier-Überlebenskampf!
 
-Schau dir das Spiel an. Du denkst vielleicht: *„Oh, süße Strichmännchen im Papercraft-Look, ein bisschen Holz hacken, ein nettes Lagerfeuer entzünden und friedlich schlafen.“* 
+Schau dich um. Du siehst diese niedlichen kleinen Strichmännchen mit ihren bunten Schals, die friedlich durch eine handgefertigte Papierschnitt-Welt watscheln, Beeren pflücken und am Lagerfeuer sitzen. Du denkst: *„Ach wie putzig, ein gemütliches Bastelspiel!“*
 
-**Vergiss es.** 
+**Täusch dich nicht.** 
 
-Hinter der Papierschichten-Ästhetik pocht ein knallharter Simulationskern. Wenn deine Siedler verhungern, weil du die Beerenbüsche ignoriert hast, schlägt der Hunger über die Mood-Maschine gnadenlos in Eskalation um. Und wenn weit und breit kein Hase flieht, schielt der hungrige Kolonist plötzlich mit sehr ungemütlichem Appetit auf seinen schlafenden Nachbarn. Jede Entscheidung hat Konsequenzen. Nichts passiert zufällig im luftleeren Raum, sondern folgt einem eisernen, unerbittlichen Takt.
+Hinter jeder Papierschicht arbeitet ein knallharter, deterministischer Simulationskern. Wenn du vergisst, Unterkünfte zu bauen, frieren deine Siedler. Wenn du keine Nahrung einlagerst, brennt die Stimmung lichterloh. Und wenn der Hunger zu groß wird, fängt die Mood-Maschine an, sehr finstere Gedankenblasen über die Köpfe zu malen.
+
+> [!TIP]
+> ### ☕ Shinon kann auch nett sein *(aber gewöhn dich bloß nicht dran!)*
+> *„Ganz ehrlich? Wenn du deine Kolonisten vernünftig fütterst, die Werkstatt rechtzeitig anschmeißt und der Preflight fehlerfrei durchläuft... dann bin ich sogar richtig stolz auf dich. Dann setz ich mich mit dir ans Lagerfeuer, reich dir ein geräuchertes Stück Fleisch und nicke anerkennend. Aber wehe, du vergisst die Wintervorräte. Dann bin ich wieder da.“*
+
+---
+
+<div align="center">
+<img src="world/assets/snip_warfare_gameplay.png" alt="Gameplay Säulen" width="100%" style="border-radius: 12px;" />
+</div>
+
+---
+
+## 📂 Die 4 Säulen des Spiels (Kategorien)
+
+### 🪵 Kategorie 1: Die Knechterei (Ressourcen & Handwerk)
+Hier fällt kein Baum von alleine um. Deine Kolonisten greifen zur Axt, schlagen Holz, brechen Steine und schleppen das Material ins Lager.
+* **Keine Zauberei:** Jede Erntezeit (`harvest_zeit_ticks`) errechnet sich aus dem Basisfaktor der `Kern_LogikRegistry` geteilt durch den Werkzeug-Bonus.
+* **Echte Werkzeuge:** Mit einer geschmiedeten Axt halbiert sich die Hackdauer. Ohne Werkzeug schwitzen die Strichmännchen doppelt so lang.
+
+### 🐻 Kategorie 2: Die Tierwelt (Zwischen Beute & Bärenhunger)
+Der Wald lebt. Vögel flattern auf, Hasen ergreifen im Zickzack die Flucht und der Bär verteidigt sein Revier mit Nachdruck.
+* **Jagd & Kadaver:** Erlegte Tiere bleiben als Kadaver liegen und müssen vom Jäger zerlegt werden, bevor das Fleisch ins Lager wandert.
+* **Respekt vor dem Pelz:** Greifst du einen Bären mit bloßen Händen an, landet dein Jäger schneller im Lazarett, als du „Preflight“ sagen kannst.
+
+### 🏗️ Kategorie 3: Die Baustellen (Warum nichts vom Himmel fällt)
+Wir bauen nach echter Kolonie-Logik:
+* **Blueprint-Planung:** Ein Gebäude wird zuerst als transparenter Bauplan auf die Karte gesetzt.
+* **Materialtransport:** Erst wenn Holz und Stein aus dem nächsten Lager zur Baustelle getragen wurden, rückt der Zimmermann an.
+* **Stufen-Gating:** Das Lagerfeuer ist der Startanker. Das Haus lockt Einwanderer an. Die Werkstatt sichert Werkzeuge. Alles streng nach Stufen.
+
+### 🧠 Kategorie 4: Die Kolonisten-Psyche (Needs, Mood & Moral)
+Jeder Siedler besitzt ein eigenes Gehirn mit Bedürfnissen nach Wärme, Nahrung und Schlaf.
+* **Sichtbare Gedanken:** Die Denkblasen erzählen dir genau, was den Siedlern fehlt – vom Kälte-Zittern bis zur Heißhunger-Panik.
+* **Moralische Grundsätze:** Über Kolonie-Grundsätze und Traits (wie *"Mag kein Papier"*) kannst du Verzweiflungstaten wie Kannibalismus blockieren und Ersatzhandlungen erzwingen.
 
 ---
 
@@ -40,22 +81,19 @@ Hinter der Papierschichten-Ästhetik pocht ein knallharter Simulationskern. Wenn
 
 Im gesamten Projekt existiert **genau eine globale Weltzeit**. Keine Domäne, kein Node und keine State Machine besitzt eine eigene geheime Uhrzeit oder heimliche `_process`-Berechnungen.
 
-* **24 Ticks pro Sekunde:** Das Autoload `Weltuhr` (`Kern_Weltuhr`) ist der Herzschlag der gesamten Kolonie.
-* **Akkumulator-Spiralenschutz:** Selbst wenn dein Rechner unter Last stöhnt, fängt das Rahmen-Budget die Ticks deterministisch ab.
-* **Keine Zeitmagie:** Alle Umrechnungen (`ticks_aus_faktor`, `ticks_aus_minuten`) laufen zentral über die Uhr.
-
-> [!NOTE]
-> Wenn bei dir etwas im Spiel passiert, dann nur, weil die `Kern_Weltuhr` getickt und eine registrierte Zustandsmaschine darauf reagiert hat. Keine parallelen Geisteruhren.
+* **24 Ticks pro Sekunde:** Das Autoload `Weltuhr` (`Kern_Weltuhr`) ist der gemeinsame Taktgeber aller Systeme.
+* **Spiralenschutz:** Das Rahmen-Budget fängt Lastspitzen sauber ab.
+* **Reine Übersetzung:** Alle Zeitberechnungen (`ticks_aus_faktor`, `ticks_aus_minuten`) laufen zentral über die Uhr.
 
 ---
 
-## 🏛️ Die Architektur-Pyramide (Config-Driven & Modular)
+## 🏛️ Die Architektur-Pyramide
 
-SnipWarfare folgt einer kompromisslosen **Single-Source-of-Truth-Architektur**. Der Code ist die Wahrheit (Regel 0), und die Werte wohnen deklarativ in JSON-Datenpools.
+SnipWarfare folgt einer kompromisslosen **Single-Source-of-Truth-Architektur**. Der Code ist die Wahrheit (Regel 0), und die Spieldaten wohnen deklarativ in JSON-Pools.
 
 ```text
   ┌────────────────────────────────────────────────────────┐
-  │       JSON-Datenpools (res://*/data/*.json)           │  ◄── Einzige Wahrheit aller Werte
+  │       JSON-Datenpools (res://*/data/*.json)           │  ◄── Deklarative Wahrheit aller Werte
   └──────────────────────────┬─────────────────────────────┘
                              │ lädt via script-Feld
   ┌──────────────────────────▼─────────────────────────────┐
@@ -63,7 +101,7 @@ SnipWarfare folgt einer kompromisslosen **Single-Source-of-Truth-Architektur**. 
   └──────────────────────────┬─────────────────────────────┘
                              │ steuert & mutiert
   ┌──────────────────────────▼─────────────────────────────┐
-  │     Maschinen & Manager (24 Hz Weltuhr-Tick)          │  ◄── Keine UI, reine Fachlogik
+  │     Maschinen & Manager (24 Hz Weltuhr-Tick)          │  ◄── Reine Fach- und Verhaltenslogik
   └──────────────────────────┬─────────────────────────────┘
                              │ schreibt Zustand
   ┌──────────────────────────▼─────────────────────────────┐
@@ -79,12 +117,12 @@ SnipWarfare folgt einer kompromisslosen **Single-Source-of-Truth-Architektur**. 
 
 ## 🎮 Steuerung & Interaktion
 
-Die Steuerung ist vollständig menschenlesbar in [`game/data/steuerung.json`](game/data/steuerung.json) definiert und trennt Befehlserfassung von Gameplay-Logik:
+Die Steuerung ist vollständig menschenlesbar in [`game/data/steuerung.json`](game/data/steuerung.json) definiert:
 
 | Eingabe | Aktion | Auswirkung im Spiel |
 |---|---|---|
 | <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> | **Kamera bewegen** | Sanftes Verschieben des Sichtfelds über das Gelände ohne Ruckler. |
-| <kbd>Linksklick</kbd> | **Einzelauswahl** | Selektiert einen Siedler oder ein Objekt; hebt vorherige Auswahl auf. |
+| <kbd>Linksklick</kbd> | **Einzelauswahl** | Wählt einen Siedler oder ein Objekt; hebt die vorherige Auswahl auf. |
 | <kbd>Links Halten & Ziehen</kbd> | **Rechteck-Massenwahl** | Wählt alle Kolonisten im gezogenen Rahmen (General-Modus). |
 | <kbd>Rechtsklick</kbd> *(auf Ziel)* | **Direktbefehl** | Startet sofort Holzfällen, Steinmetzen, Jagen oder Marschieren. |
 | <kbd>Rechtsklick</kbd> *(auf Boden)* | **Kontextmenü** | Öffnet zielgefilterte Aktionen mit Tooltip & Werkzeuganforderung. |
@@ -92,9 +130,9 @@ Die Steuerung ist vollständig menschenlesbar in [`game/data/steuerung.json`](ga
 
 ---
 
-## 📦 Das Ressourcen- & Produktionsnetz
+## 📦 Das Ressourcen-Netzwerk
 
-Jede Ressource besitzt ihr eigenes SVG-Asset und eine dedizierte Datenklasse. Das HUD liest Bestände atomar aus dem Lager:
+Jede Ressource besitzt ihr eigenes SVG-Icon und eine dedizierte Datenklasse:
 
 <div align="center">
 
@@ -105,19 +143,16 @@ Jede Ressource besitzt ihr eigenes SVG-Asset und eine dedizierte Datenklasse. Da
 
 </div>
 
-> [!TIP]
-> Die Produktionskette folgt dem echten Bedarf: Die **Werkstatt** schmiedet Werkzeuge zur Halbierung der Erntezeit, während die **Räucherei** rohes Fleisch vor dem Verderb schützt.
-
 ---
 
-## 🗺️ Aktueller Projektstand & Master-Roadmap
+## 🗺️ Aktueller Zustand & Master-Roadmap
 
-Der aktuelle **Stand** umfasst ein stabiles Fundament mit 162 Klassen, 8 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 48 bestandenen Pytest-Prüfungen.
+Der aktuelle **Zustand** und **Stand** umfasst ein gehärtetes Fundament mit 162 Klassen, 8 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 48 bestandenen Pytest-Prüfungen.
 
-Unsere konsolidierte **Vision** orientiert sich an der Tiefe von Koloniesimulatoren wie *RimWorld*:
+Unsere konsolidierte **Vision** ist in der [`ROADMAP.md`](ROADMAP.md) nach Slices strukturiert:
 
 * [x] **Phase 0 (Kern):** 24-Hz-Weltuhr, deterministischer RNG, Signalbus, Multi-Map-Savegames, A*-Pfadfinder.
-* [x] **Phase P1 (Progression):** Datengetriebene Einstiegskette: *Lagerfeuer setzen* ➔ *Erstes Haus* ➔ *Einwanderung*.
+* [x] **Phase P1 (Progression):** Datengetriebene Einstiegskette: *Lagerfeuer* ➔ *Erstes Haus* ➔ *Einwanderung*.
 * [ ] **Slice 1 (Aufräumen & Gating):** Entkoppeltes Bau-Panel, Ziel-Tags im Katalog, saubere Statusleisten.
 * [ ] **Slice 2 (Maßstab & Terrain):** 64px-Micro-Tiles, Terrain-Pool (`terrain.json`), Varianten-Blatt & Y-Sort-Tiefensortierung.
 * [ ] **Slice 3 (Landschaft):** Deterministische Fluss- & Felsmassive-Generatoren, Erzadern, Ruinen & dichte Wälder.
@@ -128,37 +163,27 @@ Unsere konsolidierte **Vision** orientiert sich an der Tiefe von Koloniesimulato
 * [ ] **Slice 8 (Eskalation & Moral):** Verzweigte Mood-Ketten in der Timeline, Spielergrundsätze (`Pop_MoralInstanz`) & Trait *"Mag kein Papier"*.
 * [ ] **Slice 9 (Ökonomie & Erze):** Schmelze, Schmiede, Barren und stufenweiser Erzabbau.
 
-*(Die vollständige Checkpoint-Aufschlüsselung findest du in der [`ROADMAP.md`](ROADMAP.md).)*
-
 ---
 
-## 🛡️ Ein Befehl zur Wahrheit: Der Preflight
+## 🛡️ Der gnadenlose Preflight: Shinons TÜV
 
-Bevor irgendein Commit die Ziellinie überquert, muss er durch mein mechanisches Schafott:
+Bevor irgendein Commit ins Repo wandert, muss er durch mein mechanisches Schafott:
 
 ```bash
 python tools/preflight.py
 ```
 
-```text
-==============================================================================
-PREFLIGHT OK: 16 Prüfkategorien grün (0 Befunde)
-- Godot Headless Kompilierung & Warnungs-Scan (E016–E018, E025)
-- Naming & Ordner-Kategorie-Präfixe (E001–E004, E021)
-- Determinismus & Zufalls-Prüfung (E012–E014)
-- Datenparität & Single Source of Truth (E040)
-- Shinon Commit Gate (E030–E039)
-==============================================================================
-```
+* **Vollprüfung:** Führt alle 16 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate) aus.
+* **Unittests:** `python -m pytest` führt alle 48 Unittests aus.
 
 > [!IMPORTANT]
-> **Shinon Gate Pflicht (Regel 5):** Commits werden nicht nach Lust und Laune geschrieben. Jede Nachricht entsteht in nummerierten Sätzen, bildlicher Sprache und ohne dekorative Banner. Wer schlampt, fängt sich einen Fehlercode ein.
+> **Shinon Gate Pflicht (Regel 5):** Commits werden nicht geschludert. Jede Nachricht entsteht in nummerierten Sätzen, bildlicher Sprache und ohne dekorative Banner. Wer schlampt, fängt sich einen Fehlercode ein.
 
 ---
 
 <div align="center">
 
 **SnipWarfare** — *Gebaut nach den Regeln der Projektverfassung [`AGENTS.md`](AGENTS.md).*  
-*Stand: September 2026 • Gepflegt von Shinon*
+*Stand: September 2026 • Mit strengem Blick und gelegentlichem Lächeln gepflegt von Shinon*
 
 </div>
