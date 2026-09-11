@@ -3,7 +3,7 @@
 # ✂️ SNIPWARFARE 🪵
 ### *Ein Papierschnitt-Kolonie- und RTS-Spektakel aus den Augen von Shinon*
 
-<img src="world/assets/snip_warfare_banner.png" alt="SnipWarfare Banner" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+<img src="world/assets/snip_warfare_banner.jpg" alt="SnipWarfare Banner" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
 
 <br/>
 
@@ -47,7 +47,7 @@ Hinter jeder Papierschicht arbeitet ein knallharter, deterministischer Simulatio
 ---
 
 <div align="center">
-<img src="world/assets/snip_warfare_gameplay.png" alt="Gameplay Säulen" width="100%" style="border-radius: 12px;" />
+<img src="world/assets/snip_warfare_gameplay.jpg" alt="Gameplay Säulen" width="100%" style="border-radius: 12px;" />
 </div>
 
 ---

@@ -7,11 +7,11 @@ Dieses Dokument ist die **einzige verbindliche Planungs- und Roadmap-Quelle** f�
 ## 1. Systemstatus & Geprüfter Bestand
 
 * **Engine:** Godot 4.7.2 (GL Compatibility)
-* **Klassenbestand:** 162 Klassen auf 181 GDScript-Dateien
+* **Klassenbestand:** 165 Klassen auf 186 GDScript-Dateien
 * **JSON-Datenpools:** 14 Pools (Wirtschaft, Bevölkerung, Welt, Jobs, Gebäude, Progression, Steuerung, Modifikatoren, Animationen)
 * **Szenen:** 8 aktive `.tscn`-Szenen
 * **Autoloads:** `Weltuhr` (`Kern_Weltuhr`, 24 Hz), `WeltSitzung` (`Ui_WeltSitzung`), `KernSignalBusAutoload` (`Kern_SignalBus`)
-* **Testabdeckung:** 17/17 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–16) grün (0 Befunde)
+* **Testabdeckung:** 67/67 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–16) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
 
 ---
 
@@ -58,23 +58,26 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 6. **Autonomie:** Unbeschäftigte Siedler gehen autonom zum Lagerfeuer, transportieren Baustellen-Material oder setzen frühere Aufgaben fort.
 7. **Eskalation & Moral:** Hunger/Kälte/Hitze eskalieren nachvollziehbar; Verzweigungen über Spielergrundsätze (`Pop_MoralInstanz`) und Traits (z. B. "Mag kein Papier").
 8. **Ökonomie:** Bergbau an Felsmassiven liefert Erze, die in Schmelze und Schmiede zu Barren und Werkzeugen verarbeitet werden.
+9. **Fraktionen und Handel:** Auf der Makrokarte leben Fraktionen mit Siedlungen, die als Außenposten beginnen und zu Städten wachsen; Karawanen transportieren in Echtzeit Waren zwischen ihnen, Handel verändert Beziehungen, und Konflikte eskalieren zu Schlachten, die als vorbereitete Animation am Spieltisch abgespielt werden.
 
 ---
 
 ## 4. Zukünftige Checkpoints je Slice
 
-### Slice 1: Aufräumen und Entdoppeln (Vorarbeit & Gating)
-- [ ] **CP-1.1:** Gating-Wahrheit (`gesperrt_ab_stufe`) vollständig in `world/data/gebaeude.json` verankern; Steuerungskonfiguration bereinigen.
-- [ ] **CP-1.2:** Deklarative `ziel_tags` in `world/data/element_katalog.json` und `game/data/steuerung.json` einführen; feste String-Vergleiche im Kontextmenü ersetzen.
-- [ ] **CP-1.3:** Debug-Overlay in eigenständiges `Ui_DebugPanel` auslagern (F3-Umschaltung, Standard: unsichtbar).
-- [ ] **CP-1.4:** Doppelte Produktionsstatuszeile im HUD eliminieren.
-- [ ] **CP-1.5:** Preflight und alle Tests nachweislich grün halten.
+### Slice 1: Aufräumen und Entdoppeln (Vorarbeit & Gating) — abgeschlossen
+- [x] **CP-1.1:** Gating-Wahrheit (`gesperrt_ab_stufe`) liegt vollständig in `world/data/gebaeude.json`; die Steuerung trägt keine Bau-Aktionen mehr. Beweis: `test_einstiegs_progression.py`.
+- [x] **CP-1.2:** `ziel_tags` in `world/data/element_katalog.json` (baum, baum_stumpf, kadaver, stein, steine_gruppe, busch, alle fünf Tiere) und `game/data/steuerung.json` (sammeln, abbauen, marschieren); `KontextMenue` vergleicht nur noch Tag-Schnittmengen, die neuen Aktionen `marschieren` und `ziel_tags_fuer` lösen die harten `contains`-Vergleiche ab. Beweis: `test_datengetriebene_naht.py`.
+- [x] **CP-1.3:** Debug-Overlay liegt als `Ui_DebugPanelSzene` (`ui/scenes/hud/hud_debug_panel.gd`) in der UI-Ebene, hält Einheit- und Tierbeobachter, ist standardmäßig unsichtbar und folgt nur dem F3-Schalter. Beweis: `tools/lauf_pruefung_hud.gd`.
+- [x] **CP-1.4:** Produktionszeile kommt als Signal `status_geaendert` aus dem `Gebaeude_Manager` und wird nur bei echter Änderung gemeldet; kein Frame-Polling mehr. Doppelbauten auf derselben Kachel verhindert `belegt_kachel` plus `_bauplatz_frei`. Beweis: `test_datengetriebene_naht.py`.
+- [x] **CP-1.5:** 59 Pytest-Prüfungen grün, voller Preflight ohne Befund.
+- [x] **CP-1.0 (nachgezogen):** HUD-Rahmen als `PanelContainer` mit Knopfzeile im selben Container; Statuszeilen und Knöpfe können sich strukturell nicht mehr überlagern. Beweis: `tools/lauf_pruefung_hud.gd` misst die Rechtecke (Rahmen 440x227, Knopfzeile bei y=200).
 
-### Slice 2: Maßstab und Terrain (Micro-Tiles & Tiefenschärfe)
-- [ ] **CP-2.1:** Kachelgröße datengetrieben auf 64 px kalibrieren; alle statischen Konstanten (`Welt_Model.KACHEL_GROESSE`) im Renderer durch `_model.kachel_groesse` ersetzen.
-- [ ] **CP-2.2:** Terrain-Datenpool `world/data/terrain.json` anlegen (`wasser`, `ufer`, `geroell`, `fels`, `waldboden`, `acker`, `weg`, `sand`).
-- [ ] **CP-2.3:** `Welt_TerrainBlatt` zur deterministischen Varianten- und Spiegelungswahl je Kachel-Koordinate implementieren.
+### Slice 2: Maßstab und Terrain (Micro-Tiles & Tiefenschärfe) — begonnen
+- [x] **CP-2.1:** Kachelgröße datengetrieben auf 64 px kalibriert (`world/data/welt_definition.json` ist die einzige Quelle); der Renderer liest `_model.kachel_groesse` für Position und Skalierung, `Welt_Model.KACHEL_GROESSE` steht dort nur noch als Rückfall für Testläufe ohne Definitions-Registry.
+- [~] **CP-2.2:** Der Terrain-Pool liegt nicht in einer zweiten Datei, sondern im bestehenden `world/data/element_katalog.json`: die zehn Einträge mit `typ: kachel` tragen Textur, `varianten`, `spiegelbar` und `toenungen`. Eine eigene `terrain.json` wäre eine zweite Wahrheit derselben Bilder.
+- [x] **CP-2.3:** `Welt_TerrainBlatt` (`world/logic/kategorie_welt/welt_terrain_blatt.gd`) wählt Spiegelung und Tönung je Kachelkoordinate deterministisch über `Kern_Zufall.abgeleitet_fuer`.
 - [ ] **CP-2.4:** `y_sort_enabled` im `Welt_Renderer` aktivieren; Sprite-Ursprünge auf Fußpunkte setzen (korrekte Überdeckung von Bäumen und Felsen).
+- [x] **CP-2.5 (nachgezogen):** Die zehn Kachelbilder unter `world/assets/terrain/kacheln/` sind importiert (64 px) und der Renderer malt fehlende Bilder als sichtbaren Platzhalter statt als Leerstelle.
 
 ### Slice 3: Landschaft (Gewässer, Felsmassive, Erzadern & Ruinen)
 - [ ] **CP-3.1:** `Generator_Gewaesser` für deterministische Teiche, Flüsse und Uferzonen aus dem Seed implementieren.
@@ -82,10 +85,12 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [ ] **CP-3.3:** Neue Weltobjekt-Klassen: `Objekt_Berg`, `Objekt_Felswand`, `Objekt_Erzader`, `Objekt_Ruine`, `Objekt_Steinkreis`.
 - [ ] **CP-3.4:** Cluster-Definitionen in `world/data/generator_gewichte.json` für Ruinen und dichte Wälder erweitern.
 
-### Slice 4: Weltkarte und Einstieg (Makro-Domäne)
-- [ ] **CP-4.1:** Eigene Makro-Domäne `world/data/weltkarte_definition.json` und `Welt_MakroGenerator` (kein Aufruf des lokalen Generators beim Betrachten der Weltkarte).
-- [ ] **CP-4.2:** Minimaler Startbereich (1 Region unter vielen) mit duplikatfreiem Fraktionsnetzwerk.
-- [ ] **CP-4.3:** `Welt_LandeplatzAnzeige` zur visuellen Markierung des Startplatzes; Startvorrat aus `gebaeude.json` beim Entzünden des Lagerfeuers einbuchen.
+### Slice 4: Weltkarte und Einstieg (Makro-Domäne) — abgeschlossen
+- [x] **CP-4.1:** Eigene Makro-Domäne `world/data/weltkarte_definition.json` (16 mal 12 Regionen) und `Welt_MakroGenerator`; die Weltkarte plant nur Regionen und ruft keinen lokalen Generator mehr. Beweis: `tools/lauf_pruefung_makrokarte.gd` (0 Objekte auf der Makrokarte, 192 Regionen).
+- [x] **CP-4.2:** Startbereich ist eine Region unter vielen, wird deterministisch nahe der Mitte gewählt und meidet Barrieren; die Nachbarliste wächst bei erneuter Planung nicht. Beweis: derselbe Lauf über 12 Seeds.
+- [x] **CP-4.3a:** Startvorrat: Das Lagerfeuer trägt `startbestand` in `world/data/gebaeude.json`, `Gebaeude_Manager._startbestand_einbuchen` bucht ihn über die vorhandene Ressourcen-Schnittstelle ins nächste Lager. Beweis: `test_makrokarte_und_barrieren.py`.
+- [x] **CP-4.4 (Barrieren):** `gebirge` und `ozean` in `world/data/biome.json` mit `barriere: true`; Gewichte-Einträge tragen `ebene` (`lokal`/`makro`), die lokale Karte zieht nur lokale Biome, der `Welt_NetzwerkPlaner` meidet Barrieren für Fraktionen, Startbereich und Wege, `welt_map.gd` zeichnet Dreiecke und Wellen. Beweis: 560 Barriere-Regionen über 12 Seeds, kein Weg kreuzt eine Barriere.
+- [ ] **CP-4.3b:** Eigene `Welt_LandeplatzAnzeige` zur sichtbaren Markierung des Startplatzes auf der lokalen Karte.
 
 ### Slice 5: Bauen und Logistik (Blueprint & Materialtransport)
 - [ ] **CP-5.1:** Bauplan-Zustand `BAUPLAN` im `Welt_Model` mit Materialbedarf; keine Vorab-Abbuchung der Baukosten.
@@ -119,6 +124,35 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [ ] **CP-9.3:** Stufenweiser Erzabbau über `world/data/ressourcen_progression.json`.
 - [ ] **CP-9.4:** Werkzeugausrüstung senkt `harvest_zeit_ticks` aller handwerklichen Jobs spürbar.
 
+### Slice 10: Fraktionen und Siedlungen (Makro-Domäne)
+- [ ] **CP-10.1:** Neue Domäne Fraktion als eigene Kategorie `military/` mit Prefix `Frakt_`: `Frakt_Basis` (Identität, Beziehungswerte, Grundsätze), `Frakt_Registry` und `Frakt_Manager`; die Makro-Domäne bleibt Eigentümerin der Regionswahrheit, die Fraktionsdomäne liest nur aus ihr.
+- [ ] **CP-10.2:** `military/data/fraktionen.json` als Datenpool: Startregionen (deterministisch aus Weltseed über `Kern_Zufall.abgeleitet_fuer`, Barrieren-Meidung über den bestehenden `Welt_NetzwerkPlaner`), Beziehungswerte je Fraktionspaar und Grundsätze; keine zweite Erzeugungsstelle neben der `Welt_MapFabrik`.
+- [ ] **CP-10.3:** `Frakt_SiedlungBasis` und `Frakt_SiedlungRegistry`: Eine Siedlung hängt an einer Region, trägt Name, Einwohnerzahl, Lagerbestand und Bauzustand; der Aufstieg Außenposten -> Dorf -> Stadt folgt Eskalationsstufen aus dem Datenpool (`military/data/siedlung_stufen.json`), nicht aus Code.
+- [ ] **CP-10.4:** Siedlungswachstum als State-Maschine `Frakt_SiedlungWachstum` an der Weltuhr: Einwohner und Bestände ändern sich im Takt; Beobachter lesen nur über Snapshots.
+- [ ] **CP-10.5:** Beweis: Headless-Laufprüfung `tools/lauf_pruefung_fraktionen.gd` über 12 Seeds (deterministische Platzierung, keine Barriere-Kreuzung) plus Pytest-Naht-Test über den Datenpool.
+
+### Slice 11: Grenzüberschreitende Karawanen und Transporte (Verbindungsdomäne)
+- [ ] **CP-11.1:** Neue Kategorie `logistic/` mit Prefix `Karw_`: `Karw_Basis` (Fracht, Start-Siedlung, Ziel-Siedlung, Fortschritt), `Karw_Manager` (Vergabe und Takt), `Karw_TransportMaschine` (Reisezustand an der Weltuhr).
+- [ ] **CP-11.2:** `military/data/karawanen.json`: Reisegeschwindigkeit, Frachtkapazität, Begleitschutz-Bedarf und Eskalationsstufen für Überfälle je Landschaft; die Reisedauer rechnet ausschließlich über `Kern_Weltuhr.ticks_aus_faktor()`.
+- [ ] **CP-11.3:** Karawanen sind die erste grenzüberschreitende Entität: Sie lesen Wegpunkte aus dem bestehenden `Welt_NetzwerkPlaner` (Barrieren-Meidung als einzige Wegwahrheit) und buchen Fracht ausschließlich über die bestehenden `Lager_MutationEinlagern`/`Lager_MutationEntnehmen` der beteiligten Siedlungen, kein zweiter Buchungspfad.
+- [ ] **CP-11.4:** Sichtbare Darstellung: Karawanen erscheinen als Markierungen auf der Makrokarte (Vorbild `welt_map.gd`, zeichnend, ohne Simulationslogik); Ankunft und Abfahrt melden sich über den `Kern_SignalBus`.
+- [ ] **CP-11.5:** Beweis: Pytest-Test über Frachtbuchung und Reisezeiten, Headless-Laufprüfung über mehrere Seeds; Ingame-Verifikation nach Regel 7 auf der Makrokarte.
+
+### Slice 12: Handel zwischen Siedlungen (Wirtschafts-Verbindungsdomäne)
+- [ ] **CP-12.1:** Neue Kategorie `logistic/` mit Prefix `Handel_`: `Handel_Angebot` (Angebot, Nachfrage, Preisrelation als Datenklasse), `Handel_Maschine` (Verhandlungszustand an der Weltuhr) und `Handel_Manager` (Abschluss und Buchung).
+- [ ] **CP-12.2:** `military/data/handel.json`: Güterpreise je Siedlungstyp, Preisreaktion auf Bestände und Ereignis-Modifikatoren (Missernte, Krieg); Preisrelationen sind Eskalationsstufen aus Daten, nie hart codiert.
+- [ ] **CP-12.3:** Handelsabschlüsse laufen als Karawanen-Transporte (Slice 11) und buchen über dieselben Lager-Mutationen; es gibt keinen zweiten Warenfluss neben der Ernte- und Produktionskette.
+- [ ] **CP-12.4:** Beziehungsverbund: Jeder Abschluss verändert Beziehungswerte der Fraktionsdomäne (Slice 10) über die `Kern_ModifikatorMaschine` (Bereich `handel` als neuer Bereich in `modifikator_settings.json`), keine eigene Formel.
+- [ ] **CP-12.5:** Beweis: Pytest-Test über Preisreaktionen und Lagerbuchungen; Ingame-Verifikation nach Regel 7 auf der Makrokarte.
+
+### Slice 13: Kriegs-Sequenzen (Militär-Verbindungsdomäne)
+- [ ] **CP-13.1:** Neue Kategorie `military/` mit Prefix `Krieg_`: `Krieg_KonfliktBasis` (Kontrahenten, Ursache, Truppenstärke), `Krieg_VorbereitungMaschine` (Truppen sammeln und Marsch an der Weltuhr), `Krieg_AufloesungMaschine` (Ergebnis, Verluste, Gebietsänderung).
+- [ ] **CP-13.2:** `military/data/krieg.json`: Truppenstärken je Siedlungsstufe, Ausfälle je Landschaft, Beziehungs-Schwellen für Kriegserklärung; Auslöser sind Eskalationsstufen aus Daten, nie Code-Weichen.
+- [ ] **CP-13.3:** Die Schlacht selbst ist eine vorbereitete Animation als Ingame-Sequenz: `Krieg_SchlachtSequenz` spielt eine datengetriebene Ablaufbeschreibung (`military/data/schlacht_ablauf.json`, Setup, Phasen, Wendepunkt, Ergebnis) über die 24 Ticks der Weltuhr ab; die Sequenz ist Darstellung, berechnet kein Fachergebnis.
+- [ ] **CP-13.4:** Das Ergebnis rechnet die `Krieg_AufloesungMaschine` deterministisch aus Truppenstärke, Landschaft und Zufallswerten von `Kern_Zufall` (Seite reicht Seeds herein, kein eigener RNG); Verluste und Gebietsänderungen laufen als `Kern_Mutation` in die Fraktions- und Siedlungsdomäne.
+- [ ] **CP-13.5:** Bespielbarkeit: Der Spieler kann jede eigene Siedlung wie eine Hauptkarte betreten (`Welt_MapFabrik` erzeugt die Region-Karte, genau eine Kartenwahrheit über `Welt_World`); Kriegsereignisse der Spieler-Kolonie melden sich über den `Kern_SignalBus` und die `Kern_Timeline` (Warum-Kette).
+- [ ] **CP-13.6:** Beweis: Pytest-Test über deterministische Auflösung (gleicher Seed, gleiches Ergebnis), Headless-Laufprüfung der Sequenzphasen; Ingame-Verifikation nach Regel 7 mit sichtbarer Schlacht-Sequenz.
+
 ### Slice A: Qualitätssicherung & Release-Gate
 - [ ] **CP-A.1:** Pytest-Suite deckt alle neuen Datenpools und Registry-Nähte ab.
 - [ ] **CP-A.2:** Voller Preflight (`python tools/preflight.py`) meldet 0 Befunde.
@@ -136,6 +170,9 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 5. **Kein zweiter Simulationstakt:** Keine Timer, kein Fachcode in `_process`, keine autonome Domänenzeit; alles läuft über `Kern_Weltuhr`.
 6. **Keine Verletzung der Datenkapselung:** Kein direkter Zugriff auf fremde Arrays (`_einheiten`, `_job_queue`, `_objekte`); Nutzung der öffentlichen API.
 7. **Keine toten Systeme:** Jedes System muss im Spiel sichtbar oder bedienbar enden (Regel 7).
+8. **Kein lokaler Generator für Siedlungen und Fraktionen:** Platzierung und Startzustand entstehen nur über Fraktions-Registry plus Datenpool und lesen den bestehenden Makro-Planer; es gibt keine zweite Erzeugungsstelle neben der `Welt_MapFabrik`.
+9. **Kein Kriegsergebnis in der Animation:** Die Schlacht-Sequenz ist Darstellung und erzählt nur; das Fachergebnis rechnet ausschließlich die Auflösungs-Maschine deterministisch aus Daten und Weltuhr.
+10. **Kein zweiter Buchungspfad über Kartengrenzen:** Handel und Karawanen buchen Fracht ausschließlich über die bestehenden Lager-Mutationen; es gibt keine Spezialwirtschaft für die Makroebene.
 
 ---
 
