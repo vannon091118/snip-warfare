@@ -13,6 +13,9 @@ var welt_objekt_id: String = ""
 var baukosten: Dictionary = {}
 var bauzeit_ticks: int = 0
 var arbeitskraft: String = ""
+## Einzige Gating-Wahrheit je Gebaeude: 0 heisst immer frei, N heisst frei
+## ab Progressions-Stufe N. Kein UI-Code erfindet mehr eine Stufe.
+var gesperrt_ab_stufe: int = 0
 var voraussetzungen: Array[String] = []
 var inputs: Array[Dictionary] = []
 var outputs: Array[Dictionary] = []
@@ -32,6 +35,7 @@ func aus_konfig_eintrag(eintrag: Dictionary) -> void:
 	baukosten = (eintrag.get("baukosten", {}) as Dictionary).duplicate(true)
 	bauzeit_ticks = int(eintrag.get("bauzeit_ticks", 0))
 	arbeitskraft = str(eintrag.get("arbeitskraft", ""))
+	gesperrt_ab_stufe = int(eintrag.get("gesperrt_ab_stufe", 0))
 	voraussetzungen.clear()
 	for voraussetzung: Variant in (eintrag.get("voraussetzungen", []) as Array):
 		voraussetzungen.append(str(voraussetzung))

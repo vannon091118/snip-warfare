@@ -62,7 +62,7 @@ script = ExtResource("8b_produktion")
 
 [node name="HilfeLabel" type="Label" parent="CanvasLayer/HUD"]
 layout_mode = 2
-text = "RTS: Linksklick wählen, Shift+Klick ketten, Rechtsklick Menü/Jobs, WASD Kamera, 1..9 wählen, Strg+1..9 merken, Rathaus automatisiert Idle"
+text = "F3: Debug | M: Weltkarte | WASD: Kamera"
 
 [node name="ZurueckKnopf" type="Button" parent="CanvasLayer"]
 unique_name_in_owner = true

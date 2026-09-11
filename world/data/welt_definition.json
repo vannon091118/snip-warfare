@@ -1,8 +1,8 @@
 {
-  "_kommentar": "Zentrale Weltdefinition: maximale Lokalkartenfläche und Flächenanteil sind Daten, keine Code-Sonderfälle. Die Registry bzw. der Generator leitet Breite/Höhe deterministisch aus dem Welt-Seed ab.",
-  "max_karten_groesse": {"breite": 32, "hoehe": 24},
+  "_kommentar": "Zentrale Weltdefinition: maximale Lokalkartenfläche und Flächenanteil sind Daten, keine Code-Sonderfälle. Die Registry bzw. der Generator leitet Breite/Höhe deterministisch aus dem Welt-Seed ab. kachel_groesse, chunk_groesse und region_kante sind die einzigen Quellen dieser drei Werte; kein Skript hält eine zweite Zahl.",
+  "max_karten_groesse": {"breite": 96, "hoehe": 72},
   "min_karten_groesse": {"breite": 8, "hoehe": 8},
-  "kachel_groesse": 512,
+  "kachel_groesse": 64,
   "chunk_groesse": 8,
   "region_kante": 4
 }

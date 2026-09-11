@@ -6,11 +6,14 @@ class_name Welt_Model
 ## Zustand, nie direkt auf die Daten. Karten sind relativ groß: 32x24 Kacheln à 512 Pixel.
 
 ## Kategorie daten: Raster und Objektliste, ausschließlich durch eigene Funktionen geändert.
+## KACHEL_GROESSE ist nur der RUECKFALL fuer Testlaeufe ohne Definitions-Registry;
+## im Spiel setzt der Generator den Wert aus world/data/welt_definition.json
+## ueber kachel_groesse_setzen. Es gibt damit genau eine Quelle je Lauf.
 const KACHEL_GROESSE := 512
 const RASTER_BREITE := 32
 const RASTER_HOEHE := 24
 const RASTER_MIN := 4
-const RASTER_MAX := 64
+const RASTER_MAX := 128
 
 ## Kategorie daten: Regionen als räumliche Makrostruktur der Welt.
 ## Jede Region trägt Biom, Seed-Beitrag und Chunk-Anzahl; Chunks sind die
@@ -30,6 +33,10 @@ var raster_hoehe: int = RASTER_HOEHE
 var raster: Array[String] = []
 var objekte: Array[Dictionary] = []
 var biom_id: String = "gemaaessigt"
+## Kantenlaenge einer Rasterkachel in Pixeln; aus der Definitions-Registry.
+var kachel_groesse: int = KACHEL_GROESSE
+## Chunk-Kante und Region-Kante aus welt_definition.json; nie doppelt im Code.
+var chunk_groesse: int = 8
 var _naechste_objekt_nummer: int = 1
 var _biom_manager: Welt_BiomManager = null
 var _welt_registry: Welt_Registry = null
@@ -49,6 +56,14 @@ func karte_erzeugen(breite: int, hoehe: int, element_id: String) -> void:
 
 func groesse() -> Vector2i:
 	return Vector2i(raster_breite, raster_hoehe)
+
+func kachel_groesse_setzen(neue_groesse: int) -> void:
+	# Einzige Schreibstelle der Kachelgroesse: Der Generator ruft sie mit dem
+	# Wert aus der Definitions-Registry; alles andere liest nur.
+	kachel_groesse = maxi(neue_groesse, 1)
+
+func chunk_groesse_setzen(neue_groesse: int) -> void:
+	chunk_groesse = maxi(neue_groesse, 1)
 
 func ueberziehe_fliesen(element_id: String) -> void:
 	_raster_anlegen(element_id)
@@ -191,8 +206,8 @@ func region_ergaenzen(region_x: int, region_y: int, biom: String, seed_beitrag: 
 
 func region_an(position: Vector2) -> Dictionary:
 	# Liefert die Region der Kachel unter der Welt-Position; sonst leer.
-	var kachel_x := int(position.x / Welt_Model.KACHEL_GROESSE)
-	var kachel_y := int(position.y / Welt_Model.KACHEL_GROESSE)
+	var kachel_x := int(position.x / float(kachel_groesse))
+	var kachel_y := int(position.y / float(kachel_groesse))
 	return region_an_kachel(kachel_x, kachel_y)
 
 func region_an_kachel(kachel_x: int, kachel_y: int) -> Dictionary:
@@ -214,7 +229,8 @@ func biom_an_kachel(kachel_x: int, kachel_y: int) -> String:
 func nach_woerterbuch() -> Dictionary:
 	return {
 		"version": SPEICHER_VERSION,
-		"kachel_groesse": KACHEL_GROESSE,
+		"kachel_groesse": kachel_groesse,
+		"chunk_groesse": chunk_groesse,
 		"raster_breite": raster_breite,
 		"raster_hoehe": raster_hoehe,
 		"raster": raster,
@@ -235,6 +251,8 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 		return false
 	raster_breite = clampi(int(daten.get("raster_breite", RASTER_BREITE)), RASTER_MIN, RASTER_MAX)
 	raster_hoehe = clampi(int(daten.get("raster_hoehe", RASTER_HOEHE)), RASTER_MIN, RASTER_MAX)
+	kachel_groesse = maxi(int(daten.get("kachel_groesse", KACHEL_GROESSE)), 1)
+	chunk_groesse = maxi(int(daten.get("chunk_groesse", 8)), 1)
 	biom_id = str(daten.get("biom_id", "gemaaessigt"))
 	biom_manager().biom_wechseln(biom_id)
 	_raster_anlegen("boden")

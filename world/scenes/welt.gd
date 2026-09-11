@@ -10,6 +10,7 @@ const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
 const _AuswahlManagerSkript := preload("res://ui/scenes/selection/auswahl_manager.gd")
 const _EinheitPanelSzene := preload("res://ui/scenes/panels/einheit_panel.tscn")
 const _TierPanelSzene := preload("res://ui/scenes/panels/tier_panel.tscn")
+const _BauPanelSzene := preload("res://ui/scenes/panels/bau_panel.tscn")
 
 ## Kategorie daten: Modell und Registries als Quellen der Visualisierung.
 ## Kategorie logik: Verdrahtung der Observer- und Visualisierungs-Spitzen.
@@ -28,6 +29,7 @@ var _orchestrator_registry := Orchestrator_Registry.new()
 var _orchestrator_manager := Orchestrator_Manager.new()
 var _biome := Welt_BiomRegistry.new()
 var _generator := Welt_Generator.new()
+var _gebaeude_definitionen := Gebaeude_DefinitionRegistry.new()
 var _karten_ebene: CanvasLayer = null
 var _karten_viewer: Ui_KartenViewer = null
 var _karten_info: Ui_WeltInfo = null
@@ -53,6 +55,7 @@ var _pause_menue: Welt_PauseMenue = null
 var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 var _einheit_panel: Control = null
 var _tier_panel: Control = null
+var _bau_panel: Ui_BauPanelSzene = null
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
@@ -81,8 +84,8 @@ func _ready() -> void:
 	(_tages_overlay as CanvasLayer).layer = 20
 	add_child(_tages_overlay)
 	(_tages_overlay as Object).call("einrichten", _tageszyklus)
-	var start_position := Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
-	var bereich := maxf(_model.groesse().x, _model.groesse().y) * Welt_Model.KACHEL_GROESSE * 0.6
+	var start_position := Vector2(_model.groesse()) * float(_model.kachel_groesse) / 2.0
+	var bereich := maxf(_model.groesse().x, _model.groesse().y) * float(_model.kachel_groesse) * 0.6
 	_karte.darstellen(_model, _registry, _biome)
 	_karte.progressions_maschine_setzen(_progression)
 	# Atmosphaeren-Domaene: Die Szene haengt nur die Spitze an und reicht
@@ -179,11 +182,13 @@ func _ready() -> void:
 	_pause_menue = Welt_PauseMenue.new()
 	add_child(_pause_menue)
 	_pause_menue.menue_gewuenscht.connect(_auf_zurueck)
-	# Fenster-Panels: beide als modulare Control-Spitzen unter dem HUD-
+	# Fenster-Panels: alle als modulare Control-Spitzen unter dem HUD-
 	# CanvasLayer eingehängt; sie lesen nur über ihre Panel-Controller aus
 	# den bestehenden Maschinen. Kein neuer Schnittpunkt, nur Sichtbarkeit.
 	_einheit_panel_bauen()
 	_tier_panel_bauen()
+	_bau_panel_bauen()
+	_eingabe_steuerung.debug_umgeschaltet.connect(_auf_debug_umgeschaltet)
 	# Warum-Fenster: Die Status-Anzeige besitzt die Begründungsliste, die Szene
 	# übergibt nur ihre drei Spitzen. Reine Verdrahtung, keine Timeline-Logik.
 	_hud.warum_verdrahten(%WarumKnopf, %WarumFenster, %WarumText)
@@ -219,7 +224,7 @@ func _modell_ersetzen(neues_modell: Welt_Model) -> void:
 		return
 	_model = neues_modell
 	_karte.darstellen(_model, _registry, _biome)
-	_kamera.position = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
+	_kamera.position = Vector2(_model.groesse()) * float(_model.kachel_groesse) / 2.0
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera.position)
 	_tier_platzierer.platzieren(_model, _registry, _tiere)
 	_waerme_sammler.sammeln(_model, _stockmaenner)
@@ -237,6 +242,8 @@ func _process(delta: float) -> void:
 	# niemals durch unmittelbares Setzen ihrer Position pro Frame.
 	_karten_beobachter.beobachten(_karten_viewer, _karten_info, _karten_ebene, _kamera_steuerung.kamera_position, _kamera)
 	_hud.produktion_anzeigen(_gebaeude.status_zeilen())
+	if _einheit_panel != null:
+		_einheit_panel.visible = (_stockmaenner != null and _stockmaenner.einheit_zahl() > 0 and _auswahl != null and _auswahl.aktiver_einheit_index >= 0)
 
 func _einheit_panel_bauen() -> void:
 	var canvas: CanvasLayer = %HUD.get_parent() as CanvasLayer
@@ -246,8 +253,9 @@ func _einheit_panel_bauen() -> void:
 	# Kein .gd.new() direkt, damit _ready und @onready der Szene laufen.
 	_einheit_panel = _EinheitPanelSzene.instantiate()
 	_einheit_panel.name = "EinheitPanel"
-	_einheit_panel.position = Vector2(16, 192)
-	_einheit_panel.custom_minimum_size = Vector2(520, 80)
+	_einheit_panel.position = Vector2(16, 500)
+	_einheit_panel.custom_minimum_size = Vector2(400, 80)
+	_einheit_panel.visible = false
 	(_einheit_panel as Object).call("einrichten", _auswahl, _stockmaenner)
 	canvas.add_child(_einheit_panel)
 
@@ -257,10 +265,28 @@ func _tier_panel_bauen() -> void:
 		return
 	_tier_panel = _TierPanelSzene.instantiate()
 	_tier_panel.name = "TierPanel"
-	_tier_panel.position = Vector2(16, 284)
+	_tier_panel.position = Vector2(16, 200)
 	_tier_panel.custom_minimum_size = Vector2(520, 80)
+	_tier_panel.visible = false
 	(_tier_panel as Object).call("einrichten", _tiere)
 	canvas.add_child(_tier_panel)
+
+func _bau_panel_bauen() -> void:
+	var canvas: CanvasLayer = %HUD.get_parent() as CanvasLayer
+	if canvas == null:
+		return
+	_bau_panel = _BauPanelSzene.instantiate()
+	_bau_panel.name = "BauPanel"
+	_bau_panel.einrichten(_gebaeude_definitionen, _fortschritt, _steuerung)
+	_bau_panel.bau_gewaehlt.connect(_auf_bau_gewaehlt)
+	canvas.add_child(_bau_panel)
+
+func _auf_bau_gewaehlt(gebaeude_id: String) -> void:
+	_eingabe_steuerung.bau_auftrag_setzen(gebaeude_id)
+
+func _auf_debug_umgeschaltet(sichtbar: bool) -> void:
+	if _tier_panel != null:
+		_tier_panel.visible = sichtbar
 
 func _unhandled_input(ereignis: InputEvent) -> void:
 	_eingabe_steuerung.unhandled_input(
@@ -307,7 +333,7 @@ func _auf_erste_einheit(_stufe: Dictionary) -> void:
 
 func _auf_stufe_erreicht(stufe: Dictionary) -> void:
 	# Neue Stufe: Das HUD nennt die freigeschaltete Stufe und das nächste
-	# Ziel; das Kontextmenü baut seine Freischaltungen neu auf.
+	# Ziel; das Kontextmenü und das Bau-Panel bauen ihre Freischaltungen neu auf.
 	var freigaben: Array[String] = []
 	for gebaeude_id: Variant in (stufe.get("schaltet_frei", {}).get("gebaeude", []) as Array):
 		freigaben.append(str(gebaeude_id))
@@ -315,6 +341,8 @@ func _auf_stufe_erreicht(stufe: Dictionary) -> void:
 		_hud.meldung_setzen("Neu freigeschaltet: %s" % ", ".join(freigaben))
 	_hud.meldung_setzen(_fortschritt.ziel_zeile())
 	_kontext.eintraege_aufbauen()
+	if _bau_panel != null:
+		_bau_panel.aktualisieren()
 
 func _auf_timeline_eintrag(eintrag: Kern_TimelineEintrag) -> void:
 	# Reine Beobachtung: Die Timeline meldet, das HUD zeigt die Begruendung.

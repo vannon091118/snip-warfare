@@ -8,7 +8,11 @@ class_name Welt_Generator
 ## hinzu; dieser Generator ändert sich dabei nicht.
 ## Welt-Aufbau: WORLD -> REGION -> CHUNK -> OBJECT. Regionen werden aus dem
 ## Seed geplant (Biom-Makrostruktur), Chunks werden je Region-Biom gefüllt.
+## Groessen (Kachel, Chunk, Region) kommen ausschliesslich aus
+## world/data/welt_definition.json ueber Welt_DefinitionRegistry.
 
+## RUECKFALL-Werte, falls der Datenpool nicht ladbar ist (Testlaeufe ohne
+## Dateisystem): Im Spiel ueberschreibt _definitionen_uebernehmen beide.
 const CHUNK_GROESSE := 8
 const REGION_KANTE := 4
 const DEFINITION_PFAD := "res://world/data/welt_definition.json"
@@ -19,6 +23,9 @@ var verteilung: Welt_GeneratorVerteilung = null
 var chunk_pruefer: Welt_GeneratorChunkPruefer = null
 var verworfene_chunks: int = 0
 var regionen_geplant: int = 0
+var _chunk_groesse: int = CHUNK_GROESSE
+var _region_kante: int = REGION_KANTE
+var _def_reg: Welt_DefinitionRegistry = null
 
 ## Kategorie logik: Welt aufbauen aus Seed und Registry.
 
@@ -27,23 +34,36 @@ func _init() -> void:
 	verteilung = Welt_GeneratorVerteilung.new()
 	chunk_pruefer = Welt_GeneratorChunkPruefer.new()
 	chunk_pruefer.einrichten(registry)
+	_def_reg = Welt_DefinitionRegistry.new()
+	_def_reg.laden()
+
+func _definitionen_uebernehmen(model: Welt_Model) -> void:
+	# Einziger Ort, der die Weltgroessen aus dem Datenpool in das Modell
+	# schreibt: Kachel, Chunk und Region haben damit genau eine Quelle.
+	if _def_reg == null:
+		_def_reg = Welt_DefinitionRegistry.new()
+		_def_reg.laden()
+	_chunk_groesse = maxi(_def_reg.chunk_groesse(), 1)
+	_region_kante = maxi(_def_reg.region_kante(), 1)
+	if model != null:
+		model.kachel_groesse_setzen(_def_reg.kachel_groesse())
+		model.chunk_groesse_setzen(_chunk_groesse)
+		model.region_kante = _region_kante
 
 func welt_erzeugen(model: Welt_Model, seed_wert: int, biom_id: String) -> bool:
 	if model == null or registry == null:
 		return false
 	verteilung.start_zustand_setzen(seed_wert)
-	var def_reg := Welt_DefinitionRegistry.new()
-	def_reg.laden()
-	var ziel_groesse := def_reg.lokalkarten_groesse_fuer(seed_wert)
+	_definitionen_uebernehmen(model)
+	var ziel_groesse := _def_reg.lokalkarten_groesse_fuer(seed_wert)
 	model.karte_erzeugen(ziel_groesse.x, ziel_groesse.y, "boden")
 	model.welt_seed = seed_wert
-	model.region_kante = REGION_KANTE
 	verworfene_chunks = 0
 	_regionen_planen(model, biom_id)
-	var kacheln := CHUNK_GROESSE * CHUNK_GROESSE
-	for chunk_y in ceili(float(model.raster_hoehe) / float(CHUNK_GROESSE)):
-		for chunk_x in ceili(float(model.raster_breite) / float(CHUNK_GROESSE)):
-			var region := model.region_an_kachel(chunk_x * CHUNK_GROESSE, chunk_y * CHUNK_GROESSE)
+	var kacheln := _chunk_groesse * _chunk_groesse
+	for chunk_y in ceili(float(model.raster_hoehe) / float(_chunk_groesse)):
+		for chunk_x in ceili(float(model.raster_breite) / float(_chunk_groesse)):
+			var region := model.region_an_kachel(chunk_x * _chunk_groesse, chunk_y * _chunk_groesse)
 			var region_biom := str(region.get("biom_id", biom_id)) if not region.is_empty() else biom_id
 			_chunk_fuellen_mit(model, Vector2i(chunk_x, chunk_y), kacheln, region_biom)
 	return true
@@ -54,15 +74,15 @@ func _regionen_planen(model: Welt_Model, weltraum_biom: String) -> void:
 	# immer dasselbe Biom und denselben Seed-Beitrag, egal in welcher
 	# Reihenfolge Regionen oder Chunks später materialisiert werden.
 	model.regionen_leeren()
-	model.region_kante = REGION_KANTE
+	model.region_kante = _region_kante
 	var biome_pool: Array[String] = [weltraum_biom]
 	for eintrag_id: String in registry.ids_mit_gewicht("biome"):
 		var wort := registry.eintrag_wort_fuer(eintrag_id)
 		var biom_id_aus_pool := str(wort.get("element_id", eintrag_id))
 		if not biome_pool.has(biom_id_aus_pool):
 			biome_pool.append(biom_id_aus_pool)
-	var regionen_x := ceili(float(model.raster_breite) / float(REGION_KANTE))
-	var regionen_y := ceili(float(model.raster_hoehe) / float(REGION_KANTE))
+	var regionen_x := ceili(float(model.raster_breite) / float(_region_kante))
+	var regionen_y := ceili(float(model.raster_hoehe) / float(_region_kante))
 	for region_y in regionen_y:
 		for region_x in regionen_x:
 			var region_id := _region_identitaet(region_x, region_y)
@@ -71,7 +91,7 @@ func _regionen_planen(model: Welt_Model, weltraum_biom: String) -> void:
 			var biom_wahl := weltraum_biom
 			if ziehung != "":
 				biom_wahl = str(registry.eintrag_wort_fuer(ziehung).get("element_id", ziehung))
-			model.region_ergaenzen(region_x, region_y, biom_wahl, region_zufall.naechste_zahl(), CHUNK_GROESSE)
+			model.region_ergaenzen(region_x, region_y, biom_wahl, region_zufall.naechste_zahl(), _chunk_groesse)
 	regionen_geplant = regionen_x * regionen_y
 
 func _region_identitaet(region_x: int, region_y: int) -> int:
@@ -87,12 +107,13 @@ func region_materialisieren(model: Welt_Model, region_x: int, region_y: int) -> 
 	# Einzelne Region reproduzierbar erzeugen: Liest ihr Biom, baut nur ihre
 	# Chunks aus derselben ortsfesten Ableitung neu. Gleicht der Region aus
 	# einer vollständigen Welt.
+	_definitionen_uebernehmen(model)
 	var region := _finde_region(model, region_x, region_y)
 	if region.is_empty():
 		return false
 	var biom_wahl := str(region.get("biom_id", "gemaaessigt"))
-	var kacheln := CHUNK_GROESSE * CHUNK_GROESSE
-	var chunk_pro_region := int(float(REGION_KANTE) / float(CHUNK_GROESSE))
+	var kacheln := _chunk_groesse * _chunk_groesse
+	var chunk_pro_region := int(float(_region_kante) / float(_chunk_groesse))
 	for dy in chunk_pro_region:
 		for dx in chunk_pro_region:
 			var chunk := Vector2i(region_x * chunk_pro_region + dx, region_y * chunk_pro_region + dy)
@@ -100,9 +121,10 @@ func region_materialisieren(model: Welt_Model, region_x: int, region_y: int) -> 
 	return true
 
 func chunk_materialisieren(model: Welt_Model, chunk: Vector2i) -> bool:
-	var region := model.region_an_kachel(chunk.x * CHUNK_GROESSE, chunk.y * CHUNK_GROESSE)
+	_definitionen_uebernehmen(model)
+	var region := model.region_an_kachel(chunk.x * _chunk_groesse, chunk.y * _chunk_groesse)
 	var biom_wahl := str(region.get("biom_id", model.biom_id)) if not region.is_empty() else model.biom_id
-	var kacheln := CHUNK_GROESSE * CHUNK_GROESSE
+	var kacheln := _chunk_groesse * _chunk_groesse
 	_chunk_fuellen_mit(model, chunk, kacheln, biom_wahl)
 	return true
 
@@ -130,10 +152,10 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 	var tier_zahl := int(gestempelt["tier_zahl"])
 	var versuche := 0
 	var plaetze: Array[Vector2i] = []
-	var start_x := chunk.x * CHUNK_GROESSE
-	var start_y := chunk.y * CHUNK_GROESSE
-	for dy in CHUNK_GROESSE:
-		for dx in CHUNK_GROESSE:
+	var start_x := chunk.x * _chunk_groesse
+	var start_y := chunk.y * _chunk_groesse
+	for dy in _chunk_groesse:
+		for dx in _chunk_groesse:
 			var x := start_x + dx
 			var y := start_y + dy
 			if x < model.raster_breite and y < model.raster_hoehe:
@@ -146,7 +168,7 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 		var platz: Vector2i = plaetze[platz_index]
 		var ziehung := verteilung.ziehe_eintrag_mit(registry, "objekte", biom_id, chunk_zufall)
 		if ziehung != "":
-			var welt_pos := Vector2((float(platz.x) + 0.5) * Welt_Model.KACHEL_GROESSE, (float(platz.y) + 0.5) * Welt_Model.KACHEL_GROESSE)
+			var welt_pos := _kachel_mitte(model, platz)
 			model.objekt_hinzufuegen(registry.element_pfad_fuer(ziehung), welt_pos)
 			objekt_zahl += 1
 			plaetze.remove_at(platz_index)
@@ -154,7 +176,7 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 				break
 		var tier_ziehung := verteilung.ziehe_eintrag_mit(registry, "tiere", biom_id, chunk_zufall)
 		if tier_ziehung != "":
-			var tier_pos := Vector2((float(platz.x) + 0.5) * Welt_Model.KACHEL_GROESSE, (float(platz.y) + 0.5) * Welt_Model.KACHEL_GROESSE)
+			var tier_pos := _kachel_mitte(model, platz)
 			model.objekt_hinzufuegen(registry.element_pfad_fuer(tier_ziehung), tier_pos)
 			tier_zahl += 1
 			if not plaetze.is_empty():
@@ -170,6 +192,10 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 	verworfene_chunks += 1
 	_chunk_verwerfen(model, start_index)
 
+func _kachel_mitte(model: Welt_Model, kachel: Vector2i) -> Vector2:
+	# Kachelmitte in Weltkoordinaten aus der einen Kachelgroesse des Modells.
+	var kante := float(model.kachel_groesse)
+	return Vector2((float(kachel.x) + 0.5) * kante, (float(kachel.y) + 0.5) * kante)
 
 func _chunk_verwerfen(model: Welt_Model, start_index: int) -> void:
 	# Ein verworfener Chunk verlässt die Welt nicht: Alle Objekte, die
@@ -214,16 +240,15 @@ func _cluster_stempeln(model: Welt_Model, chunk: Vector2i, biom_id: String, chun
 			anzahl = int(wort.get("anzahl", 0)) + int(wort.get("umgebung_zusatz", 0))
 		if anzahl <= 0:
 			continue
-		var start_x := chunk.x * CHUNK_GROESSE
-		var start_y := chunk.y * CHUNK_GROESSE
+		var start_x := chunk.x * _chunk_groesse
+		var start_y := chunk.y * _chunk_groesse
 		var mitte := Vector2i(
-			start_x + int(chunk_zufall.naechste_zahl() % CHUNK_GROESSE),
-			start_y + int(chunk_zufall.naechste_zahl() % CHUNK_GROESSE))
+			start_x + int(chunk_zufall.naechste_zahl() % _chunk_groesse),
+			start_y + int(chunk_zufall.naechste_zahl() % _chunk_groesse))
 		var objekt_ist_tier := tier_ids.any(func(t_id: String) -> bool:
 			return registry.element_pfad_fuer(t_id) == element_id)
 		for platz in _cluster_plaetze(model, mitte, radius, anzahl, chunk_zufall):
-			var welt_pos := Vector2((float(platz.x) + 0.5) * Welt_Model.KACHEL_GROESSE, (float(platz.y) + 0.5) * Welt_Model.KACHEL_GROESSE)
-			model.objekt_hinzufuegen(element_id, welt_pos)
+			model.objekt_hinzufuegen(element_id, _kachel_mitte(model, platz))
 			ergebnis["objekt_zahl"] = int(ergebnis["objekt_zahl"]) + 1
 			if objekt_ist_tier:
 				ergebnis["tier_zahl"] = int(ergebnis["tier_zahl"]) + 1

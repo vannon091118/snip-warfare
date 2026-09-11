@@ -55,7 +55,7 @@ func _welt_laden() -> void:
 		def_reg.laden()
 		var max_groesse := def_reg.max_karten_groesse()
 		_model.karte_erzeugen(max_groesse.x, max_groesse.y, "boden")
-	_kamera.position = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE / 2.0
+	_kamera.position = Vector2(_model.groesse()) * float(_model.kachel_groesse) / 2.0
 
 func _standard_welt_laden() -> Dictionary:
 	if not FileAccess.file_exists(STANDARD_WELT_PFAD):
@@ -190,7 +190,7 @@ func _maus_losgelassen() -> void:
 	_status_aktualisieren()
 
 func _maus_welt_position_in_karte() -> bool:
-	var karten_groesse := Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE
+	var karten_groesse := Vector2(_model.groesse()) * float(_model.kachel_groesse)
 	return _maus_welt_position.x >= 0.0 and _maus_welt_position.y >= 0.0 \
 		and _maus_welt_position.x < karten_groesse.x and _maus_welt_position.y < karten_groesse.y
 

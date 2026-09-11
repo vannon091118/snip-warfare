@@ -4,7 +4,9 @@
     "name": "Boden",
     "typ": "kachel",
     "kategorie": "Terrain",
-    "textur_pfad": "res://world/assets/terrain/boden_kachel.svg",
+    "textur_pfad": "res://world/assets/terrain/kacheln/boden.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#F4F1E6", "#EAE5D8"],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -12,7 +14,89 @@
     "name": "Wiese",
     "typ": "kachel",
     "kategorie": "Terrain",
-    "textur_pfad": "res://world/assets/terrain/wiese_kachel.svg",
+    "textur_pfad": "res://world/assets/terrain/kacheln/wiese.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#F2F7E4", "#E6EED2"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "waldboden",
+    "name": "Waldboden",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/waldboden.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#EDEFE0", "#E2E6D2"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "acker",
+    "name": "Acker",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/acker.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#F6F0E2", "#EFE6D2"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "weg",
+    "name": "Weg",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/weg.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#F5F0E4"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "sand",
+    "name": "Sand",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/sand.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#F7F2E0"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "ufer",
+    "name": "Ufer",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/ufer.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#EFF3F2"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "wasser",
+    "name": "Wasser",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/wasser.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#EAF2F7"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "fels",
+    "name": "Fels",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/fels.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#EFEFEA"],
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "geroell",
+    "name": "Geröll",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/kacheln/geroell.svg",
+    "spiegelbar": true,
+    "toenungen": ["#FFFFFF", "#F2F2EC"],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {

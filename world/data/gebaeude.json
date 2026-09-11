@@ -8,6 +8,7 @@
     "baukosten": {"holz": 0, "stein": 0},
     "bauzeit_ticks": 60,
     "arbeitskraft": "",
+    "gesperrt_ab_stufe": 0,
     "voraussetzungen": [],
     "lager_typ": "kleines_lager",
     "einwanderer_lieferant": true,
@@ -29,6 +30,7 @@
     "baukosten": {"holz": 12, "stein": 4},
     "bauzeit_ticks": 360,
     "arbeitskraft": "",
+    "gesperrt_ab_stufe": 1,
     "voraussetzungen": ["lagerfeuer"],
     "lager_typ": "kleines_lager",
     "einwanderer_lieferant": true,
@@ -50,6 +52,7 @@
     "baukosten": {"holz": 15, "stein": 8},
     "bauzeit_ticks": 480,
     "arbeitskraft": "",
+    "gesperrt_ab_stufe": 2,
     "voraussetzungen": [],
     "produktion": {
       "inputs": [
@@ -74,6 +77,7 @@
     "baukosten": {"holz": 20, "stein": 12},
     "bauzeit_ticks": 720,
     "arbeitskraft": "",
+    "gesperrt_ab_stufe": 2,
     "voraussetzungen": [],
     "produktion": {
       "inputs": [

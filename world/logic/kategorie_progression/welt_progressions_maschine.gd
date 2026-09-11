@@ -32,7 +32,7 @@ func einrichten(model: Welt_Model, biome: Welt_BiomRegistry, tageszyklus: Welt_T
 	_biome = biome
 	_tageszyklus = tageszyklus
 	var start_seed := model.welt_seed if model != null else 0
-	_spawn.einrichten(_registry, Welt_Model.KACHEL_GROESSE, start_seed)
+	_spawn.einrichten(_registry, float(model.kachel_groesse) if model != null else float(Welt_Model.KACHEL_GROESSE), start_seed)
 	for index in model.objekt_anzahl():
 		_zustand.zustand_erneuern(index, model)
 
