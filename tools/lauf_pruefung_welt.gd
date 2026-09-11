@@ -914,6 +914,43 @@ func _init() -> void:
 	else:
 		print("OK: Eskalationskette in der Sprechblase (Stufen %s, zuletzt %s, verzahnt nach %s)" % [
 			str(esk_stufen), esk_ende.verhalten, esk_ende.folge_mod_id])
+	# 32) Autonomer Kannibalismus: Zwei Einheiten ohne Tier und ohne Fleisch
+	#     im Lager, beide im Verzweiflungs-Stadium; der Staerkere jagt den
+	#     Schwaecheren, der Schaden laeuft ueber den Vital-Pfad, und die
+	#     Blase erzaehlt die Tat. Vorher sprachen die Ketten nur.
+	var kan_modell := Welt_Model.new()
+	kan_modell.karte_erzeugen(6, 6, "boden")
+	var kan_manager := Einheit_Manager.new()
+	kan_manager.einrichten(kan_modell, null, Einheit_Ressourcen.new())
+	var kan_lager := Lager_Manager.new()
+	kan_lager.lager_anlegen("kleines_lager", Vector2(40, 40))
+	kan_manager.lager_setzen(kan_lager)
+	var kan_mods := Pop_MoodModifikatorRegistry.new()
+	var kan_maschinen: Array[Pop_MoodMaschine] = []
+	for kan_i: int in 3:
+		kan_manager.einheit_hinzufuegen(Vector2(60 + kan_i * 8, 60))
+		var kan_mood: Pop_MoodMaschine = kan_manager._einheiten[kan_i]["mood"]
+		kan_mood.waerme_und_zyklus_setzen(null, null, kan_mods)
+		kan_maschinen.append(kan_mood)
+	# Jeder verhungert bis Stufe 3: Dann gilt das Verhalten kannibalismus.
+	for kan_tick: int in range(90):
+		kan_manager._auf_tick(kan_tick, 1.0 / 24.0)
+	var kan_job_ids: Array[String] = []
+	for kan_i: int in 3:
+		kan_job_ids.append(kan_manager.job_id_einheit(kan_i))
+	var kan_jaeger := kan_job_ids.find("kannibale")
+	var kan_ok := kan_jaeger >= 0
+	var kan_erzaehlung := ""
+	if kan_ok:
+		var kan_mood_zeile := kan_maschinen[kan_jaeger].mood()
+		kan_ok = kan_mood_zeile.kette == "hunger" and kan_mood_zeile.stufe == 3 \
+				and kan_mood_zeile.verhalten == "kannibalismus" and kan_mood_zeile.grund != ""
+		kan_erzaehlung = kan_mood_zeile.erzaehlung()
+	if not kan_ok:
+		print("FEHLER: Kannibalen-Jagd greift nicht (jobs %s)" % [str(kan_job_ids)])
+		fehler += 1
+	else:
+		print("OK: Kannibale jagt den Schwaechsten ohne Tier und Fleisch, Blase: %s" % [kan_erzaehlung.replace("\n", " | ")])
 	if fehler == 0:
 		print("ALLE PRUEFUNGEN GRUEN")
 		quit(0)

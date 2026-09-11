@@ -47,8 +47,11 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_weg_planung_erneuern()
 	_ziel_suche = Einheit_ZielSuche.new()
 	_ziel_suche.einrichten(model, tiere)
+	_ziel_suche.einheiten_quelle_setzen(self)
 	_ernte = Einheit_ErnteMaschine.new()
 	_ernte.einrichten(ressourcen, model, tiere)
+	_ernte.zufall_setzen(_zufall)
+	_ernte.manager_setzen(self)
 	_ernte.beute_erlegt.connect(_auf_beute_erlegt)
 	_versorgung = Einheit_Versorgung.new()
 	_versorgung.einrichten(ressourcen)
@@ -73,6 +76,71 @@ func waerme_quellen_aktualisieren(feuer_positionen: Array[Vector2]) -> void:
 
 func fortschritt_setzen(maschine: Welt_FortschrittsMaschine) -> void:
 	_fortschritt = maschine
+
+## Autonomes Verhalten: Der hungergetriebene Kannibalismus ist die erste
+## Verbraucherin der Eskalationsketten. Der Verzweifelte jagt den
+## schwächsten Nachbarn, wenn weder ein jagdbares Tier in Reichweite noch
+## Fleisch im Lager ist. Vor dem ersten Lagerfeuer ist die Siedlung allein,
+## die Opfersuche bleibt leer, und mit der Einwanderung aus der
+## Einstiegs-Kette gibt es erstmals Nachbarn. Der Auslöser sitzt am eigenen
+## Idle, der Job läuft wie jede Jagd über dieselben Maschinen.
+func _pruefe_verhalten(einheit: Dictionary, index: int) -> void:
+	var status: Einheit_Status = einheit["status"]
+	if status.zustand != Einheit_Status.Zustand.IDLE or _mood_mod_registry == null:
+		return
+	var hunger_mod := _mood_mod_registry.mod_fuer("hunger")
+	if hunger_mod == null or not hunger_mod.hat_eskalation():
+		return
+	var mood: Pop_MoodMaschine = einheit["mood"]
+	var not_aktuell := mood.need_wert(hunger_mod.need_id)
+	var stufe := hunger_mod.stufe_fuer(not_aktuell)
+	if stufe == null or stufe.verhalten != "kannibalismus":
+		return
+	var opfer := _jagd_nachbarn(index)
+	if opfer < 0:
+		return
+	job_vergeben(index, "kannibale", Job_Basis.ZielTyp.OWN, opfer, einheit_position(opfer))
+	# Die Hervorhebung nach der Vergabe: Der Jobwechsel denkt sonst seine
+	# Zeile über die Erzählung der Tat.
+	mood.bereich_hervorheben(hunger_mod.mod_id, stufe)
+
+func _jagd_nachbarn(jaeger_index: int) -> int:
+	# Schwächster Nachbar in Reichweite: Reichweite und Mindest-HP stehen
+	# im kannibale-Eintrag der Job-Konfiguration; niemand jagt sich selbst.
+	if _ressourcen != null and _ressourcen.bestand("fleisch") > 0:
+		return -1
+	if _tiere != null and _tier_in_reichweite(jaeger_index):
+		return -1
+	var konfig: Dictionary = _job_registry.job_konfigurationen.get("kannibale", {})
+	var reichweite := float(konfig.get("reichweite", 60.0))
+	var mindest_hp := int(konfig.get("opfer_mindest_hp", 20))
+	var eigene := einheit_position(jaeger_index)
+	var bester := -1
+	var beste_hp := 0
+	for index in _einheiten.size():
+		if index == jaeger_index:
+			continue
+		if einheit_status(index).vital.hp <= 0:
+			continue
+		if einheit_position(index).distance_to(eigene) > reichweite:
+			continue
+		var hp := einheit_hp(index)
+		if hp < mindest_hp:
+			continue
+		if bester == -1 or hp < beste_hp:
+			bester = index
+			beste_hp = hp
+	return bester
+
+func _tier_in_reichweite(jaeger_index: int) -> bool:
+	if _tiere == null:
+		return false
+	var eigene := einheit_position(jaeger_index)
+	for tier_index in _tiere.tier_zahl():
+		var tier_pos := _tiere.tier_position(tier_index)
+		if tier_pos != Vector2.INF and tier_pos.distance_to(eigene) <= 160.0:
+			return true
+	return false
 
 func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
 	_tageszyklus = zyklus
@@ -166,6 +234,12 @@ func einheit_rasse(index: int) -> String:
 	if index < 0 or index >= _einheiten.size():
 		return ""
 	return str(_einheiten[index].get("rasse", ""))
+
+func einheit_hp(index: int) -> int:
+	# Lebenspunkte je Einheit für die Schwächsten-Suche des autonomen
+	# Verhaltens; ohne Treffer bleibt der neutrale Wert.
+	var st := einheit_status(index)
+	return 0 if st == null else st.vital.hp
 
 func einheit_vital(index: int) -> Einheit_VitalStatus:
 	var st := einheit_status(index)
@@ -276,7 +350,8 @@ func _auf_tick(nummer: int, delta: float) -> void:
 		# die Rate (einwanderer_je_tag), der Takt kommt aus dem Datenpool;
 		# der Spawn läuft über denselben einheit_hinzufuegen-Schnitt.
 		_einwanderung_ticken(takt_ticks)
-	for einheit: Dictionary in _einheiten:
+	for ei: int in _einheiten.size():
+		var einheit: Dictionary = _einheiten[ei]
 		var status: Einheit_Status = einheit["status"]
 		var mood: Pop_MoodMaschine = einheit["mood"]
 		if (status.zustand == Einheit_Status.Zustand.ARBEITEN or status.zustand == Einheit_Status.Zustand.GEHEN) and not _ziel_existiert(status):
@@ -300,6 +375,8 @@ func _auf_tick(nummer: int, delta: float) -> void:
 		(status.vital as Einheit_VitalStatus).umgebungsschaden_anwenden(w, _mood_mod_registry, _zufall)
 		if ziel != Vector2.INF and status.zustand == Einheit_Status.Zustand.IDLE:
 			_in_sicherheit_bringen(einheit, ziel)
+		if status.zustand == Einheit_Status.Zustand.IDLE:
+			_pruefe_verhalten(einheit, ei)
 
 func _ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2:
 	return _ziel_suche.ziel_position_fuer(ziel_typ, ziel_index)

@@ -22,6 +22,7 @@ signal job_beendet()
 enum ZielTyp {
 	OBJEKT,
 	TIER,
+	OWN,
 }
 
 ## Kategorie daten: Job-Konfiguration und Ziel-Listen aus der Registry.
@@ -59,7 +60,8 @@ func name() -> String:
 	return str(konfiguration.get("name", job_id.capitalize()))
 
 func ziel_typ() -> ZielTyp:
-	# Unterklassen geben an, ob sie ein Weltobjekt oder ein Tier bearbeiten.
+	# Unterklassen geben an, ob sie ein Weltobjekt, ein Tier oder einen
+	# Artgenossen bearbeiten; OWN gehört dem autonomen Verhaltenssystem.
 	return ZielTyp.OBJEKT
 
 func ist_loop() -> bool:

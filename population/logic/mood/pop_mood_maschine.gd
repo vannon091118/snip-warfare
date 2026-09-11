@@ -233,6 +233,30 @@ func _ableiten() -> void:
 	_mood = neu
 	mood_geaendert.emit(_mood)
 
+## Sichtbare Hervorhebung einer Kette von außen: Der Manager ruft sie,
+## wenn das autonome Verhalten auslöst, und die Blase erzählt dieselbe
+## Stufe, die das Verhalten wählt. Zwei Erzähl-Quellen entstehen nicht.
+func bereich_hervorheben(mod_id: String, stufe: Pop_MoodEskalationStufe) -> void:
+	if _mood_mods == null or stufe == null:
+		return
+	var mod := _mood_mods.mod_fuer(mod_id)
+	if mod == null:
+		return
+	var neu := Pop_Mood.new()
+	neu.aktive_need_id = mod.need_id
+	neu.emoji = stufe.emoji
+	neu.sprechblase_text = stufe.wirkung
+	neu.grund = stufe.grund
+	neu.wirkung = stufe.wirkung
+	neu.verhalten = stufe.verhalten
+	neu.stufe = stufe.stufe
+	neu.kette = mod.mod_id
+	neu.folge_mod_id = stufe.folge_mod_id
+	neu.intensitaet = 1.0
+	neu.quelle = "verhalten"
+	_mood = neu
+	mood_geaendert.emit(_mood)
+
 func _setze_gedanke(need_id: String, emoji: String, gedanken_text: String) -> void:
 	var neu := Pop_Mood.new()
 	neu.aktive_need_id = need_id
