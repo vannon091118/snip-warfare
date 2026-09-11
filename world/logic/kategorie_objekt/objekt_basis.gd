@@ -5,6 +5,8 @@ class_name Objekt_Basis
 ## Element-Katalog. Der Renderer und die State Machines lesen nur diese
 ## Felder und übersetzen sie in Darstellung beziehungsweise Verhalten.
 
+## Kategorie daten: alle Felder des Objekts, ausschließlich durch den Katalog
+## gefüllt. Hier wird nichts berechnet und nichts aufgerufen.
 var id: String = ""
 var angezeigter_name: String = ""
 var kategorie: StringName = &""
@@ -17,7 +19,13 @@ var logik_id: String = ""
 var modifikator_id: String = "normal"
 var faktor: float = 1.0
 var funktions_animation: String = ""
+## Ziel-Tags aus dem Katalog: Sie beschreiben, was dieses Objekt ist (Holz,
+## Stein, Tier). Das Kontextmenü gleicht sie mit den ziel_tags der Aktionen
+## ab, statt Objektnamen im UI zu vergleichen.
+var ziel_tags: Array[String] = []
 var schluessel_daten: Dictionary = {}
+
+## Kategorie logik: Einlesen des Katalogs und reine Leser der Felder.
 
 func aus_katalog_eintrag(eintrag: Dictionary) -> void:
 	# Reines Einlesen der Daten; hier wird nichts berechnet und nichts aufgerufen.
@@ -35,6 +43,9 @@ func aus_katalog_eintrag(eintrag: Dictionary) -> void:
 	# Funktions-Animation als Registry-Name aus game/data/animationen.json:
 	# Der Darsteller entscheidet daraus, ob er das Objekt animiert malt.
 	funktions_animation = str(eintrag.get("funktions_animation", ""))
+	ziel_tags.clear()
+	for tag: Variant in (eintrag.get("ziel_tags", []) as Array):
+		ziel_tags.append(str(tag))
 	schluessel_daten = eintrag.duplicate()
 
 func ticks_fuer_faktor() -> int:

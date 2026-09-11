@@ -62,6 +62,15 @@ func _zentrale_klasse_fuer(element_id: String) -> Objekt_Basis:
 			return Objekt_Kachel.new()
 	return Objekt_Basis.new()
 
+func ziel_tags_fuer(element_id: String) -> Array[String]:
+	# Lesende Auskunft für das Kontextmenü: Welche Ziel-Tags trägt dieses
+	# Element? Unbekannte Elemente haben keine Tags, das Menü zeigt dort nur
+	# die globalen Aktionen. Keine zweite Tag-Tabelle im UI.
+	var objekt := finde_objekt(element_id)
+	if objekt == null:
+		return []
+	return objekt.ziel_tags
+
 func natur_sicht() -> Array[Objekt_Basis]:
 	return objekte_der_kategorie("Natur")
 

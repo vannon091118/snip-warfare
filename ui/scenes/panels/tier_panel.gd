@@ -16,6 +16,10 @@ func _ready() -> void:
 	_label.text = "Tierfenster: bereit."
 
 func _process(_delta: float) -> void:
+	# Ein unsichtbarer Beobachter liest nichts: Das Debug-Fenster ist im
+	# Normalbetrieb aus und soll dann auch keine Arbeit kosten.
+	if not is_visible_in_tree():
+		return
 	if _label == null or _tiere == null:
 		return
 	var zeilen := _panel.zeilen_fuer(_tiere)

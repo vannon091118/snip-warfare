@@ -101,6 +101,7 @@
   },
   {
     "id": "baum",
+    "ziel_tags": ["holz", "baum"],
     "name": "Baum",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -116,6 +117,7 @@
   },
   {
     "id": "baum_stumpf",
+    "ziel_tags": ["holz", "baum"],
     "name": "Baumstumpf",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -128,6 +130,7 @@
   },
   {
     "id": "kadaver",
+    "ziel_tags": ["fleisch", "kadaver"],
     "name": "Kadaver",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -140,6 +143,7 @@
   },
   {
     "id": "stein",
+    "ziel_tags": ["stein"],
     "name": "Stein",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -149,6 +153,7 @@
   },
   {
     "id": "steine_gruppe",
+    "ziel_tags": ["stein"],
     "name": "Steingruppe",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -189,6 +194,7 @@
   },
   {
     "id": "baer",
+    "ziel_tags": ["tier", "jagd"],
     "name": "Bär",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -198,6 +204,7 @@
   },
   {
     "id": "hase",
+    "ziel_tags": ["tier", "jagd"],
     "name": "Hase",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -207,6 +214,7 @@
   },
   {
     "id": "vogel",
+    "ziel_tags": ["tier", "jagd"],
     "name": "Vogel",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -216,6 +224,7 @@
   },
   {
     "id": "vogelgruppe",
+    "ziel_tags": ["tier", "jagd"],
     "name": "Vogelgruppe",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -225,6 +234,7 @@
   },
   {
     "id": "eisbaer",
+    "ziel_tags": ["tier", "jagd"],
     "name": "Eisbär",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -237,6 +247,7 @@
   },
   {
     "id": "busch",
+    "ziel_tags": ["beeren", "busch"],
     "name": "Busch",
     "typ": "objekt",
     "kategorie": "Natur",

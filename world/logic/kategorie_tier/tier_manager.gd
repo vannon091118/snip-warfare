@@ -119,9 +119,11 @@ func tier_ernten(tier_nummer: int) -> int:
 	if not status.ist_tot():
 		return 0
 	var ertrag := status.fleisch
-	var darsteller: Tier_Darsteller = tier["darsteller"]
-	if is_instance_valid(darsteller):
-		darsteller.verschwinden()
+	# Der Darsteller wird erst geprüft, dann typisiert: Ein bereits
+	# freigegebener Knoten darf nicht in eine typisierte Variable wandern.
+	var darsteller_knoten: Variant = tier.get("darsteller")
+	if is_instance_valid(darsteller_knoten):
+		(darsteller_knoten as Tier_Darsteller).verschwinden()
 	_tiere.remove_at(index)
 	_nachruecken()
 	return ertrag
@@ -142,7 +144,8 @@ func _nachruecken() -> void:
 	# Darsteller, die sich bereits selbst entfernt haben, aus der Liste nehmen.
 	var aufgerueckt: Array[Dictionary] = []
 	for tier: Dictionary in _tiere:
-		if tier["darsteller"] == null or not is_instance_valid(tier["darsteller"]):
+		var knoten: Variant = tier.get("darsteller")
+		if knoten == null or not is_instance_valid(knoten):
 			continue
 		aufgerueckt.append(tier)
 	_tiere = aufgerueckt
@@ -152,8 +155,15 @@ func _auf_tick(_nummer: int, delta: float) -> void:
 	for index in _tiere.size():
 		var tier: Dictionary = _tiere[index]
 		var status: Tier_Status = tier["status"]
-		var darsteller: Tier_Darsteller = tier["darsteller"]
-		if not is_instance_valid(darsteller):
+		# Prüfen, dann typisieren: Ein zwischen zwei Takten verschwundener
+		# Darsteller ist ein toter Verweis und wird ausgetragen, statt in
+		# jedem Takt eine Fehlermeldung zu erzeugen.
+		var darsteller_knoten: Variant = tier.get("darsteller")
+		if darsteller_knoten == null or not is_instance_valid(darsteller_knoten):
+			entfernte.append(index)
+			continue
+		var darsteller: Tier_Darsteller = darsteller_knoten as Tier_Darsteller
+		if darsteller == null:
 			entfernte.append(index)
 			continue
 		var bewegung := status.tick(delta, tier["position"], _spieler_position)
@@ -162,6 +172,9 @@ func _auf_tick(_nummer: int, delta: float) -> void:
 			darsteller.global_position = tier["position"]
 		if not is_instance_valid(darsteller):
 			entfernte.append(index)
+	# Von hinten austragen: Das Entfernen verschiebt alle folgenden Indizes,
+	# ein Lauf von vorne würde bei mehreren Treffern die falschen Tiere löschen.
+	entfernte.reverse()
 	for index in entfernte:
 		_tiere.remove_at(index)
 

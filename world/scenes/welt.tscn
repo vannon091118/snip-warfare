@@ -11,6 +11,22 @@
 [ext_resource type="Script" path="res://ui/scenes/selection/auswahl_rechteck.gd" id="9_rechteck"]
 [ext_resource type="Script" path="res://ui/scenes/panels/kontext_menue.gd" id="10_kontext"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.06, 0.08, 0.1, 0.74)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.16)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [node name="Welt" type="Node2D"]
 script = ExtResource("1_karte")
 
@@ -25,73 +41,79 @@ script = ExtResource("3_tiere")
 [node name="Kamera" type="Camera2D" parent="."]
 unique_name_in_owner = true
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
-
-[node name="HUD" type="VBoxContainer" parent="CanvasLayer"]
+[node name="UILayer" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
-offset_left = 16.0
-offset_top = 16.0
-offset_right = 480.0
-offset_bottom = 120.0
-theme_override_constants/separation = 8
+
+[node name="HUDRahmen" type="PanelContainer" parent="UILayer"]
+unique_name_in_owner = true
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 452.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud")
+
+[node name="HUD" type="VBoxContainer" parent="UILayer/HUDRahmen"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
 script = ExtResource("5_hudleiste")
 
-[node name="RessourcenLeiste" type="HBoxContainer" parent="CanvasLayer/HUD"]
+[node name="RessourcenLeiste" type="HBoxContainer" parent="UILayer/HUDRahmen/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 16
 script = ExtResource("6_ressourcen")
 
-[node name="JobAnzeige" type="Label" parent="CanvasLayer/HUD"]
+[node name="JobAnzeige" type="Label" parent="UILayer/HUDRahmen/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
+autowrap_mode = 3
 text = "Job: keiner (Objekt anklicken)"
 script = ExtResource("7_jobanzeige")
 
-[node name="StatusAnzeige" type="Label" parent="CanvasLayer/HUD"]
+[node name="StatusAnzeige" type="Label" parent="UILayer/HUDRahmen/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
+autowrap_mode = 3
 text = ""
 script = ExtResource("8_statusanzeige")
 
-[node name="ProduktionAnzeige" type="Label" parent="CanvasLayer/HUD"]
+[node name="ProduktionAnzeige" type="Label" parent="UILayer/HUDRahmen/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
+autowrap_mode = 3
 text = "Produktion: keine Gebaeude"
 script = ExtResource("8b_produktion")
 
-[node name="HilfeLabel" type="Label" parent="CanvasLayer/HUD"]
+[node name="HilfeLabel" type="Label" parent="UILayer/HUDRahmen/HUD"]
 layout_mode = 2
 text = "F3: Debug | M: Weltkarte | WASD: Kamera"
 
-[node name="ZurueckKnopf" type="Button" parent="CanvasLayer"]
+[node name="KnopfZeile" type="HBoxContainer" parent="UILayer/HUDRahmen/HUD"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ZurueckKnopf" type="Button" parent="UILayer/HUDRahmen/HUD/KnopfZeile"]
 unique_name_in_owner = true
-offset_left = 16.0
-offset_top = 130.0
-offset_right = 136.0
-offset_bottom = 170.0
+layout_mode = 2
 text = "Hauptmenü"
 
-[node name="WarumKnopf" type="Button" parent="CanvasLayer"]
+[node name="WarumKnopf" type="Button" parent="UILayer/HUDRahmen/HUD/KnopfZeile"]
 unique_name_in_owner = true
-offset_left = 144.0
-offset_top = 130.0
-offset_right = 244.0
-offset_bottom = 170.0
+layout_mode = 2
 text = "Warum?"
 
-[node name="WarumFenster" type="AcceptDialog" parent="CanvasLayer"]
+[node name="WarumFenster" type="AcceptDialog" parent="UILayer"]
 unique_name_in_owner = true
 title = "Warum ist das so?"
 size = Vector2i(560, 340)
 
-[node name="AuswahlRechteckEbene" type="CanvasLayer" parent="."]
-
-[node name="WarumText" type="Label" parent="CanvasLayer/WarumFenster"]
+[node name="WarumText" type="Label" parent="UILayer/WarumFenster"]
 unique_name_in_owner = true
 text = ""
 autowrap_mode = 2
 layer = 10
+
+[node name="AuswahlRechteckEbene" type="CanvasLayer" parent="."]
 
 [node name="AuswahlRechteck" type="Control" parent="AuswahlRechteckEbene"]
 unique_name_in_owner = true
