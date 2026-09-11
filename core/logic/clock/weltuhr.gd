@@ -13,6 +13,12 @@ const MAX_TICKS_PRO_FRAME := 5
 const FAKTOR_SEKUNDEN := 10.0
 const FAKTOR_MIN := 0.1
 const FAKTOR_MAX := 10.0
+## Grenzen für Spielrhythmus-Dauern in Minuten. Sie sind bewusst weiter als
+## die Modifikator-Grenzen, weil Takt, Tag und Nacht echte Spielzeiten sind
+## und nicht auf den Modifikator-Bereich bis 100 Sekunden geklemmt werden
+## dürfen.
+const MINUTEN_MIN := 0.1
+const MINUTEN_MAX := 120.0
 
 var _tick_nummer: int = 0
 var _akkumulator: float = 0.0
@@ -43,9 +49,12 @@ static func ticks_aus_faktor(faktor: float) -> int:
 
 ## Einzige zentrale Übersetzung Minuten -> ticks. Spielrhythmus-Werte aus
 ## der Konfiguration werden hier umgerechnet, damit weder Einheiten-Takt
-## noch Tageszyklus dieselbe Rechnung separat führen.
+## noch Tageszyklus dieselbe Rechnung separat führen. Die Modifikator-Klemme
+## gilt hier nicht: Eine Dauer wird auf ihre eigenen Grenzen geklemmt, sonst
+## fielen lange Takte auf 100 Sekunden zusammen und die Nacht verschwände.
 static func ticks_aus_minuten(minuten: float) -> int:
-	return ticks_aus_faktor(minuten * 60.0 / FAKTOR_SEKUNDEN)
+	var geklemmte_dauer := clampf(minuten, MINUTEN_MIN, MINUTEN_MAX)
+	return maxi(int(round(geklemmte_dauer * 60.0 * TICK_RATE_HZ)), 1)
 
 static func faktor_aus_ticks(ticks: int) -> float:
 	if ticks <= 0:

@@ -17,9 +17,9 @@ const RHYTHMUS_SCHLUESSEL := "weltrhythmus"
 ## Rückfallwerte nur für den Fall einer fehlenden oder defekten Datei;
 ## im Normalfall kommen alle Werte aus needs.json.
 const RHYTHMUS_RUECKFALL := {
-	"takt_minuten": 6.0,
-	"tag_minuten": 4.0,
-	"nacht_minuten": 2.0,
+	"takt_minuten": 2.0,
+	"tag_minuten": 1.5,
+	"nacht_minuten": 0.5,
 	"verbrauch_je_takt": 0.8,
 }
 
@@ -84,13 +84,13 @@ func _need_klasse_fuer(need_id: String, eintrag: Dictionary) -> Pop_NeedBasis:
 ## aus needs.json. Fehlt der Abschnitt, gelten die dokumentierten
 ## Rückfallwerte, die exakt den bisherigen Code-Zahlen entsprechen.
 func takt_minuten() -> float:
-	return maxf(float(_rhythmus.get("takt_minuten", RHYTHMUS_RUECKFALL["takt_minuten"])), 1.0)
+	return clampf(float(_rhythmus.get("takt_minuten", RHYTHMUS_RUECKFALL["takt_minuten"])), 0.5, Kern_Weltuhr.MINUTEN_MAX)
 
 func tag_minuten() -> float:
-	return maxf(float(_rhythmus.get("tag_minuten", RHYTHMUS_RUECKFALL["tag_minuten"])), 0.5)
+	return clampf(float(_rhythmus.get("tag_minuten", RHYTHMUS_RUECKFALL["tag_minuten"])), 0.1, Kern_Weltuhr.MINUTEN_MAX)
 
 func nacht_minuten() -> float:
-	return maxf(float(_rhythmus.get("nacht_minuten", RHYTHMUS_RUECKFALL["nacht_minuten"])), 0.5)
+	return clampf(float(_rhythmus.get("nacht_minuten", RHYTHMUS_RUECKFALL["nacht_minuten"])), 0.1, Kern_Weltuhr.MINUTEN_MAX)
 
 func verbrauch_je_takt() -> float:
 	return clampf(float(_rhythmus.get("verbrauch_je_takt", RHYTHMUS_RUECKFALL["verbrauch_je_takt"])), 0.1, 5.0)

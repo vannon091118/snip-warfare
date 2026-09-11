@@ -1,7 +1,10 @@
 extends RefCounted
 class_name Welt_TageszyklusMaschine
 ## State-Maschine des Tageszyklus. Genau eine Verantwortung:
-## 6-Minuten-Takt (4 Tag / 2 Nacht) an der zentralen Weltuhr.
+## Takt mit Tag- und Nachtanteil an der zentralen Weltuhr. Die Dauer kommt
+## aus dem Abschnitt weltrhythmus in population/data/needs.json und wird
+## über die Welt-Szene hereingereicht; die Vorgabewerte hier sind nur der
+## Rückfall für nackte Aufrufe aus Prüfungen.
 ## Liefert Helligkeit 0..1 und färbt die Welt über eine Schablone.
 ## Übergang = Papierschieber wie im Kinderbuch (Overlay-Alpha je Phase).
 
@@ -10,15 +13,16 @@ enum Phase { TAG, DAEMMERUNG, NACHT, MORGEN }
 signal phase_geaendert(neue_phase: Phase, helligkeit: float)
 
 ## Kategorie daten: Takt-Konfiguration und aktueller Zustand.
-var takt_minuten: float = 6.0
-var tag_minuten: float = 4.0
-var nacht_minuten: float = 2.0
+## Rückfallwerte entsprechend dem Datenpool in needs.json.
+var takt_minuten: float = 2.0
+var tag_minuten: float = 1.5
+var nacht_minuten: float = 0.5
 var _tick_in_takt: int = 0
 var _helligkeit: float = 1.0
 var _phase: Phase = Phase.TAG
 
 ## Kategorie logik: Tick an Weltuhr, Phase und Helligkeit ableiten.
-func einrichten(neu_takt_minuten: float = 6.0, neu_tag_minuten: float = 4.0, _neu_nacht_minuten: float = 2.0) -> void:
+func einrichten(neu_takt_minuten: float = 2.0, neu_tag_minuten: float = 1.5, _neu_nacht_minuten: float = 0.5) -> void:
 	# Die Nacht ergibt sich aus Takt minus Tag; der eigene Nacht-Wert ist
 	# bewusst nur ein Platzhalter in der Signatur und bleibt ungenutzt.
 	takt_minuten = maxf(neu_takt_minuten, 1.0)

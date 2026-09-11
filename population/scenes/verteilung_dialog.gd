@@ -7,9 +7,9 @@ extends Window
 signal verteilung_gesetzt(nahrung_je_einheit_je_takt: float)
 
 ## Rückfallwerte nur für den Fall, dass niemand Werte übergibt.
-const TAKT_RUECKFALL := 6.0
-const TAG_RUECKFALL := 4.0
-const NACHT_RUECKFALL := 2.0
+const TAKT_RUECKFALL := 2.0
+const TAG_RUECKFALL := 1.5
+const NACHT_RUECKFALL := 0.5
 const WERT_RUECKFALL := 0.8
 
 var _label: Label = null
@@ -35,8 +35,8 @@ func _ready() -> void:
 	var root := VBoxContainer.new()
 	add_child(root)
 	_label = Label.new()
-	_label.text = "Nahrung je Stickman je %d-Minuten-Takt (Tag %d / Nacht %d):" % [
-		int(round(_takt_minuten)), int(round(_tag_minuten)), int(round(_nacht_minuten))]
+	_label.text = "Nahrung je Stickman je %s-Minuten-Takt (Tag %s / Nacht %s):" % [
+		_minuten_text(_takt_minuten), _minuten_text(_tag_minuten), _minuten_text(_nacht_minuten)]
 	root.add_child(_label)
 	var row := HBoxContainer.new()
 	root.add_child(row)
@@ -56,6 +56,13 @@ func _ready() -> void:
 	ok.pressed.connect(_auf_ok)
 	root.add_child(ok)
 	close_requested.connect(queue_free)
+
+func _minuten_text(wert: float) -> String:
+	# Ganze Minuten ohne Nachkommastelle, halbe Minuten mit einer, damit die
+	# Anzeige exakt den Datenwert nennt statt ihn zu runden.
+	if is_equal_approx(wert, roundf(wert)):
+		return str(int(roundf(wert)))
+	return "%.1f" % wert
 
 func _auf_wert(wert: float) -> void:
 	_wert_label.text = "%.1f" % wert

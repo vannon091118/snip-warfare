@@ -1,15 +1,15 @@
 {
   "weltrhythmus": {
-    "takt_minuten": 6,
-    "tag_minuten": 4,
-    "nacht_minuten": 2,
+    "takt_minuten": 2,
+    "tag_minuten": 1.5,
+    "nacht_minuten": 0.5,
     "verbrauch_je_takt": 0.8,
-    "beschreibung": "Einzige Quelle des Spielrhythmus: Taktlaenge des Tageszyklus und der Nahrungsverteilung, Tag- und Nachtanteil sowie der Verbrauch je Einheit und Takt."
+    "beschreibung": "Einzige Quelle des Spielrhythmus: Taktlaenge des Tageszyklus und der Nahrungsverteilung, Tag- und Nachtanteil sowie der Verbrauch je Einheit und Takt. Die Nacht ist der kurze, gefaehrliche Teil des Taktes."
   },
   "nahrung": {
     "script": "res://population/logic/needs/pop_need_nahrung.gd",
     "name": "Hunger",
-    "beschreibung": "Der Magen knurrt und fordert Nachschub aus dem nächsten Lager. 0.8 Nahrung je Einheit je 6-Minuten-Takt.",
+    "beschreibung": "Der Magen knurrt und fordert Nachschub aus dem nächsten Lager. Der Verbrauch je Einheit und Takt steht im Abschnitt weltrhythmus.",
     "ressource": "fleisch",
     "schwellwert": 3,
     "dringlichkeit_pro_tick": 0.02,
@@ -31,9 +31,10 @@
     "emoji": "🔥",
     "sprechblase_text": "Mir ist kalt…",
     "farbe": "#E07A2E",
-    "kaelte_schwellwert": -0.4,
-    "hitze_schwellwert": 0.6,
-    "hp_abzug_je_tick_kaelte": 1,
-    "hp_abzug_je_tick_hitze": 2
+    "_dokumentation_kaelte_schwellwert": -0.4,
+    "_dokumentation_hitze_schwellwert": 0.6,
+    "_dokumentation_hp_abzug_je_tick_kaelte": 1,
+    "_dokumentation_hp_abzug_je_tick_hitze": 2,
+    "_hinweis_waerme_gates": "Nur Dokumentation – die Gates lesen ausschließlich population/data/mood_modifikatoren.json (kaelte/hitze) über Pop_MoodModifikatorRegistry. Werte hier werden nicht gelesen."
   }
 }
