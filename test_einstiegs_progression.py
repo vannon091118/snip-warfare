@@ -57,18 +57,23 @@ def test_gebaeude_pool_traegt_lagerfeuer_und_haus_mit_lager_typ():
     assert haus["baukosten"]["holz"] > 0, "Das Haus kostet echte Arbeit"
 
 
-def test_steuerung_traegt_bau_aktion_fuer_lagerfeuer_und_gesperrte():
-    """Lagerfeuer-Aktion offen, Werkstatt/Raeucherei/Expansion gesperrt markiert."""
+def test_gebaeude_tragen_die_einzige_gating_wahrheit():
+    """Die Stufen-Sperre ist ein Attribut des Gebaeudes, nicht der Steuerung.
+
+    Die Vorarbeit hat das Bauen aus dem Kontextmenue in das Bau-Panel
+    verschoben. Damit gibt es genau eine Gating-Quelle: gesperrt_ab_stufe in
+    world/data/gebaeude.json. Die Steuerung traegt keine Bau-Aktionen mehr.
+    """
+    gebaeude = {g["id"]: g for g in _json("world/data/gebaeude.json")}
+    assert gebaeude["lagerfeuer"]["gesperrt_ab_stufe"] == 0, "Erste Aktion ist immer offen"
+    assert gebaeude["haus"]["gesperrt_ab_stufe"] == 1
+    assert gebaeude["werkstatt"]["gesperrt_ab_stufe"] == 2
+    assert gebaeude["raeucherei"]["gesperrt_ab_stufe"] == 2
     steuerung = _json("game/data/steuerung.json")
     aktionen = {a["id"]: a for a in steuerung["kontextmenue"]["aktionen"]}
-    assert "bauen_lagerfeuer" in aktionen
-    assert aktionen["bauen_lagerfeuer"]["gebaeude_id"] == "lagerfeuer"
-    assert aktionen["bauen_lagerfeuer"].get("gesperrt_ab_stufe", 0) == 0, "Erste Aktion ist immer offen"
-    assert aktionen["bauen_werkstatt"]["gesperrt_ab_stufe"] == 2
-    assert aktionen["bauen_raeucherei"]["gesperrt_ab_stufe"] == 2
+    assert not any(a_id.startswith("bauen_") for a_id in aktionen), \
+        "Bauen gehoert ins Panel, nicht ins Kontextmenue"
     assert aktionen["expansieren"]["gesperrt_ab_stufe"] == 3
-    assert "bauen_haus" in aktionen
-    assert aktionen["bauen_haus"]["gesperrt_ab_stufe"] == 1
 
 
 def test_fortschritts_maschine_ist_datengetrieben():
@@ -97,6 +102,16 @@ def test_eingabe_steuerung_blockt_gesperrte_aktionen():
     """Der Eingabe-Übersetzer fragt die Maschine, bevor er baut."""
     eingabe = _lies("ui/logic/kategorie_ui/ui_eingabe_steuerung.gd")
     assert "stufe_frei" in eingabe, "Gesperrte Bau-Aktionen werden abgelehnt"
+
+
+def test_bau_panel_liest_die_sperre_aus_der_definition():
+    """Das Panel erfindet keine Stufen mehr, es liest gesperrt_ab_stufe."""
+    panel = _lies("ui/logic/kategorie_ui/ui_bau_panel.gd")
+    assert "def.gesperrt_ab_stufe" in panel, "Stufe kommt aus der Definition"
+    assert 'def.id == "haus"' not in panel, "keine erfundene Stufen-Tabelle im UI"
+    definition = _lies("world/logic/kategorie_objekt/gebaeude_definition.gd")
+    assert "var gesperrt_ab_stufe: int = 0" in definition
+    assert 'eintrag.get("gesperrt_ab_stufe", 0)' in definition
 
 
 def test_lager_fabrik_ankert_am_lagerfeuer():

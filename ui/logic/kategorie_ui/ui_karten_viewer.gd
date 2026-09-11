@@ -34,7 +34,7 @@ func beobachten_setzen(spieler_position: Vector2, kamera_position: Vector2, kame
 func fokus_auf_spieler() -> void:
 	if _model == null:
 		return
-	var kanten: Vector2 = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE
+	var kanten: Vector2 = Vector2(_model.groesse()) * float(_model.kachel_groesse)
 	if kanten.x <= 0.0 or kanten.y <= 0.0:
 		return
 	_fokus = Vector2(_spieler_position.x / kanten.x, _spieler_position.y / kanten.y)
@@ -50,7 +50,7 @@ func _draw() -> void:
 	var kachel_px := _kachel_pixel()
 	if kachel_px <= 0.0:
 		return
-	var kante := Welt_Model.KACHEL_GROESSE
+	var kante := float(_model.kachel_groesse)
 	_kacheln_malen(kachel_px)
 	_regionen_malen(kachel_px, kante)
 	_chunks_malen(kachel_px, kante)
@@ -131,7 +131,7 @@ func _gui_input(ereignis: InputEvent) -> void:
 	if ereignis is InputEventMouseButton and ereignis.pressed and ereignis.button_index == MOUSE_BUTTON_LEFT:
 		var kachel_px := _kachel_pixel()
 		if kachel_px > 0.0 and _model != null:
-			var _kanten: Vector2 = Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE
+			var _kanten: Vector2 = Vector2(_model.groesse()) * float(_model.kachel_groesse)
 			_fokus = Vector2(ereignis.position.x / (kachel_px * _model.raster_breite), ereignis.position.y / (kachel_px * _model.raster_hoehe))
 			_fokus = _fokus.clamp(Vector2.ZERO, Vector2.ONE)
 			queue_redraw()

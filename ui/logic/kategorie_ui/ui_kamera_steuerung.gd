@@ -30,7 +30,7 @@ func kamera_bewegen(delta: float, kamera: Camera2D) -> void:
 	var geschw := _steuerung.steuerung.kamera_geschwindigkeit if _steuerung != null and _steuerung.steuerung != null else 520.0
 	kamera_position += richtung * geschw * delta
 	if _model != null:
-		var karten_groesse := Vector2(_model.groesse()) * Welt_Model.KACHEL_GROESSE
+		var karten_groesse := Vector2(_model.groesse()) * float(_model.kachel_groesse)
 		kamera_position = kamera_position.clamp(Vector2.ZERO, karten_groesse)
 	if kamera != null:
 		kamera.position = kamera_position

@@ -11,7 +11,8 @@ func zustand_zeigen(model: Welt_Model, tier_zahl: int, blick_position: Vector2, 
 	if model == null:
 		text = "Keine Welt geladen"
 		return
-	var kachel := Vector2i(blick_position / Welt_Model.KACHEL_GROESSE)
+	var kante := float(model.kachel_groesse)
+	var kachel := Vector2i(blick_position / kante)
 	var region := model.region_an_kachel(kachel.x, kachel.y)
 	var region_text := "-"
 	var biom_text := model.biom_id
@@ -21,7 +22,7 @@ func zustand_zeigen(model: Welt_Model, tier_zahl: int, blick_position: Vector2, 
 	var zeilen := [
 		"Seed: %d" % model.welt_seed,
 		"Region: %s" % region_text,
-		"Chunk: %d/%d" % [int(floor(float(kachel.x) / float(Welt_Generator.CHUNK_GROESSE))), int(floor(float(kachel.y) / float(Welt_Generator.CHUNK_GROESSE)))],
+		"Chunk: %d/%d" % [int(floor(float(kachel.x) / float(model.chunk_groesse))), int(floor(float(kachel.y) / float(model.chunk_groesse)))],
 		"Biom: %s" % biom_text,
 		"Objekte: %d" % model.objekt_anzahl(),
 		"Tiere: %d" % tier_zahl,

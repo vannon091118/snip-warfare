@@ -11,6 +11,8 @@ class_name Ui_EingabeSteuerung
 
 const SCHNELLWAHL_MAX := 9
 
+signal debug_umgeschaltet(sichtbar: bool)
+
 ## Kategorie daten: Eingabe-Ziel-Referenzen und Auswahl-Hilfen.
 var _steuerung: Kern_SteuerungRegistry = null
 var _model: Welt_Model = null
@@ -35,6 +37,8 @@ var _map_fabrik: Welt_MapFabrik = null
 var _modell_ersetzen: Callable = Callable()
 var _fortschritt: Welt_FortschrittsMaschine = null
 var _rechtsklick_welt_position := Vector2.ZERO
+var _aktiver_bau_auftrag: String = ""
+var _debug_sichtbar: bool = false
 
 ## Kategorie logik: Eingabe in Maschinen-Aufrufe übersetzen.
 
@@ -62,6 +66,17 @@ func einrichten(p: Dictionary) -> void:
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
 
+func bau_auftrag_setzen(gebaeude_id: String) -> void:
+	_aktiver_bau_auftrag = gebaeude_id
+	if _hud != null:
+		(_hud as Variant).meldung_setzen("Bauplatz für %s wählen (Linksklick platziert, Rechtsklick/Esc bricht ab)" % gebaeude_id.capitalize())
+
+func debug_umschalten() -> void:
+	_debug_sichtbar = not _debug_sichtbar
+	debug_umgeschaltet.emit(_debug_sichtbar)
+	if _hud != null:
+		(_hud as Variant).meldung_setzen("Debug-Overlay: %s" % ("Aktiv" if _debug_sichtbar else "Deaktiviert"))
+
 func karten_umschalten() -> void:
 	_karten_oeffnen = not _karten_oeffnen
 	if _karten_ebene != null:
@@ -79,17 +94,35 @@ func unhandled_input(ereignis: InputEvent, klick_ermitteln: Callable, rechteck_p
 				if _kamera_steuerung != null:
 					_kamera_steuerung.zoom(_kamera_steuerung.zoom_schritt(), _kamera)
 			MOUSE_BUTTON_LEFT:
+				if _aktiver_bau_auftrag != "":
+					var ziel_pos: Vector2 = klick_ermitteln.call(ereignis)
+					_bauen_ausfuehren_an_position(_aktiver_bau_auftrag, ziel_pos)
+					_aktiver_bau_auftrag = ""
+					return
 				if _auswahl != null:
 					_auswahl.einzel_start(klick_ermitteln.call(ereignis))
 			MOUSE_BUTTON_RIGHT:
+				if _aktiver_bau_auftrag != "":
+					_aktiver_bau_auftrag = ""
+					if _hud != null:
+						(_hud as Variant).meldung_setzen("Bauauftrag abgebrochen.")
+					return
 				_rechtsklick_verarbeiten(klick_ermitteln.call(ereignis))
 	elif ereignis is InputEventMouseButton and not ereignis.pressed and ereignis.button_index == MOUSE_BUTTON_LEFT:
-		_linksklick_ende(klick_ermitteln.call(ereignis))
+		if _aktiver_bau_auftrag == "":
+			_linksklick_ende(klick_ermitteln.call(ereignis))
 	elif ereignis is InputEventMouseMotion and _auswahl != null and _auswahl.ziehen_aktiv:
 		rechteck_pflegen.call()
 	elif ereignis is InputEventKey and ereignis.pressed:
 		if ereignis.keycode == KEY_M:
 			karten_umschalten()
+		elif ereignis.keycode == KEY_F3:
+			debug_umschalten()
+		elif ereignis.keycode == KEY_ESCAPE:
+			if _aktiver_bau_auftrag != "":
+				_aktiver_bau_auftrag = ""
+				if _hud != null:
+					(_hud as Variant).meldung_setzen("Bauauftrag abgebrochen.")
 		else:
 			hotkey.call(ereignis)
 	elif ereignis.is_action_pressed("ui_cancel"):
@@ -186,14 +219,48 @@ func _linksklick_ende(ende: Vector2) -> void:
 		(_hud as Variant).meldung_setzen("Massenwahl: %d Einheiten im Rechteck" % treffer.size())
 
 func _rechtsklick_verarbeiten(welt_pos: Vector2) -> void:
-	if _kontext == null or _hud == null:
+	if _hud == null:
 		return
 	_rechtsklick_welt_position = welt_pos
-	# Rechtsklick öffnet immer das Kontextmenü: an Objekten und Tieren für
-	# Sammel-/Abbau-Aktionen, auf freiem Feld für Bau-Aktionen.
-	if _kamera != null and _kamera.get_viewport() != null:
-		_kontext.position = _kamera.get_viewport().get_mouse_position()
-	_kontext.popup()
+	
+	var hat_einheiten := false
+	if _stockmaenner != null and _auswahl != null:
+		if _auswahl.aktiver_einheit_index >= 0 and _auswahl.aktiver_einheit_index < _stockmaenner.einheit_zahl():
+			hat_einheiten = true
+	
+	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
+	var tier_nummer := _tiere.tier_id_bei(welt_pos, radius) if _tiere != null else -1
+	var objekt_index := _model.objekt_bei(welt_pos, radius) if _model != null else -1
+	var element_id := _model.objekt_element_id(objekt_index) if (_model != null and objekt_index >= 0) else ""
+	
+	if hat_einheiten:
+		if tier_nummer >= 0:
+			_job_vergeben_fuer_tier(tier_nummer, _tiere.tier_position(tier_nummer), false)
+			(_hud as Variant).meldung_setzen("Befehl: Jagen auf Tier #%d" % tier_nummer)
+			return
+		if objekt_index >= 0 and element_id != "":
+			var element_pos := _model.objekt_position(objekt_index)
+			_job_vergeben_fuer_objekt(objekt_index, element_pos, element_id, false)
+			return
+		
+		# Freier Boden: Ausgewählte Einheiten marschieren dorthin
+		var einheiten_liste: Array[int] = _auswahl.auswahl_einheiten if not _auswahl.auswahl_einheiten.is_empty() else [_auswahl.aktiver_einheit_index]
+		for e_idx in einheiten_liste:
+			_stockmaenner.einheit_bewegen_nach(e_idx, welt_pos)
+		(_hud as Variant).meldung_setzen("Marschieren nach (%.0f, %.0f)" % [welt_pos.x, welt_pos.y])
+		return
+	
+	# Ohne aktive Einheit: Kontextmenü zielgerichtet öffnen
+	if _kontext != null:
+		if _kamera != null and _kamera.get_viewport() != null:
+			_kontext.position = _kamera.get_viewport().get_mouse_position()
+		if tier_nummer >= 0:
+			_kontext.eintraege_aufbauen_fuer("tier")
+		elif objekt_index >= 0 and element_id != "":
+			_kontext.eintraege_aufbauen_fuer(element_id)
+		else:
+			_kontext.eintraege_aufbauen_fuer("boden")
+		_kontext.popup()
 
 func _expansion_ausfuehren() -> void:
 	# Expansion: Die Fabrik erzeugt eine neue Karte, trägt sie in die World
@@ -212,12 +279,15 @@ func _expansion_ausfuehren() -> void:
 	(_hud as Variant).meldung_setzen("Expansion: Neue Basis-Karte %s erzeugt und gespeichert." % neue_karte.map_id)
 
 func _bauen_ausfuehren(aktion: Dictionary) -> void:
+	var gebaeude_id := str(aktion.get("gebaeude_id", ""))
+	_bauen_ausfuehren_an_position(gebaeude_id, _rechtsklick_welt_position)
+
+func _bauen_ausfuehren_an_position(gebaeude_id: String, pos: Vector2) -> void:
 	if _gebaeude == null or _hud == null:
 		return
-	var gebaeude_id := str(aktion.get("gebaeude_id", ""))
-	var ergebnis := _gebaeude.bauen_anfordern(gebaeude_id, _rechtsklick_welt_position)
+	var ergebnis := _gebaeude.bauen_anfordern(gebaeude_id, pos)
 	if bool(ergebnis.get("ok", false)):
-		(_hud as Variant).meldung_setzen("Bau angefordert: %s" % str(aktion.get("label", gebaeude_id)))
+		(_hud as Variant).meldung_setzen("Bau angefordert: %s" % gebaeude_id.capitalize())
 	else:
 		(_hud as Variant).meldung_setzen("Bauen nicht möglich: %s" % str(ergebnis.get("grund", "unbekannt")))
 

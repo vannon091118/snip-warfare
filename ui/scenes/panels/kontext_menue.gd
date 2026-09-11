@@ -9,6 +9,7 @@ signal aktion_gewaehlt(aktion: Dictionary)
 
 var _steuerung: Kern_SteuerungRegistry = null
 var _fortschritt: Welt_FortschrittsMaschine = null
+var _aktuelle_aktionen: Array[Dictionary] = []
 
 ## Kategorie daten: die gewählte Aktion als letzter Zustand des Menüs.
 var letzte_aktion: Dictionary = {}
@@ -33,16 +34,36 @@ func _auf_oeffnen() -> void:
 		bus._emit_menue_geoeffnet()
 
 func eintraege_aufbauen() -> void:
+	eintraege_aufbauen_fuer("")
+
+func eintraege_aufbauen_fuer(ziel_filter: String) -> void:
 	clear()
-	var aktionen: Array[Dictionary] = []
+	_aktuelle_aktionen.clear()
+	var alle_aktionen: Array[Dictionary] = []
 	if _steuerung != null and _steuerung.steuerung != null:
-		aktionen = _steuerung.steuerung.kontext_aktionen
-	for aktion: Dictionary in aktionen:
-		# Einstiegs-Gating: Gesperrte Aktionen werden ausgegraut angezeigt,
-		# damit der Spieler sieht, dass es mehr zu entdecken gibt.
+		alle_aktionen = _steuerung.steuerung.kontext_aktionen
+	
+	for aktion: Dictionary in alle_aktionen:
+		var aktion_id := str(aktion.get("id", ""))
+		var logik_id := str(aktion.get("logik_id", ""))
+		
+		# Kontextsensitive Filterung nach Zielobjekt:
+		if ziel_filter != "":
+			if ziel_filter.contains("baum") and aktion_id != "sammeln":
+				continue
+			elif ziel_filter.contains("stein") and aktion_id != "abbauen":
+				continue
+			elif ziel_filter.contains("busch") and aktion_id != "sammeln":
+				continue
+			elif ziel_filter == "tier" and aktion_id != "sammeln":
+				continue
+			elif ziel_filter == "boden" and (aktion_id == "sammeln" or aktion_id == "abbauen"):
+				continue
+		
+		_aktuelle_aktionen.append(aktion)
 		var gesperrt := false
 		if _fortschritt != null and _steuerung != null and _steuerung.steuerung != null:
-			gesperrt = not _fortschritt.stufe_frei(_steuerung.steuerung.gesperrt_ab_stufe_fuer_aktion(str(aktion.get("id", ""))))
+			gesperrt = not _fortschritt.stufe_frei(_steuerung.steuerung.gesperrt_ab_stufe_fuer_aktion(aktion_id))
 		var eintrag_idx := item_count
 		var label_text := str(aktion.get("label", ""))
 		if gesperrt:
@@ -53,13 +74,10 @@ func eintraege_aufbauen() -> void:
 		if icon_pfad != "" and ResourceLoader.exists(icon_pfad):
 			set_item_icon(eintrag_idx, load(icon_pfad))
 		if _steuerung != null and _steuerung.steuerung != null:
-			set_item_tooltip(eintrag_idx, _steuerung.steuerung.tooltip_fuer_aktion(str(aktion.get("id", ""))))
+			set_item_tooltip(eintrag_idx, _steuerung.steuerung.tooltip_fuer_aktion(aktion_id))
 
 func _auf_id(id: int) -> void:
-	var aktionen: Array[Dictionary] = []
-	if _steuerung != null and _steuerung.steuerung != null:
-		aktionen = _steuerung.steuerung.kontext_aktionen
-	if id < 0 or id >= aktionen.size():
+	if id < 0 or id >= _aktuelle_aktionen.size():
 		return
-	letzte_aktion = aktionen[id]
+	letzte_aktion = _aktuelle_aktionen[id]
 	aktion_gewaehlt.emit(letzte_aktion)
