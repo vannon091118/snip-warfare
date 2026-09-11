@@ -1,6 +1,6 @@
-1. Du hast die fünf Schattenwarnungen des Godot Editors eingereicht und verlangt, dass sie nicht weiter still bleiben.
-2. In world/logic/kategorie_welt/welt_objekt_darsteller.gd und world/logic/kategorie_feedback/feedback_manager.gd tragen die Parameter jetzt eigene Namen statt die Basiseigenschaft position der Node2D zu verdecken.
-3. In game/logic/kategorie_einheit/einheit_status.gd heißt der Todesort tod_position, damit er nicht mehr die Member-Variable welt_position der eigenen Klasse überdeckt.
-4. In population/logic/mood/pop_mood_maschine.gd, ui/scenes/hauptmenue.gd und world/scenes/welt.gd zogen die text Parameter eigene Namen an, damit keine Texteigenschaft der Basisklasse verschattet wird.
-5. In tools/warnungs_scan.py erkennt der Scanner jetzt alle drei echten Schattenfälle, Funktion, Member-Variable und Basiseigenschaft, statt position und text pauschal zu übersehen, und die neuen Beispiele in test_warnungs_scan_shadow.py beweisen das rot grün.
-6. python tools/preflight.py meldet PREFLIGHT OK ohne Befunde, damit der Editor nach dem nächsten Reload keine dieser Warnungen mehr zeigt und künftige Schatten sofort im Gate aufschlagen.
+1. Du wolltest Slice A direkt umsetzen und danach Slice B, also habe ich zuerst die Objekt-Plugin-Naht nach dem bewährten script Muster aus Jobs und Needs errichtet.
+2. Der rote Test in test_objekt_plugin_naht.py verlangte zunächst das script Feld für alle Registry-Objekte und die Naht in der Registry, und er schlug wie erwartet fehl, weil der Katalog nichts trug und die Zuordnung geschlossen war.
+3. In world/data/element_katalog.json tragen jetzt alle zehn Objekte mit eigener Klasse ihr script Feld, von boden über baum und haus bis lagerfeuer, während Tier Einträge bewusst außen vor bleiben weil sie durch die Tier Registry laufen.
+4. In world/logic/kategorie_objekt/objekt_registry_basis.gd lädt _objekt_klasse_fuer jetzt zuerst das script Feld mit Existenz- und Typprüfung, und world/logic/kategorie_welt/welt_registry.gd hält die alte Zuordnung nur noch als _zentrale_klasse_fuer Fallback vor.
+5. In Architektur.md trägt die Welt-Objekte Zeile die neue Erweiterungsgrenze und in docs/Inventur_Stand.md ist Slice 0 vom offen auf erledigt umgesprungen, beide ohne alte Lüge.
+6. Der Laufbeweis meldet ALLE PRUEFUNGEN GRUEN, Seed 12345 reproduziert dieselben 25 Objekte, und python tools/preflight.py bleibt grün, damit jedes neue Objekt künftig nur Katalog Eintrag plus SVG braucht.

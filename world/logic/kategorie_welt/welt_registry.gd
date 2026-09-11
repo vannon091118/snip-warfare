@@ -37,7 +37,10 @@ func registries_vorbereiten() -> void:
 func _registrieren_in_kategorie(kategorie: String, element_id: String, objekt: Objekt_Basis) -> void:
 	super._registrieren_in_kategorie(kategorie, element_id, objekt)
 
-func _objekt_klasse_fuer(element_id: String) -> Objekt_Basis:
+func _zentrale_klasse_fuer(element_id: String) -> Objekt_Basis:
+	# Übergangs-Fallback für Katalog-Einträge ohne script-Feld: Dieselbe
+	# Zuordnung wie zuvor in _objekt_klasse_fuer. Die Plugin-Naht liegt in
+	# Objekt_RegistryBasis und fragt zuerst das script-Feld des Eintrags.
 	match element_id:
 		"baum":
 			return Objekt_Baum.new()

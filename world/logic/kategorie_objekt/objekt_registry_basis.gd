@@ -46,7 +46,7 @@ func _eintraege_uebernehmen(gelesen: Variant) -> bool:
 		if not Kern_AssetPruefer.eintrag_hat_asset(wort):
 			var platzhalter := Kern_AssetPruefer.sichere_textur_pfad(wort, element_id)
 			wort["textur_pfad"] = platzhalter
-		var objekt := _objekt_klasse_fuer(element_id)
+		var objekt := _objekt_klasse_fuer(element_id, wort)
 		objekt.aus_katalog_eintrag(wort)
 		registrieren(element_id, objekt)
 		_registrieren_in_kategorie(kategorie, element_id, objekt)
@@ -56,8 +56,28 @@ func registries_vorbereiten() -> void:
 	# Unterklassen legen hier ihre Fach-Registries an.
 	pass
 
-func _objekt_klasse_fuer(_element_id: String) -> Objekt_Basis:
-	# Unterklassen ordnen hier jede Objektart ihrer eigenen Datenklasse zu.
+func _objekt_klasse_fuer(element_id: String, eintrag: Dictionary = {}) -> Objekt_Basis:
+	# Plugin-Naht: Das script-Feld des Katalog-Eintrags bestimmt die Datenklasse;
+	# ein neues Objekt braucht künftig nur Katalog-Eintrag plus SVG, ohne dass
+	# eine Registry-Klasse angefasst wird. ResourceLoader.exists verhindert
+	# Halluzinationen bei Tippfehlern, die Typprüfung hält fremde Skripte raus.
+	# Einträge ohne script-Feld (oder mit ungültigem) fallen auf die zentrale
+	# Zuordnung der Unterklasse zurück (Übergangs-Fallback).
+	var skript_pfad := str(eintrag.get("script", ""))
+	if skript_pfad != "":
+		if not ResourceLoader.exists(skript_pfad):
+			push_warning("Objekt-Skript fehlt: %s (Eintrag %s)" % [skript_pfad, element_id])
+			return _zentrale_klasse_fuer(element_id)
+		var skript: GDScript = load(skript_pfad)
+		if skript != null:
+			var instanz: Variant = skript.new()
+			if instanz is Objekt_Basis:
+				return instanz as Objekt_Basis
+			push_warning("Objekt-Skript ist kein Objekt_Basis: %s" % skript_pfad)
+	return _zentrale_klasse_fuer(element_id)
+
+func _zentrale_klasse_fuer(_element_id: String) -> Objekt_Basis:
+	# Übergangs-Fallback für Katalog-Einträge ohne script-Feld.
 	return Objekt_Basis.new()
 
 func _registrieren_in_kategorie(kategorie: String, element_id: String, objekt: Objekt_Basis) -> void:

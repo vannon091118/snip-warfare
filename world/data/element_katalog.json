@@ -1,20 +1,182 @@
 [
-  {"id": "boden", "name": "Boden", "typ": "kachel", "kategorie": "Terrain", "textur_pfad": "res://world/assets/terrain/boden_kachel.svg"},
-  {"id": "wiese", "name": "Wiese", "typ": "kachel", "kategorie": "Terrain", "textur_pfad": "res://world/assets/terrain/wiese_kachel.svg"},
-  {"id": "baum", "name": "Baum", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/terrain/baum.svg", "arbeits_ressource": "holz", "logik_id": "ressource_holz", "modifikator_id": "normal", "faktor": 1.0},
-  {"id": "baum_stumpf", "name": "Baumstumpf", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/terrain/baum_stumpf.svg", "arbeits_ressource": "holz", "logik_id": "ressource_holz", "modifikator_id": "normal", "faktor": 1.0},
-  {"id": "kadaver", "name": "Kadaver", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/tiere/kadaver.svg", "arbeits_ressource": "fleisch", "logik_id": "ressource_fleisch", "modifikator_id": "normal", "faktor": 1.0},
-  {"id": "stein", "name": "Stein", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/terrain/stein.svg", "arbeits_ressource": "stein"},
-  {"id": "steine_gruppe", "name": "Steingruppe", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/terrain/steine_gruppe.svg", "arbeits_ressource": "stein"},
-  {"id": "haus", "name": "Haus", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/haus.svg"},
-  {"id": "haus_gross", "name": "Großes Haus", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/haus_gross.svg"},
-  {"id": "lagerfeuer", "name": "Lagerfeuer", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/lagerfeuer.svg", "waerme_radius_kacheln": 5, "waerme_staerke": 1.0, "logik_id": "waerme_quelle", "modifikator_id": "normal", "faktor": 1.0, "funktions_animation": "flackern", "funktions_takt_faktor": 0.4},
-  {"id": "baer", "name": "Bär", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/baer.svg", "frame_breite": 48, "frame_hoehe": 72},
-  {"id": "hase", "name": "Hase", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/hase.svg", "frame_breite": 32, "frame_hoehe": 72},
-  {"id": "vogel", "name": "Vogel", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/vogel.svg", "frame_breite": 32, "frame_hoehe": 64},
-  {"id": "vogelgruppe", "name": "Vogelgruppe", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/vogelgruppe.svg", "frame_breite": 48, "frame_hoehe": 64},
-  {"id": "eisbaer", "name": "Eisbär", "typ": "bewegt", "kategorie": "Tiere", "textur_pfad": "res://world/assets/tiere/eisbaer.svg", "frame_breite": 48, "frame_hoehe": 72, "logik_id": "baer_verfolgen", "modifikator_id": "aggressiv", "faktor": 1.2},
-  {"id": "busch", "name": "Busch", "typ": "objekt", "kategorie": "Natur", "textur_pfad": "res://world/assets/terrain/busch.svg", "arbeits_ressource": "holz", "logik_id": "ressource_holz", "modifikator_id": "normal", "faktor": 1.0, "funktions_animation": "wehen", "funktions_takt_faktor": 1.0},
-  {"id": "werkstatt", "name": "Werkstatt", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/werkstatt.svg", "funktions_animation": "grind", "funktions_takt_faktor": 0.3},
-  {"id": "raeucherei", "name": "Räucherei", "typ": "objekt", "kategorie": "Gebäude", "textur_pfad": "res://world/assets/terrain/raeucherei.svg", "funktions_animation": "raeuchern", "funktions_takt_faktor": 0.25}
+  {
+    "id": "boden",
+    "name": "Boden",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/boden_kachel.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "wiese",
+    "name": "Wiese",
+    "typ": "kachel",
+    "kategorie": "Terrain",
+    "textur_pfad": "res://world/assets/terrain/wiese_kachel.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
+  },
+  {
+    "id": "baum",
+    "name": "Baum",
+    "typ": "objekt",
+    "kategorie": "Natur",
+    "textur_pfad": "res://world/assets/terrain/baum.svg",
+    "arbeits_ressource": "holz",
+    "logik_id": "ressource_holz",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "script": "res://world/logic/kategorie_objekt/objekt_baum.gd"
+  },
+  {
+    "id": "baum_stumpf",
+    "name": "Baumstumpf",
+    "typ": "objekt",
+    "kategorie": "Natur",
+    "textur_pfad": "res://world/assets/terrain/baum_stumpf.svg",
+    "arbeits_ressource": "holz",
+    "logik_id": "ressource_holz",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "script": "res://world/logic/kategorie_objekt/objekt_baumstumpf.gd"
+  },
+  {
+    "id": "kadaver",
+    "name": "Kadaver",
+    "typ": "objekt",
+    "kategorie": "Natur",
+    "textur_pfad": "res://world/assets/tiere/kadaver.svg",
+    "arbeits_ressource": "fleisch",
+    "logik_id": "ressource_fleisch",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "script": "res://world/logic/kategorie_objekt/objekt_kadaver.gd"
+  },
+  {
+    "id": "stein",
+    "name": "Stein",
+    "typ": "objekt",
+    "kategorie": "Natur",
+    "textur_pfad": "res://world/assets/terrain/stein.svg",
+    "arbeits_ressource": "stein",
+    "script": "res://world/logic/kategorie_objekt/objekt_stein.gd"
+  },
+  {
+    "id": "steine_gruppe",
+    "name": "Steingruppe",
+    "typ": "objekt",
+    "kategorie": "Natur",
+    "textur_pfad": "res://world/assets/terrain/steine_gruppe.svg",
+    "arbeits_ressource": "stein",
+    "script": "res://world/logic/kategorie_objekt/objekt_steingruppe.gd"
+  },
+  {
+    "id": "haus",
+    "name": "Haus",
+    "typ": "objekt",
+    "kategorie": "Gebäude",
+    "textur_pfad": "res://world/assets/terrain/haus.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_haus.gd"
+  },
+  {
+    "id": "haus_gross",
+    "name": "Großes Haus",
+    "typ": "objekt",
+    "kategorie": "Gebäude",
+    "textur_pfad": "res://world/assets/terrain/haus_gross.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_hausgross.gd"
+  },
+  {
+    "id": "lagerfeuer",
+    "name": "Lagerfeuer",
+    "typ": "objekt",
+    "kategorie": "Gebäude",
+    "textur_pfad": "res://world/assets/terrain/lagerfeuer.svg",
+    "waerme_radius_kacheln": 5,
+    "waerme_staerke": 1.0,
+    "logik_id": "waerme_quelle",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "funktions_animation": "flackern",
+    "funktions_takt_faktor": 0.4,
+    "script": "res://world/logic/kategorie_objekt/objekt_lagerfeuer.gd"
+  },
+  {
+    "id": "baer",
+    "name": "Bär",
+    "typ": "bewegt",
+    "kategorie": "Tiere",
+    "textur_pfad": "res://world/assets/tiere/baer.svg",
+    "frame_breite": 48,
+    "frame_hoehe": 72
+  },
+  {
+    "id": "hase",
+    "name": "Hase",
+    "typ": "bewegt",
+    "kategorie": "Tiere",
+    "textur_pfad": "res://world/assets/tiere/hase.svg",
+    "frame_breite": 32,
+    "frame_hoehe": 72
+  },
+  {
+    "id": "vogel",
+    "name": "Vogel",
+    "typ": "bewegt",
+    "kategorie": "Tiere",
+    "textur_pfad": "res://world/assets/tiere/vogel.svg",
+    "frame_breite": 32,
+    "frame_hoehe": 64
+  },
+  {
+    "id": "vogelgruppe",
+    "name": "Vogelgruppe",
+    "typ": "bewegt",
+    "kategorie": "Tiere",
+    "textur_pfad": "res://world/assets/tiere/vogelgruppe.svg",
+    "frame_breite": 48,
+    "frame_hoehe": 64
+  },
+  {
+    "id": "eisbaer",
+    "name": "Eisbär",
+    "typ": "bewegt",
+    "kategorie": "Tiere",
+    "textur_pfad": "res://world/assets/tiere/eisbaer.svg",
+    "frame_breite": 48,
+    "frame_hoehe": 72,
+    "logik_id": "baer_verfolgen",
+    "modifikator_id": "aggressiv",
+    "faktor": 1.2
+  },
+  {
+    "id": "busch",
+    "name": "Busch",
+    "typ": "objekt",
+    "kategorie": "Natur",
+    "textur_pfad": "res://world/assets/terrain/busch.svg",
+    "arbeits_ressource": "holz",
+    "logik_id": "ressource_holz",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "funktions_animation": "wehen",
+    "funktions_takt_faktor": 1.0
+  },
+  {
+    "id": "werkstatt",
+    "name": "Werkstatt",
+    "typ": "objekt",
+    "kategorie": "Gebäude",
+    "textur_pfad": "res://world/assets/terrain/werkstatt.svg",
+    "funktions_animation": "grind",
+    "funktions_takt_faktor": 0.3
+  },
+  {
+    "id": "raeucherei",
+    "name": "Räucherei",
+    "typ": "objekt",
+    "kategorie": "Gebäude",
+    "textur_pfad": "res://world/assets/terrain/raeucherei.svg",
+    "funktions_animation": "raeuchern",
+    "funktions_takt_faktor": 0.25
+  }
 ]
