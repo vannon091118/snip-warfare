@@ -280,9 +280,9 @@ func rasse_faktor_setzen(faktor: float) -> void:
 	# nächsten Tick ohne Neuberechnung der Modifikator-Maschine.
 	_rasse_bewegungs_faktor = maxf(faktor, 0.1)
 
-func _auf_eigenen_tod(welt_position: Vector2) -> void:
+func _auf_eigenen_tod(tod_position: Vector2) -> void:
 	var bus := Kern_SignalBus.bus()
 	if bus != null:
-		bus._emit_gestorben(welt_position, "einheit", true)
-	gestorben.emit(welt_position)
+		bus._emit_gestorben(tod_position, "einheit", true)
+	gestorben.emit(tod_position)
 	job_abbrechen()

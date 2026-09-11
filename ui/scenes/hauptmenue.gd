@@ -115,11 +115,11 @@ func _auf_editor_welt_gewaehlt(welt_name: String) -> void:
 	WeltSitzung.kommt_vom_editor = true
 	_uebergang_einlaeuten(SZENE_EDITOR, "Der Kreativmodus wird geöffnet …")
 
-func _uebergang_einlaeuten(ziel: String, text: String) -> void:
+func _uebergang_einlaeuten(ziel: String, menue_text: String) -> void:
 	# Verbindungs-Stelle: Jeder Szenenwechsel läuft über die Zwischen-Szene,
 	# damit später Events und Cutscenes zwischen Szenen eingefügt werden.
 	WeltSitzung.uebergang_ziel = ziel
-	WeltSitzung.uebergang_text = text
+	WeltSitzung.uebergang_text = menue_text
 	get_tree().change_scene_to_file(SZENE_UEBERGANG)
 
 func _wechsle_zu(nach: Ui_MenueZustaende.Zustand) -> void:

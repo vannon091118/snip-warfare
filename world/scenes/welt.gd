@@ -256,8 +256,8 @@ func _auf_zurueck() -> void:
 	WeltSitzung.uebergang_text = "Zurück zum Hauptmenü …"
 	get_tree().change_scene_to_file("res://ui/scenes/uebergang.tscn")
 
-func _auf_gebaeude_meldung(text: String) -> void:
-	_hud.meldung_setzen(text)
+func _auf_gebaeude_meldung(meldung_text: String) -> void:
+	_hud.meldung_setzen(meldung_text)
 
 func _auf_timeline_eintrag(eintrag: Kern_TimelineEintrag) -> void:
 	# Reine Beobachtung: Die Timeline meldet, das HUD zeigt die Begruendung.

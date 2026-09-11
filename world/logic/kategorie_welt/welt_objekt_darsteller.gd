@@ -24,7 +24,7 @@ func _init() -> void:
 		if typeof(gelesen) == TYPE_DICTIONARY:
 			_animationen = gelesen
 
-func objekt_darstellen(objekt: Objekt_Basis, position: Vector2) -> void:
+func objekt_darstellen(objekt: Objekt_Basis, welt_position: Vector2) -> void:
 	# Bewegtbild nur auf Anweisung der Registry: Ohne Eintrag geschieht nichts.
 	if objekt == null:
 		return
@@ -56,12 +56,12 @@ func objekt_darstellen(objekt: Objekt_Basis, position: Vector2) -> void:
 	sprite.sprite_frames = frames
 	sprite.animation = animations_name
 	sprite.centered = false
-	sprite.position = position
+	sprite.position = welt_position
 	sprite.play(animations_name)
 	add_child(sprite)
 
-func objekt_entfernen(position: Vector2) -> void:
+func objekt_entfernen(welt_position: Vector2) -> void:
 	for kind: Node in get_children():
 		var sprite := kind as AnimatedSprite2D
-		if sprite != null and sprite.position == position:
+		if sprite != null and sprite.position == welt_position:
 			sprite.queue_free()

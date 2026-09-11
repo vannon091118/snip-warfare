@@ -32,30 +32,30 @@ func _exit_tree() -> void:
 		if bus2.gestorben.is_connected(_auf_gestorben):
 			bus2.gestorben.disconnect(_auf_gestorben)
 
-func zeige_ernte(welt_position: Vector2, ressource: String, menge: int) -> void:
+func zeige_ernte(ernte_position: Vector2, ressource: String, menge: int) -> void:
 	if menge <= 0:
 		return
 	var icon := ""
 	if _ressourcen != null:
 		icon = _ressourcen.icon_pfad(ressource)
 	var anzeige := Welt_PlusAnzeige.new()
-	anzeige.einrichten(ressource, menge, icon, welt_position)
+	anzeige.einrichten(ressource, menge, icon, ernte_position)
 	_ebene.add_child(anzeige)
 
-func zeige_schaden(welt_position: Vector2, schaden: int, art: String) -> void:
+func zeige_schaden(schaden_position: Vector2, schaden: int, art: String) -> void:
 	if schaden <= 0:
 		return
 	var anzeige := Welt_SchadenAnzeige.new()
-	anzeige.einrichten(schaden, art, welt_position)
+	anzeige.einrichten(schaden, art, schaden_position)
 	_ebene.add_child(anzeige)
 
-func zeige_tod(welt_position: Vector2, typ: String, war_einheit: bool) -> void:
+func zeige_tod(tod_position: Vector2, typ: String, war_einheit: bool) -> void:
 	var anzeige := Welt_TodAnzeige.new()
-	anzeige.einrichten(typ, war_einheit, welt_position)
+	anzeige.einrichten(typ, war_einheit, tod_position)
 	_ebene.add_child(anzeige)
 
-func _auf_schaden_erhalten(position: Vector2, schaden: int, art: String) -> void:
-	zeige_schaden(position, schaden, art)
+func _auf_schaden_erhalten(schaden_position: Vector2, schaden: int, art: String) -> void:
+	zeige_schaden(schaden_position, schaden, art)
 
-func _auf_gestorben(position: Vector2, typ: String, war_einheit: bool) -> void:
-	zeige_tod(position, typ, war_einheit)
+func _auf_gestorben(tod_position: Vector2, typ: String, war_einheit: bool) -> void:
+	zeige_tod(tod_position, typ, war_einheit)

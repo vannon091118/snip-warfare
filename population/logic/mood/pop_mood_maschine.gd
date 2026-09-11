@@ -199,11 +199,11 @@ func _ableiten() -> void:
 	_mood = neu
 	mood_geaendert.emit(_mood)
 
-func _setze_gedanke(need_id: String, emoji: String, text: String) -> void:
+func _setze_gedanke(need_id: String, emoji: String, gedanken_text: String) -> void:
 	var neu := Pop_Mood.new()
 	neu.aktive_need_id = need_id
 	neu.emoji = emoji
-	neu.sprechblase_text = text
+	neu.sprechblase_text = gedanken_text
 	neu.intensitaet = 0.6
 	neu.quelle = "uebergang"
 	_mood = neu

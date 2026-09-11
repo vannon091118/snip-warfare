@@ -30,6 +30,20 @@ BASIS_FUNKTIONEN = {
     "get_parent", "get_children", "queue_free", "set_text", "get_value",
 }
 
+# Basisklassen, bei denen ein Parameter wie "position" tatsächlich die
+# gleichnamige Eigenschaft der Engine verschattet (Godot meldet
+# SHADOWED_VARIABLE_BASE_CLASS). Für RefCounted/Resource gilt das nicht.
+BASIS_KLASSEN_MIT_POSITION = {
+    "Node2D", "CanvasItem", "Sprite2D", "AnimatedSprite2D", "CharacterBody2D",
+    "Area2D", "Control", "Label", "Button", "TextureRect", "ColorRect",
+    "Panel", "Node",  # Node selbst hat kein position, wird unten gefiltert
+}
+# Node hat kein position – deshalb extra Menge für position-relevante Basen.
+POSITION_BASEN = {
+    "Node2D", "CanvasItem", "Sprite2D", "AnimatedSprite2D", "CharacterBody2D",
+    "Area2D", "Control", "Label", "Button", "TextureRect", "ColorRect", "Panel",
+}
+
 # Ausdrücke, die bekanntermaßen int liefern; für die Integer-Divisions-Prüfung.
 INT_RUECKGABE_FUNKTIONEN = {
     "size", "count", "len", "maxi", "mini", "clampi", "absi", "floori",
@@ -70,6 +84,12 @@ class WarnungsScan:
         befunde = []
         zeilen = code.splitlines()
         funktionen = set(re.findall(r"^func\s+([A-Za-z_][A-Za-z0-9_]*)", code, re.M))
+        # Basisklasse und Member-Variablen für SHADOWED_VARIABLE (Godot meldet
+        # sowohl Verschattung einer Basiseigenschaft als auch einer Member-Variablen).
+        basis_treffer = re.search(r"^\s*extends\s+([A-Za-z_][A-Za-z0-9_]*)", code, re.M)
+        basis_klasse = basis_treffer.group(1) if basis_treffer else ""
+        # Nur top-level vars (ohne führenden Tab/Leerzeichen) sind Member.
+        member_vars = set(re.findall(r"^var\s+([A-Za-z_][A-Za-z0-9_]*)\b", code, re.M))
         for nummer, zeile in enumerate(zeilen, start=1):
             signal_treffer = SIGNAL_DECL.match(zeile)
             if signal_treffer:
@@ -92,7 +112,7 @@ class WarnungsScan:
             funktions_zeilen_offset = code.count("\n", 0, start)
             befunde.extend(self._funktion_scannen(
                 relativ, funktions_name, parameter_text, funktions_code,
-                funktions_zeilen_offset, funktionen, code))
+                funktions_zeilen_offset, funktionen, code, basis_klasse, member_vars))
         return befunde
 
     def _signal_genutzt(self, code: str, name: str) -> bool:
@@ -130,7 +150,9 @@ class WarnungsScan:
     # ------------------------------------------------------------------
 
     def _funktion_scannen(self, relativ, funktions_name, parameter_text,
-                          funktions_code, offset, funktionen, gesamt_code) -> list:
+                          funktions_code, offset, funktionen, gesamt_code, basis_klasse="", member_vars=None) -> list:
+        if member_vars is None:
+            member_vars = set()
         befunde = []
         parameter = [p.strip().split(":")[0].strip()
                      for p in parameter_text.split(",") if p.strip()]
@@ -142,12 +164,38 @@ class WarnungsScan:
             if gebrauch == 0 and funktions_code.strip() != "":
                 befunde.append(Befund(relativ, offset + 1, "UNUSED_PARAMETER",
                                       'Der Parameter "%s" wird in der Funktion "%s" nie verwendet.' % (parameter_name, funktions_name)))
-            # SHADOWED_VARIABLE nur, wenn der Parameter eine Funktion dieser
-            # Klasse oder eine echte Basisklassen-Methode verschattet.
-            if parameter_name in funktionen or parameter_name in BASIS_FUNKTIONEN:
-                if parameter_name not in ("position", "text") or parameter_name in funktionen:
-                    befunde.append(Befund(relativ, offset + 1, "SHADOWED_VARIABLE",
-                                          'Der Parameter "%s" verschattet eine gleichnamige Funktion oder Basiseigenschaft.' % parameter_name))
+            # SHADOWED_VARIABLE: drei echte Godot-Fälle – Parameter verschattet
+            # (a) eine Funktion der eigenen Klasse, (b) eine Member-Variable
+            # der Klasse (welt_position), (c) eine Eigenschaft der Basisklasse
+            # (Node2D.position). Früher wurde (c) für position/text unterdrückt,
+            # deshalb blieb Godots SHADOWED_VARIABLE_BASE_CLASS unentdeckt.
+            verschattet = False
+            grund = ""
+            if parameter_name in funktionen:
+                verschattet = True
+                grund = "Funktion"
+            elif parameter_name in member_vars:
+                verschattet = True
+                grund = "Member-Variable"
+            elif parameter_name in BASIS_FUNKTIONEN:
+                # Nur melden, wenn die Basisklasse die Eigenschaft wirklich hat.
+                if parameter_name == "position" and basis_klasse not in POSITION_BASEN:
+                    pass
+                elif parameter_name == "global_position" and basis_klasse not in POSITION_BASEN:
+                    pass
+                elif basis_klasse in BASIS_KLASSEN_MIT_POSITION or parameter_name in ("name", "owner", "visible", "modulate"):
+                    # Für generische Basen wie Node gilt nur subset.
+                    if basis_klasse == "Node" and parameter_name in ("position", "global_position", "scale", "rotation", "z_index", "global_scale"):
+                        pass
+                    else:
+                        verschattet = True
+                        grund = "Basiseigenschaft %s" % basis_klasse
+                elif parameter_name in ("text", "value", "size") and basis_klasse in ("Control", "Label", "Button", "TextureRect"):
+                    verschattet = True
+                    grund = "Basiseigenschaft %s" % basis_klasse
+            if verschattet:
+                befunde.append(Befund(relativ, offset + 1, "SHADOWED_VARIABLE",
+                                      'Der Parameter "%s" verschattet eine gleichnamige %s.' % (parameter_name, grund)))
         # UNUSED_VARIABLE: lokale Deklarationen, die im Funktionskörper nie auftauchen.
         for treffer in VAR_DECL.finditer(funktions_code):
             name = treffer.group(1)

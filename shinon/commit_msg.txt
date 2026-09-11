@@ -1,5 +1,6 @@
-1. Du hast verlangt, dass jede harte Zahlenschwelle die schon in einem JSON Pool liegt mechanisch im Code auffliegt und nicht als stille zweite Wahrheit weiterlebt.
-2. In tools/preflight.py wohnt jetzt der neue Wächter E040, der alle echten Schwellen wie schwellwert und verbrauch_je_takt aus den Datenpools sammelt und jedes nackte Literal im GDScript dagegen haelt.
-3. Nur ein markierter RUECKFALL oder eine delegierte Lesestelle wie _schwellwert_von und ticks_aus_minuten darf dieselbe Zahl noch tragen, alles andere wird als doppelte Wahrheit angeprangert.
-4. In game/logic/kategorie_einheit/einheit_versorgung.gd traegt der Notwert 0.8 deshalb sein RUECKFALL Schild, damit der einzige Taktwert sauber aus needs.json kommt und niemand mehr heimlich dupliziert.
-5. Der Preflight bleibt gruen, der Wachhund bellt nur bei echtem Drift, und der naechste Slice kann ohne Zahlendrift wachsen weil die Daten jetzt allein bestimmen.
+1. Du hast die fünf Schattenwarnungen des Godot Editors eingereicht und verlangt, dass sie nicht weiter still bleiben.
+2. In world/logic/kategorie_welt/welt_objekt_darsteller.gd und world/logic/kategorie_feedback/feedback_manager.gd tragen die Parameter jetzt eigene Namen statt die Basiseigenschaft position der Node2D zu verdecken.
+3. In game/logic/kategorie_einheit/einheit_status.gd heißt der Todesort tod_position, damit er nicht mehr die Member-Variable welt_position der eigenen Klasse überdeckt.
+4. In population/logic/mood/pop_mood_maschine.gd, ui/scenes/hauptmenue.gd und world/scenes/welt.gd zogen die text Parameter eigene Namen an, damit keine Texteigenschaft der Basisklasse verschattet wird.
+5. In tools/warnungs_scan.py erkennt der Scanner jetzt alle drei echten Schattenfälle, Funktion, Member-Variable und Basiseigenschaft, statt position und text pauschal zu übersehen, und die neuen Beispiele in test_warnungs_scan_shadow.py beweisen das rot grün.
+6. python tools/preflight.py meldet PREFLIGHT OK ohne Befunde, damit der Editor nach dem nächsten Reload keine dieser Warnungen mehr zeigt und künftige Schatten sofort im Gate aufschlagen.
