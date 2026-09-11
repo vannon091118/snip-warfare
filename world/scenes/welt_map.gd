@@ -63,7 +63,7 @@ func _karten_flaeche_zeichnen() -> void:
 			var region: Dictionary = _model.region_an_kachel(rx * _model.region_kante, ry * _model.region_kante)
 			var b_id: String = str(region.get("biom_id", "gemaaessigt"))
 			var farbe: Color = Color(0.3, 0.5, 0.2)
-			var biom_obj: Welt_Biom = _biome.biom_fuer(b_id)
+			var biom_obj: Welt_BiomBasis = _biome.biom_fuer(b_id)
 			if biom_obj != null:
 				farbe = Color.from_string(biom_obj.farbe, farbe)
 			var r_rect := Rect2(float(rx) * kachel_b, float(ry) * kachel_h, kachel_b, kachel_h)
@@ -117,8 +117,8 @@ func _karten_flaeche_eingabe(ereignis: InputEvent) -> void:
 func _details_aktualisieren() -> void:
 	var region: Dictionary = _model.region_an_kachel(_gewaehlte_region.x * _model.region_kante, _gewaehlte_region.y * _model.region_kante)
 	var biom_id: String = str(region.get("biom_id", "gemaaessigt"))
-	var biom_obj: Welt_Biom = _biome.biom_fuer(biom_id)
-	var biom_name: String = biom_obj.angezeigter_name if biom_obj != null else biom_id.capitalize()
+	var biom_obj: Welt_BiomBasis = _biome.biom_fuer(biom_id)
+	var biom_name: String = biom_obj.biom_name if biom_obj != null else biom_id.capitalize()
 
 	_info_label.text = "Region: [%d, %d]\nBiom: %s\nCharakter: %s" % [
 		_gewaehlte_region.x,
