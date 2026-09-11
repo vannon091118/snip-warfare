@@ -3,6 +3,7 @@ extends Control
 ## Die Ansicht bedient nur die Menüführung; Simulationslogik bleibt außen vor.
 
 const SZENE_KARTE := "res://world/scenes/welt.tscn"
+const SZENE_WORLD_MAP := "res://world/scenes/welt_map.tscn"
 const SZENE_EDITOR := "res://world/scenes/karten_editor.tscn"
 const SZENE_UEBERGANG := "res://ui/scenes/uebergang.tscn"
 const GRENZE_RECHTS := 2200.0
@@ -81,15 +82,14 @@ func _process(delta: float) -> void:
 			laeufer.position.x = GRENZE_RECHTS
 
 func _auf_start() -> void:
-	# Neues Spiel heißt immer neue Welt: Unabhängig von gespeicherten
-	# Welten wird frisch aus dem Generator mit zufälligem Seed erzeugt.
-	# Laden bleibt ausschließlich dem Laden-Knopf vorbehalten.
+	# Neues Spiel startet über die World Map: Der Spieler wählt zuerst
+	# seinen Startbereich und prüft das Fraktionsnetzwerk.
 	WeltSitzung.welt_name = ""
 	WeltSitzung.seed_wunsch = 0
 	WeltSitzung.kommt_vom_editor = false
 	WeltSitzung.world = null
 	WeltSitzung.aktive_map_id = ""
-	_uebergang_einlaeuten(SZENE_KARTE, "Eine neue Welt wird geboren …")
+	_uebergang_einlaeuten(SZENE_WORLD_MAP, "Die Weltkarte wird entfaltet …")
 
 func _auf_laden() -> void:
 	_wechsle_zu(Ui_MenueZustaende.Zustand.WELT_AUSWAHL_LADEN)

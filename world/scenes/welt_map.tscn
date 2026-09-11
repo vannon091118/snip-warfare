@@ -1,0 +1,108 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8weltmap001"]
+
+[ext_resource type="Script" path="res://world/scenes/welt_map.gd" id="1_weltmap"]
+
+[node name="WeltMap" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_weltmap")
+
+[node name="Hintergrund" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.09, 0.1, 1)
+
+[node name="KartenContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.03
+anchor_top = 0.05
+anchor_right = 0.68
+anchor_bottom = 0.93
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="KartenFlaeche" type="Control" parent="KartenContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SeitenLeiste" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.7
+anchor_top = 0.05
+anchor_right = 0.97
+anchor_bottom = 0.93
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Inhalt" type="VBoxContainer" parent="SeitenLeiste"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Titel" type="Label" parent="SeitenLeiste/Inhalt"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "WORLD MAP"
+horizontal_alignment = 1
+
+[node name="Untertitel" type="Label" parent="SeitenLeiste/Inhalt"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 13
+text = "Wähle deinen Startbereich auf der Weltkarte vor Spielbeginn."
+autowrap_mode = 2
+
+[node name="Trenner1" type="HSeparator" parent="SeitenLeiste/Inhalt"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="SeitenLeiste/Inhalt"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Region: [0, 0]
+Biom: Gemäßigt
+Charakter: Dichte Wälder und reiche Beerensträucher."
+autowrap_mode = 2
+
+[node name="Trenner2" type="HSeparator" parent="SeitenLeiste/Inhalt"]
+layout_mode = 2
+
+[node name="NachbarnLabel" type="Label" parent="SeitenLeiste/Inhalt"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Direkte Nachbarn:
+• Waldläufer
+• Steppenreiter"
+autowrap_mode = 2
+
+[node name="Abstandhalter" type="Control" parent="SeitenLeiste/Inhalt"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NeuKnopf" type="Button" parent="SeitenLeiste/Inhalt"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+text = "🎲 Fraktionen neu platzieren"
+
+[node name="StartenKnopf" type="Button" parent="SeitenLeiste/Inhalt"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "⚔ Partie starten"
+
+[node name="ZurueckKnopf" type="Button" parent="SeitenLeiste/Inhalt"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Zurück zum Hauptmenü"

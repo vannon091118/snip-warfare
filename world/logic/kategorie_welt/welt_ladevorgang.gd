@@ -60,6 +60,7 @@ func ausfuehren(welt_name: String, seed_wunsch: int, biom_id: String) -> bool:
 	return true
 
 func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> bool:
+	var effektives_biom := WeltSitzung.start_biom_id if WeltSitzung.start_biom_id != "" else biom_id
 	var basis_seed := seed_wunsch
 	if basis_seed == 0:
 		# Autoritativer Seed ohne Uhrzeit: deterministisch aus bestehendem
@@ -76,10 +77,10 @@ func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> b
 	kandidat_zufall.start_zustand_setzen(basis_seed)
 	var seed_wert := basis_seed
 	for _versuch in range(20):
-		if _generator.welt_erzeugen(_model, seed_wert, biom_id) and _generator.verworfene_chunks == 0:
+		if _generator.welt_erzeugen(_model, seed_wert, effektives_biom) and _generator.verworfene_chunks == 0:
 			break
 		seed_wert = kandidat_zufall.naechste_zahl() % 1000000000
-	if not _generator.welt_erzeugen(_model, seed_wert, biom_id):
+	if not _generator.welt_erzeugen(_model, seed_wert, effektives_biom):
 		return false
 	# World-Ebene: Die erzeugte Szene-Karte ist die Basis-Karte. Die World
 	# übernimmt die laufende Instanz, es wird nicht ein zweites Mal
