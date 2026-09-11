@@ -73,6 +73,9 @@ func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_o
 
 func _wege_berechnen(model: Welt_Model) -> void:
 	_wege.clear()
+	_spieler_nachbarn.clear()
+	for f: Welt_Fraktion in _fraktionen:
+		f.nachbarn.clear()
 	var spieler_pos_kachel := _spieler_region * model.region_kante + Vector2i(model.region_kante / 2, model.region_kante / 2)
 
 	# Distanzen aller Fraktionen zum Spieler ermitteln
