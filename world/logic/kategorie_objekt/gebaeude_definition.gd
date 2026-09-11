@@ -16,6 +16,12 @@ var arbeitskraft: String = ""
 ## Einzige Gating-Wahrheit je Gebaeude: 0 heisst immer frei, N heisst frei
 ## ab Progressions-Stufe N. Kein UI-Code erfindet mehr eine Stufe.
 var gesperrt_ab_stufe: int = 0
+## Startvorrat des Ankunftsortes: Wird beim Aufstellen dieses Gebaeudes
+## einmalig ins naechste Lager gebucht (Startbestand des Lagerfeuers).
+var startbestand: Dictionary = {}
+## Belegungsregel als Datum: Ein Gebäude mit true blockiert seine Kachel für
+## weitere Gebäude. Die Bauverbindung fragt nur, kein UI erfindet die Regel.
+var belegt_kachel: bool = true
 var voraussetzungen: Array[String] = []
 var inputs: Array[Dictionary] = []
 var outputs: Array[Dictionary] = []
@@ -36,6 +42,8 @@ func aus_konfig_eintrag(eintrag: Dictionary) -> void:
 	bauzeit_ticks = int(eintrag.get("bauzeit_ticks", 0))
 	arbeitskraft = str(eintrag.get("arbeitskraft", ""))
 	gesperrt_ab_stufe = int(eintrag.get("gesperrt_ab_stufe", 0))
+	belegt_kachel = bool(eintrag.get("belegt_kachel", true))
+	startbestand = (eintrag.get("startbestand", {}) as Dictionary).duplicate(true)
 	voraussetzungen.clear()
 	for voraussetzung: Variant in (eintrag.get("voraussetzungen", []) as Array):
 		voraussetzungen.append(str(voraussetzung))

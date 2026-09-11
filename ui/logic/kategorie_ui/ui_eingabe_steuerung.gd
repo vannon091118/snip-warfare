@@ -194,6 +194,9 @@ func auf_kontext_aktion(aktion: Dictionary) -> void:
 	if logik == "expansieren":
 		_expansion_ausfuehren()
 		return
+	if logik == "marschieren":
+		_marschieren_ausfuehren()
+		return
 	if label_text.to_lower().contains("wachstum") or logik.to_lower().contains("wachstum"):
 		var haus_pos := _kamera_steuerung.kamera_position if _kamera_steuerung != null else Vector2.ZERO
 		if _lager != null and _lager.lager_zahl() > 0:
@@ -206,6 +209,19 @@ func auf_kontext_aktion(aktion: Dictionary) -> void:
 		return
 	if _hud != null:
 		(_hud as Variant).meldung_setzen("Kontext: %s ueber Logik %s" % [label_text, logik])
+
+func _marschieren_ausfuehren() -> void:
+	# Der Marschbefehl der Kontextaktion nimmt denselben Weg wie der direkte
+	# Rechtsklick: Die laufende Auswahl geschlossen zum angeklickten Ort.
+	if _stockmaenner == null or _auswahl == null or _hud == null:
+		return
+	if _auswahl.aktiver_einheit_index < 0 or _auswahl.aktiver_einheit_index >= _stockmaenner.einheit_zahl():
+		(_hud as Variant).meldung_setzen("Marschieren braucht eine gewaehlte Einheit.")
+		return
+	var einheiten_liste: Array[int] = _auswahl.auswahl_einheiten if not _auswahl.auswahl_einheiten.is_empty() else [_auswahl.aktiver_einheit_index]
+	for einheit_index in einheiten_liste:
+		_stockmaenner.einheit_bewegen_nach(einheit_index, _rechtsklick_welt_position)
+	(_hud as Variant).meldung_setzen("Marschieren nach (%.0f, %.0f)" % [_rechtsklick_welt_position.x, _rechtsklick_welt_position.y])
 
 func _linksklick_ende(ende: Vector2) -> void:
 	if _rechteck != null:
@@ -254,13 +270,18 @@ func _rechtsklick_verarbeiten(welt_pos: Vector2) -> void:
 	if _kontext != null:
 		if _kamera != null and _kamera.get_viewport() != null:
 			_kontext.position = _kamera.get_viewport().get_mouse_position()
-		if tier_nummer >= 0:
-			_kontext.eintraege_aufbauen_fuer("tier")
-		elif objekt_index >= 0 and element_id != "":
-			_kontext.eintraege_aufbauen_fuer(element_id)
-		else:
-			_kontext.eintraege_aufbauen_fuer("boden")
+		_kontext.eintraege_aufbauen_fuer_tags(_ziel_tags_fuer_ort(tier_nummer, objekt_index, element_id))
 		_kontext.popup()
+
+func _ziel_tags_fuer_ort(tier_nummer: int, objekt_index: int, element_id: String) -> Array[String]:
+	# Ziel-Tags statt Objektnamen: Tiere tragen die Tags der Jagd, Objekte ihre
+	# Katalog-Tags, freier Boden die des Bodens. Welche Aktion darauf passt,
+	# entscheidet allein die Registry aus steuerung.json.
+	if tier_nummer >= 0:
+		return ["tier", "jagd"]
+	if objekt_index >= 0 and element_id != "" and _registry != null:
+		return _registry.ziel_tags_fuer(element_id)
+	return ["boden"]
 
 func _expansion_ausfuehren() -> void:
 	# Expansion: Die Fabrik erzeugt eine neue Karte, trägt sie in die World

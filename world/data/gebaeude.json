@@ -9,6 +9,8 @@
     "bauzeit_ticks": 60,
     "arbeitskraft": "",
     "gesperrt_ab_stufe": 0,
+    "belegt_kachel": true,
+    "startbestand": {"holz": 20, "stein": 5, "beeren": 10},
     "voraussetzungen": [],
     "lager_typ": "kleines_lager",
     "einwanderer_lieferant": true,
@@ -31,6 +33,7 @@
     "bauzeit_ticks": 360,
     "arbeitskraft": "",
     "gesperrt_ab_stufe": 1,
+    "belegt_kachel": true,
     "voraussetzungen": ["lagerfeuer"],
     "lager_typ": "kleines_lager",
     "einwanderer_lieferant": true,
@@ -53,6 +56,7 @@
     "bauzeit_ticks": 480,
     "arbeitskraft": "",
     "gesperrt_ab_stufe": 2,
+    "belegt_kachel": true,
     "voraussetzungen": [],
     "produktion": {
       "inputs": [
@@ -78,6 +82,7 @@
     "bauzeit_ticks": 720,
     "arbeitskraft": "",
     "gesperrt_ab_stufe": 2,
+    "belegt_kachel": true,
     "voraussetzungen": [],
     "produktion": {
       "inputs": [

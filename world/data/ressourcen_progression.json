@@ -47,6 +47,11 @@
       "stufe_icon_pfad": "res://world/assets/progression/baum_stufe.svg"
     }
   },
+  "stufen_blatt": {
+    "blatt_breite": 128,
+    "blatt_hoehe": 128,
+    "spalten": 4
+  },
   "waerme": {
     "max_faktor": 1.0,
     "min_faktor": 0.25

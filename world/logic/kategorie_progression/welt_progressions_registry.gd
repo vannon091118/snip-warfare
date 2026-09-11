@@ -51,6 +51,12 @@ func regenerations_ticks_fuer(element_id: String) -> int:
 func stufe_icon_pfad_fuer(element_id: String) -> String:
 	return str(definition_fuer(element_id).get("stufe_icon_pfad", ""))
 
+func stufen_blatt() -> Dictionary:
+	# Geometrie der Stufen-Sheets als Daten: Blattbreite, Blatthoehe und die
+	# Zahl der Blaetter nebeneinander. Der Renderer schneidet damit dieselben
+	# Zellen, ohne eine zweite Zellgroesse zu kennen.
+	return _abschnitt("stufen_blatt")
+
 func waerme_max_faktor() -> float:
 	return float(_abschnitt("waerme").get("max_faktor", 1.0))
 
