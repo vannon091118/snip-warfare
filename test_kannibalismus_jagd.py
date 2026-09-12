@@ -29,11 +29,15 @@ def test_der_manager_jagt_den_schwaechsten_nachbarn_beim_kannibalismus():
     """Beim Kannibalismus-Verhalten wählt die Verhaltens-Maschine das schwächste Ziel."""
     verhalten = _lies("game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd")
     manager = _lies("game/logic/kategorie_einheit/einheit_manager.gd")
+    takt = _lies("game/logic/kategorie_einheit/einheit_takt_maschine.gd")
     assert "kannibalis" in verhalten.lower(), "Verhaltens-Maschine kennt das Verhalten nicht"
     assert "schwäch" in verhalten.lower(), "Verhaltens-Maschine wählt nicht den Schwächsten"
     assert "func _jagd_nachbarn" in verhalten, "Verhaltens-Maschine hat keinen Nachbar-Zielsucher"
     assert "einheit_hp" in verhalten, "Verhaltens-Maschine liest die Lebenspunkte nicht"
-    assert "_verhalten.pruefe_verhalten" in manager, "Der Manager reicht den Takt an die Verhaltens-Maschine durch"
+    # Der Takt liegt seit dem Zerlegungs-Slice in der Takt-Maschine; der Manager
+    # reicht ihn nur noch durch.
+    assert "pruefe_verhalten" in takt, "Die Takt-Maschine erreicht die Verhaltens-Maschine nicht"
+    assert "_takt.tick" in manager, "Der Manager reicht den Takt nicht an die Takt-Maschine durch"
 
 
 def test_die_ernte_maschine_erlegt_artgenossen_wie_beute():

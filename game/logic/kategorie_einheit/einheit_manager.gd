@@ -90,11 +90,14 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 		"ressourcen": _ressourcen,
 		"tiere": _tiere,
 	})
+	_einwanderung.einrichten(_einwanderungs_kontext())
+	_takt.einrichten(_takt_kontext())
 
 func lager_setzen(lager: Lager_Manager) -> void:
 	_lager = lager
 	_trupp.lager_setzen(lager)
 	_job_fluss.lager_setzen(lager)
+	_einwanderung.einrichten(_einwanderungs_kontext())
 	for einheit: Dictionary in _einheiten:
 		var m: Pop_MoodMaschine = einheit["mood"]
 		m.einrichten(_need_registry, _lager)
@@ -104,6 +107,7 @@ func need_baum_setzen(baum: Pop_NeedBaum) -> void:
 	# Der eigene Need-Tree erzeugt und besitzt die Mood-Maschinen als Kinder;
 	# der Manager greift nur noch über Referenzen zu.
 	_need_baum = baum
+	_einwanderung.einrichten(_einwanderungs_kontext())
 
 func waerme_quellen_aktualisieren(feuer_positionen: Array[Vector2]) -> void:
 	# Die Kachelkante kommt aus dem Modell (eine Quelle), der Rest aus dem
@@ -131,6 +135,10 @@ var _versorgung_neu := Einheit_VersorgungsMaschine.new()
 ## nur Knoten, Ticks und Lese-Schnittstellen.
 var _job_fluss := Einheit_JobFlussMaschine.new()
 var _trupp := Einheit_TruppMaschine.new()
+## Einwanderung: Die Maschine traegt die Ankunft samt Status, Stimmung und Inventar.
+var _einwanderung := Einheit_EinwanderungsMaschine.new()
+## Takt: Die Maschine fuehrt die Einheiten-Schleife an der Weltuhr.
+var _takt := Einheit_TaktMaschine.new()
 
 
 func schlag_ort_empfaenger_setzen(empfaenger: Callable) -> void:
@@ -153,6 +161,7 @@ func _auf_schlag_objekt(ziel_index: int) -> void:
 
 func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
 	_tageszyklus = zyklus
+	_einwanderung.einrichten(_einwanderungs_kontext())
 	for einheit: Dictionary in _einheiten:
 		(einheit["mood"] as Pop_MoodMaschine).waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
 
@@ -189,87 +198,42 @@ func nacht_minuten() -> float:
 	return _need_registry.nacht_minuten()
 
 func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> int:
-	var status := Einheit_Status.new()
-	status.welt_position_setzen(welt_position)
-	var darsteller := Einheit_Darsteller.new()
-	darsteller.einrichten(status)
-	darsteller.position = welt_position
-	darsteller.animation_setzen(status.animation())
-	var rasse := rasse_id
-	if rasse == "":
-		# Ohne Wunsch gilt die Standard-Rasse des Need-Baums; ohne Baum bleibt
-		# der neutrale Mensch als Fallback für Testläufe.
-		rasse = _need_baum.standard_rasse() if _need_baum != null else "mensch"
-	var mood: Pop_MoodMaschine = null
-	if _need_baum != null:
-		mood = _need_baum.einheit_need_anlegen(rasse, welt_position)
-	else:
-		# Fallback ohne Baum: Maschine bleibt ohne Parent, damit Testläufe
-		# ohne Szenenbaum weiterhin laufen.
-		mood = Pop_MoodMaschine.new()
-		mood.einrichten(_need_registry, _lager)
-		mood.welt_position_setzen(welt_position)
-	mood.waerme_und_zyklus_setzen(_waerme_feld, _tageszyklus, _mood_mod_registry)
-	status.rasse_faktor_setzen(mood.bewegungs_faktor())
-	var denkblase := Pop_Denkblase.new()
-	denkblase.einrichten(mood)
-	darsteller.add_child(denkblase)
-	add_child(darsteller)
-	status.zustand_geaendert.connect(_auf_zustand_geaendert.bind(status, mood))
-	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt.bind(status))
-	status.job_loop_gefragt.connect(_auf_job_loop_gefragt.bind(status))
-	status.naechster_job_aus_queue.connect(_auf_naechster_job_aus_queue.bind(status))
+	## Die Ankunft einer Einheit traegt die Einwanderungs-Maschine.
+	return _einwanderung.hinzufuegen(welt_position, rasse_id)
 
-	# Physisches Inventar pro Einheit
-	var inventar := Einheit_Inventar.new()
-	var ei := _einheiten.size()
-	inventar.einheit_id_setzen("einheit_%d" % ei)
-	inventar.timeline_setzen(_ressourcen.timeline_holen() if _ressourcen.has_method("timeline_holen") else null)
-	inventar.inventar_voll.connect(_auf_inventar_voll.bind(ei))
-
-	_einheiten.append({
-		"status": status,
-		"darsteller": darsteller,
-		"mood": mood,
-		"denkblase": denkblase,
-		"position": welt_position,
-		"rasse": rasse,
-		"inventar": inventar,
-		"_letzter_zustand": status.zustand,
-	})
-
-	# Ernte-Maschine bekommt Referenz auf das Inventar dieser Einheit
-	if _ernte != null:
-		_ernte.inventar_fuer_einheit_setzen(ei, inventar)
-
-	return ei
+func _einwanderungs_kontext() -> Dictionary:
+	# Die Einwanderungs-Maschine bekommt genau die Quellen, die eine Ankunft
+	# braucht; die Verbinder sind die Methoden dieses Managers.
+	return {
+		"node": self,
+		"einheiten": _einheiten,
+		"need_baum": _need_baum,
+		"need_registry": _need_registry,
+		"lager": _lager,
+		"waerme_feld": _waerme_feld,
+		"tageszyklus": _tageszyklus,
+		"mood_mod_registry": _mood_mod_registry,
+		"ressourcen": _ressourcen,
+		"ernte": _ernte,
+		"verbinder": {
+			"zustand_geaendert": _auf_zustand_geaendert,
+			"arbeitsschritt": _auf_arbeitsschritt,
+			"job_loop": _auf_job_loop_gefragt,
+			"naechster_job": _auf_naechster_job_aus_queue,
+			"inventar_voll": _auf_inventar_voll,
+		},
+	}
 
 func einheit_zahl() -> int:
-	return _einheiten.size()
+	return Einheit_LeseSchnittstelle.zahl(_einheiten)
 
 func idle_einheiten() -> Array[int]:
-	# Gibt die Indizes aller Einheiten zurück, die aktuell keinen Job haben
-	# (d.h. sie sind im Idle-Zustand und können neue Aufträge übernehmen).
-	var gefundene: Array[int] = []
-	for idx in _einheiten.size():
-		if job_id_einheit(idx) == "":
-			gefundene.append(idx)
-	return gefundene
+	# Alle Einheiten ohne laufenden Job koennen neue Auftraege uebernehmen.
+	return Einheit_LeseSchnittstelle.idle_indizes(_einheiten)
 
 func einheit_bei(welt_position: Vector2, radius: float) -> int:
-	## Linksklick-Einheitenwahl: Liefert den Index der nächsten Einheit
-	## innerhalb von radius Pixeln um welt_position, sonst -1.
-	var bester := -1
-	var beste_distanz := radius + 1.0
-	for idx in _einheiten.size():
-		var status: Einheit_Status = _einheiten[idx]["status"]
-		if status == null:
-			continue
-		var distanz := status.welt_position.distance_to(welt_position)
-		if distanz <= radius and distanz < beste_distanz:
-			beste_distanz = distanz
-			bester = idx
-	return bester
+	## Linksklick-Einheitenwahl: Die naechste Einheit im Radius, sonst -1.
+	return Einheit_LeseSchnittstelle.naechste_bei(_einheiten, welt_position, radius)
 
 func auswahl_markierung_erneuern(aktiver_index: int, auswahl_liste: Array[int] = []) -> void:
 	## CP-6.1: Die Trupp-Maschine trägt die goldene Markierung aller Einheiten.
@@ -296,49 +260,34 @@ func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager, welt_wo
 		_ziel_suche.einheiten_quelle_setzen(self)
 	if _ernte != null:
 		_ernte.einrichten(null, _ressourcen, _model, _tiere)
+	_einwanderung.einrichten(_einwanderungs_kontext())
+	_takt.einrichten(_takt_kontext())
 
 
 
 ## Geschlossener Schnittpunkt: Nur diese Leseschnittstellen duerfen Einheiten
-## lesen. Direkter Zugriff auf _einheiten bleibt der Manager-Interna.
+## lesen; die Antworten liegen alle in der Lese-Schnittstelle.
 func einheit_status(index: int) -> Einheit_Status:
-	if index < 0 or index >= _einheiten.size():
-		return null
-	return _einheiten[index]["status"] as Einheit_Status
+	return Einheit_LeseSchnittstelle.status(_einheiten, index)
 
 func einheit_rasse(index: int) -> String:
-	if index < 0 or index >= _einheiten.size():
-		return ""
-	return str(_einheiten[index].get("rasse", ""))
+	return Einheit_LeseSchnittstelle.rasse(_einheiten, index)
 
 func einheit_hp(index: int) -> int:
-	# Lebenspunkte je Einheit für die Schwächsten-Suche des autonomen
-	# Verhaltens; ohne Treffer bleibt der neutrale Wert.
-	var st := einheit_status(index)
-	return 0 if st == null else st.vital.hp
+	return Einheit_LeseSchnittstelle.hp(_einheiten, index)
 
 func einheit_vital(index: int) -> Einheit_VitalStatus:
-	var st := einheit_status(index)
-	if st == null:
-		return null
-	return st.vital
+	return Einheit_LeseSchnittstelle.vital(_einheiten, index)
 
 func einheit_beschreibung(index: int) -> Dictionary:
 	# Schlanker Snapshot fuer Observer, getragen von der Trupp-Maschine.
 	return _trupp.beschreibung_fuer(index, einheit_rasse(index))
 
 func einheit_position(index: int) -> Vector2:
-	if index < 0 or index >= _einheiten.size():
-		return Vector2.ZERO
-	var status: Einheit_Status = _einheiten[index]["status"]
-	if status != null:
-		return status.welt_position
-	return _einheiten[index]["position"]
+	return Einheit_LeseSchnittstelle.position(_einheiten, index)
 
 func einheit_mood(index: int) -> Pop_MoodMaschine:
-	if index < 0 or index >= _einheiten.size():
-		return null
-	return _einheiten[index].get("mood", null) as Pop_MoodMaschine
+	return Einheit_LeseSchnittstelle.mood(_einheiten, index)
 
 func need_baum() -> Pop_NeedBaum:
 	return _need_baum
@@ -383,12 +332,7 @@ func job_vergeben(einheit_index: int, job_id: String, ziel_typ: Job_Basis.ZielTy
 	return true
 
 func job_id_einheit(einheit_index: int) -> String:
-	if einheit_index < 0 or einheit_index >= _einheiten.size():
-		return ""
-	var status: Einheit_Status = _einheiten[einheit_index]["status"]
-	if status.job == null:
-		return ""
-	return status.job.job_id
+	return Einheit_LeseSchnittstelle.job_id(_einheiten, einheit_index)
 
 func einheit_job_abbrechen(einheit_index: int) -> void:
 	# Der Spieler bricht den Job ab; die Einheit fällt zurück in den Idle.
@@ -402,80 +346,27 @@ func einheit_job_abbrechen(einheit_index: int) -> void:
 func einheit_bewegen_nach(einheit_index: int, ziel_position: Vector2) -> bool:
 	# Spieler-Befehl: Die Trupp-Maschine bricht laufende Jobs ab und marschiert
 	# zur Position; der Weg-Planer des Managers berechnet die Route.
-	return _trupp.einheit_bewegen_nach(einheit_index, ziel_position, _planner_fuer)
+	return _trupp.einheit_bewegen_nach(einheit_index, ziel_position)
 
 func _auf_tick(nummer: int, delta: float) -> void:
-	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
-	if _welt_world != null and _model != null:
-		var aktive_map_id := _welt_world.aktive_map_id()
-		var eigene_map_id := _model.map_id
-		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
-			if Engine.get_process_frames() % 6 != 0:
-				return
+	## Der Manager reicht den Takt nur an seine Takt-Maschine weiter.
+	_takt.tick(nummer, delta)
 
-	# Der Tageszyklus tickt nicht mehr hier: Die Weltmaschine hängt seit
-	# der Besitzkorrektur direkt an der Weltuhr und lebt nicht mehr in
-	# der Einheiten-Domäne. Dieser Takt kennt nur Einheiten-Arbeit.
-	# Taktdauer aus dem Datenpool: Der Wert kommt über die Need-Registry aus
-	# population/data/needs.json und wird von der Weltuhr in Ticks übersetzt;
-	# dieselbe Zahl steuert auch den Tageszyklus.
-	_verhalten.cache_erneuern(nummer)
-	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(_need_registry.takt_minuten())
-	var verbrauch_faellig := takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0
-	if verbrauch_faellig:
-		_nahrung_verteilen()
-		# Einwanderung über die Versorgungs-Maschine: Der aktive
-		# Progressions-Zieltyp einwanderung liefert die Rate, der Spawn läuft
-		# über denselben einheit_hinzufuegen-Schnitt.
-		_versorgung_neu.einwanderung_ticken()
-	for ei: int in _einheiten.size():
-		var einheit: Dictionary = _einheiten[ei]
-		var status: Einheit_Status = einheit["status"]
-		var mood: Pop_MoodMaschine = einheit["mood"]
-		if (status.zustand == Einheit_Status.Zustand.ARBEITEN or status.zustand == Einheit_Status.Zustand.GEHEN) and not _ziel_existiert(status):
-			# Ziel wurde in der Zwischenzeit entfernt: Job endet.
-			status.job_abbrechen()
-			var darsteller: Einheit_Darsteller = einheit["darsteller"]
-			darsteller.animation_setzen(status.animation())
-			continue
-
-		# Transport-Job Phasen prüfen: Die Trupp-Maschine bucht die Ablieferung.
-		if status.job != null and status.job.job_id == "transport":
-			var transport_job: Job_Transport = status.job as Job_Transport
-			if transport_job != null:
-				match transport_job.phase():
-					Job_Transport.PHASE_GEHE_ZU_LAGER:
-						if status.zustand == Einheit_Status.Zustand.ARBEITEN:
-							transport_job.phase_wechseln(Job_Transport.PHASE_ABLIEFERN)
-							_trupp.transport_job_ankommen(transport_job)
-							transport_job.phase_wechseln(Job_Transport.PHASE_FERTIG)
-					Job_Transport.PHASE_ABLIEFERN:
-						# Wird direkt in GEHE_ZU_LAGER abgehandelt
-						pass
-					Job_Transport.PHASE_FERTIG:
-						# Transport fertig: Job beenden, zur Queue zurückkehren
-						status.job_beendet.emit()
-						transport_job.zuruecksetzen()
-
-		status.tick(delta)
-		if status.welt_position != einheit["position"]:
-			# Bewegung hat direkte Auswirkung: Position, Darsteller und Mood
-			# folgen auch im Ankunfts-Tick, wenn der Zustand schon wechselt.
-			einheit["position"] = status.welt_position
-			var darsteller_g: Einheit_Darsteller = einheit["darsteller"]
-			darsteller_g.position = status.welt_position
-			darsteller_g.animation_setzen(status.animation())
-			darsteller_g.flip_h = not status.blick_richtung_rechts()
-			mood.welt_position_setzen(status.welt_position)
-		var ziel := mood.auf_tick(nummer, delta)
-		var w := mood.waerme_wert()
-		(status.vital as Einheit_VitalStatus).umgebungsschaden_anwenden(w, _mood_mod_registry, _zufall)
-		if ziel != Vector2.INF and status.zustand == Einheit_Status.Zustand.IDLE:
-			_trupp.in_sicherheit_bringen(einheit, ziel)
-		# Slice C: Verhaltensprüfung auf 12 Ticks gestreut verteilen (0.5s Reaktionszeit)
-		if status.zustand == Einheit_Status.Zustand.IDLE and (nummer % 12 == (ei % 12)):
-			_verhalten.pruefe_verhalten(einheit, ei)
-
+func _takt_kontext() -> Dictionary:
+	# Alles, was die Takt-Maschine fuer einen Takt braucht, in einem Bund.
+	return {
+		"einheiten": _einheiten,
+		"welt_world": _welt_world,
+		"model": _model,
+		"verhalten": _verhalten,
+		"need_registry": _need_registry,
+		"versorgung_neu": _versorgung_neu,
+		"versorgung": _versorgung,
+		"ziel_suche": _ziel_suche,
+		"trupp": _trupp,
+		"mood_mod_registry": _mood_mod_registry,
+		"zufall": _zufall,
+	}
 
 func _naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:
 	return _ziel_suche.naechstes_objekt(status, alter_ziel_index)
@@ -528,6 +419,5 @@ func transport_fuer_idle(einheit_index: int, _freies_lager: Lager_Manager) -> bo
 	return _trupp.transport_fuer_idle(einheit_index)
 
 func _nahrung_verteilen() -> void:
-	# Die Versorgungs-Maschine besitzt die Regel; der Manager nur den Takt.
-	if _versorgung != null:
-		_versorgung.verteilen(_einheiten)
+	# Die Versorgungs-Maschine besitzt die Regel; der Takt liegt bei der Takt-Maschine.
+	_takt.nahrung_verteilen()
