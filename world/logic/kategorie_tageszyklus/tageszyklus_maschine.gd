@@ -84,7 +84,7 @@ func faerbung() -> Color:
 		return Color(1.0, 0.96, 0.88, 1.0)
 	return Color(1, 1, 1, 1)
 
-func tages_farbe_fuer_tick(aktueller_tick: int) -> void:
+func tages_farbe_fuer_tick(_aktueller_tick: int) -> void:
 	# Liefert die Farbe für den aktuellen Tick basierend auf vier Waypoints:
 	# Morgen (warm weiß), Mittag (neutral weiß), Abend (orange), Nacht (dunkelblau).
 	# Verwendet Color.lerp() zwischen den Waypoints, geladen aus atmosphaere.json.
@@ -94,7 +94,7 @@ func tages_farbe_fuer_tick(aktueller_tick: int) -> void:
 	# Konfiguration aus der Weltuhr/Atmosphaere: Phase und Position innerhalb der Phase
 	var tages_phasen_anteil := _tick_in_takt % maxi(Kern_Weltuhr.ticks_aus_minuten(tag_minuten), 1)
 	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(takt_minuten)
-	var t := float(tages_phasen_anteil) / float(maxi(takt_ticks, 1)
+	var t := float(tages_phasen_anteil) / float(maxi(takt_ticks, 1))
 	# Waypoint-Farben: Morgen, Mittag, Abend, Nacht
 	# Auslesen aus atmosphaere.json via preload; Fallback-Werte wenn nicht gefunden
 	var morgen_farbe := Color(1.0, 0.96, 0.88, 1.0) # warm weiß
@@ -106,13 +106,13 @@ func tages_farbe_fuer_tick(aktueller_tick: int) -> void:
 	var color: Color
 	match phase:
 		Phase.MORGEN:
-			color = Color.lerp(morgen_farbe, mittag_farbe, t)
+			color = morgen_farbe.lerp(mittag_farbe, t)
 		Phase.TAG:
-			color = Color.lerp(mittag_farbe, abend_farbe, t)
+			color = mittag_farbe.lerp(abend_farbe, t)
 		Phase.NACHT:
-			color = Color.lerp(abend_farbe, nacht_farbe, t)
+			color = abend_farbe.lerp(nacht_farbe, t)
 		Phase.DAEMMERUNG:
-			color = Color.lerp(nacht_farbe, morgen_farbe, t)
+			color = nacht_farbe.lerp(morgen_farbe, t)
 	# CanvasModulate setzt die globale Farbe für alle Sprites/etc.
 	canvas_modulate.color = color
 

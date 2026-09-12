@@ -20,8 +20,8 @@ func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall, z_ebene: 
 	
 	# Tiefe beeinflusst Erz-Affinität: Je tiefer (negativer z_ebene), desto höher die Chance auf Erzadern
 	var erz_chance_base := 0.05
-	var erz_tiefe_factor := max(0.0, -z_ebene) * 0.01  # Je tiefer (negativer z), desto höher
-	var erz_chance := min(0.3, erz_chance_base + erz_tiefe_factor)
+	var erz_tiefe_factor: float = max(0.0, float(-z_ebene) * 0.01)  # Je tiefer (negativer z), desto höher
+	var erz_chance: float = min(0.3, erz_chance_base + erz_tiefe_factor)
 	
 	# Anzahl Massiv-Zentren (hoeher in Tundra/Steppe, normal im gemaessigten Biom)
 	var zentren_basis := 2 if biom_id == "gemaaessigt" else 3

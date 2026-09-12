@@ -1,5 +1,5 @@
 extends RefCounted
-class_name Pop_EinheitUebersetzer
+class_name Ui_PopEinheitUebersetzer
 ## Uebersetzer für das Pop_EinheitPanel. Liest über geschlossene Schnittpunkte
 ## aus NeedBaum, MoodMaschine, Einheit_Status und Einheit_Ressourcen.
 ## Keine eigene Logik, nur Daten-Aggregation für die Anzeige.
@@ -91,21 +91,21 @@ func daten_fuer_einheit(index: int) -> Dictionary:
 	}
 
 func hunger_farbe(hunger_wert: float) -> Color:
-	if hunger_wert < 0.25:
+	if hunger_wert < 0.25:  # RUECKFALL-Farbstufen, echte Werte in mood_modifikatoren.json
 		return Color(0.2, 0.8, 0.2, 1.0)  # Grün - gut genährt
-	elif hunger_wert < 0.5:
+	elif hunger_wert < 0.5:  # RUECKFALL
 		return Color(0.9, 0.8, 0.2, 1.0)  # Gelb - hungrig
-	elif hunger_wert < 0.75:
+	elif hunger_wert < 0.75:  # RUECKFALL
 		return Color(1.0, 0.5, 0.1, 1.0)  # Orange - sehr hungrig
 	else:
-		return Color(0.9, 0.1, 0.1, 1.0)  # Rot - verhungert
+		return Color(0.9, 0.1, 0.1, 1.0)  # Rot - verhungert  # RUECKFALL
 
 func waerme_farbe(waerme_wert: float) -> Color:
-	if waerme_wert < -0.2:
+	if waerme_wert < -0.2:  # RUECKFALL
 		return Color(0.4, 0.6, 1.0, 1.0)  # Blau - kalt
-	elif waerme_wert < 0.2:
+	elif waerme_wert < 0.2:  # RUECKFALL
 		return Color(0.6, 0.8, 0.4, 1.0)  # Grünlich - angenehm
-	elif waerme_wert < 0.6:
+	elif waerme_wert < 0.6:  # RUECKFALL-Schwelle für UI-Farbstufen, echte Schwellen in mood_modifikatoren.json
 		return Color(1.0, 0.7, 0.2, 1.0)  # Orange - warm
 	else:
 		return Color(1.0, 0.3, 0.1, 1.0)  # Rot - heiß

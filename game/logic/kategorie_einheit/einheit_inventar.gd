@@ -12,6 +12,7 @@ signal inventar_leer()
 const KONFIG_PFAD := "res://game/data/ressourcen.json"
 const MUTATIONEN_PFAD := "res://game/data/mutationen_inventar.json"
 
+## Kategorie daten: Schema, Timeline und physischer Bestand.
 var _schema := Einheit_InventarSchema.new()
 var _timeline: Kern_Timeline = null
 var _einheit_id: String = ""
@@ -20,6 +21,8 @@ var _ressourcen_objekte: Array[Ressource_Basis] = []
 var _objekte_nach_id: Dictionary = {}
 var _aktueller_zustand: Dictionary = {}
 
+## Kategorie logik: Aufnahme und Abgabe laufen ausschließlich über die
+## Mutationen im Schema, nie direkt auf den Beständen.
 func _init() -> void:
 	_lade_ressourcen()
 	_startzustand_fahren()
@@ -114,7 +117,7 @@ func ist_leer() -> bool:
 func freie_kapazitaet() -> int:
 	return _kapazitaet - _gesamt_bestand()
 
-func kann_aufnehmen(ressource: String, menge: int) -> bool:
+func kann_aufnehmen(_ressource: String, menge: int) -> bool:
 	return menge > 0 and _gesamt_bestand() + menge <= _kapazitaet
 
 func aufnahme(ressource: String, menge: int) -> bool:
@@ -167,7 +170,7 @@ func alles_abgeben() -> Dictionary:
 		abgabe(ressource, ergebnis[ressource])
 	return ergebnis
 
-func _timeline_buchung(quelle_aktion: String, beschreibung: String, ressource: String, alte_menge: int, neue_menge: int) -> void:
+func _timeline_buchung(_quelle_aktion: String, beschreibung: String, ressource: String, alte_menge: int, neue_menge: int) -> void:
 	if _timeline == null:
 		return
 	var tick := 0

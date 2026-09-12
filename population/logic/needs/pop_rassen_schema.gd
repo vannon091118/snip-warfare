@@ -1,13 +1,13 @@
 extends RefCounted
 class_name Pop_RassenSchema
 ## Datenklasse eines Rassen-Schemas.
--- Reines Einlesen aus rassen_schemata.json oder Generierung durch Rassen_Generator.
--- Jede Rasse trägt Multiplikatoren, mit denen die Need-Maschinen ihre Werte
--- skalieren: Nahrungsverbrauch, Dringlichkeit, Abfall, Schwellwert und
--- Bewegung. Der zentrale Modifikator-Faktor multipliziert zusätzlich; das
--- Schema selbst enthält keine Logik und ruft nichts auf.
--- Instanzen sind nach Initialisierung immutabel (nicht mehr änderbar).
--- Immuntät wird durch _finalisiert-Flag und Preflight-Prüfung durchgesetzt.
+## Reines Einlesen aus rassen_schemata.json oder Generierung durch Rassen_Generator.
+## Jede Rasse trägt Multiplikatoren, mit denen die Need-Maschinen ihre Werte
+## skalieren: Nahrungsverbrauch, Dringlichkeit, Abfall, Schwellwert und
+## Bewegung. Der zentrale Modifikator-Faktor multipliziert zusätzlich; das
+## Schema selbst enthält keine Logik und ruft nichts auf.
+## Instanzen sind nach Initialisierung immutabel (nicht mehr änderbar).
+## Immuntät wird durch _finalisiert-Flag und Preflight-Prüfung durchgesetzt.
 
 ## Kategorie daten: Rassen-Identität und Multiplikator-Faktoren.
 var rasse_id: String = ""
@@ -16,7 +16,7 @@ var beschreibung: String = ""
 
 ## Diese Faktoren sind nach dem Setzen via _finalisieren() nicht mehr änderbar.
 ## Werden als var deklariert, um Godot-Syntax zu erlauben, aber die
--- Immuntät wird durch _finalisiert-Flag und setter-Prüfung durchgesetzt.
+## Immunität wird durch _finalisiert-Flag und setter-Prüfung durchgesetzt.
 var faktor_nahrung: float = 1.0
 var faktor_dringlichkeit: float = 1.0
 var faktor_abfall: float = 1.0
@@ -98,7 +98,7 @@ func _finalisieren() -> void:
 		push_error("Pop_RassenSchema '%s' bereits finalisiert" % rasse_id)
 		return
 	_finalisiert = true
-	push_debug("Pop_RassenSchema '%s' (%s) ist nun immutabel - keine weiteren Änderungen erlaubt." % [rasse_id, angezeigter_name])
+	print("Pop_RassenSchema '%s' (%s) ist nun immutabel - keine weiteren Änderungen erlaubt." % [rasse_id, angezeigter_name])
 
 func _pruefe_nicht_finalisiert(aufrufer: String) -> void:
 	if _finalisiert:
@@ -121,7 +121,8 @@ func faktor_fuer(bedarfstyp: String) -> float:
 			return faktor_bewegung
 		"grab":
 			return grab_bonus
-		return 1.0
+		_:
+			return 1.0
 
 ## Kategorie logik: Serialisierung für Speicherstand.
 

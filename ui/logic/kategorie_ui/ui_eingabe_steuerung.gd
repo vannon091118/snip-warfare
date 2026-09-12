@@ -39,7 +39,7 @@ var _fortschritt: Welt_FortschrittsMaschine = null
 var _rechtsklick_welt_position := Vector2.ZERO
 var _aktiver_bau_auftrag: String = ""
 var _debug_sichtbar: bool = false
-var _orchestrator_panel: Orchestrator_PriorityPanel = null
+var _orchestrator_panel: Ui_OrchestratorPriorityPanel = null
 var _orchestrator_manager: Orchestrator_Manager = null
 
 ## Kategorie logik: Eingabe in Maschinen-Aufrufe übersetzen.

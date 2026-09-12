@@ -1,9 +1,9 @@
 extends RefCounted
 class_name Pop_NamensGenerator
 ## Deterministischer Namensgenerator für Rassen und Fraktionen.
--- Zieht Silben aus archetypspezifischen Pools mittels Kern_Zufall.
--- Keine zufälligen Namen: gleicher Seed + gleicher Keimpunkt = gleicher Name.
--- Pools sind in JSON definiert und erweiterbar.
+## Zieht Silben aus archetypspezifischen Pools mittels Kern_Zufall.
+## Keine zufälligen Namen: gleicher Seed + gleicher Keimpunkt = gleicher Name.
+## Pools sind in JSON definiert und erweiterbar.
 
 ## Silben-Pools pro Archetyp für Rassen-Namen
 const RASSEN_SILBEN_POOLS: Dictionary = {
@@ -78,13 +78,13 @@ const FRAKTION_SILBEN_POOLS: Dictionary = {
 static func generiere_rassen_name(archetyp: String, keimpunkt_id: String, welt_seed: int) -> String:
 	## Erzeuge RNG für diese spezifische Kombination
 	var rng := Kern_Zufall.abgeleitet_fuer(welt_seed, hash(keimpunkt_id + "_rasse_" + archetyp))
-	var pools := RASSEN_SILBEN_POOLS.get(archetyp, RASSEN_SILBEN_POOLS["wald"])
+	var pools: Dictionary = RASSEN_SILBEN_POOLS.get(archetyp, RASSEN_SILBEN_POOLS["wald"])
 
 	## Name-Struktur: Anfang + 1-2 Silben + Ende
 	var name := ""
-	var anfang_pool := pools.anfang
-	var silben_pool := pools.silben
-	var ende_pool := pools.ende
+	var anfang_pool: Array = pools.get("anfang", [])
+	var silben_pool: Array = pools.get("silben", [])
+	var ende_pool: Array = pools.get("ende", [])
 
 	## Anfang (1 Element)
 	var anfang_idx := rng.naechste_zahl() % anfang_pool.size()
@@ -105,18 +105,18 @@ static func generiere_rassen_name(archetyp: String, keimpunkt_id: String, welt_s
 static func generiere_fraktions_name(archetyp: String, keimpunkt_id: String, welt_seed: int) -> String:
 	## Erzeuge RNG für diese spezifische Kombination
 	var rng := Kern_Zufall.abgeleitet_fuer(welt_seed, hash(keimpunkt_id + "_fraktion_" + archetyp))
-	var pools := FRAKTION_SILBEN_POOLS.get(archetyp, FRAKTION_SILBEN_POOLS["wald"])
+	var pools: Dictionary = FRAKTION_SILBEN_POOLS.get(archetyp, FRAKTION_SILBEN_POOLS["wald"])
 
 	## Name-Struktur: Anfang + Mitte + Ende (mit Bindestrich oder Leerzeichen)
 	var rng_wahl := rng.naechste_zahl() % 3
 	var trennzeichen := " " if rng_wahl == 0 else "-" if rng_wahl == 1 else ""
 
-	var anfang_pool := pools.anfang
-	var mitte_pool := pools.mittel
-	var ende_pool := pools.ende
+	var anfang_pool: Array = pools.get("anfang", [])
+	var mitte_pool: Array = pools.get("mittel", [])
+	var ende_pool: Array = pools.get("ende", [])
 
 	var anfang_idx := rng.naechste_zahl() % anfang_pool.size()
-	var name := anfang_pool[anfang_idx]
+	var name: String = str(anfang_pool[anfang_idx])
 
 	var mitte_idx := rng.naechste_zahl() % mitte_pool.size()
 	name += trennzeichen + mitte_pool[mitte_idx].to_lower()
@@ -128,8 +128,8 @@ static func generiere_fraktions_name(archetyp: String, keimpunkt_id: String, wel
 
 static func hash(input: String) -> int:
 	## FNV-1a 64-bit Hash für deterministische Seed-Ableitung
-	var h := 0xcbf29ce484222325
+	var h: int = int(0x84222325) | (int(0xcbf29ce4) << 32)
 	for char in input:
 		h ^= ord(char)
-		h = (h * 0x100000001b3) & 0x7FFFFFFFFFFFFFFF
-	return int(h)
+		h = int((h * 0x100000001b3) & 0x7FFFFFFFFFFFFFFF)
+	return h

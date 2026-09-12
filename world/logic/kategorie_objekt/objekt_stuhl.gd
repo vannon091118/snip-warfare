@@ -1,5 +1,5 @@
 extends Objekt_Basis
-class_name Script_Stuhl
+class_name Objekt_Stuhl
 ## Ein einfaches Stuhl-Möbelobjekt. Erbt von Objekt_Basis und liest
 ## seine Werte aus dem Katalog-Eintrag. Der Renderer malt das SVG und
 ## der Kontextmenü-Handler nutzt die ziel_tags für Aktionen wie "Abbauen".

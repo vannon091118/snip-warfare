@@ -103,30 +103,30 @@ func _karten_flaeche_zeichnen() -> void:
 		_karten_flaeche.draw_string(ThemeDB.fallback_font, pos + Vector2(-20, 24), f.angezeigter_name, HORIZONTAL_ALIGNMENT_CENTER, -1, 13, Color.WHITE)
 
 	# 3b. Fraktionsverbindungen zeichnen (nachbarn-Linien)
-	var fraktionen_dict := {}
+	var fraktionen_dict: Dictionary = {}
 	for frak in _netzwerk_planer.fraktionen():
 		fraktionen_dict[frak.fraktion_id] = frak
-	var gezeichnete_paare := set()
+	var gezeichnete_paare: Dictionary = {}
 	for frak in _netzwerk_planer.fraktionen():
-		var pos_a := Vector2(float(frak.position_kachel.x) / float(_model.raster_breite) * _karten_flaeche.size.x, float(frak.position_kachel.y) / float(_model.raster_hoehe) * _karten_flaeche.size.y)
+		var pos_a: Vector2 = Vector2(float(frak.position_kachel.x) / float(_model.raster_breite) * _karten_flaeche.size.x, float(frak.position_kachel.y) / float(_model.raster_hoehe) * _karten_flaeche.size.y)
 		for nachbar_id in frak.nachbarn:
 			if fraktionen_dict.has(nachbar_id):
-				var frak_b := fraktionen_dict[nachbar_id]
+				var frak_b: Welt_Fraktion = fraktionen_dict[nachbar_id]
 				# Paar-ID zur Vermeidung von Doppelzeichnungen
-				var id_a := frak.fraktion_id
-				var id_b := frak_b.fraktion_id
+				var id_a: String = frak.fraktion_id
+				var id_b: String = frak_b.fraktion_id
 				if id_a > id_b:
-					var temp := id_a
-					id_a := id_b
-					id_b := temp
-				var paar := id_a + "," + id_b
-				if paar in gezeichnete_paare:
+					var temp: String = id_a
+					id_a = id_b
+					id_b = temp
+				var paar: String = id_a + "," + id_b
+				if gezeichnete_paare.has(paar):
 					continue
-				gezeichnete_paare.add(paar)
-				var pos_b := Vector2(float(frak_b.position_kachel.x) / float(_model.raster_breite) * _karten_flaeche.size.x, float(frak_b.position_kachel.y) / float(_model.raster_hoehe) * _karten_flaeche.size.y)
-				var linien_farbe := Color(0.8, 0.8, 0.8, 0.6)
-				var breite := 2.0
-				_karten_flaeche.draw_line(pos_a, pos_b, linien_farbe, breite)
+				gezeichnete_paare[paar] = true
+				var pos_b: Vector2 = Vector2(float(frak_b.position_kachel.x) / float(_model.raster_breite) * _karten_flaeche.size.x, float(frak_b.position_kachel.y) / float(_model.raster_hoehe) * _karten_flaeche.size.y)
+				var verbindung_farbe: Color = Color(0.8, 0.8, 0.8, 0.6)
+				var verbindung_breite: float = 2.0
+				_karten_flaeche.draw_line(pos_a, pos_b, verbindung_farbe, verbindung_breite)
 
 	# 4. Gewählte Spieler-Startregion hervorheben
 	var sp_rect := Rect2(float(_gewaehlte_region.x) * kachel_b, float(_gewaehlte_region.y) * kachel_h, kachel_b, kachel_h)

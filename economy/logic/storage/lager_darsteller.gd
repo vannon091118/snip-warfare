@@ -106,15 +106,15 @@ func _ressource_rendern(ressource_id: String, menge: int) -> void:
 		sprites.append(sprite)
 	
 	while sprites.size() > anzahl_icons:
-		var sprite := sprites.pop_back()
-		sprite.queue_free()
+		var entfernte_flaeche: Sprite2D = sprites.pop_back()
+		entfernte_flaeche.queue_free()
 	
 	# Positionen der Sprites setzen (gestapelt)
 	var start_x := -((anzahl_icons - 1) * _icon_abstand) * 0.5
 	for i in range(anzahl_icons):
-		var sprite := sprites[i]
-		sprite.position = Vector2(start_x + i * _icon_abstand, _stapel_versatz.y)
-		sprite.z_index = i  # Stapel-Reihenfolge
+		var stappel_flaeche: Sprite2D = sprites[i]
+		stappel_flaeche.position = Vector2(start_x + i * _icon_abstand, _stapel_versatz.y)
+		stappel_flaeche.z_index = i  # Stapel-Reihenfolge
 	
 	# Label für Anzahl (wenn > 5 oder generell zur Anzeige)
 	if label == null:

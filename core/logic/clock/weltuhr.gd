@@ -61,6 +61,12 @@ static func faktor_aus_ticks(ticks: int) -> float:
 		return FAKTOR_MIN
 	return clampf(float(ticks) / (FAKTOR_SEKUNDEN * TICK_RATE_HZ), FAKTOR_MIN, FAKTOR_MAX)
 
+## Einzige zentrale Übersetzung ticks -> Sekunden im ganzen Projekt.
+## Dauertexte und Anzeigen lesen sie hier ab, statt TICK_RATE_HZ
+## selbst zu teilen und die Formel zu duplizieren.
+static func sekunden_aus_ticks(ticks: int) -> float:
+	return float(ticks) / TICK_RATE_HZ
+
 ## Das Rahmen-Budget in Sekunden: Der hoechste Reststand, den der
 ## Akkumulator nach einem Rahmen tragen darf. Nur die Uhr selbst kennt
 ## diese Übersetzung, alle anderen lesen sie hier ab.

@@ -2,7 +2,7 @@ extends Kern_Mutation
 class_name Einheit_InventarMutationAbgabe
 ## Mutation: bucht eine Abgabe (Einlagern) aus dem Inventar aus.
 
-func _init(konfiguration: Dictionary = {}) -> void:
+func _init(_konfiguration: Dictionary = {}) -> void:
 	super("InventarAbgabe", Quelle.RESSOURCE,
 		"Entnimmt Ressourcen aus dem Einheit-Inventar.")
 

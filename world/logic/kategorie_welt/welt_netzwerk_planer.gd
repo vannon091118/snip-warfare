@@ -255,18 +255,18 @@ func _berechne_regionen(model: Welt_Model) -> Vector2i:
 	var regionen_y := ceili(float(model.raster_hoehe) / float(maxi(model.region_kante, 1)))
 	return Vector2i(regionen_x, regionen_y)
 
-func _belegte_regionen_ermitteln(model: Welt_Model, fraktionen: Array[Welt_Fraktion]) -> Array[Vector2i]:
+func _belegte_regionen_ermitteln(model: Welt_Model, eingehende_fraktionen: Array[Welt_Fraktion]) -> Array[Vector2i]:
 	var belegte: Array[Vector2i] = []
-	for f in fraktionen:
+	for f in eingehende_fraktionen:
 		var region := _region_von_fraktion(model, f)
 		if not belegte.has(region):
 			belegte.append(region)
 	return belegte
 
-func _wege_berechnen_mit_fraktionen(model: Welt_Model, fraktionen: Array[Welt_Fraktion]) -> void:
+func _wege_berechnen_mit_fraktionen(model: Welt_Model, eingehende_fraktionen: Array[Welt_Fraktion]) -> void:
 	# Weise übergebene Fraktionen dem internen Array zu
 	_fraktionen.clear()
-	for f in fraktionen:
+	for f in eingehende_fraktionen:
 		_fraktionen.append(f)
 	# Berechne Wege wie im Original
 	_wege_berechnen(model)

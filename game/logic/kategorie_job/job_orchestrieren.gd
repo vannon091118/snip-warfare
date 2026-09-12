@@ -1,6 +1,6 @@
 extends Job_Basis
 class_name Job_Orchestrieren
-## Der Job, den eine Orchestrator_Einheit permanent ausführt.
+## Der Job, den eine Orchestrator_EinheitDerWelt permanent ausführt.
 ## Er ist ein "reserved" Job: Er blockiert die Einheit nicht im herkömmlichen
 ## Sinne, sondern steuert die Orchestrator-Zone aktiv. Der Job läuft ununterbrochen
 ## und wird von der Orchestrator_Manager-Logik neu zugewiesen, wenn Prioritäten

@@ -51,8 +51,10 @@ var chunk_groesse: int = 8
 var _naechste_objekt_nummer: int = 1
 var _biom_manager: Welt_BiomManager = null
 var _welt_registry: Welt_Registry = null
-var _biom_analyzer: Biom_Analyzer = null
+var _biom_analyser: Welt_BiomAnalyser = null
 
+## Kategorie logik: Lesen und Schreiben des Rasters, der Regionen und
+## der Tile-Leben. Alles andere delegiert an die eigenen Funktionen.
 func _init() -> void:
 	ueberziehe_fliesen("boden")
 	_lade_erschopfung_config()
@@ -280,8 +282,8 @@ func biom_raster_schreiben(hoehe_raster: Array[float], feuchtigkeit_raster: Arra
 	if hoehe_raster.size() < raster_breite * raster_hoehe or feuchtigkeit_raster.size() < raster_breite * raster_hoehe or temperatur_raster.size() < raster_breite * raster_hoehe:
 		push_warning("Biom-Analyzer: Noise-Rastergroesse stimmt nicht mit Welt-Raster überein.")
 		return
-	if _biom_analyzer == null:
-		_biom_analyzer = Biom_Analyzer.new()
+	if _biom_analyser == null:
+		_biom_analyser = Welt_BiomAnalyser.new()
 	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
 	for y in range(raster_hoehe):
 		for x in range(raster_breite):
@@ -289,7 +291,7 @@ func biom_raster_schreiben(hoehe_raster: Array[float], feuchtigkeit_raster: Arra
 			var height := hoehe_raster[index]
 			var moisture := feuchtigkeit_raster[index]
 			var temperature := temperatur_raster[index]
-			var biom_id := _biom_analyzer.analysiere_biom(height, moisture, temperature)
+			var biom_id: String = _biom_analyser.analysiere_biom(height, moisture, temperature)
 			biom_raster["%d:%d:%d" % [x, y, z]] = biom_id
 
 func objekte_leeren() -> void:
@@ -313,8 +315,7 @@ func region_an(position: Vector2, z_ebene: int = 0) -> Dictionary:
 	var kachel_y := int(position.y / float(kachel_groesse))
 	return region_an_kachel(kachel_x, kachel_y, z_ebene)
 
-func region_an_kachel(kachel_x: int, kachel_y: int, z_ebene: int = 0) -> Dictionary:
-	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+func region_an_kachel(kachel_x: int, kachel_y: int, _z_ebene: int = 0) -> Dictionary:
 	for region: Dictionary in regionen:
 		var start_x := int(region.get("region_x", 0)) * region_kante
 		var start_y := int(region.get("region_y", 0)) * region_kante
@@ -367,12 +368,12 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 	var neues_raster: Variant = daten.get("raster", {})
 	if typeof(neues_raster) == TYPE_DICTIONARY:
 		# Format: Dictionary mit "x:y:z" Schlüsseln
-		for key, wert in neues_raster:
-			raster[key] = str(wert)
+		for schluessel: String in neues_raster:
+			raster[schluessel] = str(neues_raster[schluessel])
 	var neues_biom_raster: Variant = daten.get("biom_raster", {})
 	if typeof(neues_biom_raster) == TYPE_DICTIONARY:
-		for key, wert in neues_biom_raster:
-			biom_raster[key] = str(wert)
+		for schluessel: String in neues_biom_raster:
+			biom_raster[schluessel] = str(neues_biom_raster[schluessel])
 	objekte.clear()
 	_naechste_objekt_nummer = 1
 	var neue_objekte: Variant = daten.get("objekte", [])
@@ -419,7 +420,7 @@ func _eskalation_anwenden(geladene_version: int) -> void:
 		if regionen.is_empty() and welt_seed == 0:
 			# Alter Save ohne Seed: deterministisch aus biom_id ableiten,
 			# damit gleiche alte Welt nicht zufällig neu würfelt.
-			welt_seed = int(hash(biom_id) & 0x7FFFFFFF)
+			welt_seed = int(Pop_NamensGenerator.hash(biom_id) & 0x7FFFFFFF)
 		for region in regionen:
 			if int(region.get("chunk_kante", 0)) == 2:
 				region["chunk_kante"] = Welt_Generator.CHUNK_GROESSE
@@ -430,39 +431,39 @@ func _eskalation_anwenden(geladene_version: int) -> void:
 		biom_raster.clear()
 		if typeof(alt_biom_raster) == TYPE_ARRAY:
 			for i in range(alt_biom_raster.size()):
-				var y := int(i / raster_breite)
-				var x := i % raster_breite
-				biom_raster["%d:%d:0" % [x, y]] = str(alt_biom_raster[i])
+				var biom_spalte := int(i / float(raster_breite))
+				var biom_zeile := i % raster_breite
+				biom_raster["%d:%d:0" % [biom_zeile, biom_spalte]] = str(alt_biom_raster[i])
 		elif typeof(alt_biom_raster) == TYPE_DICTIONARY:
-			for key, wert in alt_biom_raster:
+			for schluessel: String in alt_biom_raster:
 				# Alte Keys ohne Z: "x:y" -> "x:y:0"
-				var teile := key.split(":")
-				if teile.size() == 2:
-					biom_raster["%s:0" % [key]] = str(wert)
+				var biom_teile := schluessel.split(":")
+				if biom_teile.size() == 2:
+					biom_raster["%s:0" % [schluessel]] = str(alt_biom_raster[schluessel])
 				else:
-					biom_raster[key] = str(wert)
+					biom_raster[schluessel] = str(alt_biom_raster[schluessel])
 		# Raster migrieren falls altes Format
 		var alt_raster := raster.duplicate()
 		raster.clear()
 		if typeof(alt_raster) == TYPE_ARRAY:
 			for i in range(alt_raster.size()):
-				var y := int(i / raster_breite)
-				var x := i % raster_breite
-				raster["%d:%d:0" % [x, y]] = str(alt_raster[i])
+				var raster_spalte := int(i / float(raster_breite))
+				var raster_zeile := i % raster_breite
+				raster["%d:%d:0" % [raster_zeile, raster_spalte]] = str(alt_raster[i])
 		elif typeof(alt_raster) == TYPE_DICTIONARY:
-			for key, wert in alt_raster:
-				var teile := key.split(":")
-				if teile.size() == 2:
-					raster["%s:0" % [key]] = str(wert)
+			for schluessel: String in alt_raster:
+				var raster_teile := schluessel.split(":")
+				if raster_teile.size() == 2:
+					raster["%s:0" % [schluessel]] = str(alt_raster[schluessel])
 				else:
-					raster[key] = str(wert)
+					raster[schluessel] = str(alt_raster[schluessel])
 
 ## Erschöpfungssystem: Pro Chunk und Ressourcentyp.
 ## Erschöpfung wird einmalig bei Generierung gesetzt und kann nur durch
 ## neue Chunkgenerierung via Expansion erhöht (bzw. zurückgesetzt) werden.
 ## Wenn lager_bestand / erschoepfungs_maximum > 0.8 blockiert Spawn.
-var ERSCHOEPFUNG_MAXIMUM := 100
-var ERSCHOEPFUNG_SPAWN_SCHWELLE := 0.8
+var _erschoepfung_maximum: int = 100
+var _erschoepfung_spawn_schwelle: float = 0.8
 var _erschoepfung_pro_chunk: Dictionary = {}
 var _erschopfung_config_geladen := false
 
@@ -477,12 +478,12 @@ func _lade_erschopfung_config() -> void:
 	if datei != null:
 		var text := datei.get_as_text()
 		datei.close()
-		var config := JSON.parse_string(text)
+		var config: Variant = JSON.parse_string(text)
 		if typeof(config) == TYPE_DICTIONARY:
 			if config.has("erschoepfung_spawn_schwelle"):
-				ERSCHOEPFUNG_SPAWN_SCHWELLE = float(config["erschoepfung_spawn_schwelle"])
+				_erschoepfung_spawn_schwelle = float(config["erschoepfung_spawn_schwelle"])
 			if config.has("erschoepfung_maximum"):
-				ERSCHOEPFUNG_MAXIMUM = int(config["erschoepfung_maximum"])
+				_erschoepfung_maximum = int(config["erschoepfung_maximum"])
 	_erschopfung_config_geladen = true
 
 func _chunk_key_aus_position(x: int, y: int) -> String:
@@ -512,7 +513,7 @@ func erschoepfung_holen(chunk_key: String, ressource_typ: String) -> int:
 	# Liefert aktuellen Erschöpfungswert für Ressource in Chunk (0-100).
 	if not _erschoepfung_pro_chunk.has(chunk_key):
 		return 0
-	var chunk_daten := _erschoepfung_pro_chunk[chunk_key]
+	var chunk_daten: Dictionary = _erschoepfung_pro_chunk[chunk_key]
 	return int(chunk_daten.get(ressource_typ, 0))
 
 func erschoepfung_setzen(chunk_key: String, ressource_typ: String, wert: int) -> void:
@@ -522,7 +523,7 @@ func erschoepfung_setzen(chunk_key: String, ressource_typ: String, wert: int) ->
 		for typ in RESSOURCE_TYPEN:
 			chunk_daten[typ] = 0
 		_erschoepfung_pro_chunk[chunk_key] = chunk_daten
-	_erschoepfung_pro_chunk[chunk_key][ressource_typ] = clampi(wert, 0, ERSCHOEPFUNG_MAXIMUM)
+	_erschoepfung_pro_chunk[chunk_key][ressource_typ] = clampi(wert, 0, _erschoepfung_maximum)
 
 func erschoepfung_erhoehen(chunk_key: String, ressource_typ: String, delta: int) -> void:
 	# Erhöht Erschöpfung beim Abbau/Ernte. Kann nicht über Maximum hinaus.
@@ -531,20 +532,20 @@ func erschoepfung_erhoehen(chunk_key: String, ressource_typ: String, delta: int)
 
 func erschoepfung_prozent(chunk_key: String, ressource_typ: String) -> float:
 	# Liefert Erschöpfung als 0.0-1.0 Wert.
-	return float(erschoepfung_holen(chunk_key, ressource_typ)) / float(ERSCHOEPFUNG_MAXIMUM)
+	return float(erschoepfung_holen(chunk_key, ressource_typ)) / float(_erschoepfung_maximum)
 
 func kann_ressource_spawnen(chunk_key: String, ressource_typ: String, lager_bestand: int) -> bool:
 	# Prüft ob Ressource in Chunk spawnen darf.
 	# Blockiert wenn lager_bestand / erschoepfungs_maximum > erschoepfung_spawn_schwelle
 	# (d.h. Erschöpfung > erschoepfung_spawn_schwelle bei vollem Lagerbestand relativ zum Maximum).
 	var erschoepfung := erschoepfung_holen(chunk_key, ressource_typ)
-	if float(erschoepfung) / float(ERSCHOEPFUNG_MAXIMUM) > ERSCHOEPFUNG_SPAWN_SCHWELLE:
+	if float(erschoepfung) / float(_erschoepfung_maximum) > _erschoepfung_spawn_schwelle:
 		return false
 	# Zusatzprüfung: Wenn Lagerbestand hoch aber Erschöpfung auch hoch -> kein Spawn
 	# Dies erzwingt Expansion als einzige Wachstumsstrategie.
-	if lager_bestand > 0 and float(erschoepfung) / float(ERSCHOEPFUNG_MAXIMUM) > 0.5:
-		var verh := float(lager_bestand) / float(ERSCHOEPFUNG_MAXIMUM)
-		if verh > ERSCHOEPFUNG_SPAWN_SCHWELLE:
+	if lager_bestand > 0 and float(erschoepfung) / float(_erschoepfung_maximum) > 0.5:
+		var verh := float(lager_bestand) / float(_erschoepfung_maximum)
+		if verh > _erschoepfung_spawn_schwelle:
 			return false
 	return true
 
@@ -552,7 +553,7 @@ func erschoepfung_zuruecksetzen_fuer_chunk(chunk_key: String) -> void:
 	# Setzt Erschöpfung für alle Ressourcentypen eines Chunks auf 0.
 	# Wird bei Expansion (neue Karte) aufgerufen.
 	if _erschoepfung_pro_chunk.has(chunk_key):
-		var chunk_daten := _erschoepfung_pro_chunk[chunk_key]
+		var chunk_daten: Dictionary = _erschoepfung_pro_chunk[chunk_key]
 		for typ in RESSOURCE_TYPEN:
 			chunk_daten[typ] = 0
 

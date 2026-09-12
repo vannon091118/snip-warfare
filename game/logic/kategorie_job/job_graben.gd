@@ -24,11 +24,10 @@ func graben_ausfuehren(model: Welt_Model, x: int, y: int, z_ebene: int = 0) -> b
 	var neues_leben := model.tile_leben_schaden(x, y, z_ebene, schaden)
 	
 	if neues_leben <= 0:
-		# Tile wurde entfernt -> Decke-entfernt Signal ausstoßen
-		var pos := Vector2(x * model.kachel_groesse + model.kachel_groesse / 2.0, 
+		# Tile wurde entfernt -> Decke-entfernt Signal ausstoßen		var pos := Vector2(x * model.kachel_groesse + model.kachel_groesse / 2.0,
 						  y * model.kachel_groesse + model.kachel_groesse / 2.0)
 		var bus := Kern_SignalBus.bus()
-		if bus != null:
+		if bus != null and bus.has_signal("decken_entfernt"):
 			bus._emit_decke_entfernt(pos, z_ebene)
 		return true
 	return false

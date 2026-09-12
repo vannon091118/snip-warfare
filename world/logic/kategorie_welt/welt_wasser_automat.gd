@@ -12,9 +12,12 @@ const TILE_WASSER := "wasser"
 const TILE_UFER := "ufer"
 const TICK_INTERVALL := 3  # Alle 3 Ticks
 
+## Kategorie daten: Wasser-Queue und Verbindungsstatus.
 var _model: Welt_Model = null
 var _registry: Welt_Registry = null
 var _dirty_queue: Array[Dictionary] = []  # Einträge: {"x": int, "y": int, "z": int}
+
+## Kategorie logik: Tick-Verarbeitung und Wasserfluss.
 var _verarbeitete_ticks: int = 0
 var _signal_verbunden: bool = false
 var _weltuhr_verbunden: bool = false
@@ -36,7 +39,7 @@ func einrichten(model: Welt_Model, registry: Welt_Registry) -> void:
 func _weltuhr_anschliessen() -> void:
 	var weltuhr := Kern_Weltuhr.bus()
 	if weltuhr != null and not _weltuhr_verbunden:
-		weltenuhr.tick.connect(_auf_weltuhr_tick)
+		weltuhr.tick.connect(_auf_weltuhr_tick)
 		_weltuhr_verbunden = true
 
 func _auf_weltuhr_tick(_tick_nummer: int, _delta: float) -> void:
@@ -72,7 +75,7 @@ func _auf_decke_entfernt(position: Vector2, z_ebene: int) -> void:
 			# Wasser über dem Loch zur Dirty-Queue hinzufügen
 			_dirty_queue.append({"x": x, "y": y, "z": z_oben})
 
-func tick(delta: float) -> void:
+func tick(_delta: float) -> void:
 	_verarbeitete_ticks += 1
 	if _verarbeitete_ticks % TICK_INTERVALL != 0:
 		return
@@ -128,8 +131,8 @@ func _wasser_schritt() -> void:
 					_ufersaeume_bilden_fuer(x, y, z_unten)
 	
 	# Neue Einträge zur Queue hinzufügen
-	for e in neue_queue:
-		_dirty_queue.append(e)
+	for eintrag: Dictionary in neue_queue:
+		_dirty_queue.append(eintrag)
 
 func _ufersaeume_bilden_fuer(x: int, y: int, z: int) -> void:
 	# Bildet Ufer um das Wasser-Tile bei (x,y,z)

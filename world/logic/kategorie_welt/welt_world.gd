@@ -23,7 +23,7 @@ var _karten: Dictionary = {}
 const SPEICHER_VERSION := 1
 
 ## Karawanen-Manager: Global für alle Karten dieser World.
-var _karawanen_manager: Karawanen_Manager = null
+var _karawanen_manager: Welt_KarawanenManager = null
 
 ## Kategorie logik: Eintragen, Suchen und Abfragen der Maps.
 
@@ -129,7 +129,7 @@ func map_zahl() -> int:
 func map_karte(map_id: String) -> Dictionary:
 	# Gibt das Parallel-Map-Info zurück: {"model": Welt_Model, "ist_aktiv": bool, "lager_daten": Array}
 	if _karten.has(map_id):
-		var info := _karten[map_id].duplicate(true)
+		var info: Dictionary = _karten[map_id].duplicate(true)
 		return info
 	return {"model": null, "ist_aktiv": false, "lager_daten": []}
 
@@ -188,7 +188,7 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 
 ## Parallel-Map: Karawanen-Handel zwischen Karten.
 
-func karawane_ankunft_verarbeiten(karawane: Karawanen_Einheit) -> bool:
+func karawane_ankunft_verarbeiten(karawane: Welt_Karawane) -> bool:
 	## Verarbeitet die Ankunft einer Karawane auf der Zielkarte.
 	## Führt die Einlagerung direkt über Mutation auf dem Ziel-Modell aus.
 	## Funktioniert auch auf inaktiven Karten (kein SubViewport, kein Threading,
@@ -250,7 +250,7 @@ func karawane_ankunft_verarbeiten(karawane: Karawanen_Einheit) -> bool:
 func _erster_gueltiger_lager_index(lager_daten: Array) -> int:
 	## Findet den ersten Lager-Index mit Kapazität > 0, oder -1 wenn keins.
 	for idx in lager_daten.size():
-		var lager := lager_daten[idx]
+		var lager: Variant = lager_daten[idx]
 		var kapazitaet := int(lager.get("kapazitaet", 0))
 		if kapazitaet > 0:
 			return idx
@@ -290,11 +290,11 @@ func karte_ist_aktiv(map_id: String) -> bool:
 		return _karten[map_id]["ist_aktiv"]
 	return false
 
-func karawanen_manager() -> Karawanen_Manager:
+func karawanen_manager() -> Welt_KarawanenManager:
 	## Gibt den globalen Karawanen-Manager zurück (erzeugt ihn bei Bedarf).
 	if _karawanen_manager == null:
-		_karawanen_manager = Karawanen_Manager.new()
+		_karawanen_manager = Welt_KarawanenManager.new()
 	return _karawanen_manager
 
-func karawanen_manager_setzen(manager: Karawanen_Manager) -> void:
+func karawanen_manager_setzen(manager: Welt_KarawanenManager) -> void:
 	_karawanen_manager = manager

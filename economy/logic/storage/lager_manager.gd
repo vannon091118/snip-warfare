@@ -138,7 +138,7 @@ func entnehmen(ressource: String, menge: int, lager_index: int) -> bool:
 	lager_geaendert_emit(lager_index, ressource, -menge)
 	return true
 
-func lager_geaendert_emit(lager_index: int, ressource: String, menge_delta: int) -> void:
+func lager_geaendert_emit(lager_index: int, _ressource: String, _menge_delta: int) -> void:
 	var lager_id := "lager_%d" % lager_index
 	var bus := Kern_SignalBus.bus()
 	if bus != null and bus.has_signal("lager_geaendert"):

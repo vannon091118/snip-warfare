@@ -1,5 +1,5 @@
 extends RefCounted
-class_name Karawanen_Einheit
+class_name Welt_Karawane
 ## Karawanen-Einheit: Repräsentiert eine Handels-Karawane, die zwischen Karten
 ## der World pendelt. Sie besitzt eine eigene State Machine für Reise, Ankunft
 ## und Entladung. Die Reisedauer wird aus dem Makro-Netzwerk (Welt_NetzwerkPlaner.wege)
@@ -21,7 +21,7 @@ var _aktueller_fortschritt: float = 0.0
 
 enum Zustand { WARTEND, UNTERWEGS, ANGEKOMMEN, ENTLADEN, FERTIG }
 
-func _init(k_id: String = "", von: String = "", nach: String = "", v_pos: Vector2 = Vector2.ZERO, n_pos: Vector2 = Vector2.ZERO, ticks: int = 0, fracht: Dictionary = {}) -> void:
+func _init(k_id: String = "", von: String = "", nach: String = "", v_pos: Vector2 = Vector2.ZERO, n_pos: Vector2 = Vector2.ZERO, ticks: int = 0, fracht_ladung: Dictionary = {}) -> void:
 	karawanen_id = k_id
 	von_map_id = von
 	nach_map_id = nach
@@ -29,7 +29,7 @@ func _init(k_id: String = "", von: String = "", nach: String = "", v_pos: Vector
 	nach_position = n_pos
 	reise_ticks = maxi(ticks, 1)
 	_verbleibende_ticks = reise_ticks
-	_fraescht = fracht.duplicate(true)
+	_fraescht = fracht_ladung.duplicate(true)
 	_zustand = "wartend"
 	_aktueller_fortschritt = 0.0
 
@@ -120,12 +120,12 @@ func entladen(ziel_lager_manager: Object) -> bool:
 		# für den Lager-Index, da die Karawane auf Kartenebene agiert.
 		var lager_index := 0
 		if ziel_lager_manager != null and ziel_lager_manager.has_method("naechstes_lager_fuer"):
-			lager_index := ziel_lager_manager.naechstes_lager_fuer(nach_position)
+			lager_index = ziel_lager_manager.naechstes_lager_fuer(nach_position)
 		if lager_index < 0:
 			lager_index = 0
 		
 		if ziel_lager_manager != null and ziel_lager_manager.has_method("einlagern"):
-			var ok := ziel_lager_manager.einlagern(ressource, menge, lager_index)
+			var ok: bool = ziel_lager_manager.einlagern(ressource, menge, lager_index)
 			if not ok:
 				alles_erfolgreich = false
 		else:
@@ -139,11 +139,11 @@ func entladen(ziel_lager_manager: Object) -> bool:
 
 func reise_dauer_text() -> String:
 	## Formatierte Reisedauer für UI-Anzeige.
-	var sekunden := float(reise_ticks) / 24.0  # 24 Ticks pro Sekunde
+	var sekunden := Kern_Weltuhr.sekunden_aus_ticks(reise_ticks)
 	if sekunden < 60:
 		return "%ds" % int(sekunden)
 	var minuten := int(sekunden / 60)
-	var rest_sek := int(sekunden % 60)
+	var rest_sek := int(fmod(sekunden, 60.0))
 	return "%dm %ds" % [minuten, rest_sek]
 
 func nach_woerterbuch() -> Dictionary:
@@ -166,8 +166,8 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 	karawanen_id = str(daten.get("karawanen_id", ""))
 	von_map_id = str(daten.get("von_map_id", ""))
 	nach_map_id = str(daten.get("nach_map_id", ""))
-	var v_pos := daten.get("von_position", [0, 0])
-	var n_pos := daten.get("nach_position", [0, 0])
+	var v_pos: Variant = daten.get("von_position", [0, 0])
+	var n_pos: Variant = daten.get("nach_position", [0, 0])
 	von_position = Vector2(v_pos[0], v_pos[1])
 	nach_position = Vector2(n_pos[0], n_pos[1])
 	reise_ticks = maxi(int(daten.get("reise_ticks", 0)), 1)

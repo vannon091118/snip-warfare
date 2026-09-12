@@ -52,7 +52,7 @@ func schritt_vorruecken() -> bool:
 	# über lager_erreicht() und ablieferung_fertig().
 	return false
 
-func arbeitsschritt(ziel_ressource: String) -> void:
+func arbeitsschritt(_ziel_ressource: String) -> void:
 	# Wird nicht für Ernte verwendet; Abgabe passiert über die Phase.
 	pass
 

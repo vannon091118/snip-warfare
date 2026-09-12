@@ -64,18 +64,18 @@ func registriere_generiert(rasse_id: String, schema: Pop_RassenSchema) -> void:
 
 	_schemata.append(schema)
 	_schemata_nach_id[rasse_id] = schema
-	push_debug("Generiertes Rassen-Schema registriert: %s (%s)" % [rasse_id, schema.angezeigter_name])
+	print("Generiertes Rassen-Schema registriert: %s (%s)" % [rasse_id, schema.angezeigter_name])
 
 ## Kategorie logik: Entfernen generierter Schemata (z.B. bei Welt-Neugenerierung).
 
 func entferne_generiert(rasse_id: String) -> void:
 	if _schemata_nach_id.has(rasse_id):
-		var schema := _schemata_nach_id[rasse_id]
-		var index := _schemata.find(schema)
+		var schema: Pop_RassenSchema = _schemata_nach_id[rasse_id]
+		var index: int = _schemata.find(schema)
 		if index >= 0:
 			_schemata.remove_at(index)
 		_schemata_nach_id.erase(rasse_id)
-		push_debug("Generiertes Rassen-Schema entfernt: %s" % rasse_id)
+		print("Generiertes Rassen-Schema entfernt: %s" % rasse_id)
 
 func entferne_alle_generierten() -> void:
 	## Entfernt alle Schemata, die nicht aus der Basis-JSON stammen

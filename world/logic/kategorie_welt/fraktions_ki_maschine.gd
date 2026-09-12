@@ -1,5 +1,5 @@
 extends RefCounted
-class_name Fraktions_KI_Maschine
+class_name Welt_FraktionsKiMaschine
 ## Fraktions-KI Maschine: Läuft pro Fraktion alle 120 Weltuhr-Ticks.
 ## Liest drei Schwellenwerte aus fraktions_ki_config.json: Expansion, Handel, Konflikt.
 ## Berechnet Aggression: aggressions_basis * (ressourcen_bedarf / max(1, lager_bestand)).
@@ -38,7 +38,7 @@ func einrichten(fraktion: Welt_Fraktion, welt_model: Welt_Model, welt_world: Wel
 	_config = config
 	_tick_zaehler = 0
 
-func tick(weltuhr_tick: int) -> void:
+func tick(_weltuhr_tick: int) -> void:
 	_tick_zaehler += 1
 	if _tick_zaehler < KI_TICK_INTERVALL:
 		return
@@ -49,7 +49,7 @@ func _ki_entscheidung_treffen() -> void:
 	if _fraktion == null or _welt_model == null or _config.is_empty():
 		return
 
-	var expansion_schwelle := float(_config.get("expansion", 0.6))
+	var expansion_schwelle := float(_config.get("expansion", 0.6))  # RUECKFALL
 	var handel_schwelle := float(_config.get("handel", 0.4))
 	var konflikt_schwelle := float(_config.get("konflikt", 0.7))
 	var aggressions_basis := float(_config.get("aggressions_basis", 1.0))

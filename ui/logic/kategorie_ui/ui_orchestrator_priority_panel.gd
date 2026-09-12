@@ -1,5 +1,5 @@
 extends PopupPanel
-class_name Orchestrator_PriorityPanel
+class_name Ui_OrchestratorPriorityPanel
 ## Panel für Orchestrator-Prioritäten: Der Spieler klickt auf eine
 ## Orchestrator-Einheit und ändert die Prioritäten der Bedarfsliste in
 ## der orchestrator_config.json. Das Panel liest die Konfiguration des
@@ -128,7 +128,7 @@ func _ui_erstellen() -> void:
 	btn_schliessen.pressed.connect(_auf_schliessen)
 	_ui_container.add_child(btn_schliessen)
 
-func _auf_prioritaet_hoch(idx: int, prio_label: Label) -> void:
+func _auf_prioritaet_hoch(idx: int, _prio_label: Label) -> void:
 	if _aktuelle_konfig == null or _orchestrator_manager == null:
 		return
 	var bedarfe := _aktuelle_konfig.bedarfsliste
@@ -141,7 +141,7 @@ func _auf_prioritaet_hoch(idx: int, prio_label: Label) -> void:
 	_config_speichern()
 	_ui_erstellen()
 
-func _auf_prioritaet_runter(idx: int, prio_label: Label) -> void:
+func _auf_prioritaet_runter(idx: int, _prio_label: Label) -> void:
 	if _aktuelle_konfig == null or _orchestrator_manager == null:
 		return
 	var bedarfe := _aktuelle_konfig.bedarfsliste

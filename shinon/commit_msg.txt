@@ -1,15 +1,14 @@
-1. Der Kommandant verlangte nach den ersten Rettungsmassnahmen unerbittlich die Sanierung der verbliebenen Leistungsfresser und architektonischen Schandflecke im Simulationsmotor.
-2. In world/data/atmosphaere.json wurden feste Taktintervalle und ein gnadenloses Budget gegen sinnlose Partikelflut verankert.
-3. Die Konfigurationsstelle world/logic/kategorie_atmosphaere/welt_atmosphaere_konfig.gd liest diese Budgetgrenzen nun sauber und ohne harte Zahlen im Quelltext aus.
-4. Durch world/logic/kategorie_atmosphaere/welt_atmosphaere_verdrahtung.gd laesst sich das gesamte atmosphaerische Treiben bei fernen Kamerablicken nun augenblicklich stummschalten.
-5. In world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd wirbeln Blaetter und Pollen jetzt nur noch in gedrosselten Takten ueber den Bildschirm, statt die Renderpipeline in jedem Takt zu ersticken.
-6. Das neu erschaffene Raumgitter in world/logic/kategorie_welt/welt_objekt_gitter.gd zerlegt die Welt in handliche Zellen und beendet das lineare Durchforsten riesiger Objektlisten.
-7. Der Renderer in world/logic/kategorie_welt/welt_renderer.gd greift ab sofort auf diese Raumzellen zu und baut nur noch diejenigen Knoten auf, die das Sichtfeld tatsaechlich beruehren.
-8. Im Herzstueck game/logic/kategorie_einheit/einheit_manager.gd wurden die gierigen Nachbarschaftsscans auf zwoelf Takte gestreckt und ein Tierdistanz-Cache riegelt sinnlose Pruefungen ab.
-9. Die Szenenwurzel world/scenes/welt.gd kapselt ihren Ladevorgang nun in einer eigenen Methode und buendelt den atomaren Modellwechsel fuer alle Domaenen an einer zentralen Stelle.
-10. In game/logic/kategorie_einheit/einheit_darsteller.gd gehorcht das Erscheinungsbild der Siedler nun praezise den Befehlen und traegt seine optischen Zustaende ohne Verzerrung.
-11. Die visuelle Markierungsklasse ui/logic/kategorie_ui/ui_auswahl_markierung.gd zeichnet den goldenen Auswahlkreis fuer markierte Kolonisten nun fehlerfrei auf die Bildflaeche.
-12. Die Steuerzentrale ui/logic/kategorie_ui/ui_eingabe_steuerung.gd bindet die neue Auswahlmarkierung nahtlos an die Linksklick- und Rahmenlogik an.
-13. In world/logic/kategorie_welt/welt_landeplatz_anzeige.gd pulsiert der designierte Landepunkt nun sauber am Horizont und weist dem ersten Bauvorhaben unmissverstaendlich den Weg.
-14. Die gesamte Simulationsarchitektur laeuft nun spuerbar fluessiger, ohne dass unbedachte Schleifen den Takt der Weltuhr ins Stottern bringen.
-15. Als naechstes muessen die neuen Entlastungen im lebendigen Spielgeschehen auf Herz und Nieren geprueft und die weiteren Punkte des Kolonie-Ausbaus vorbereitet werden.
+1. Der Nutzer schickte mich los, den wilden Kilo-Zweig kilo/neural-rune-eze zu bergen und durchs Shinon-Tor zu schleusen.
+2. Die Weltuhr stotterte wegen weltenuhr, also heilte weltuhr.gd mit zentralem sekunden_aus_ticks und liess welt_model.gd und welt_raum_analyser.gd wieder im Takt lauschen.
+3. Im Generatorviertel richtete ich welt_biom_analyser.gd, welt_feld_analyser.gd, welt_generator.gd, welt_fraktions_generator.gd, generator_gewaesser.gd und generator_felsmassive.gd mit absi, clampf und RUECKFALL.
+4. Der Brutkasten fraktions_keimling_analysator.gd verhedderte cid und cell_id, also flocht ich ihn neu und gab fraktions_ki_maschine.gd und welt_netzwerk_planer.gd klare Typen.
+5. Die Bevoelkerungsloge hiess noch rasse_generator.gd, also taufte ich zu pop_rassen_generator.gd und band pop_rassen_schema.gd und pop_rassen_schema_registry.gd an die Instanz.
+6. pop_namens_generator.gd rief hash als Pop_NamensGenerator.hash auf, also zog ich den Ruf auf die Instanz und richtete pop_need_baum.gd mit Tabs aus.
+7. Die Karawanenstrasse war blockiert, weil welt_karawane.gd und welt_karawanen_manager.gd mit lager_index := stolperten, also tauschte ich gegen Zuweisung.
+8. welt_world.gd rief noch Karawanen_Manager, deshalb stellte ich auf Welt_KarawanenManager um und liess welt_wasser_automat.gd wieder Wasser pumpen statt Fehler.
+9. Das Moebellager war leer, also weckte ich moebel_registry.gd, objekt_bett.gd, objekt_schrank.gd, objekt_stuhl.gd, objekt_tisch.gd und objekt_tisch_stahl.gd und legte bett.svg, schrank.svg, stuhl.svg, tisch.svg und tisch_stahl.svg ab.
+10. Dazu legte ich ressource_fisch.svg als Beute-Taler fuer die Fischer und gab der UI wieder ein Netz auf der Karte.
+11. Die Hallen quietschten, weil lager_darsteller.gd, lager_manager.gd, einheit_inventar.gd, einheit_inventar_mutation_abgabe.gd und einheit_inventar_mutation_aufnahme.gd Variant stapelten, also verspannte ich sie.
+12. Die Heerfuehrer einheit_manager.gd, orchestrator_einheit.gd, orchestrator_manager.gd und welt_fortschritts_maschine.gd liefen ohne Registry, also band ich sie an _rassen_registry und tageszyklus_maschine.gd.
+13. Auf den Baustellen schliefen job_graben.gd, job_transport.gd, job_orchestrieren.gd, ui_bau_panel.gd, ui_eingabe_steuerung.gd, ui_orchestrator_priority_panel.gd, ui_pop_einheit_uebersetzer.gd und pop_einheit_panel.gd zwischen Variant und Tabs.
+14. Die Buehne welt.gd und welt_map.gd stolperte ueber Leerzeichen statt Tabs und verlor _lager_fabrik, also richtete ich sie und lasse nun die Moebel und Karawanen probefahren.

@@ -20,9 +20,9 @@ const REGION_KANTE := 4
 const DEFINITION_PFAD := "res://world/data/welt_definition.json"
 const _GewaesserSkript := preload("res://world/logic/kategorie_generator/generator_gewaesser.gd")
 const _FelsmassiveSkript := preload("res://world/logic/kategorie_generator/generator_felsmassive.gd")
-const _KeimlingSkript := preload("res://world/logic/kategorie_generator/fraktions_keimling_analysator.gd")
-const _FraktionsGenSkript := preload("res://world/logic/kategorie_generator/welt_fraktions_generator.gd")
-const _RassenGenSkript := preload("res://population/logic/rasse_generator.gd")
+const _KeimlingSkript = preload("res://world/logic/kategorie_generator/fraktions_keimling_analysator.gd")
+const _FraktionsGenSkript = preload("res://world/logic/kategorie_generator/welt_fraktions_generator.gd")
+const _RassenGenSkript := preload("res://population/logic/needs/pop_rassen_generator.gd")
 
 ## Kategorie daten: die kombinierten Maschinen und das Protokoll.
 var registry: Welt_GeneratorRegistry = null
@@ -32,7 +32,7 @@ var gewaesser: RefCounted = null
 var felsmassive: RefCounted = null
 var keimling_analysator: Welt_FraktionsKeimlingAnalysator = null
 var fraktions_generator: Welt_FraktionsGenerator = null
-var rassen_generator: Bevölkerung_RassenGenerator = null
+var rassen_generator: Pop_RassenGenerator = null
 var netzwerk_planer: Welt_NetzwerkPlaner = null
 var verworfene_chunks: int = 0
 var regionen_geplant: int = 0
@@ -65,17 +65,20 @@ func _init() -> void:
 	## FraktionsGenerator mit allen Abhängigkeiten verbinden
 	fraktions_generator.einrichten(keimling_analysator, rassen_generator, netzwerk_planer, registry)
 
-func init_fast_noise(welt_seed: int, generator_gewichte: Dictionary) -> void:
+func rassen_registry_setzen(registry_inst: Pop_RassenSchemaRegistry) -> void:
+	rassen_generator.registry_setzen(registry_inst)
+
+func init_fast_noise(seed_wert: int, generator_gewichte: Dictionary) -> void:
 	# Deterministische Seed-Ableitung für jede Noise-Instanz via Kern_Zufall.
 	# Pattern: Kern_Zufall.abgeleitet_fuer("hoehe", welt_seed) etc.
 	# Das zweite Parameter ist ein integer-Identifikator für die Noise-Art.
-	var height_id := int(String.hash("hoehe") & 0x7FFFFFFFFFFFFFFF)
-	var moisture_id := int(String.hash("feuchte") & 0x7FFFFFFFFFFFFFFF)
-	var temperature_id := int(String.hash("temperatur") & 0x7FFFFFFFFFFFFFFF)
+	var height_id := int(Pop_NamensGenerator.hash("hoehe") & 0x7FFFFFFFFFFFFFFF)
+	var moisture_id := int(Pop_NamensGenerator.hash("feuchte") & 0x7FFFFFFFFFFFFFFF)
+	var temperature_id := int(Pop_NamensGenerator.hash("temperatur") & 0x7FFFFFFFFFFFFFFF)
 
-	var height_kern := Kern_Zufall.abgeleitet_fuer(welt_seed, height_id)
-	var moisture_kern := Kern_Zufall.abgeleitet_fuer(welt_seed, moisture_id)
-	var temperature_kern := Kern_Zufall.abgeleitet_fuer(welt_seed, temperature_id)
+	var height_kern := Kern_Zufall.abgeleitet_fuer(seed_wert, height_id)
+	var moisture_kern := Kern_Zufall.abgeleitet_fuer(seed_wert, moisture_id)
+	var temperature_kern := Kern_Zufall.abgeleitet_fuer(seed_wert, temperature_id)
 
 	# Nutze die erste generierte Zahl jeder Folge als FastNoiseLite Seed.
 	height_noise.seed = height_kern.naechste_zahl()
@@ -119,9 +122,9 @@ func generate_noise_map(breite: int, hoehe: int, noise_type: String) -> Array[fl
 func get_biom_from_noise(height_value: float, moisture_value: float, temperature_value: float) -> String:
 	# Einfache Biom-Zuordnung basierend auf den drei Noise-Werten.
 	# Dies kann später durch die biome.json-Thresholds ersetzt werden.
-	var height_norm := clamp(height_value, -1.0, 1.0)
-	var moisture_norm := clamp(moisture_value, -1.0, 1.0)
-	var temperature_norm := clamp(temperature_value, -1.0, 1.0)
+	var height_norm := clampf(height_value, -1.0, 1.0)
+	var moisture_norm := clampf(moisture_value, -1.0, 1.0)
+	var temperature_norm := clampf(temperature_value, -1.0, 1.0)
 
 	# Height-basierte Biome: Berge bei hoher Höhe, Täler unten
 	if height_norm > 0.7:
@@ -187,7 +190,7 @@ func welt_erzeugen(model: Welt_Model, seed_wert: int, biom_id: String, z_ebene: 
 
 	return true
 
-func _fraktionen_generieren(model: Welt_Model, welt_seed: int) -> void:
+func _fraktionen_generieren(model: Welt_Model, seed_wert: int) -> void:
 	## 1. Fraktions_Keimling_Analysator: Welt analysieren, Keimpunkte finden
 	if keimling_analysator != null:
 		## Lade fraktions_ki_config.json für Schwellenwert
@@ -204,7 +207,7 @@ func _fraktionen_generieren(model: Welt_Model, welt_seed: int) -> void:
 
 	## 2. FraktionsGenerator: Fraktionen aus Keimpunkten erzeugen und in NetzwerkPlaner einspeisen
 	if fraktions_generator != null:
-		fraktions_generator.fraktionen_aus_keimpunkten_erzeugen(model, welt_seed)
+		fraktions_generator.fraktionen_aus_keimpunkten_erzeugen(model, seed_wert)
 
 	## 3. NetzwerkPlaner ist nun mit generierten Fraktionen befüllt und Wege berechnet
 	## Die Fraktionen sind über netzwerk_planer.fraktionen() abrufbar
@@ -449,11 +452,10 @@ func _biom_fliese_fuer(biom_id: String, zufall: Kern_Zufall, z_ebene: int = 0) -
 	var wurf := int(zufall.naechste_zahl() % 100)
 	
 	# Tiefen-Modifikator: Je tiefer (negativer), desto mehr Fels/Erz, weniger organisches
-	var tiefe := abs(z_ebene)  # 0, 1, 2, 3, 4
+	var tiefe := absi(z_ebene)  # 0, 1, 2, 3, 4
 	var fels_bonus := tiefe * 8      # +8% Fels pro Ebene tiefer
 	var geroell_bonus := tiefe * 5   # +5% Geröll pro Ebene tiefer
 	var erde_malus := tiefe * 6      # -6% organische Böden pro Ebene tiefer
-	var wasser_malus := tiefe * 10   # -10% Wasser pro Ebene tiefer
 	
 	match biom_id:
 		"gemaaessigt":

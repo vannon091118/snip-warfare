@@ -1,5 +1,5 @@
 extends RefCounted
-class_name Orchestrator_Einheit
+class_name Orchestrator_EinheitDerWelt
 ## Eine normale Einheit mit reserviertem Job_Orchestrieren, der permanent läuft.
 ## Sie dient als physische Präsenz des Orchestrators auf der Weltkarte und
 ## im Spielgeschehen. Der Job wird von der Orchestrator_Manager-Logik verwaltet.

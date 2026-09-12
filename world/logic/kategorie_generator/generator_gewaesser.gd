@@ -19,24 +19,24 @@ func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall, z_ebene: 
 	
 	# Tiefe beeinflusst Wasserverteilung: Je tiefer (negativer z_ebene), desto weniger Wasser
 	var wasser_chance_base := 0.85
-	var wasser_tiefe_penalty := max(0.0, -z_ebene) * 0.1  # Je tiefer, desto weniger Wasser
-	var wasser_chance := max(0.1, wasser_chance_base - wasser_tiefe_penalty)
+	var wasser_tiefe_penalty: float = max(0.0, float(-z_ebene) * 0.1)  # Je tiefer, desto weniger Wasser
+	var wasser_chance: float = max(0.1, wasser_chance_base - wasser_tiefe_penalty)
 	
 	# Flussanzahl je nach Biom (1 im gemaessigten Biom / Tundra, seltener in Steppe)
-	var fluss_chance := wasser_chance if biom_id != "steppe" else 0.40 * wasser_chance
+	var fluss_chance: float = (wasser_chance if biom_id != "steppe" else 0.40 * wasser_chance)
 	var wurf := float(zufall.naechste_zahl() % 1000) / 1000.0
 	if wurf < fluss_chance:
-		_fluss_erzeugen(model, breite, hoehe, zufall, z_ebene)
+		_fluss_erzeugen(model, breite, hoehe, zufall)
 	
 	# 1 bis 2 Seen / Teiche
 	var seen_anzahl := 1 + int(zufall.naechste_zahl() % 2)
 	for i in seen_anzahl:
-		_see_erzeugen(model, breite, hoehe, zufall, z_ebene)
+		_see_erzeugen(model, breite, hoehe, zufall)
 	
 	# Ufersaeume um alle Wasserkacheln legen
 	_ufersaeume_bilden(model, breite, hoehe)
 
-func _fluss_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zufall, z_ebene: int = 0) -> void:
+func _fluss_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zufall) -> void:
 	# Fluss startet an einer Kante und maeandriert zur gegenueberliegenden Kante
 	var von_oben_nach_unten := (zufall.naechste_zahl() % 2) == 0
 	var start_x := int(zufall.naechste_zahl() % breite)
@@ -69,7 +69,7 @@ func _fluss_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zu
 			cur_y = clampf(cur_y + drift, 1.0, float(hoehe - 2))
 
 
-func _see_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zufall, z_ebene: int = 0) -> void:
+func _see_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zufall) -> void:
 	var mitte_x := 3 + int(zufall.naechste_zahl() % (breite - 6))
 	var mitte_y := 3 + int(zufall.naechste_zahl() % (hoehe - 6))
 	var radius := 1.5 + float(zufall.naechste_zahl() % 20) / 10.0

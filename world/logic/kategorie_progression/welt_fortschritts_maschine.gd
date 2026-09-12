@@ -8,7 +8,7 @@ class_name Welt_FortschrittsMaschine
 ## von außen gesetzt. Freischaltungen und Zielabschluss werden als Signale
 ## sichtbar, damit HUD und Eingabe ohne Umwege reagieren können.
 ## Wenn ein Rathaus-Möbel-Set den Produktionsraum "rathaus" vervollständigt,
-## spawnt diese Maschine die Orchestrator_Einheit über den Einheit_Manager.
+## spawnt diese Maschine die Orchestrator_EinheitDerWelt über den Einheit_Manager.
 
 signal stufe_erreicht(stufe: Dictionary)
 signal ziel_erreicht(stufe: Dictionary)
@@ -75,7 +75,7 @@ func einwanderer_angekommen() -> void:
 	_fortschalten()
 
 ## Reaktion auf Rathaus-Fertigstellung: Spawnt die Orchestrator-Einheit.
-func _auf_produktionsraum_entstanden(raum_id: String, profil: String) -> void:
+func _auf_produktionsraum_entstanden(_raum_id: String, profil: String) -> void:
 	if profil != "rathaus":
 		return
 	if _einheit_manager == null:

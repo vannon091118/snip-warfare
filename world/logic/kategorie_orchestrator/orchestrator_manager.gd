@@ -31,11 +31,11 @@ func rassen_registry_setzen(registry: Pop_RassenSchemaRegistry) -> void:
 	_rassen_registry = registry
 
 func _ready() -> void:
-	Weltuhr.tick.connect(_auf_tick)
+	Kern_Weltuhr.bus().tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	if Weltuhr.tick.is_connected(_auf_tick):
-		Weltuhr.tick.disconnect(_auf_tick)
+	if Kern_Weltuhr.bus().tick.is_connected(_auf_tick):
+		Kern_Weltuhr.bus().tick.disconnect(_auf_tick)
 
 func referenzen_setzen(einheit_manager: Einheit_Manager, welt_modell: Welt_Model, welt_registry: Welt_Registry, job_registry: Job_Registry) -> void:
 	_einheit_manager = einheit_manager
@@ -87,6 +87,9 @@ func einheit_als_orchestrator_registrieren(einheit_index: int, zonen_index: int)
 			einheiten_array.append(einheit_index)
 			_orchestratoren[zonen_index]["einheiten"] = einheiten_array
 
+func _auf_bedarf_pruefen(_konfig: Orchestrator_Konfiguration) -> void:
+	pass
+
 func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 	# Tick-Zähler erhöhen alle Male
 	_tick_counter += 1
@@ -108,7 +111,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 		return
 
 	# Freie Einheiten im System holen
-	var freie_einheiten := _einheit_manager.idle_einheiten()
+	var frei_einheiten: Array = _einheit_manager.idle_einheiten()
 	if frei_einheiten.is_empty():
 		return
 
@@ -153,9 +156,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 				if frei_einheiten.is_empty():
 					break
 
-				var einheit_idx := frei_einheiten.pop_front()
-				var ressource_str := str(bedarf.get("ressource", ""))
-
+				var einheit_idx: int = frei_einheiten.pop_front()
 				var ziel_index := _naechstes_objekt_fuer_ressource(ressource, konfig.position, konfig.radius)
 				if ziel_index < 0:
 					# Ziel nicht gefunden, Einheit wieder frei geben

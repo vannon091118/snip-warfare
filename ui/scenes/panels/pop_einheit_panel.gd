@@ -16,7 +16,7 @@ extends PanelContainer
 @onready var _mood_container: VBoxContainer = %MoodContainer
 @onready var _inventar_grid: GridContainer = %InventarGrid
 
-var _uebersetzer: Pop_EinheitUebersetzer = null
+var _uebersetzer: Ui_PopEinheitUebersetzer = null
 var _signal_bus: Kern_SignalBus = null
 var _aktiver_index: int = -1
 
@@ -27,7 +27,7 @@ func _ready() -> void:
 	visible = false
 	set_process(false)
 
-func einrichten(uebersetzer: Pop_EinheitUebersetzer) -> void:
+func einrichten(uebersetzer: Ui_PopEinheitUebersetzer) -> void:
 	_uebersetzer = uebersetzer
 
 func _auf_einheit_ausgewaehlt(einheit_id: int) -> void:
@@ -52,7 +52,7 @@ func _anzeigen() -> void:
 	_hp_label.text = "HP: %d" % daten.hp
 	
 	# Hunger mit Farbskala
-	var hunger := daten.hunger_wert
+	var hunger: float = daten.hunger_wert
 	_hunger_bar.value = hunger * 100.0
 	_hunger_bar.max_value = 100.0
 	var hunger_farbe := _uebersetzer.hunger_farbe(hunger)
@@ -61,13 +61,13 @@ func _anzeigen() -> void:
 	_hunger_label.add_theme_color_override("font_color", hunger_farbe)
 	
 # Wärme-Wert
- 	var waerme := daten.waerme_wert
- 	_waerme_bar.value = (waerme + 1.0) * 50.0  # -1..1 auf 0..100
- 	_waerme_bar.max_value = 100.0
- 	var waerme_farbe := _uebersetzer.waerme_farbe(waerme)
- 	_waerme_bar.modulate = waerme_farbe
- 	_waerme_label.text = "Wärme: %.2f" % waerme
- 	_waerme_label.add_theme_color_override("font_color", waerme_farbe)
+	var waerme: float = daten.waerme_wert
+	_waerme_bar.value = (waerme + 1.0) * 50.0  # -1..1 auf 0..100
+	_waerme_bar.max_value = 100.0
+	var waerme_farbe := _uebersetzer.waerme_farbe(waerme)
+	_waerme_bar.modulate = waerme_farbe
+	_waerme_label.text = "Wärme: %.2f" % waerme
+	_waerme_label.add_theme_color_override("font_color", waerme_farbe)
 	
 	# Stimmungs-Modifikatoren als scrollbare Liste
 	_mood_container.queue_free_children()

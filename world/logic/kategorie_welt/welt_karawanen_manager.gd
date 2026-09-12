@@ -1,17 +1,17 @@
 extends Node2D
-class_name Karawanen_Manager
+class_name Welt_KarawanenManager
 ## Manager für Karawanen auf der Weltkarte: Erzeugt, tickt und zeichnet
 ## Karawanen als bewegte Punkte zwischen den Karten. Verbindet Lager über
 ## das Makro-Netzwerk (Welt_NetzwerkPlaner.wege). Handelsabwicklung läuft
 ## über direkte Mutationen auf dem Ziel-Modell (auch inaktiv).
 
-signal karawane_gestartet(karawane: Karawanen_Einheit)
-signal karawane_angekommen(karawane: Karawanen_Einheit)
-signal karawane_entladen(karawane: Karawanen_Einheit, erfolreich: bool)
+signal karawane_gestartet(karawane: Welt_Karawane)
+signal karawane_angekommen(karawane: Welt_Karawane)
+signal karawane_entladen(karawane: Welt_Karawane, erfolreich: bool)
 signal handels_abgeschlossen(von_map_id: String, nach_map_id: String, ressourcen: Dictionary)
 
 ## Kategorie daten: Liste aller aktiven Karawanen.
-var _karawanen: Array[Karawanen_Einheit] = []
+var _karawanen: Array[Welt_Karawane] = []
 var _naechste_karawanen_nummer: int = 1
 
 ## Kategorie logik: Verbindungen zu anderen Domänen.
@@ -51,7 +51,7 @@ func modell_wechseln(neues_modell: Welt_Model) -> void:
 	## Kartenwechsel-Handshake: Aktualisiert Modell-Referenz.
 	_model = neues_modell
 
-func _auf_tick(tick_nummer: int, delta: float) -> void:
+func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
 	if _welt_world != null:
 		var aktive_map_id := _welt_world.aktive_map_id()
@@ -64,7 +64,7 @@ func _auf_tick(tick_nummer: int, delta: float) -> void:
 	# Karawanen ticken
 	var entfernte_indices: Array[int] = []
 	for index in _karawanen.size():
-		var karawane: Karawanen_Einheit = _karawanen[index]
+		var karawane: Welt_Karawane = _karawanen[index]
 		if karawane == null:
 			entfernte_indices.append(index)
 			continue
@@ -90,14 +90,14 @@ func _auf_tick(tick_nummer: int, delta: float) -> void:
 	# Sichtbarkeit aktualisieren
 	_karawanen_ebene.queue_redraw()
 
-func _karawane_entladen(karawane: Karawanen_Einheit, index: int) -> void:
+func _karawane_entladen(karawane: Welt_Karawane, _index: int) -> void:
 	## Lädt die Fracht in das Ziel-Lager ein (direkte Mutation über Welt_World,
 	## funktioniert auch auf inaktiven Karten).
 	var erfolg := false
 	if _welt_world != null:
 		# Direkter Aufruf: Welt_World wendet Mutation auf gespeicherten
 		# Lager-Daten der Zielkarte an (kein SubViewport, kein Threading).
-		erfolg := _welt_world.karawane_ankunft_verarbeiten(karawane)
+		erfolg = _welt_world.karawane_ankunft_verarbeiten(karawane)
 	
 	karawane_angekommen.emit(karawane)
 	
@@ -110,14 +110,14 @@ func _karawane_entladen(karawane: Karawanen_Einheit, index: int) -> void:
 	else:
 		karawane_entladen.emit(karawane, false)
 
-func karawane_erstellen(von_map_id: String, nach_map_id: String, von_pos: Vector2, nach_pos: Vector2, fracht: Dictionary) -> Karawanen_Einheit:
+func karawane_erstellen(von_map_id: String, nach_map_id: String, von_pos: Vector2, nach_pos: Vector2, fracht: Dictionary) -> Welt_Karawane:
 	## Erstellt eine neue Karawane mit berechneter Reisedauer aus dem Netzwerk.
 	var reise_ticks := _reise_dauer_berechnen(von_map_id, nach_map_id, von_pos, nach_pos)
 	
 	var k_id := "karawane_%d" % _naechste_karawanen_nummer
 	_naechste_karawanen_nummer += 1
 	
-	var karawane := Karawanen_Einheit.new(k_id, von_map_id, nach_map_id, von_pos, nach_pos, reise_ticks, fracht)
+	var karawane := Welt_Karawane.new(k_id, von_map_id, nach_map_id, von_pos, nach_pos, reise_ticks, fracht)
 	_karawanen.append(karawane)
 	
 	# Reise starten
@@ -142,7 +142,6 @@ func _reise_dauer_berechnen(von_map_id: String, nach_map_id: String, von_pos: Ve
 	for weg: Dictionary in wege:
 		var weg_von_id := str(weg.get("von_id", ""))
 		var weg_nach_id := str(weg.get("nach_id", ""))
-		var weg_typ := str(weg.get("typ", ""))
 		
 		# Prüfen ob dieser Weg die Karten verbindet
 		var verbindung := false
@@ -163,17 +162,17 @@ func _reise_dauer_berechnen(von_map_id: String, nach_map_id: String, von_pos: Ve
 	
 	if kuerzeste_distanz == INF:
 		# Kein direkter Weg: Fallback auf Luftlinie
-		kuerzeste_distanz := von_pos.distance_to(nach_pos)
+		kuerzeste_distanz = von_pos.distance_to(nach_pos)
 	
 	# Umrechnung: 1 Kachel ≈ 50 Pixel, 24 Ticks/Sekunde, Geschwindigkeit ~100 Pixel/Sekunde
 	# => Ticks = Distanz / (Geschwindigkeit * Tick_Dauer) = Distanz / (100/24) = Distanz * 0.24
 	var ticks := maxi(int(kuerzeste_distanz * 0.24), 60)  # Mindestens 2.5 Sekunden
 	return ticks
 
-func karawanen_liste() -> Array[Karawanen_Einheit]:
+func karawanen_liste() -> Array[Welt_Karawane]:
 	return _karawanen.duplicate()
 
-func karawane_bei_index(index: int) -> Karawanen_Einheit:
+func karawane_bei_index(index: int) -> Welt_Karawane:
 	if index < 0 or index >= _karawanen.size():
 		return null
 	return _karawanen[index]
@@ -181,7 +180,7 @@ func karawane_bei_index(index: int) -> Karawanen_Einheit:
 func _draw() -> void:
 	## Zeichnet alle Karawanen als bewegte Punkte auf der Weltkarte.
 	## Wird von der Weltkarten-Szene (welt_map.gd) oder Welt-Szene aufgerufen.
-	for karawane: Karawanen_Einheit in _karawanen:
+	for karawane: Welt_Karawane in _karawanen:
 		if karawane == null:
 			continue
 		# Nur Karawanen zeichnen, die auf DIESER Karte relevant sind
@@ -220,7 +219,7 @@ func _draw() -> void:
 
 func nach_woerterbuch() -> Dictionary:
 	var karawanen_daten: Array[Dictionary] = []
-	for k: Karawanen_Einheit in _karawanen:
+	for k: Welt_Karawane in _karawanen:
 		if k != null:
 			karawanen_daten.append(k.nach_woerterbuch())
 	return {
@@ -233,7 +232,7 @@ func aus_woerterbuch(daten: Dictionary) -> void:
 	if typeof(k_daten) == TYPE_ARRAY:
 		for eintrag: Variant in k_daten:
 			if typeof(eintrag) == TYPE_DICTIONARY:
-				var k := Karawanen_Einheit.new()
+				var k := Welt_Karawane.new()
 				if k.aus_woerterbuch(eintrag as Dictionary):
 					_karawanen.append(k)
 	_naechste_karawanen_nummer = int(daten.get("naechste_nummer", _naechste_karawanen_nummer))

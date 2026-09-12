@@ -3,7 +3,7 @@ class_name Einheit_InventarMutationAufnahme
 ## Mutation: bucht eine Aufnahme (Ernte/Sammeln) in das Inventar.
 ## Die Menge wird direkt übernommen, keine Varianz (Varianz gehört zur Ernte-Maschine).
 
-func _init(konfiguration: Dictionary = {}) -> void:
+func _init(_konfiguration: Dictionary = {}) -> void:
 	super("InventarAufnahme", Quelle.RESSOURCE,
 		"Bucht Ressourcen in das Einheit-Inventar ein.")
 

@@ -626,21 +626,22 @@ func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp,
 				var lager_idx := ziel_index
 				if lager_idx >= 0 and lager_idx < _lager.lager_zahl():
 					var lager_pos := _lager.lager_position(lager_idx)
-					var job := _job_registry.job_erzeugen("transport")
-					if job != null:
-						job.lager_index_setzen(lager_idx)
-						job.lager_position_setzen(lager_pos)
-						job.inventar_vorher_setzen(inventar.alles_abgeben())
+					var transport_job := _job_registry.job_erzeugen("transport")
+					if transport_job != null:
+						transport_job.lager_index_setzen(lager_idx)
+						transport_job.lager_position_setzen(lager_pos)
+						transport_job.inventar_vorher_setzen(inventar.alles_abgeben())
 						status.queue_vorne_entfernen()
 						status.geh_ziel_setzen(lager_pos)
 						_planner_fuer(status, lager_pos)
-						status.job_vergeben(job, ziel_typ, lager_idx, "")
+						status.job_vergeben(transport_job, ziel_typ, lager_idx, "")
 						return
 		# Falls kein Inventar oder Lager nicht gefunden: Queue-Eintrag entfernen
 		status.queue_vorne_entfernen()
 		return
 	
-	var job := _job_registry.job_erzeugen(job_id)
+	var folge_job := _job_registry.job_erzeugen(job_id)
+	var job: Job_Basis = folge_job
 	if job == null:
 		status.queue_vorne_entfernen()
 		return

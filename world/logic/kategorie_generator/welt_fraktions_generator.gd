@@ -1,15 +1,15 @@
 extends RefCounted
 class_name Welt_FraktionsGenerator
 ## Fraktions_Generator: Verbindet Keimpunkte mit Welt_Fraktion und NetzwerkPlaner.
--- Läuft NACH dem Fraktions_Keimling_Analysator und Rassen_Generator.
--- Erzeugt Welt_Fraktion-Instanzen aus jedem Keimpunkt (ERSATZ für statische Einträge in generator_gewichte.json).
--- Verwendet deterministische Namen via Pop_NamensGenerator.
--- Registriert generierte Fraktionen im NetzwerkPlaner für Wege/Nachbarn-Berechnung.
--- KEINE feste Fraktionen-Zahl - Weltstruktur (Keimpunkte) bestimmt die Anzahl.
+## Läuft NACH dem Fraktions_Keimling_Analysator und Rassen_Generator.
+## Erzeugt Welt_Fraktion-Instanzen aus jedem Keimpunkt (ERSATZ für statische Einträge in generator_gewichte.json).
+## Verwendet deterministische Namen via Pop_NamensGenerator.
+## Registriert generierte Fraktionen im NetzwerkPlaner für Wege/Nachbarn-Berechnung.
+## KEINE feste Fraktionen-Zahl - Weltstruktur (Keimpunkte) bestimmt die Anzahl.
 
 ## Kategorie daten: Referenzen auf Generator-Komponenten.
 var keimling_analysator: Welt_FraktionsKeimlingAnalysator = null
-var rassen_generator: Bevölkerung_RassenGenerator = null
+var rassen_generator: Pop_RassenGenerator = null
 var netzwerk_planer: Welt_NetzwerkPlaner = null
 var generator_registry: Welt_GeneratorRegistry = null
 
@@ -34,7 +34,7 @@ const ARCHETYP_BIOME: Dictionary = {
 func _init() -> void:
 	pass
 
-func einrichten(p_keimling: Welt_FraktionsKeimlingAnalysator, p_rassen_gen: Bevölkerung_RassenGenerator, p_netzwerk: Welt_NetzwerkPlaner, p_registry: Welt_GeneratorRegistry) -> void:
+func einrichten(p_keimling: Welt_FraktionsKeimlingAnalysator, p_rassen_gen: Pop_RassenGenerator, p_netzwerk: Welt_NetzwerkPlaner, p_registry: Welt_GeneratorRegistry) -> void:
 	keimling_analysator = p_keimling
 	rassen_generator = p_rassen_gen
 	netzwerk_planer = p_netzwerk
@@ -63,13 +63,13 @@ func fraktionen_aus_keimpunkten_erzeugen(welt_model: Welt_Model, welt_seed: int)
 
 	## 4. In NetzwerkPlaner einspeisen (ersetzt statische Registry-IDs)
 	if netzwerk_planer != null and not generierte_fraktionen.is_empty():
-		_netzwerk_mit_generierten_fuellen(welt_model, welt_seed, generierte_fraktionen)
+		_netzwerk_mit_generierten_fuellen(welt_model, generierte_fraktionen)
 
 	return generierte_fraktionen
 
 func _keimpunkt_zu_fraktion(keimpunkt: Dictionary, welt_seed: int, welt_model: Welt_Model) -> Welt_Fraktion:
-	var archetyp := keimpunkt.dominante_archetyp
-	var keimpunkt_id := keimpunkt.zellen_id
+	var archetyp := str(keimpunkt.get("dominante_archetyp", "wald"))
+	var keimpunkt_id := str(keimpunkt.get("zellen_id", ""))
 
 	## Deterministischer Name für die Fraktion
 	var fraktions_name := Pop_NamensGenerator.generiere_fraktions_name(archetyp, keimpunkt_id, welt_seed)
@@ -94,9 +94,9 @@ func _keimpunkt_zu_fraktion(keimpunkt: Dictionary, welt_seed: int, welt_model: W
 	return fraktion
 
 func _generiere_beschreibung(archetyp: String, keimpunkt: Dictionary) -> String:
-	var score := keimpunkt.score
-	var gesamt := keimpunkt.gesamt_score
-	var dom := keimpunkt.dominante_archetyp
+	var score: Dictionary = keimpunkt.get("score", {})
+	var gesamt := float(keimpunkt.get("gesamt_score", 0.0))
+	var dom := str(keimpunkt.get("dominante_archetyp", "wald"))
 
 	var beschreibungen := {
 		"wald": "Ein vom Wald geprägtes Volk, das im Einklang mit der Natur lebt. Ihre Siedlungen wachsen organisch zwischen den Bäumen.",
@@ -106,7 +106,7 @@ func _generiere_beschreibung(archetyp: String, keimpunkt: Dictionary) -> String:
 		"tundra": "Überlebenskünstler der ewigen Kälte, widerstandsfähig gegen Frost und Schnee. Jäger der großen Herden."
 	}
 
-	var basis := beschreibungen.get(archetyp, "Eine Fraktion unbekannter Herkunft.")
+	var basis: String = str(beschreibungen.get(archetyp, "Eine Fraktion unbekannter Herkunft."))
 	var score_text := "Dominanz: %s (Score: %.2f)" % [dom, gesamt]
 	return "%s %s" % [basis, score_text]
 
@@ -115,7 +115,7 @@ func _welt_pos_zu_kachel(pos: Vector2, welt_model: Welt_Model) -> Vector2i:
 	var kachel_y := int(pos.y / welt_model.kachel_groesse)
 	return Vector2i(clampi(kachel_x, 0, welt_model.raster_breite - 1), clampi(kachel_y, 0, welt_model.raster_hoehe - 1))
 
-func _netzwerk_mit_generierten_fuellen(welt_model: Welt_Model, welt_seed: int, fraktionen: Array[Welt_Fraktion]) -> void:
+func _netzwerk_mit_generierten_fuellen(welt_model: Welt_Model, fraktionen: Array[Welt_Fraktion]) -> void:
 	## NetzwerkPlaner öffentliche API nutzen für Integration
 	if netzwerk_planer == null:
 		push_error("NetzwerkPlaner nicht verfügbar")

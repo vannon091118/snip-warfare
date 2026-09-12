@@ -1,5 +1,5 @@
 extends RefCounted
-class_name Raum_Analysator
+class_name Welt_RaumAnalyser
 ## Analysiert einen Raum anhand von Möbel-Tags innerhalb von Wänden (felswand).
 ## Nutzt Flood-Fill über das Welt_ObjektGitter, wobei felswand-Objekte als
 ## Blockaden gelten. Gibt die Menge aller eindeutigen Tags der Möbel im Raum
@@ -46,8 +46,8 @@ func analysiere(start_position: Vector2) -> Array[String]:
 					tags_set.append(tag)
 		
 		# Nachbarschaftstiles hinzufügen (4- oder 8-richtungsbasiert? Wir nutzen 4)
-		for dx, dy in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
-			var nachbar := tile + Vector2i(dx, dy)
+		for versatz: Vector2i in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
+			var nachbar := tile + versatz
 			var nachbar_key := "%d:%d" % [nachbar.x, nachbar.y]
 			if not besucht.has(nachbar_key) and not _ist_wand_tile(nachbar):
 				zu_besuchen.append(nachbar)
