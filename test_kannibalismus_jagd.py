@@ -26,12 +26,14 @@ def test_job_basis_hat_einen_eigenen_ziel_knoten_fuer_einheiten():
 
 
 def test_der_manager_jagt_den_schwaechsten_nachbarn_beim_kannibalismus():
-    """Beim Kannibalismus-Verhalten wählt der Manager das schwächste Ziel."""
+    """Beim Kannibalismus-Verhalten wählt die Verhaltens-Maschine das schwächste Ziel."""
+    verhalten = _lies("game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd")
     manager = _lies("game/logic/kategorie_einheit/einheit_manager.gd")
-    assert "kannibalis" in manager.lower(), "Manager kennt das Verhalten nicht"
-    assert "schwäch" in manager.lower(), "Manager wählt nicht den Schwächsten"
-    assert "_jagd_nachbarn" in manager, "Manager hat keinen Nachbar-Zielsucher"
-    assert "einheit_hp" in manager, "Manager liest die Lebenspunkte nicht"
+    assert "kannibalis" in verhalten.lower(), "Verhaltens-Maschine kennt das Verhalten nicht"
+    assert "schwäch" in verhalten.lower(), "Verhaltens-Maschine wählt nicht den Schwächsten"
+    assert "func _jagd_nachbarn" in verhalten, "Verhaltens-Maschine hat keinen Nachbar-Zielsucher"
+    assert "einheit_hp" in verhalten, "Verhaltens-Maschine liest die Lebenspunkte nicht"
+    assert "_verhalten.pruefe_verhalten" in manager, "Der Manager reicht den Takt an die Verhaltens-Maschine durch"
 
 
 def test_die_ernte_maschine_erlegt_artgenossen_wie_beute():
@@ -42,9 +44,9 @@ def test_die_ernte_maschine_erlegt_artgenossen_wie_beute():
 
 
 def test_die_blase_erzaehlt_die_tat_wie_jede_andere_stufe():
-    """Der Manager meldet den Jagd-Auslöser an die Mood-Maschine der Einheit."""
-    manager = _lies("game/logic/kategorie_einheit/einheit_manager.gd")
-    assert "mood.bereich_hervorheben" in manager, "Blase erzählt die Jagd nicht"
+    """Die Verhaltens-Maschine meldet den Jagd-Auslöser an die Mood-Maschine der Einheit."""
+    verhalten = _lies("game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd")
+    assert "bereich_hervorheben" in verhalten, "Blase erzählt die Jagd nicht"
 
 
 def test_vitaler_tod_einer_artgenossin_laeuft_ueber_den_einzigen_pfad():

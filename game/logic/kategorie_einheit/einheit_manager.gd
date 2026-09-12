@@ -72,6 +72,20 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	# Verbrauchs-Vorgabe aus dem Datenpool: Der Wert aus needs.json gilt, bis
 	# der Spieler im Verteilungs-Fenster etwas anderes setzt.
 	_versorgung.verteilung_setzen(_need_registry.verbrauch_je_takt())
+	# Die zwei Regel-Maschinen des Managers: Verhalten (Kannibalismus-Auslöser)
+	# und Versorgung (Wachstum und Einwanderung) tragen ihre Rechnung selbst.
+	_versorgung_neu.einrichten({
+		"manager": self,
+		"ressourcen": _ressourcen,
+		"fortschritt": null,
+	})
+	_verhalten.einrichten({
+		"manager": self,
+		"mood_mod_registry": _mood_mod_registry,
+		"job_registry": _job_registry,
+		"ressourcen": _ressourcen,
+		"tiere": _tiere,
+	})
 
 func lager_setzen(lager: Lager_Manager) -> void:
 	_lager = lager
@@ -94,80 +108,18 @@ func waerme_quellen_aktualisieren(feuer_positionen: Array[Vector2]) -> void:
 
 func fortschritt_setzen(maschine: Welt_FortschrittsMaschine) -> void:
 	_fortschritt = maschine
+	_versorgung_neu.einrichten({
+		"manager": self,
+		"ressourcen": _ressourcen,
+		"fortschritt": _fortschritt,
+	})
 
-## Autonomes Verhalten: Der hungergetriebene Kannibalismus ist die erste
-## Verbraucherin der Eskalationsketten. Der Verzweifelte jagt den
-## schwächsten Nachbarn, wenn weder ein jagdbares Tier in Reichweite noch
-## Fleisch im Lager ist. Vor dem ersten Lagerfeuer ist die Siedlung allein,
-## die Opfersuche bleibt leer, und mit der Einwanderung aus der
-## Einstiegs-Kette gibt es erstmals Nachbarn. Der Auslöser sitzt am eigenen
-## Idle, der Job läuft wie jede Jagd über dieselben Maschinen.
-## Slice C: Performance-Cache für den teuren Tier- und Nachbarschafts-Scan.
-var _tier_reichweite_cache: Dictionary = {}
-var _tier_cache_tick: int = -1
-
-func _pruefe_verhalten(einheit: Dictionary, index: int) -> void:
-	var status: Einheit_Status = einheit["status"]
-	if status.zustand != Einheit_Status.Zustand.IDLE or _mood_mod_registry == null:
-		return
-	var hunger_mod := _mood_mod_registry.mod_fuer("hunger")
-	if hunger_mod == null or not hunger_mod.hat_eskalation():
-		return
-	var mood: Pop_MoodMaschine = einheit["mood"]
-	var not_aktuell := mood.need_wert(hunger_mod.need_id)
-	var stufe := hunger_mod.stufe_fuer(not_aktuell)
-	if stufe == null or stufe.verhalten != "kannibalismus":
-		return
-	var opfer := _jagd_nachbarn(index)
-	if opfer < 0:
-		return
-	job_vergeben(index, "kannibale", Job_Basis.ZielTyp.OWN, opfer, einheit_position(opfer))
-	# Die Hervorhebung nach der Vergabe: Der Jobwechsel denkt sonst seine
-	# Zeile über die Erzählung der Tat.
-	mood.bereich_hervorheben(hunger_mod.mod_id, stufe)
-
-func _jagd_nachbarn(jaeger_index: int) -> int:
-	# Schwächster Nachbar in Reichweite: Reichweite und Mindest-HP stehen
-	# im kannibale-Eintrag der Job-Konfiguration; niemand jagt sich selbst.
-	if _ressourcen != null and _ressourcen.bestand("fleisch") > 0:
-		return -1
-	if _tiere != null and _tier_in_reichweite(jaeger_index):
-		return -1
-	var konfig: Dictionary = _job_registry.job_konfigurationen.get("kannibale", {})
-	var reichweite := float(konfig.get("reichweite", 60.0))
-	var mindest_hp := int(konfig.get("opfer_mindest_hp", 20))
-	var eigene := einheit_position(jaeger_index)
-	var bester := -1
-	var beste_hp := 0
-	for index in _einheiten.size():
-		if index == jaeger_index:
-			continue
-		if einheit_status(index).vital.hp <= 0:
-			continue
-		if einheit_position(index).distance_to(eigene) > reichweite:
-			continue
-		var hp := einheit_hp(index)
-		if hp < mindest_hp:
-			continue
-		if bester == -1 or hp < beste_hp:
-			bester = index
-			beste_hp = hp
-	return bester
-
-func _tier_in_reichweite(jaeger_index: int) -> bool:
-	if _tiere == null:
-		return false
-	if _tier_reichweite_cache.has(jaeger_index):
-		return bool(_tier_reichweite_cache[jaeger_index])
-	var eigene := einheit_position(jaeger_index)
-	var treffer := false
-	for tier_index in _tiere.tier_zahl():
-		var tier_pos := _tiere.tier_position(tier_index)
-		if tier_pos != Vector2.INF and tier_pos.distance_to(eigene) <= 160.0:
-			treffer = true
-			break
-	_tier_reichweite_cache[jaeger_index] = treffer
-	return treffer
+## Autonomes Verhalten: Die Verhaltens-Maschine trägt den Kannibalismus-Auslöser
+## und ihre Scans; der Manager reicht nur den Takt und die Einheiten durch.
+var _verhalten := Einheit_VerhaltensMaschine.new()
+## Wachstum und Einwanderung: Die Versorgungs-Maschine trägt die Nachschub-
+## Regel, der Manager nur den Takt und den Spawn-Schnitt.
+var _versorgung_neu := Einheit_VersorgungsMaschine.new()
 
 
 func schlag_ort_empfaenger_setzen(empfaenger: Callable) -> void:
@@ -488,17 +440,15 @@ func _auf_tick(nummer: int, delta: float) -> void:
 	# Taktdauer aus dem Datenpool: Der Wert kommt über die Need-Registry aus
 	# population/data/needs.json und wird von der Weltuhr in Ticks übersetzt;
 	# dieselbe Zahl steuert auch den Tageszyklus.
-	if _tier_cache_tick != nummer:
-		_tier_cache_tick = nummer
-		_tier_reichweite_cache.clear()
+	_verhalten.cache_erneuern(nummer)
 	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(_need_registry.takt_minuten())
 	var verbrauch_faellig := takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0
 	if verbrauch_faellig:
 		_nahrung_verteilen()
-		# Einwanderung: Der aktive Progressions-Zieltyp einwanderung liefert
-		# die Rate (einwanderer_je_tag), der Takt kommt aus dem Datenpool;
-		# der Spawn läuft über denselben einheit_hinzufuegen-Schnitt.
-		_einwanderung_ticken(takt_ticks)
+		# Einwanderung über die Versorgungs-Maschine: Der aktive
+		# Progressions-Zieltyp einwanderung liefert die Rate, der Spawn läuft
+		# über denselben einheit_hinzufuegen-Schnitt.
+		_versorgung_neu.einwanderung_ticken()
 	for ei: int in _einheiten.size():
 		var einheit: Dictionary = _einheiten[ei]
 		var status: Einheit_Status = einheit["status"]
@@ -551,7 +501,7 @@ func _auf_tick(nummer: int, delta: float) -> void:
 			_in_sicherheit_bringen(einheit, ziel)
 		# Slice C: Verhaltensprüfung auf 12 Ticks gestreut verteilen (0.5s Reaktionszeit)
 		if status.zustand == Einheit_Status.Zustand.IDLE and (nummer % 12 == (ei % 12)):
-			_pruefe_verhalten(einheit, ei)
+			_verhalten.pruefe_verhalten(einheit, ei)
 
 
 func _ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2:
@@ -566,35 +516,10 @@ func _naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:
 func _naechstes_tier(status: Einheit_Status, alter_ziel_index: int) -> int:
 	return _ziel_suche.naechstes_tier(status, alter_ziel_index)
 
-## Leerlauf und Wachstum: ein Haus aus 3 Nahrung erzeugt einen neuen Stickman.
+## Leerlauf und Wachstum: Die Versorgungs-Maschine besitzt die Regel.
 
 func versuche_wachstum(haus_welt_position: Vector2) -> bool:
-	if _ressourcen == null:
-		return false
-	_ressourcen.ernte_position_setzen(haus_welt_position)
-	if not _ressourcen.entnehmen("fleisch", 3):
-		return false
-	einheit_hinzufuegen(haus_welt_position + Vector2(0, 20))
-	return true
-
-## Einwanderung: Die Einstiegs-Kette macht aus dem Wachstum eine automatische
-## Kette. Die Rate steht menschenlesbar in progression.json je Stufe; ohne
-## aktive einwanderung-Stufe kommt niemand. Der Ankömmling meldet sich an
-## die Maschine zurück, damit die Stufe weiterzählt.
-func _einwanderung_ticken(_takt_ticks: int) -> void:
-	## Einwanderung: Pro Verbrauchstakt erscheint je_tag Einwanderer direkt,
-	## sofern die aktive Progressions-Stufe den Typ einwanderung trägt.
-	## Der frühere _einwanderer_takt-Zähler verdoppelte die Wartezeit auf
-	## takt_ticks² und ist entfernt worden.
-	if _fortschritt == null:
-		return
-	var stufe := _fortschritt.aktive_stufe()
-	if str(stufe.get("ziel_typ", "")) != "einwanderung":
-		return
-	var je_tag := int(stufe.get("einwanderer_je_tag", 0))
-	for _i: int in je_tag:
-		einheit_hinzufuegen(lager_anker_position() + Vector2(24, 20))
-		_fortschritt.einwanderer_angekommen()
+	return _versorgung_neu.versuche_wachstum(haus_welt_position)
 
 
 func lager_anker_position() -> Vector2:

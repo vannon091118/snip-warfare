@@ -5,7 +5,7 @@
   "economy/logic/storage/lager_darsteller.gd": {"ist_zeilen": 163},
   "economy/logic/storage/lager_manager.gd": {"ist_zeilen": 164},
   "game/logic/kategorie_einheit/einheit_ernte_maschine.gd": {"ist_zeilen": 145},
-  "game/logic/kategorie_einheit/einheit_manager.gd": {"ist_zeilen": 754, "slice": "C"},
+  "game/logic/kategorie_einheit/einheit_manager.gd": {"ist_zeilen": 679},
   "game/logic/kategorie_einheit/einheit_status.gd": {"ist_zeilen": 306},
   "game/logic/kategorie_job/job_basis.gd": {"ist_zeilen": 162},
   "population/logic/mood/pop_mood_maschine.gd": {"ist_zeilen": 285},

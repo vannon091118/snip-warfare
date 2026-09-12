@@ -1,7 +1,7 @@
-1. Der Kommandant zeigte auf den Zettelmeister ui_eingabe_steuerung.gd, der mit 475 Zeilen und fuenfzehn fremden Schnueren nicht mehr nur uebersetzte, sondern selbst rechnete.
-2. Ich band ihm drei Werkzeuggehaeuse an: Die Bauauftrag-Maschine haelt jetzt den Bauwunsch und platziert ihn, die Expansion-Maschine zieht neue Karten aus der Fabrik, und die Job-Vergabe-Maschine verteilt Arbeit an Tier und Objekt samt Baustellen-Vorzug und Marschbefehl.
-3. Der Zettelmeister behielt nur noch das Verteilen der Ereignisse und das Ermitteln der Klick-Orte, und sein Zettel schrumpfte auf 368 Zeilen, der Nachlass-Eintrag ist aus dem Verzeichnis gestrichen.
-4. Drei alte Tests riefen nach den ausgelagerten Werkzeugen an der alten Adresse, also hängte ich ihre Schilder auf die neuen Gehaeuse um.
-5. Nach dem Umzug liefen alle 85 Tests gruen und der volle Preflight meldete keinen Befund.
-6. Auf der Baustelle bleibt sichtbar: Klicken, Bauen, Marschieren und Sammeln gehorchen wie zuvor, nur rechnet jetzt jede Maschine in ihrem eigenen Gehaeuse.
-7. Als Naechstes zerlege ich einheit_manager.gd, das groesste Monster von allen, und streiche seinen Nachlass-Eintrag.
+1. Der Kommandant wies mir das groesste Monster zu, den Einheiten-Vorsteher einheit_manager.gd, der mit 754 Zeilen fuenf Fachwelten unter einem Dach festhielt.
+2. Ich entnahm ihm die zwei noch fehlenden Rechnungen: Die Verhaltens-Maschine einheit_verhaltens_maschine.gd traegt jetzt den Kannibalismus-Ausloeser samt Schwaechsten-Jagd und Tier-Reichweiten-Cache, und die Versorgungs-Maschine einheit_versorgungs_maschine.gd traegt Wachstum und Einwanderung samt Rueckmeldung an die Einstiegs-Kette.
+3. Der Vorsteher blieb bei 679 Zeilen als reiner Takt- und Verdrahtungs-Herr, sein Nachlass-Eintrag im Verzeichnis wurde auf den neuen Ist-Wert gesenkt, damit kein Zurueckwachsen moeglich ist.
+4. Zwei Tests der Kannibalen-Jagd schrien nach der alten Adresse des Ausloesers, also haengte ich ihre Schilder auf die neue Verhaltens-Maschine um.
+5. Nach dem Umbau liefen alle 85 Tests gruen und der volle Preflight meldete keinen Befund.
+6. Auf der Baustelle bleibt sichtbar: Hungrige Einheiten kippen weiterhin in die Kannibalismus-Kette, waehrend neue Siedler am Lagerfeuer einwandern, nur rechnet jetzt jede Regel in ihrem eigenen Gehaeuse.
+7. Als Naechstes zerlege ich welt_model.gd und lagere die Erschoepfungs-Rechnung in eine eigene Maschine aus.
