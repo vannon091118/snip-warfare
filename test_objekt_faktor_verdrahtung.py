@@ -73,10 +73,13 @@ def test_job_basisklasse_nimmt_den_zielfaktor_in_die_zeit_auf():
 
 
 def test_manager_setzt_den_zielfaktor_bei_jedem_job_start():
-    """G1-Verdrahtung: Der Manager liest den effektiven Faktor des Ziels."""
+    """G1-Verdrahtung: Direkte Vergabe im Manager, Queue-Start und Loop-Fortsetzung in der Job-Fluss-Maschine."""
     quelltext = _lies("game/logic/kategorie_einheit/einheit_manager.gd")
-    assert quelltext.count("ziel_faktor_setzen") >= 3, \
-        "Direkte Vergabe, Queue-Start und Loop-Fortsetzung brauchen den Zielfaktor"
+    fluss = _lies("game/logic/kategorie_einheit/einheit_job_fluss_maschine.gd")
+    assert quelltext.count("ziel_faktor_setzen") >= 1, \
+        "Die direkte Vergabe braucht den Zielfaktor"
+    assert fluss.count("ziel_faktor_setzen") >= 2, \
+        "Queue-Start und Loop-Fortsetzung brauchen den Zielfaktor"
     such = _lies("game/logic/kategorie_einheit/einheit_ziel_suche.gd")
     assert "func ziel_faktor_fuer(" in such, \
         "Die Ziel-Suche ist der Lesepfad zum Faktor des Ziels"

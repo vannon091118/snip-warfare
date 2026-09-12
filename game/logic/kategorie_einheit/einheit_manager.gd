@@ -67,6 +67,10 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	_ernte.schlag_ort_gemeldet.connect(_auf_schlag_ort)
 	_ernte.schlag_objekt_gemeldet.connect(_auf_schlag_objekt)
 	_ernte.inventar_voll.connect(_auf_inventar_voll)
+	_trupp.einrichten(_einheiten)
+	_trupp.job_registry_setzen(_job_registry)
+	_trupp.weg_planer_setzen(_planner_fuer)
+	_job_fluss.einrichten(_trupp, _job_registry, _ziel_suche, _ernte, _planner_fuer)
 	_versorgung = Einheit_Versorgung.new()
 	_versorgung.einrichten(ressourcen)
 	# Verbrauchs-Vorgabe aus dem Datenpool: Der Wert aus needs.json gilt, bis
@@ -89,6 +93,8 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 
 func lager_setzen(lager: Lager_Manager) -> void:
 	_lager = lager
+	_trupp.lager_setzen(lager)
+	_job_fluss.lager_setzen(lager)
 	for einheit: Dictionary in _einheiten:
 		var m: Pop_MoodMaschine = einheit["mood"]
 		m.einrichten(_need_registry, _lager)
@@ -120,6 +126,11 @@ var _verhalten := Einheit_VerhaltensMaschine.new()
 ## Wachstum und Einwanderung: Die Versorgungs-Maschine trägt die Nachschub-
 ## Regel, der Manager nur den Takt und den Spawn-Schnitt.
 var _versorgung_neu := Einheit_VersorgungsMaschine.new()
+## Job-Fluss und Trupp-Zusammenschau: Die zwei Maschinen tragen die Reaktionen
+## auf den Job-Rhythmus und die Zusammenschau des Trupps; der Manager behält
+## nur Knoten, Ticks und Lese-Schnittstellen.
+var _job_fluss := Einheit_JobFlussMaschine.new()
+var _trupp := Einheit_TruppMaschine.new()
 
 
 func schlag_ort_empfaenger_setzen(empfaenger: Callable) -> void:
@@ -261,12 +272,8 @@ func einheit_bei(welt_position: Vector2, radius: float) -> int:
 	return bester
 
 func auswahl_markierung_erneuern(aktiver_index: int, auswahl_liste: Array[int] = []) -> void:
-	## CP-6.1: Aktualisiert die goldene Auswahl-Markierung aller Einheiten.
-	for idx in _einheiten.size():
-		var darsteller: Variant = _einheiten[idx].get("darsteller")
-		if darsteller != null and darsteller.has_method("markierung_setzen"):
-			var ist_gewaehlt := (idx == aktiver_index) or auswahl_liste.has(idx)
-			darsteller.markierung_setzen(ist_gewaehlt)
+	## CP-6.1: Die Trupp-Maschine trägt die goldene Markierung aller Einheiten.
+	_trupp.auswahl_markierung_erneuern(aktiver_index, auswahl_liste)
 
 func weg_planung_aktualisieren() -> void:
 	## Öffentlicher Aufruf nach Gebäudeplatzierung: Das Netz kennt das
@@ -281,6 +288,8 @@ func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager, welt_wo
 	_model = neues_modell
 	_tiere = neue_tiere
 	_welt_world = welt_world
+	_trupp.model_setzen(neues_modell)
+	_job_fluss.model_setzen(neues_modell, neue_tiere)
 	_weg_planung_erneuern()
 	if _ziel_suche != null:
 		_ziel_suche.einrichten(_model, _tiere)
@@ -315,28 +324,8 @@ func einheit_vital(index: int) -> Einheit_VitalStatus:
 	return st.vital
 
 func einheit_beschreibung(index: int) -> Dictionary:
-	# Schlanker Snapshot fuer Observer: alles, was ein Fenster braucht,
-	# ohne die Interna preiszugeben.
-	if index < 0 or index >= _einheiten.size():
-		return {}
-	var st := einheit_status(index)
-	if st == null:
-		return {}
-	var hp := 0.0
-	if st.vital != null:
-		hp = st.vital.hp
-	var job_id := ""
-	if st.job != null:
-		job_id = st.job.job_id
-	return {
-		"position": st.welt_position,
-		"rasse": einheit_rasse(index),
-		"zustand": st.zustand,
-		"job_id": job_id,
-		"ziel_index": st.aktuelles_ziel_index,
-		"hp": hp,
-		"queue": st.queue_laenge(),
-	}
+	# Schlanker Snapshot fuer Observer, getragen von der Trupp-Maschine.
+	return _trupp.beschreibung_fuer(index, einheit_rasse(index))
 
 func einheit_position(index: int) -> Vector2:
 	if index < 0 or index >= _einheiten.size():
@@ -411,19 +400,9 @@ func einheit_job_abbrechen(einheit_index: int) -> void:
 	darsteller.animation_setzen(status.animation())
 
 func einheit_bewegen_nach(einheit_index: int, ziel_position: Vector2) -> bool:
-	# Spieler-Befehl: Die Einheit bricht laufende Jobs ab und marschiert zur Position.
-	if einheit_index < 0 or einheit_index >= _einheiten.size():
-		return false
-	var status: Einheit_Status = _einheiten[einheit_index]["status"]
-	if status == null:
-		return false
-	status.geh_befehl(ziel_position)
-	_planner_fuer(status, ziel_position)
-	status.blick_richtung_setzen(ziel_position.x >= einheit_position(einheit_index).x)
-	var darsteller: Einheit_Darsteller = _einheiten[einheit_index]["darsteller"]
-	darsteller.animation_setzen(status.animation())
-	darsteller.flip_h = not status.blick_richtung_rechts()
-	return true
+	# Spieler-Befehl: Die Trupp-Maschine bricht laufende Jobs ab und marschiert
+	# zur Position; der Weg-Planer des Managers berechnet die Route.
+	return _trupp.einheit_bewegen_nach(einheit_index, ziel_position, _planner_fuer)
 
 func _auf_tick(nummer: int, delta: float) -> void:
 	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
@@ -460,21 +439,15 @@ func _auf_tick(nummer: int, delta: float) -> void:
 			darsteller.animation_setzen(status.animation())
 			continue
 		
-		# Transport-Job Phasen prüfen
+		# Transport-Job Phasen prüfen: Die Trupp-Maschine bucht die Ablieferung.
 		if status.job != null and status.job.job_id == "transport":
 			var transport_job: Job_Transport = status.job as Job_Transport
 			if transport_job != null:
 				match transport_job.phase():
 					Job_Transport.PHASE_GEHE_ZU_LAGER:
 						if status.zustand == Einheit_Status.Zustand.ARBEITEN:
-							# Am Lager angekommen: Ablieferung starten
 							transport_job.phase_wechseln(Job_Transport.PHASE_ABLIEFERN)
-							# Inventar in Lager einlagern
-							var inventar_vorher := transport_job.inventar_vorher()
-							for ressource: String in inventar_vorher:
-								var menge: int = int(inventar_vorher[ressource])
-								if menge > 0 and _lager != null:
-									_lager.einlagern(ressource, menge, transport_job.lager_index())
+							_trupp.transport_job_ankommen(transport_job)
 							transport_job.phase_wechseln(Job_Transport.PHASE_FERTIG)
 					Job_Transport.PHASE_ABLIEFERN:
 						# Wird direkt in GEHE_ZU_LAGER abgehandelt
@@ -498,17 +471,11 @@ func _auf_tick(nummer: int, delta: float) -> void:
 		var w := mood.waerme_wert()
 		(status.vital as Einheit_VitalStatus).umgebungsschaden_anwenden(w, _mood_mod_registry, _zufall)
 		if ziel != Vector2.INF and status.zustand == Einheit_Status.Zustand.IDLE:
-			_in_sicherheit_bringen(einheit, ziel)
+			_trupp.in_sicherheit_bringen(einheit, ziel)
 		# Slice C: Verhaltensprüfung auf 12 Ticks gestreut verteilen (0.5s Reaktionszeit)
 		if status.zustand == Einheit_Status.Zustand.IDLE and (nummer % 12 == (ei % 12)):
 			_verhalten.pruefe_verhalten(einheit, ei)
 
-
-func _ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2:
-	return _ziel_suche.ziel_position_fuer(ziel_typ, ziel_index)
-
-func _ziel_existiert(status: Einheit_Status) -> bool:
-	return _ziel_suche.ziel_existiert(status)
 
 func _naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:
 	return _ziel_suche.naechstes_objekt(status, alter_ziel_index)
@@ -530,147 +497,35 @@ func lager_anker_position() -> Vector2:
 	return Vector2.ZERO
 
 func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp, _ziel_index: int, _ressource: String, status: Einheit_Status) -> void:
-	# Die eigene Queue der Einheit startet den nächsten Auftrag: Der Manager
-	# erzeugt den Job frisch über die Registry und entfernt die Vormerkung.
-	if status.zustand != Einheit_Status.Zustand.IDLE:
-		return
-	var eintrag := status.queue_naechster()
-	if eintrag.is_empty():
-		return
-	var job_id := str(eintrag.get("job_id", ""))
-	var ziel_typ := int(eintrag.get("ziel_typ", 0)) as Job_Basis.ZielTyp
-	var ziel_index := int(eintrag.get("ziel_index", -1))
-	var ressource := str(eintrag.get("ressource", ""))
-	
-	# Transport-Job wird speziell behandelt: Inventar wird übergeben
-	if job_id == "transport":
-		var ei := _einheiten_find_index_by_status(status)
-		if ei >= 0:
-			var inventar: Einheit_Inventar = _einheiten[ei].get("inventar", null)
-			if inventar != null and not inventar.ist_leer():
-				var lager_idx := ziel_index
-				if lager_idx >= 0 and lager_idx < _lager.lager_zahl():
-					var lager_pos := _lager.lager_position(lager_idx)
-					var transport_job := _job_registry.job_erzeugen("transport")
-					if transport_job != null:
-						transport_job.lager_index_setzen(lager_idx)
-						transport_job.lager_position_setzen(lager_pos)
-						transport_job.inventar_vorher_setzen(inventar.alles_abgeben())
-						status.queue_vorne_entfernen()
-						status.geh_ziel_setzen(lager_pos)
-						_planner_fuer(status, lager_pos)
-						status.job_vergeben(transport_job, ziel_typ, lager_idx, "")
-						return
-		# Falls kein Inventar oder Lager nicht gefunden: Queue-Eintrag entfernen
-		status.queue_vorne_entfernen()
-		return
-	
-	var folge_job := _job_registry.job_erzeugen(job_id)
-	var job: Job_Basis = folge_job
-	if job == null:
-		status.queue_vorne_entfernen()
-		return
-	status.queue_vorne_entfernen()
-	# G1: Auch aus der Queue startet der Job mit dem Faktor seines Ziels.
-	job.ziel_faktor_setzen(_ziel_suche.ziel_faktor_fuer(ziel_typ, ziel_index))
-	var ziel_position := _ziel_position_fuer(int(eintrag.get("ziel_typ", 0)), ziel_index)
-	status.geh_ziel_setzen(ziel_position)
-	_planner_fuer(status, ziel_position)
-	status.job_vergeben(job, ziel_typ, ziel_index, ressource)
-
-func _einheiten_find_index_by_status(status: Einheit_Status) -> int:
-	for idx in _einheiten.size():
-		if _einheiten[idx]["status"] == status:
-			return idx
-	return -1
+	# Die Queue-Reaktion wohnt in der Job-Fluss-Maschine; der Manager reicht nur durch.
+	_job_fluss.auf_naechster_job_aus_queue(_job_id, _ziel_typ, _ziel_index, _ressource, status)
 
 func _auf_job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int, status: Einheit_Status) -> void:
-	# Die Schleife endet nie hart im Idle: Der Manager sucht das naechste
-	# gueltige Ziel desselben Typs und setzt den Job direkt neu. Der Status
-	# haengt ueber bind() am Ende der Signal-Argumente, der Job kommt zuerst.
-	if job == null or status.job != job or _ressourcen == null:
-		return
-	var such_index := -1
-	match ziel_typ:
-		Job_Basis.ZielTyp.OBJEKT:
-			if _model != null:
-				such_index = _naechstes_objekt(status, alter_ziel_index)
-		Job_Basis.ZielTyp.TIER:
-			if _tiere != null:
-				such_index = _naechstes_tier(status, alter_ziel_index)
-	if such_index < 0:
-		return
-	var ziel_position := _ziel_position_fuer(ziel_typ, such_index)
-	status.geh_ziel_setzen(ziel_position)
-	_planner_fuer(status, ziel_position)
-	# G1: Das neue Loop-Ziel bringt seinen eigenen Faktor mit.
-	job.ziel_faktor_setzen(_ziel_suche.ziel_faktor_fuer(ziel_typ, such_index))
-	status.job_loopy_fortsetzen(job, ziel_typ, such_index, job.ressource())
+	# Die Loop-Reaktion wohnt in der Job-Fluss-Maschine; der Manager reicht nur durch.
+	_job_fluss.auf_job_loop_gefragt(job, ziel_typ, alter_ziel_index, status)
 
 func _auf_arbeitsschritt(ressource: String, menge: int, status: Einheit_Status) -> void:
-	# Ein Arbeitsschritt ist fertig; die Ernte-Maschine verarbeitet ihn.
-	# Nur der Status, der den Schritt geschafft hat, bucht seine Ernte:
-	# Der frühere Sammel-Lauf über alle Einheiten war ein Doppelpfad, der
-	# mit bind() auf dem Arbeitsloop-Signal zweimal die gleiche Ernte
-	# angestoßen hätte. bind(status) legt den Absender fest, beide Pfade
-	# landen auf demselben Empfänger und laufen exakt einmal durch.
-	if _ernte == null or status == null:
-		return
-	_ernte.arbeitsschritt_verarbeiten(ressource, menge, status)
+	# Die Arbeitsschritt-Buchung wohnt in der Job-Fluss-Maschine.
+	_job_fluss.auf_arbeitsschritt(ressource, menge, status)
 
 func _auf_beute_erlegt(status: Einheit_Status) -> void:
-	# Beute gefallen: Die Darstellung der Einheit folgt dem Job-Ende.
-	for einheit: Dictionary in _einheiten:
-		if einheit["status"] == status:
-			(einheit["darsteller"] as Einheit_Darsteller).animation_setzen(status.animation())
+	# Die Beute-Darstellung wohnt in der Trupp-Maschine.
+	_trupp.beute_darstellen(status)
 
 func _auf_inventar_voll(einheit_index: int) -> void:
-	# Inventar ist voll: Transport-Job vormerken
-	if _lager == null or _lager.lager_zahl() == 0:
-		return
-	if einheit_index < 0 or einheit_index >= _einheiten.size():
-		return
-	var status: Einheit_Status = _einheiten[einheit_index]["status"]
-	var inventar: Einheit_Inventar = _einheiten[einheit_index].get("inventar", null)
-	if inventar == null or inventar.ist_leer():
-		return
-	# Nächstes Lager suchen
-	var lager_index := _lager.naechstes_lager_fuer(status.welt_position)
-	if lager_index < 0:
-		return
-	# Transport-Job vormerken
-	status.job_vormerken("transport", Job_Basis.ZielTyp.OBJEKT, lager_index, "")
-	# Signal an Manager für nächste Queue-Verarbeitung
-	status.naechster_job_aus_queue.emit("transport", Job_Basis.ZielTyp.OBJEKT, lager_index, "")
+	# Die Transport-Vormerkung wohnt in der Job-Fluss-Maschine.
+	_job_fluss.auf_inventar_voll(einheit_index)
 
 func _auf_zustand_geaendert(_neu: int, status: Einheit_Status, mood: Pop_MoodMaschine) -> void:
-	var vorher: int = 0
-	for einheit: Dictionary in _einheiten:
-		if einheit["status"] == status:
-			vorher = int(einheit.get("_letzter_zustand", 0))
-			einheit["_letzter_zustand"] = status.zustand
-			break
-	var von_str := "idle" if vorher == Einheit_Status.Zustand.IDLE else "arbeiten"
-	var nach_str := "idle" if status.zustand == Einheit_Status.Zustand.IDLE else "arbeiten"
-	var job_id := status.job.job_id if status.job != null else ""
-	mood.auf_jobwechsel(von_str, nach_str, job_id)
+	# Die Stimmungs-Regel wohnt in der Job-Fluss-Maschine; der Manager reicht durch.
+	_trupp.zustand_merken(status)
+	_job_fluss.auf_zustand_geaendert(_neu, status, mood)
 
 func transport_fuer_idle(einheit_index: int, _freies_lager: Lager_Manager) -> bool:
-	# Das Lager wird in der Transportkette des Status gezogen; der Manager
-	# braucht es hier nicht, der Parameter bleibt als Vertrag erhalten und
-	# trägt einen eigenen Namen, damit das Klassenfeld _lager nicht verschattet wird.
-	if einheit_index < 0 or einheit_index >= _einheiten.size():
-		return false
-	var mood: Pop_MoodMaschine = _einheiten[einheit_index]["mood"]
-	mood.auf_jobwechsel("idle", "transport", "transport")
-	return true
-
-func _in_sicherheit_bringen(einheit: Dictionary, ziel: Vector2) -> void:
-	# Progression-Gate: Wärme triggert in_sicherheit_bringen am Gate.
-	einheit["position"] = ziel
-	(einheit["darsteller"] as Einheit_Darsteller).position = ziel
-	(einheit["mood"] as Pop_MoodMaschine).welt_position_setzen(ziel)
-	(einheit["status"] as Einheit_Status).welt_position_setzen(ziel)
+	# Das Lager wird in der Transportkette des Status gezogen; der Parameter
+	# bleibt als Vertrag erhalten und trägt einen eigenen Namen, damit das
+	# Klassenfeld _lager nicht verschattet wird.
+	return _trupp.transport_fuer_idle(einheit_index)
 
 func _nahrung_verteilen() -> void:
 	# Die Versorgungs-Maschine besitzt die Regel; der Manager nur den Takt.

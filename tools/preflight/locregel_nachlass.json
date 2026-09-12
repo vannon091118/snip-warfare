@@ -1,30 +1,88 @@
 {
   "_kommentar": "E041 Nachlass-Liste: Jede Datei traegt ihren Ist-Wert zum Einfuehrungszeitpunkt, bis ihr Zerlegungs-Slice sie streicht. Eine Datei darf nie ueber ihren Ist-Wert wachsen; neue Dateien muessen die Grenze sofort halten. Die Liste muss leer enden.",
-  "core/logic/kern_mutationsschema.gd": {"ist_zeilen": 82},
-  "core/logic/kern_steuerung_basis.gd": {"ist_zeilen": 165},
-  "economy/logic/storage/lager_darsteller.gd": {"ist_zeilen": 163},
-  "economy/logic/storage/lager_manager.gd": {"ist_zeilen": 164},
-  "game/logic/kategorie_einheit/einheit_ernte_maschine.gd": {"ist_zeilen": 145},
-  "game/logic/kategorie_einheit/einheit_manager.gd": {"ist_zeilen": 679},
-  "game/logic/kategorie_einheit/einheit_status.gd": {"ist_zeilen": 306},
-  "game/logic/kategorie_job/job_basis.gd": {"ist_zeilen": 162},
-  "population/logic/mood/pop_mood_maschine.gd": {"ist_zeilen": 285},
-  "population/logic/needs/pop_need_registry.gd": {"ist_zeilen": 106},
-  "population/logic/needs/pop_rassen_schema_registry.gd": {"ist_zeilen": 105},
-  "world/logic/kategorie_generator/generator_registry.gd": {"ist_zeilen": 109},
-  "world/logic/kategorie_generator/welt_generator.gd": {"ist_zeilen": 383, "slice": "E"},
-  "world/logic/kategorie_objekt/gebaeude_manager.gd": {"ist_zeilen": 310, "slice": "F"},
-  "world/logic/kategorie_objekt/objekt_registry_basis.gd": {"ist_zeilen": 140},
-  "world/logic/kategorie_orchestrator/orchestrator_manager.gd": {"ist_zeilen": 228},
-  "world/logic/kategorie_progression/welt_fortschritts_maschine.gd": {"ist_zeilen": 145},
-  "world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd": {"ist_zeilen": 151},
-  "world/logic/kategorie_tier/tier_manager.gd": {"ist_zeilen": 234},
-  "world/logic/kategorie_tier/tier_registry.gd": {"ist_zeilen": 121},
-  "world/logic/kategorie_tier/tier_status.gd": {"ist_zeilen": 149},
-  "world/logic/kategorie_welt/fraktions_ki_maschine.gd": {"ist_zeilen": 165},
-  "world/logic/kategorie_welt/welt_karawanen_manager.gd": {"ist_zeilen": 238},
-  "world/logic/kategorie_welt/welt_model.gd": {"ist_zeilen": 505},
-  "world/logic/kategorie_welt/welt_objekt_darsteller.gd": {"ist_zeilen": 107},
-  "world/logic/kategorie_welt/welt_registry.gd": {"ist_zeilen": 116},
-  "world/logic/kategorie_welt/welt_renderer.gd": {"ist_zeilen": 443, "slice": "G"}
+  "core/logic/kern_mutationsschema.gd": {
+    "ist_zeilen": 82
+  },
+  "core/logic/kern_steuerung_basis.gd": {
+    "ist_zeilen": 165
+  },
+  "economy/logic/storage/lager_darsteller.gd": {
+    "ist_zeilen": 163
+  },
+  "economy/logic/storage/lager_manager.gd": {
+    "ist_zeilen": 164
+  },
+  "game/logic/kategorie_einheit/einheit_ernte_maschine.gd": {
+    "ist_zeilen": 145
+  },
+  "game/logic/kategorie_einheit/einheit_manager.gd": {
+    "ist_zeilen": 534,
+    "slice": "C"
+  },
+  "game/logic/kategorie_einheit/einheit_status.gd": {
+    "ist_zeilen": 306
+  },
+  "game/logic/kategorie_job/job_basis.gd": {
+    "ist_zeilen": 162
+  },
+  "population/logic/mood/pop_mood_maschine.gd": {
+    "ist_zeilen": 285
+  },
+  "population/logic/needs/pop_need_registry.gd": {
+    "ist_zeilen": 106
+  },
+  "population/logic/needs/pop_rassen_schema_registry.gd": {
+    "ist_zeilen": 105
+  },
+  "world/logic/kategorie_generator/generator_registry.gd": {
+    "ist_zeilen": 109
+  },
+  "world/logic/kategorie_generator/welt_generator.gd": {
+    "ist_zeilen": 383,
+    "slice": "E"
+  },
+  "world/logic/kategorie_objekt/gebaeude_manager.gd": {
+    "ist_zeilen": 310,
+    "slice": "F"
+  },
+  "world/logic/kategorie_objekt/objekt_registry_basis.gd": {
+    "ist_zeilen": 140
+  },
+  "world/logic/kategorie_orchestrator/orchestrator_manager.gd": {
+    "ist_zeilen": 228
+  },
+  "world/logic/kategorie_progression/welt_fortschritts_maschine.gd": {
+    "ist_zeilen": 145
+  },
+  "world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd": {
+    "ist_zeilen": 151
+  },
+  "world/logic/kategorie_tier/tier_manager.gd": {
+    "ist_zeilen": 234
+  },
+  "world/logic/kategorie_tier/tier_registry.gd": {
+    "ist_zeilen": 121
+  },
+  "world/logic/kategorie_tier/tier_status.gd": {
+    "ist_zeilen": 149
+  },
+  "world/logic/kategorie_welt/fraktions_ki_maschine.gd": {
+    "ist_zeilen": 165
+  },
+  "world/logic/kategorie_welt/welt_karawanen_manager.gd": {
+    "ist_zeilen": 238
+  },
+  "world/logic/kategorie_welt/welt_model.gd": {
+    "ist_zeilen": 505
+  },
+  "world/logic/kategorie_welt/welt_objekt_darsteller.gd": {
+    "ist_zeilen": 107
+  },
+  "world/logic/kategorie_welt/welt_registry.gd": {
+    "ist_zeilen": 116
+  },
+  "world/logic/kategorie_welt/welt_renderer.gd": {
+    "ist_zeilen": 443,
+    "slice": "G"
+  }
 }

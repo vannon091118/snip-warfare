@@ -1,13 +1,13 @@
-1. Der Nutzer hat befohlen, die Monster-Dateien zu zerlegen, und nach dem Gebäude-Manager war der Welt-Renderer der nächste Kandidat, weil er Darstellung und Sichtbarkeits-Rechnung in einer Klasse vereinte.
+1. Der Kommandant befahl, den Einheiten-Manager ein zweites Mal zu zerlegen, weil er trotz erster Teilung noch 678 Zeilen und mehrere fremde Rechnungen unter einem Dach trug.
 
-2. In world/logic/kategorie_welt/welt_renderer.gd habe ich die Sichtbereichs-Rechnung herausgetrennt: Die Entscheidung, wann der sichtbare Knotenbestand neu abgeglichen wird und ob ein Punkt im Blick liegt, wohnt nun in der neuen Klasse Welt_SichtbereichSammler in world/logic/kategorie_welt/welt_sichtbereich_sammler.gd.
+2. Ich legte die Job-Fluss-Maschine in game/logic/kategorie_einheit/einheit_job_fluss_maschine.gd an und zog dorthin Queue-Start, Loop-Neusuche, Arbeitsschritt, Inventar-Vormerkung, Beute-Darstellung und den Zustandswechsel aus dem Manager.
 
-3. Der Renderer ist auf 443 Zeilen geschrumpft und zeichnet nur noch: Er hält die Fliesen- und Objekt-Knoten und fragt den Sammler, was sichtbar ist, während die Rand-, Schritt- und Deckel-Konstanten mit dem Sammler in dessen eigene Datei gewandert sind.
+3. Ich legte die Trupp-Maschine in game/logic/kategorie_einheit/einheit_trupp_maschine.gd an und zog dorthin Beschreibung, Auswahl-Markierung, Marschbefehl, Transport-Start mit Ablieferung, Sicherheits-Transport und die Zustands-Merken-Logik.
 
-4. Die äußere Verbindung bleibt unangetastet: Die Szene ruft weiterhin sichtbereich_setzen, sichtgebiet_aktualisieren und den Rand-Wert am Renderer, sie merkt von der neuen Ordnung nichts.
+4. Der Manager in game/logic/kategorie_einheit/einheit_manager.gd schrumpfte auf 534 Zeilen und behielt nur noch Knoten, Ticks, Registries, Lese-Schnittstellen und duenne Delegationen an die beiden Maschinen, alle Aufrufe aus welt.gd und ui blieben unveraendert.
 
-5. In tools/preflight/locregel_nachlass.json habe ich den Ist-Wert des Renderers von 456 auf 443 Zeilen gesenkt, damit die Datei nicht heimlich nachwachsen kann.
+5. Der Test in test_objekt_faktor_verdrahtung.py suchte den Zielfaktor noch dreimal im Manager, ich spaltete die Pruefung auf Manager und Job-Fluss-Maschine auf und hielt damit die G1-Verdrahtung bildlich fest.
 
-6. Der volle Preflight läuft ohne Befunde, alle 85 Tests sind grün, und der verschattete Parameter im Sammler wurde umbenannt, damit die Warnungs-Prüfung still bleibt.
+6. In tools/preflight/locregel_nachlass.json senkte ich den Manager-Eintrag von 679 auf 534 Zeilen, die beiden neuen Maschinen halten ihre 120er-Grenze und der volle Preflight laeuft ohne Befund mit allen 85 Tests gruen.
 
-7. Noch offen sind die Basis-Klassen, die Lager- und Tier-Domäne, die Population und die übrigen Maschinen, denn ein Renderer, der rechnet und zeichnet, ist nur halb entkleidet.
+7. Noch offen bleiben der Welt-Renderer-Sammler aus Slice G und die Slices K bis N fuer Basis-Klassen, Lager, Tiere, Population und die uebrigen Maschinen, bevor das Nachlass-Verzeichnis leer sein darf.
