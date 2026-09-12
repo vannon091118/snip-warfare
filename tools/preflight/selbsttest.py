@@ -61,6 +61,28 @@ def selbsttest():
         SteuerungPruefer = _lade_shinon_klasse("shinon/shinon_steuerung_pruefer.py", "_shinon_steuerung_selbsttest", "ShinonSteuerungPruefer")
         if not SteuerungPruefer().pruefen(PROJEKT_STAMM / "__shinon_probe_nicht_existent_steuerung__.json"):
             probleme.append("Shinon Steuerung Pruefer meldet fehlende Steuerung nicht")
+        # Whitespace-Waechter Selbsttest: CRLF und trailing muessen sicher greifen.
+        import importlib.util as _ilu_ws
+        import pathlib as _pl_ws
+        _ws_pfad = PROJEKT_STAMM / "tools" / "preflight" / "pruef_whitespace.py"
+        _ws_spez = _ilu_ws.spec_from_file_location("_ws_mod", str(_ws_pfad))
+        _ws_mod = _ilu_ws.module_from_spec(_ws_spez)
+        _ws_spez.loader.exec_module(_ws_mod)
+        _probe_crlf = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1\r\n", "a = 1\r\n")
+        if not any("CRLF" in u for u in _probe_crlf):
+            probleme.append("Whitespace Pruefer meldet CRLF nicht")
+        _probe_trail = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1   \n", "a = 1   \n")
+        if not any("trailing" in u for u in _probe_trail):
+            probleme.append("Whitespace Pruefer meldet trailing Leerzeichen nicht")
+        _probe_final = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1", "a = 1")
+        if not any("finales" in u for u in _probe_final):
+            probleme.append("Whitespace Pruefer meldet fehlendes finales Newline nicht")
+        _probe_tab = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a\t= 1\n", "a\t= 1\n")
+        if not any("Tab" in u for u in _probe_tab):
+            probleme.append("Whitespace Pruefer meldet Tab in py nicht")
+        _probe_gd_tab = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.gd"), b"\ta = 1\n", "\ta = 1\n")
+        if any("Tab" in u for u in _probe_gd_tab):
+            probleme.append("Whitespace Pruefer darf Tabs in .gd nicht melden")
     except Exception as lauf_fehler:
         probleme.append(f"Shinon Gate Selbsttest wirft Ausnahme: {lauf_fehler}")
     return probleme

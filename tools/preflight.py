@@ -66,6 +66,7 @@ from preflight.pruef_shinon import pruefe_shinon
 from preflight.pruef_godot import godot_lauf
 from preflight.pruef_warnungen import pruefe_warnungen
 from preflight.pruef_locregel import pruefe_locregel
+from preflight.pruef_whitespace import pruefe_whitespace
 from preflight.selbsttest import selbsttest
 
 PRUEFKATEGORIEN = {
@@ -85,6 +86,7 @@ PRUEFKATEGORIEN = {
     "einheitlich": ("E023", "E024"),
     "welt": ("E012", "E019", "E023"),
     "locregel": ("E041",),
+    "whitespace": ("E042",),
 }
 
 ALLE_KLASSEN = set()
@@ -100,9 +102,18 @@ def hauptprogramm():
                         help="Godot-Lauf überspringen")
     parser.add_argument("--godot-befehl", default="godot",
                         help="Befehl oder Pfad der Godot-Engine")
+    parser.add_argument("--fix", action="store_true",
+                        help="Whitespace-Maengel (E042) automatisch reparieren (nur mit --kategorie whitespace)")
     parser.add_argument("--hilfe-fehler", action="store_true",
                         help="Zeigt die Zuordnung Godot Zeile zu E016/E017/E018")
     argumente = parser.parse_args()
+    if argumente.fix and "whitespace" not in {k.lower() for k in argumente.kategorie}:
+        print("E000: --fix ist nur mit --kategorie whitespace erlaubt")
+        return 2
+    if argumente.fix:
+        from preflight.pruef_whitespace import fix_dateien
+        anzahl = fix_dateien()
+        print(f"E042 --fix: {anzahl} Dateien bereinigt")
 
     if argumente.hilfe_fehler:
         return _hilfe_debug_uebersetzer()
@@ -153,6 +164,8 @@ def hauptprogramm():
         pruefe_datenparitaet(dateien)
     if "locregel" in gewaehlt:
         pruefe_locregel(dateien)
+    if "whitespace" in gewaehlt:
+        pruefe_whitespace(dateien)
     if godot_aktiv:
         godot_lauf(argumente.godot_befehl)
 

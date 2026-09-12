@@ -32,6 +32,11 @@ Thumbs.db
 # Headless-Bin relativer Referenzpfad bleibt im Repo, Cache nicht
 tools/godot/.cache/
 
+# Godot Banner- und Gameplay-Vorschauen: lokal erzeugte Artefakte
+banner_tmp*
+gameplay_tmp*
+plan_katzen_bindung_eskalaion.md
+
 # GODOT ACP — MCP-Testumgebung bleibt lokal, niemals im Repo
 /addons/
 /mcp_tools/
