@@ -17,4 +17,3 @@ func platzieren(model: Welt_Model, registry: Welt_Registry, tiere: Tier_Manager)
 		if eintrag == null or eintrag.typ != &"bewegt":
 			continue
 		tiere.tier_platzieren(element_id, model.objekt_position(index))
-

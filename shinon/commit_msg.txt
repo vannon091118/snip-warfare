@@ -1,5 +1,5 @@
-1. Der Nutzer verlangte, dass die vielen Leerzeichen-Fehler verschwinden und das Repo atmen kann, also schickte Shinon den Waecher fuer Teil 4 von 5 los.
-2. Ich bereinigte mit E042 --fix genau diese 15 Dateien: gebaeude_produktions_maschine.gd, moebel_registry.gd, objekt_bett.gd, objekt_schrank.gd, objekt_stuhl.gd, objekt_tisch.gd, objekt_tisch_stahl.gd, orchestrator_einheit.gd, orchestrator_manager.gd, tier_manager.gd, tier_status.gd, waerme_shader.gd, fraktions_ki_maschine.gd, welt_bau_geist.gd, welt_karawane.gd.
+1. Der Nutzer verlangte, dass die vielen Leerzeichen-Fehler verschwinden und das Repo atmen kann, also schickte Shinon den Waecher fuer Teil 5 von 5 los.
+2. Ich bereinigte mit E042 --fix genau diese 11 Dateien: welt_karawanen_manager.gd, welt_lager_fabrik.gd, welt_landeplatz_anzeige.gd, welt_map_fabrik.gd, welt_raum_analyser.gd, welt_renderer.gd, welt_tier_platzierer.gd, welt_wasser_automat.gd, welt_world.gd, waerme_overlay.gd, waerme_overlay.tscn.
 3. Jede Datei traegt nun LF statt CRLF und saubere Abschluesse ohne trailing Leerzeichen, Tabs leben nur noch in .gd.
 4. Der Nachlass in tools/preflight/locregel_nachlass.json glich bereits sechs Eintraege an das neue Mass an.
 5. Der volle Preflight meldet null Befunde fuer whitespace und die 85 Tests laufen gruen wie frischer Rasen.

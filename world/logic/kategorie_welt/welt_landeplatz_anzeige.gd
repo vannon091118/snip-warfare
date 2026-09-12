@@ -52,23 +52,23 @@ func _draw() -> void:
 	var puls_alpha := (0.65 + 0.2 * sin(_puls_zeit)) * _alpha_modulator
 	var rahmen_farbe := Color(_basis_farbe.r, _basis_farbe.g, _basis_farbe.b, puls_alpha)
 	var flaechen_farbe := Color(_hintergrund_farbe.r, _hintergrund_farbe.g, _hintergrund_farbe.b, _hintergrund_farbe.a * _alpha_modulator)
-	
+
 	# Zarter Hintergrundteppich
 	draw_rect(rechteck, flaechen_farbe, true)
-	
+
 	# Gestrichelte Kanten um das Startareal
 	_zeichne_gestrichelte_kante(Vector2(rechteck.position.x, rechteck.position.y), Vector2(rechteck.end.x, rechteck.position.y), rahmen_farbe)
 	_zeichne_gestrichelte_kante(Vector2(rechteck.end.x, rechteck.position.y), Vector2(rechteck.end.x, rechteck.end.y), rahmen_farbe)
 	_zeichne_gestrichelte_kante(Vector2(rechteck.end.x, rechteck.end.y), Vector2(rechteck.position.x, rechteck.end.y), rahmen_farbe)
 	_zeichne_gestrichelte_kante(Vector2(rechteck.position.x, rechteck.end.y), Vector2(rechteck.position.x, rechteck.position.y), rahmen_farbe)
-	
+
 	# Praegnente Eck-Winkel zur taktischen Orientierung
 	var eck_laenge := 24.0
 	_zeichne_ecke(rechteck.position, Vector2.RIGHT, Vector2.DOWN, eck_laenge, rahmen_farbe)
 	_zeichne_ecke(Vector2(rechteck.end.x, rechteck.position.y), Vector2.LEFT, Vector2.DOWN, eck_laenge, rahmen_farbe)
 	_zeichne_ecke(rechteck.end, Vector2.LEFT, Vector2.UP, eck_laenge, rahmen_farbe)
 	_zeichne_ecke(Vector2(rechteck.position.x, rechteck.end.y), Vector2.RIGHT, Vector2.UP, eck_laenge, rahmen_farbe)
-	
+
 	# Zentrales Fadenkreuz / Orientierungsmarkierung
 	var kreuz_groesse := 12.0
 	draw_line(Vector2(-kreuz_groesse, 0.0), Vector2(kreuz_groesse, 0.0), rahmen_farbe, 1.5)

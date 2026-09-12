@@ -31,7 +31,7 @@ func _ready() -> void:
 	_karawanen_ebene.name = "KarawanenEbene"
 	_karawanen_ebene.y_sort_enabled = true
 	add_child(_karawanen_ebene)
-	
+
 	# Weltuhr verbinden
 	var weltuhr := get_node_or_null("/root/Weltuhr")
 	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_auf_tick):
@@ -60,7 +60,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 			# Inaktive Karte: Nur jedes 6. Frame ticken
 			if Engine.get_process_frames() % 6 != 0:
 				return
-	
+
 	# Karawanen ticken
 	var entfernte_indices: Array[int] = []
 	for index in _karawanen.size():
@@ -68,12 +68,12 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 		if karawane == null:
 			entfernte_indices.append(index)
 			continue
-		
+
 		# Prüfen ob die Karawane auf DIESER Karte startet oder ankommt
 		var ist_meine_karawane := (karawane.von_map_id == _model.map_id) or (karawane.nach_map_id == _model.map_id)
 		if not ist_meine_karawane:
 			continue
-		
+
 		var angekommen := karawane.tick()
 		if angekommen:
 			# Karawane ist am Ziel angekommen -> Entladen
@@ -81,12 +81,12 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 		elif karawane.ist_fertig():
 			# Karawane ist vollständig abgewickelt -> Entfernen
 			entfernte_indices.append(index)
-	
+
 	# Entfernte Karawanen bereinigen (von hinten, damit Indizes stimmen)
 	entfernte_indices.sort_custom(func(a: int, b: int) -> bool: return a > b)
 	for idx in entfernte_indices:
 		_karawanen.remove_at(idx)
-	
+
 	# Sichtbarkeit aktualisieren
 	_karawanen_ebene.queue_redraw()
 
@@ -98,9 +98,9 @@ func _karawane_entladen(karawane: Welt_Karawane, _index: int) -> void:
 		# Direkter Aufruf: Welt_World wendet Mutation auf gespeicherten
 		# Lager-Daten der Zielkarte an (kein SubViewport, kein Threading).
 		erfolg = _welt_world.karawane_ankunft_verarbeiten(karawane)
-	
+
 	karawane_angekommen.emit(karawane)
-	
+
 	if erfolg:
 		karawane.als_fertig_markieren()
 		karawane_entladen.emit(karawane, true)
@@ -113,36 +113,36 @@ func _karawane_entladen(karawane: Welt_Karawane, _index: int) -> void:
 func karawane_erstellen(von_map_id: String, nach_map_id: String, von_pos: Vector2, nach_pos: Vector2, fracht: Dictionary) -> Welt_Karawane:
 	## Erstellt eine neue Karawane mit berechneter Reisedauer aus dem Netzwerk.
 	var reise_ticks := _reise_dauer_berechnen(von_map_id, nach_map_id, von_pos, nach_pos)
-	
+
 	var k_id := "karawane_%d" % _naechste_karawanen_nummer
 	_naechste_karawanen_nummer += 1
-	
+
 	var karawane := Welt_Karawane.new(k_id, von_map_id, nach_map_id, von_pos, nach_pos, reise_ticks, fracht)
 	_karawanen.append(karawane)
-	
+
 	# Reise starten
 	karawane.reise_starten()
 	karawane_gestartet.emit(karawane)
-	
+
 	return karawane
 
 func _reise_dauer_berechnen(von_map_id: String, nach_map_id: String, von_pos: Vector2, nach_pos: Vector2) -> int:
 	## Berechnet die Reisedauer in Ticks basierend auf dem Makro-Netzwerk.
 	## Nutzt Welt_NetzwerkPlaner.wege() für die Distanz zwischen Karten.
-	
+
 	if _netzwerk_planer == null:
 		# Fallback: euklidische Distanz * Faktor
 		var distanz := von_pos.distance_to(nach_pos)
 		return maxi(int(distanz / 50.0), 120)  # Mindestens 5 Sekunden
-	
+
 	var wege := _netzwerk_planer.wege()
 	var kuerzeste_distanz := INF
-	
+
 	# Suche Weg zwischen den Karten (über Fraktionen/Spieler-Region)
 	for weg: Dictionary in wege:
 		var weg_von_id := str(weg.get("von_id", ""))
 		var weg_nach_id := str(weg.get("nach_id", ""))
-		
+
 		# Prüfen ob dieser Weg die Karten verbindet
 		var verbindung := false
 		if (weg_von_id == von_map_id and weg_nach_id == nach_map_id) or \
@@ -152,18 +152,18 @@ func _reise_dauer_berechnen(von_map_id: String, nach_map_id: String, von_pos: Ve
 		if (weg_von_id == "spieler" and weg_nach_id == nach_map_id) or \
 		   (weg_von_id == nach_map_id and weg_nach_id == "spieler"):
 			verbindung = true
-		
+
 		if verbindung:
 			var v_pos := Vector2(weg.get("von", Vector2i.ZERO))
 			var n_pos := Vector2(weg.get("nach", Vector2i.ZERO))
 			var dist := v_pos.distance_to(n_pos)
 			if dist < kuerzeste_distanz:
 				kuerzeste_distanz = dist
-	
+
 	if kuerzeste_distanz == INF:
 		# Kein direkter Weg: Fallback auf Luftlinie
 		kuerzeste_distanz = von_pos.distance_to(nach_pos)
-	
+
 	# Umrechnung: 1 Kachel ≈ 50 Pixel, 24 Ticks/Sekunde, Geschwindigkeit ~100 Pixel/Sekunde
 	# => Ticks = Distanz / (Geschwindigkeit * Tick_Dauer) = Distanz / (100/24) = Distanz * 0.24
 	var ticks := maxi(int(kuerzeste_distanz * 0.24), 60)  # Mindestens 2.5 Sekunden
@@ -187,10 +187,10 @@ func _draw() -> void:
 		var ist_meine := (karawane.von_map_id == _model.map_id) or (karawane.nach_map_id == _model.map_id)
 		if not ist_meine:
 			continue
-		
+
 		var pos := karawane.position_aktuel()
 		var zustand := karawane.zustand()
-		
+
 		var farbe := KARAWANEN_FARBE
 		if zustand == "wartend":
 			farbe = Color(0.6, 0.6, 0.6)
@@ -198,11 +198,11 @@ func _draw() -> void:
 			farbe = Color(0.2, 1.0, 0.3)
 		elif zustand == "fertig":
 			farbe = Color(0.5, 0.5, 0.5)
-		
+
 		# Punkt zeichnen
 		draw_circle(pos, KARAWANEN_PUNKT_RADIUS, farbe)
 		draw_circle(pos, KARAWANEN_PUNKT_RADIUS, KARAWANEN_RAND_FARBE, false, 2.0)
-		
+
 		# Fortschrittsbalken bei Reise
 		if zustand == "unterwegs":
 			var fortschritt := karawane._aktueller_fortschritt
@@ -213,7 +213,7 @@ func _draw() -> void:
 			var vordergrund_rect := Rect2(balken_pos, Vector2(balken_breite * fortschritt, balken_hoehe))
 			draw_rect(hintergrund_rect, Color(0, 0, 0, 0.5))
 			draw_rect(vordergrund_rect, Color(1.0, 0.9, 0.2))
-		
+
 		# ID anzeigen
 		draw_string(ThemeDB.fallback_font, pos + Vector2(-20, KARAWANEN_PUNKT_RADIUS + 10), karawane.karawanen_id, HORIZONTAL_ALIGNMENT_CENTER, -1, 10, Color.WHITE)
 

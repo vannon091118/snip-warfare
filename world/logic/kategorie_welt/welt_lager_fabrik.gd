@@ -24,4 +24,3 @@ func anlegen_aus_welt(model: Welt_Model, lager: Lager_Manager, fallback_position
 			lager.lager_anlegen("kleines_lager", welt_pos)
 	if lager.lager_zahl() == 0:
 		lager.lager_anlegen("kleines_lager", fallback_position)
-

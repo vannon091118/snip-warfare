@@ -197,28 +197,28 @@ func karawane_ankunft_verarbeiten(karawane: Welt_Karawane) -> bool:
 	if not _karten.has(ziel_map_id):
 		push_warning("Karawane %s: Zielkarte %s nicht gefunden" % [karawane.karawanen_id, ziel_map_id])
 		return false
-	
+
 	var ziel_model: Welt_Model = _karten[ziel_map_id]["model"]
 	if ziel_model == null:
 		push_warning("Karawane %s: Ziel-Modell für %s ist null" % [karawane.karawanen_id, ziel_map_id])
 		return false
-	
+
 	# Lager-Daten der Zielkarte holen (funktioniert auch für inaktive Karten)
 	var lager_daten: Array = _karten[ziel_map_id]["lager_daten"]
 	if lager_daten == null:
 		lager_daten = []
-	
+
 	# Lager_MutationEinlagern direkt auf den Lager-Daten anwenden
 	var alles_erfolgreich := true
 	var fracht := karawane.fracht()
 	var zufall := Kern_Zufall.new()
 	zufall.start_zustand_setzen(42)
-	
+
 	for ressource: String in fracht.keys():
 		var menge := int(fracht[ressource])
 		if menge <= 0:
 			continue
-		
+
 		# Ersten verfügbaren Lager-Index finden oder 0 als Fallback
 		var lager_index := _erster_gueltiger_lager_index(lager_daten)
 		if lager_index < 0:
@@ -230,21 +230,21 @@ func karawane_ankunft_verarbeiten(karawane: Welt_Karawane) -> bool:
 				"kapazitaet": 1000
 			})
 			lager_index = lager_daten.size() - 1
-		
+
 		# Mutation direkt anwenden
 		var mutation := Lager_MutationEinlagern.new(ressource, menge, lager_index)
 		var zustand := {"lager": lager_daten.duplicate(true)}
-		
+
 		if mutation.anwendbar(zustand):
 			var ergebnis := mutation.anwenden(zustand, zufall)
 			lager_daten = ergebnis["lager"]
 		else:
 			push_warning("Karawane %s: Mutation nicht anwendbar für %d %s in Lager %d" % [karawane.karawanen_id, menge, ressource, lager_index])
 			alles_erfolgreich = false
-	
+
 	# Aktualisierte Lager-Daten speichern
 	_karten[ziel_map_id]["lager_daten"] = lager_daten
-	
+
 	return alles_erfolgreich
 
 func _erster_gueltiger_lager_index(lager_daten: Array) -> int:
@@ -263,23 +263,23 @@ func lager_mutation_direkt_ausfuehren(map_id: String, ressource: String, menge: 
 	if not _karten.has(map_id):
 		push_warning("Lager-Mutation: Karte %s nicht gefunden" % map_id)
 		return false
-	
+
 	var lager_daten: Array = _karten[map_id]["lager_daten"]
 	if lager_daten == null:
 		lager_daten = []
-	
+
 	if lager_index < 0 or lager_index >= lager_daten.size():
 		push_warning("Lager-Mutation: Ungültiger Lager-Index %d für Karte %s" % [lager_index, map_id])
 		return false
-	
+
 	var mutation := Lager_MutationEinlagern.new(ressource, menge, lager_index)
 	var zustand := {"lager": lager_daten.duplicate(true)}
 	var zufall := Kern_Zufall.new()
 	zufall.start_zustand_setzen(42)
-	
+
 	if not mutation.anwendbar(zustand):
 		return false
-	
+
 	var ergebnis := mutation.anwenden(zustand, zufall)
 	_karten[map_id]["lager_daten"] = ergebnis["lager"]
 	return true

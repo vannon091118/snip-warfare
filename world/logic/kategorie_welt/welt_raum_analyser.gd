@@ -19,21 +19,21 @@ func analysiere(start_position: Vector2) -> Array[String]:
 	var besucht: Dictionary = {} # Schlüssel: "x:y" -> true
 	var zu_besuchen: Array[Vector2i] = []
 	var tags_set: Array[String] = []
-	
+
 	var start_tile := _welt_pos_to_tile(start_position)
 	zu_besuchen.append(start_tile)
-	
+
 	while zu_besuchen.size() > 0:
 		var tile := zu_besuchen.pop_back()
 		var key := "%d:%d" % [tile.x, tile.y]
 		if besucht.has(key):
 			continue
 		besucht[key] = true
-		
+
 		# Prüfe, ob die Tile durch eine Wand blockiert ist
 		if _ist_wand_tile(tile):
 			continue
-		
+
 		# Sammle Tags von Möbeln auf dieser Tile
 		var objekte_auf_tile := _objekte_auf_tile(tile)
 		for obj_index in objekte_auf_tile:
@@ -44,14 +44,14 @@ func analysiere(start_position: Vector2) -> Array[String]:
 			for tag in tags:
 				if not tags_set.has(tag):
 					tags_set.append(tag)
-		
+
 		# Nachbarschaftstiles hinzufügen (4- oder 8-richtungsbasiert? Wir nutzen 4)
 		for versatz: Vector2i in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
 			var nachbar := tile + versatz
 			var nachbar_key := "%d:%d" % [nachbar.x, nachbar.y]
 			if not besucht.has(nachbar_key) and not _ist_wand_tile(nachbar):
 				zu_besuchen.append(nachbar)
-	
+
 	return tags_set
 
 func _welt_pos_to_tile(position: Vector2) -> Vector2i:

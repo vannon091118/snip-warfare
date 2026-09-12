@@ -84,25 +84,25 @@ func tick(_delta: float) -> void:
 func _wasser_schritt() -> void:
 	if _model == null or _dirty_queue.is_empty():
 		return
-	
+
 	var neue_queue: Array[Dictionary] = []
 	var verarbeitet: Dictionary = {}  # Key "x:y:z" -> bool, um Doppelverarbeitung zu vermeiden
-	
+
 	while not _dirty_queue.is_empty():
 		var eintrag := _dirty_queue.pop_front()
 		var x := eintrag["x"]
 		var y := eintrag["y"]
 		var z := eintrag["z"]
 		var key := "%d:%d:%d" % [x, y, z]
-		
+
 		if verarbeitet.has(key):
 			continue
 		verarbeitet[key] = true
-		
+
 		# Prüfen ob Tile noch Wasser ist (könnte sich geändert haben)
 		if _model.fliese(x, y, z) != TILE_WASSER:
 			continue
-		
+
 		# 4 horizontale Nachbarn prüfen
 		var richtungen := [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 		for richtung in richtungen:
@@ -118,7 +118,7 @@ func _wasser_schritt() -> void:
 					neue_queue.append({"x": nx, "y": ny, "z": z})
 					# Ufer um neue Wasser-Kachel bilden
 					_ufersaeume_bilden_fuer(nx, ny, z)
-		
+
 		# Tile direkt UNTERHALB auf Z-1 prüfen (Cross-Z nur nach unten)
 		var z_unten := z - 1
 		if z_unten >= -Welt_Model.MAX_Z_EBENEN + 1:
@@ -129,7 +129,7 @@ func _wasser_schritt() -> void:
 					_model.fliese_setzen(x, y, TILE_WASSER, z_unten)
 					neue_queue.append({"x": x, "y": y, "z": z_unten})
 					_ufersaeume_bilden_fuer(x, y, z_unten)
-	
+
 	# Neue Einträge zur Queue hinzufügen
 	for eintrag: Dictionary in neue_queue:
 		_dirty_queue.append(eintrag)
