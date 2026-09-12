@@ -17,28 +17,28 @@ func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall, z_ebene: 
 	var hoehe := model.raster_hoehe
 	if breite <= 4 or hoehe <= 4:
 		return
-	
+
 	# Tiefe beeinflusst Erz-Affinität: Je tiefer (negativer z_ebene), desto höher die Chance auf Erzadern
 	var erz_chance_base := 0.05
 	var erz_tiefe_factor: float = max(0.0, float(-z_ebene) * 0.01)  # Je tiefer (negativer z), desto höher
 	var erz_chance: float = min(0.3, erz_chance_base + erz_tiefe_factor)
-	
+
 	# Anzahl Massiv-Zentren (hoeher in Tundra/Steppe, normal im gemaessigten Biom)
 	var zentren_basis := 2 if biom_id == "gemaaessigt" else 3
 	var anzahl := zentren_basis + int(zufall.naechste_zahl() % 2)
-	
+
 	var fels_kacheln: Array[Vector2i] = []
-	
+
 	for i in anzahl:
 		var zx := 4 + int(zufall.naechste_zahl() % (breite - 8))
 		var zy := 4 + int(zufall.naechste_zahl() % (hoehe - 8))
 		# Wasser nicht ueberbauen
 		if model.fliese(zx, zy) == KACHEL_WASSER:
 			continue
-		
+
 		var radius := 1.8 + float(zufall.naechste_zahl() % 15) / 10.0
 		var r_int := ceili(radius)
-		
+
 		for dy in range(-r_int, r_int + 1):
 			for dx in range(-r_int, r_int + 1):
 				var dist := sqrt(float(dx * dx + dy * dy))
@@ -51,7 +51,7 @@ func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall, z_ebene: 
 							var pos := Vector2i(fx, fy)
 							if not fels_kacheln.has(pos):
 								fels_kacheln.append(pos)
-	
+
 	# Gezielt Bergbauelemente und Felsformationen platzieren - mit tieferabhängiger Erz-Chance
 	_bergbau_elemente_platzieren(model, fels_kacheln, zufall, erz_chance)
 
@@ -70,7 +70,7 @@ func _geroellsaum_bilden(model: Welt_Model, breite: int, hoehe: int, fels_kachel
 						var npos := Vector2i(nx, ny)
 						if not geroell_kandidaten.has(npos):
 							geroell_kandidaten.append(npos)
-	
+
 	for gpos in geroell_kandidaten:
 		model.fliese_setzen(gpos.x, gpos.y, KACHEL_GEROELL)
 
@@ -78,7 +78,7 @@ func _bergbau_elemente_platzieren(model: Welt_Model, fels_kacheln: Array[Vector2
 	if fels_kacheln.is_empty():
 		return
 	var kante := float(model.kachel_groesse)
-	
+
 	for pos in fels_kacheln:
 		var welt_pos := Vector2((float(pos.x) + 0.5) * kante, (float(pos.y) + 0.5) * kante)
 		var wurf := zufall.naechste_zahl() % 100

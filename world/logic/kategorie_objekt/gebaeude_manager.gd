@@ -271,7 +271,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
 			if Engine.get_process_frames() % 6 != 0:
 				return
-	
+
 	if not _laufzeit.bereit():
 		return
 	_melde_status_wenn_neu()

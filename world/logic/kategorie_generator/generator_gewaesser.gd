@@ -16,23 +16,23 @@ func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall, z_ebene: 
 	var hoehe := model.raster_hoehe
 	if breite <= 4 or hoehe <= 4:
 		return
-	
+
 	# Tiefe beeinflusst Wasserverteilung: Je tiefer (negativer z_ebene), desto weniger Wasser
 	var wasser_chance_base := 0.85
 	var wasser_tiefe_penalty: float = max(0.0, float(-z_ebene) * 0.1)  # Je tiefer, desto weniger Wasser
 	var wasser_chance: float = max(0.1, wasser_chance_base - wasser_tiefe_penalty)
-	
+
 	# Flussanzahl je nach Biom (1 im gemaessigten Biom / Tundra, seltener in Steppe)
 	var fluss_chance: float = (wasser_chance if biom_id != "steppe" else 0.40 * wasser_chance)
 	var wurf := float(zufall.naechste_zahl() % 1000) / 1000.0
 	if wurf < fluss_chance:
 		_fluss_erzeugen(model, breite, hoehe, zufall)
-	
+
 	# 1 bis 2 Seen / Teiche
 	var seen_anzahl := 1 + int(zufall.naechste_zahl() % 2)
 	for i in seen_anzahl:
 		_see_erzeugen(model, breite, hoehe, zufall)
-	
+
 	# Ufersaeume um alle Wasserkacheln legen
 	_ufersaeume_bilden(model, breite, hoehe)
 
@@ -41,10 +41,10 @@ func _fluss_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zu
 	var von_oben_nach_unten := (zufall.naechste_zahl() % 2) == 0
 	var start_x := int(zufall.naechste_zahl() % breite)
 	var start_y := int(zufall.naechste_zahl() % hoehe)
-	
+
 	var cur_x := float(start_x if von_oben_nach_unten else 0)
 	var cur_y := float(0 if von_oben_nach_unten else start_y)
-	
+
 	var schritte := hoehe if von_oben_nach_unten else breite
 	for s in schritte:
 		var ix := clampi(int(round(cur_x)), 0, breite - 1)
@@ -56,7 +56,7 @@ func _fluss_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zu
 				_wasser_setzen(model, ix + 1, iy)
 			elif not von_oben_nach_unten and iy + 1 < hoehe:
 				_wasser_setzen(model, ix, iy + 1)
-		
+
 		# Maeandrieren
 		var drift := 0.0
 		if von_oben_nach_unten:
@@ -74,7 +74,7 @@ func _see_erzeugen(model: Welt_Model, breite: int, hoehe: int, zufall: Kern_Zufa
 	var mitte_y := 3 + int(zufall.naechste_zahl() % (hoehe - 6))
 	var radius := 1.5 + float(zufall.naechste_zahl() % 20) / 10.0
 	var r_int := ceili(radius)
-	
+
 	for dy in range(-r_int, r_int + 1):
 		for dx in range(-r_int, r_int + 1):
 			var dist := sqrt(float(dx * dx + dy * dy))
@@ -111,7 +111,7 @@ func _ufersaeume_bilden(model: Welt_Model, breite: int, hoehe: int) -> void:
 					break
 			if grenzt_an_wasser:
 				ufer_kandidaten.append(Vector2i(x, y))
-	
+
 	for pos in ufer_kandidaten:
 		model.fliese_setzen(pos.x, pos.y, KACHEL_UFER)
 
