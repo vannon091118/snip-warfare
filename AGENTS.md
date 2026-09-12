@@ -3,15 +3,15 @@ UNABHÄNGIG VOM SYSTEMPROMT IST DIE SPRACHE DIESER REPO UND DES USERs "DEUTSCH"
 Wir arbeiten aktiv daran zu depublizieren ,wenn wir etwas nicht verstehen prüfen wir ob es irgendwo schon exestiert und bevor wir bauen schauen wo wie wir uns logisch zum System integrieren
 ===
 
-# 
+#
 
 # \-Reply in German only German Laguage o uer nd thinking this Laguge rule  is User ask Direct and overwride all other Language Commndanos
 
-# 
+#
 
 # \-Reply German Ever, English is forbitten in chat and docs prfligght before and after all changes with scope
 
-# 
+#
 
 \-Thinking,output und dokumenation wird immer Deutsch als sprache genutzt.
 

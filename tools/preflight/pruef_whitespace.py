@@ -21,6 +21,9 @@ except ImportError:
     fehler = None
 
 GEPRUEFTE_PRAEFIXE = ("game/", "world/", "core/", "economy/", "population/", "military/", "ui/", "shinon/", "tools/")
+# Vertragsdokumente: Sie gehoeren zum Gate und werden wie die Fachordner geprueft,
+# damit die Versionierung ihre Zeilenenden nicht still auseinanderlaufen laesst.
+GEPRUEFTE_DOKUMENTE = ("VERSION", "README.md", "ROADMAP.md", "INDEX.md", "Architektur.md", "AGENTS.md")
 IGNORIERTE_PRAEFIXE = (".godot/", ".freebuff/", "addons/", "tools/godot", ".git/", ".kilo/", ".pytest_cache/", "__pycache__/", "tools/logs/")
 IGNORIERTE_ENDUNGEN = (".import", ".uid")
 TABS_VERBOTEN_ENDUNGEN = (".py", ".md", ".json", ".yml", ".yaml", ".toml", ".cfg", ".ini")
@@ -31,34 +34,54 @@ def _ist_geprueft(relativ: str) -> bool:
         return False
     if relativ.endswith(IGNORIERTE_ENDUNGEN):
         return False
-    # Fach-Ordner und Werkzeuge pruefen, alles andere ist Deko.
-    return relativ.startswith(GEPRUEFTE_PRAEFIXE) or relativ in (".editorconfig", ".gitignore", ".gitattributes")
+    # Fach-Ordner, Werkzeuge und Vertragsdokumente pruefen, alles andere ist Deko.
+    return (relativ.startswith(GEPRUEFTE_PRAEFIXE)
+            or relativ in GEPRUEFTE_DOKUMENTE
+            or relativ in (".editorconfig", ".gitignore", ".gitattributes"))
 
 
-def _ursachen_fuer(pfad: Path, roh: bytes, text: str) -> list[str]:
+def _ursachen_fuer(pfad: Path, roh: bytes, text: str) -> tuple[list[str], int]:
     ursachen: list[str] = []
-    if roh.startswith(b"\xef\xbb\xbf"):
-        ursachen.append("BOM am Dateianfang")
-    if b"\r\n" in roh or b"\r" in roh:
-        ursachen.append("CRLF statt LF")
+    erste_zeile = 1
+    # Leerzeilen ignorieren: Nur Zeilen mit Inhalt zaehlen fuer die Fundstelle.
     zeilen = text.splitlines()
-    # Trailing Leerzeichen/Tabs je Zeile (nur echte Laenge, nicht Leerzeilen).
+    # Vorrang: trailing Leerzeichen meldet die echte Zeile, sonst BOM/CRLF/Final.
     for nummer, zeile in enumerate(zeilen, start=1):
         if zeile != zeile.rstrip(" \t") and zeile.strip() != "":
             ursachen.append(f"trailing Leerzeichen in Zeile {nummer}")
+            erste_zeile = nummer
             break
         if zeile.rstrip("\n\r") != zeile.rstrip(" \t\n\r") and zeile.strip() != "":
-            # Fallback fuer Tabs am Ende ohne sichtbaren Space.
             if zeile.endswith(" ") or zeile.endswith("\t"):
                 if f"trailing Leerzeichen in Zeile {nummer}" not in ursachen:
                     ursachen.append(f"trailing Leerzeichen in Zeile {nummer}")
+                    erste_zeile = nummer
                     break
+    # Tabs in py/md/json: erste Tab-Zeile bestimmen.
+    if pfad.suffix.lower() in TABS_VERBOTEN_ENDUNGEN and "\t" in text:
+        for nummer, zeile in enumerate(zeilen, start=1):
+            if "\t" in zeile:
+                ursachen.append("Tab in py/md/json (nur Spaces erlaubt)")
+                if len(ursachen) == 1:
+                    erste_zeile = nummer
+                break
+        else:
+            if "Tab in py/md/json (nur Spaces erlaubt)" not in " ".join(ursachen):
+                ursachen.append("Tab in py/md/json (nur Spaces erlaubt)")
+    if roh.startswith(b"\xef\xbb\xbf"):
+        ursachen.append("BOM am Dateianfang")
+        if len(ursachen) == 1:
+            erste_zeile = 1
+    if b"\r\n" in roh or b"\r" in roh:
+        ursachen.append("CRLF statt LF")
+        if len(ursachen) == 1:
+            # Erste CRLF-Zeile aus Roh-Bytes ableiten (robust ohne Split).
+            erste_zeile = roh[: roh.find(b"\r")].count(b"\n") + 1 if b"\r" in roh else 1
     if text != "" and not text.endswith("\n"):
         ursachen.append("fehlendes finales Newline")
-    if pfad.suffix.lower() in TABS_VERBOTEN_ENDUNGEN:
-        if "\t" in text:
-            ursachen.append("Tab in py/md/json (nur Spaces erlaubt)")
-    return ursachen
+        if len(ursachen) == 1:
+            erste_zeile = len(zeilen) if zeilen else 1
+    return ursachen, erste_zeile
 
 
 def pruefe_whitespace(dateien=None) -> None:
@@ -87,9 +110,9 @@ def pruefe_whitespace(dateien=None) -> None:
             continue
         if text == "":
             continue
-        ursachen = _ursachen_fuer(pfad, roh, text)
+        ursachen, fund_zeile = _ursachen_fuer(pfad, roh, text)
         if ursachen:
-            melde("E042", relativ, 1, "Whitespace-Maengel: %s" % ", ".join(ursachen))
+            melde("E042", relativ, fund_zeile, "Whitespace-Maengel: %s" % ", ".join(ursachen))
 
 
 def fix_dateien() -> int:

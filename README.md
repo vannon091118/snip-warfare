@@ -38,7 +38,7 @@
 
 Schau dich um. Du siehst diese niedlichen kleinen Strichmännchen mit ihren bunten Schals, die friedlich durch eine handgefertigte Papierschnitt-Welt watscheln, Beeren pflücken und am Lagerfeuer sitzen. Du denkst: *„Ach wie putzig, ein gemütliches Bastelspiel!“*
 
-**Täusch dich nicht.** 
+**Täusch dich nicht.**
 
 Hinter jeder Papierschicht arbeitet ein knallharter, deterministischer Simulationskern. Wenn du vergisst, Unterkünfte zu bauen, frieren deine Siedler. Wenn du keine Nahrung einlagerst, brennt die Stimmung lichterloh. Und wenn der Hunger zu groß wird, fängt die Mood-Maschine an, sehr finstere Gedankenblasen über die Köpfe zu malen.
 
@@ -201,7 +201,7 @@ python tools/preflight.py
 
 <div align="center">
 
-**SnipWarfare** — *Gebaut nach den Regeln der Projektverfassung [`AGENTS.md`](AGENTS.md).*  
+**SnipWarfare** — *Gebaut nach den Regeln der Projektverfassung [`AGENTS.md`](AGENTS.md).*
 *Stand: September 2026 • Mit strengem Blick und gelegentlichem Lächeln gepflegt von Shinon*
 
 </div>
