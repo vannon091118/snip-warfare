@@ -12,6 +12,9 @@ var bevorzugte_biome: Array[String] = []
 var farbe: Color = Color.WHITE
 var position_kachel: Vector2i = Vector2i.ZERO
 var nachbarn: Array[String] = []
+## Herkunft der Fraktion aus dem Generator: Keimpunkt und Archetyp.
+var _keimpunkt_daten: Dictionary = {}
+var _archetyp: String = ""
 
 ## Kategorie logik: Einlesen aus Konfigurationseintrag und Wörterbuch-Konvertierung.
 

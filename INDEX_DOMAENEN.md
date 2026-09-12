@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 252 Klassen, 278 Dateien, 64 Signale, 31 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 257 Klassen, 284 Dateien, 64 Signale, 31 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -10,7 +10,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 252 Klassen, 278 Dateien, 64 Sign
 | --- | --- | --- | --- | --- | --- |
 | `core` | `kern` | `Kern_` | `core/` | 20 | 20 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
-| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 41 | 41 |
+| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 42 | 42 |
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 32 | 32 |
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 17 | 17 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 7 | 7 |
@@ -19,9 +19,9 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 252 Klassen, 278 Dateien, 64 Sign
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
 | `population` | `pop` | `Pop_` | `population/` | 15 | 16 |
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
-| `ui` | `ui` | `Ui_` | `ui/` | 19 | 31 |
+| `ui` | `ui` | `Ui_` | `ui/` | 23 | 35 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 8 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 9 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -62,7 +62,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 252 Klassen, 278 Dateien, 64 Sign
 | `Kern_SignalBus.schaden_erhalten` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_SignalBus.timeline_eintrag` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_Timeline.eintrag_neu` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
-| `Kern_Weltuhr.tick` | DS | - | V | V | V | V | V | - | - | - | - | - | - | - | V |
+| `Kern_Weltuhr.tick` | DS | - | V | V | V | V | V | - | - | - | - | V | - | - | V |
 | `Gebaeude_Manager.gebaeude_fertiggestellt` | - | - | - | DS | - | - | - | - | - | - | - | - | - | V | - |
 | `Gebaeude_Manager.gebaeude_meldung` | - | - | - | DS | - | - | - | - | - | - | - | - | - | - | V |
 | `Gebaeude_Manager.gebaeude_platziert` | - | - | - | DS | - | - | - | - | - | - | - | - | - | - | V |
@@ -110,8 +110,8 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 52 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 2 | 2 | 7 | - | 1 | 3 |
-| `Dictionary` | 32 | 3 | 1 | 6 | 1 | 1 | 2 | 8 | - | - | 1 | 1 | 4 | - | - | 4 |
+| `String` | 53 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 2 | 2 | 7 | - | 2 | 3 |
+| `Dictionary` | 33 | 3 | 1 | 6 | 1 | 1 | 2 | 8 | - | - | 1 | 1 | 5 | - | - | 4 |
 | `int` | 15 | - | - | 5 | - | 1 | 1 | 3 | - | - | - | - | 3 | - | 1 | 1 |
 | `Vector2i` | 8 | 1 | 4 | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `Vector2` | 5 | 1 | - | 1 | - | - | - | 2 | - | - | - | - | - | - | - | 1 |
@@ -190,7 +190,7 @@ Prefix `Kern_`, 20 Klassen.
 | `Kern_SignalBus.schaden_erhalten` | DS | kern, rest |
 | `Kern_SignalBus.timeline_eintrag` | DS | kern, rest |
 | `Kern_Timeline.eintrag_neu` | DS | kern, rest |
-| `Kern_Weltuhr.tick` | DS | ein, kern, obj, orch, rest, tier, welt |
+| `Kern_Weltuhr.tick` | DS | ein, kern, obj, orch, rest, tier, ui, welt |
 
 #### Arrays (`Array[Typ]`)
 
@@ -240,7 +240,7 @@ _keine Signal-Deklaration in dieser Domaene_
 
 ### world/welt — Kuerzel `welt` — `world/logic/kategorie_welt/`
 
-Prefix `Welt_`, 41 Klassen.
+Prefix `Welt_`, 42 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -270,8 +270,9 @@ Prefix `Welt_`, 41 Klassen.
 | `Welt_ObjektKnoten` | `world/logic/kategorie_welt/welt_objekt_knoten.gd` | 95 |
 | `Welt_PauseMenue` | `world/logic/kategorie_welt/welt_pause_menue.gd` | 130 |
 | `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` | 119 |
-| `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` | 100 |
+| `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` | 96 |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
+| `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` | 36 |
 | `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 530 |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` | 44 |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` | 50 |
@@ -292,7 +293,7 @@ Prefix `Welt_`, 41 Klassen.
 | --- | --- | --- |
 | `Kern_SignalBus.decken_entfernt` | V | kern, welt |
 | `Kern_SignalBus.kachel_geaendert` | V | kern, tools, welt |
-| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, welt |
+| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Ui_BauPanelSzene.bau_gewaehlt` | V | ui, welt |
 | `Welt_KarawanenManager.handels_abgeschlossen` | DS | welt |
 | `Welt_KarawanenManager.karawane_angekommen` | DS | welt |
@@ -364,7 +365,7 @@ Prefix `Objekt_/Gebaeude_`, 32 Klassen.
 | `Gebaeude_Manager.gebaeude_platziert` | DS | obj, rest |
 | `Gebaeude_Manager.status_geaendert` | DS | obj, rest |
 | `Kern_SignalBus.menue_geoeffnet` | V | kern, obj |
-| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, welt |
+| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Objekt_MoebelPlatzierer.moebel_platziert` | DS | obj, rest |
 
 #### Arrays (`Array[Typ]`)
@@ -405,7 +406,7 @@ Prefix `Tier_`, 17 Klassen.
 | Signal | Rolle | mitwirkende Domaenen |
 | --- | --- | --- |
 | `Einheit_Status.zustand_geaendert` | SV | ein, orch, tier |
-| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, welt |
+| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Orchestrator_Status.zustand_geaendert` | SV | ein, orch, tier |
 | `Tier_Status.zustand_geaendert` | DSV | ein, orch, tier |
 
@@ -426,7 +427,7 @@ Prefix `Orchestrator_`, 7 Klassen.
 | `Orchestrator_Darsteller` | `world/logic/kategorie_orchestrator/orchestrator_darsteller.gd` | 63 |
 | `Orchestrator_EinheitDerWelt` | `world/logic/kategorie_orchestrator/orchestrator_einheit.gd` | 49 |
 | `Orchestrator_Konfiguration` | `world/logic/kategorie_orchestrator/orchestrator_konfiguration.gd` | 68 |
-| `Orchestrator_Manager` | `world/logic/kategorie_orchestrator/orchestrator_manager.gd` | 229 |
+| `Orchestrator_Manager` | `world/logic/kategorie_orchestrator/orchestrator_manager.gd` | 226 |
 | `Orchestrator_Registry` | `world/logic/kategorie_orchestrator/orchestrator_registry.gd` | 58 |
 | `Orchestrator_Status` | `world/logic/kategorie_orchestrator/orchestrator_status.gd` | 50 |
 | `Orchestrator_Verdrahtung` | `world/logic/kategorie_orchestrator/orchestrator_verdrahtung.gd` | 30 |
@@ -436,7 +437,7 @@ Prefix `Orchestrator_`, 7 Klassen.
 | Signal | Rolle | mitwirkende Domaenen |
 | --- | --- | --- |
 | `Einheit_Status.zustand_geaendert` | SV | ein, orch, tier |
-| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, welt |
+| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Orchestrator_Manager.orchestrator_platziert` | DS | orch |
 | `Orchestrator_Status.bedarf_pruefen` | DSV | orch |
 | `Orchestrator_Status.zustand_geaendert` | DSV | ein, orch, tier |
@@ -510,7 +511,7 @@ Prefix `Einheit_`, 25 Klassen.
 | `Job_Basis.job_beendet` | SV | ein, job, tools |
 | `Kern_ModifikatorMaschine.aktualisiert` | V | ein, kern |
 | `Kern_SignalBus.gestorben` | SV | ein, kern, rest |
-| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, welt |
+| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Orchestrator_Status.zustand_geaendert` | SV | ein, orch, tier |
 | `Tier_Status.zustand_geaendert` | SV | ein, orch, tier |
 
@@ -658,10 +659,14 @@ Prefix `Lager_`, 6 Klassen.
 
 ### ui — Kuerzel `ui` — `ui/`
 
-Prefix `Ui_`, 19 Klassen.
+Prefix `Ui_`, 23 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
+| `Menue_BuehnenMeister` | `ui/logic/kategorie_ui/menue_buehnen_meister.gd` | 348 |
+| `Menue_StoryDaten` | `ui/logic/kategorie_ui/menue_story_daten.gd` | 54 |
+| `Menue_StoryRegisseur` | `ui/logic/kategorie_ui/menue_story_regisseur.gd` | 49 |
+| `Menue_Unterschrift` | `ui/logic/kategorie_ui/menue_unterschrift.gd` | 34 |
 | `Ui_AuswahlManager` | `ui/scenes/selection/auswahl_manager.gd` | 50 |
 | `Ui_AuswahlMarkierung` | `ui/logic/kategorie_ui/ui_auswahl_markierung.gd` | 60 |
 | `Ui_BauAuftragMaschine` | `ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd` | 65 |
@@ -689,6 +694,7 @@ Prefix `Ui_`, 19 Klassen.
 | `Einheit_Inventar.bestand_geaendert` | V | ein, ui |
 | `Einheit_Ressourcen.bestand_geaendert` | V | ein, ui |
 | `Kern_SignalBus.einheit_ausgewaehlt` | V | kern, ui |
+| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Ui_BauPanelSzene.bau_gewaehlt` | DS | ui, welt |
 | `Ui_EingabeSteuerung.debug_umgeschaltet` | DS | rest, ui |
 | `Ui_OrchestratorPriorityPanel.panel_geschlossen` | DS | ui |
@@ -701,7 +707,7 @@ Prefix `Ui_`, 19 Klassen.
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
 | `String` | 7 |
-| `Dictionary` | 4 |
+| `Dictionary` | 5 |
 | `int` | 3 |
 | `AnimatedSprite2D` | 1 |
 
@@ -737,9 +743,9 @@ Prefix `-`, 0 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
+| `String` | 2 |
 | `Kern_ModifikatorBasis` | 1 |
 | `Pop_MoodMaschine` | 1 |
-| `String` | 1 |
 | `Vector2i` | 1 |
 | `int` | 1 |
 
@@ -797,7 +803,7 @@ Prefix `-`, 33 Klassen.
 | `Kern_SignalBus.schaden_erhalten` | V | kern, rest |
 | `Kern_SignalBus.timeline_eintrag` | V | kern, rest |
 | `Kern_Timeline.eintrag_neu` | V | kern, rest |
-| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, welt |
+| `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Objekt_MoebelPlatzierer.moebel_platziert` | V | obj, rest |
 | `Ui_EingabeSteuerung.debug_umgeschaltet` | V | rest, ui |
 | `Welt_FortschrittsMaschine.orchestrator_gespawnt` | DS | rest |

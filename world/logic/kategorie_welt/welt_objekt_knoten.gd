@@ -14,6 +14,7 @@ class_name Welt_ObjektKnoten
 var _objekt_daten: Dictionary = {}
 var _standbild: Sprite2D = null
 var _bewegtbild: AnimatedSprite2D = null
+var _schatten_lage: LightOccluder2D = null
 
 ## Kategorie logik: Fußpunkt, Standbild und Bewegtbild setzen und lesen.
 
@@ -44,6 +45,28 @@ func standbild_setzen(textur: Texture2D) -> Sprite2D:
 	_standbild.centered = true
 	_standbild.offset = Vector2(0.0, -_hoehe_von(textur) * 0.5)
 	return _standbild
+
+## Die Schatten-Lage des Objekts: Ein simples Rechteck-Okkluder über der
+## unteren Bildhälfte wirft im Papierlicht die weiche Boden-Schattenlage.
+## Die Szene schaltet sie nur für Katalog-Einträge mit schatten_wurf an.
+func schatten_wurf_setzen(aktiv: bool, breite: float, hoehe: float) -> void:
+	if aktiv:
+		if _schatten_lage == null:
+			_schatten_lage = LightOccluder2D.new()
+			_schatten_lage.name = "SchattenLage"
+			var umriss := OccluderPolygon2D.new()
+			var halb_b := maxf(breite * 0.35, 8.0)
+			var halb_h := maxf(hoehe * 0.3, 8.0)
+			umriss.polygon = PackedVector2Array([
+				Vector2(-halb_b, 0.0), Vector2(halb_b, 0.0),
+				Vector2(halb_b, -halb_h), Vector2(-halb_b, -halb_h),
+			])
+			_schatten_lage.occluder = umriss
+			add_child(_schatten_lage)
+		return
+	if _schatten_lage != null:
+		_schatten_lage.queue_free()
+		_schatten_lage = null
 
 func standbild() -> Sprite2D:
 	return _standbild

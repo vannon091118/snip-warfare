@@ -78,7 +78,7 @@ static func bus() -> Kern_Weltuhr:
 	var baum := Engine.get_main_loop() as SceneTree
 	if baum == null or baum.root == null:
 		return null
-	var knoten := baum.root.get_node_or_null("KernWeltuhrAutoload")
+	var knoten := baum.root.get_node_or_null("Weltuhr")
 	if knoten is Kern_Weltuhr:
 		return knoten as Kern_Weltuhr
 	return null

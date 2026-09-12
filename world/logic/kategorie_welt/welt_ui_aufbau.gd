@@ -61,12 +61,12 @@ func debug_panel_bauen(canvas: CanvasLayer, auswahl: Ui_AuswahlManager, stockmae
 	debug_panel.call("einrichten", auswahl, stockmaenner, tiere)
 	canvas.add_child(debug_panel)
 
-func bau_panel_bauen(canvas: CanvasLayer, definitionen: Gebaeude_DefinitionRegistry, fortschritt: Welt_FortschrittsMaschine, steuerung: Kern_SteuerungRegistry, empfaenger: Callable) -> void:
+func bau_panel_bauen(canvas: CanvasLayer, definitionen: Gebaeude_DefinitionRegistry, fortschritt: Welt_FortschrittsMaschine, steuerung: Kern_SteuerungRegistry, empfaenger: Callable, registry: Welt_Registry = null) -> void:
 	if canvas == null:
 		return
 	bau_panel = _BauPanelSzene.instantiate()
 	bau_panel.name = "BauPanel"
-	bau_panel.einrichten(definitionen, fortschritt, steuerung)
+	bau_panel.einrichten(definitionen, fortschritt, steuerung, registry)
 	bau_panel.bau_gewaehlt.connect(empfaenger)
 	canvas.add_child(bau_panel)
 

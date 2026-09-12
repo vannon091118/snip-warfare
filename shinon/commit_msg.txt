@@ -1,11 +1,6 @@
-1. Der Nutzer verlangte Slices fuer die Warteschlange, deshalb rollte der vierte Wagen als Instandhaltung: kleine Risse, die der parallel laufende Betrieb in den Werkzeugen hinterliess, dazu der Plan der kommenden Sozial-Domaene.
-
-2. In game/logic/kategorie_job/job_basis.gd fielen drei Geisterzeilen ans Bodenpersonal, ein halb geloeschter Rest am Dateiende, der nichts mehr tat ausser Verwirrung saeen.
-
-3. In tools/preflight/kern.py trug ich das Menue-Praefix in die Ehrentafel der Kategorien, damit die Buehnen-Klassen des Menue-Threads nicht als Namenlose am E001 scheitern.
-
-4. In tools/preflight/pruef_pfade.py lernte der Pfad-Waechter der Unterscheidung, die der Moebel-Umlaut-Fehler uns lehrte: Format-Platzhalter wie das Prozent-s sind Schablonen, keine Pfade auf der Festplatte, und duerfen nicht als fehlende Dateien gelten.
-
-5. task_plan.md, findings.md und progress.md kommen als neue Plan-Tische des Sozial-Slices in den Baum: Ethik und Image je Bewohner, Zeugen-Erinnerung und Gerede, datengetrieben, unter der Konstitution geprueft.
-
-6. Alle 97 Pruefungen bestehen, der Preflight ist gruen, und der Plan-Tisch wartet darauf, dass der naechste Zug der Sozial-Domaene am Holz arbeitet.
+1. Der Nutzer verlangte, dass alle Systeme von Shinon scharf bleiben, waehrend der Preflight vor jedem Commit automatisch heilt, deshalb bekam das Tor zuerst seine getrackte Kopie und die Dokumente ihren Statuszahlen-Nachzug.
+2. In tools/hooks/pre-commit liegt die Version des Pre-Commit-Hakens im Baum, der vor dem Urteil Whitespace-Fix und Dokumenten-Nachzug ausfuehrt und danach die Preflight-Kategorien samt Shinon ungeschmaeiert laufen laesst.
+3. In README.md und ROADMAP.md zaehlen die Standzeilen wieder die wahre Zahl von 257 Klassen, weil der mechanische Nachzug sie angeglichen hat.
+4. INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md tragen denselben Stand, damit kein Index eine andere Wahrheit erzaehlt als der Code.
+5. Der Hook unter .git bleibt eine lokale Kopie; die getrackte Datei ist die verbindliche Vorlage, aus der jede Maschine ihn wiederherstellen kann.
+6. Sichtbar im Betrieb: Jeder kuenftige Commit heilt zuerst sich selbst, und das Gate schlaegt nur noch bei echtem Unrecht zu.

@@ -3,16 +3,17 @@ class_name Welt_RaumAnalyser
 ## Analysiert einen Raum anhand von Möbel-Tags innerhalb von Wänden (felswand).
 ## Nutzt Flood-Fill über das Welt_ObjektGitter, wobei felswand-Objekte als
 ## Blockaden gelten. Gibt die Menge aller eindeutigen Tags der Möbel im Raum
-## zurück.
+## zurück. Die Tags kommen aus der zentralen Moebel-Registry, nicht aus
+## einer zweiten Datenquelle.
 
 var _welt_modell: Welt_Model
 var _objekt_gitter: Welt_ObjektGitter
 var _moebel_tags: Dictionary
 
-func _init(welt_modell: Welt_Model, objekt_gitter: Welt_ObjektGitter) -> void:
+func _init(welt_modell: Welt_Model, objekt_gitter: Welt_ObjektGitter, moebel_registry: Objekt_MoebelRegistry = null) -> void:
 	_welt_modell = welt_modell
 	_objekt_gitter = objekt_gitter
-	_moebel_tags = _lade_moebel_tags()
+	_moebel_tags = _lade_moebel_tags(moebel_registry)
 
 func analysiere(start_position: Vector2) -> Array[String]:
 	## Führt Flood-Fill von der Startposition aus und sammelt alle Möbel-Tags.
@@ -101,26 +102,17 @@ func _objekte_auf_tile(tile: Vector2i) -> Array[int]:
 			ergebnis.append(obj_index)
 	return ergebnis
 
-func _lade_moebel_tags() -> Dictionary:
+func _lade_moebel_tags(moebel_registry: Objekt_MoebelRegistry) -> Dictionary:
+	## Liest die Moebel-Tags aus der zentralen Moebel-Registry: Die
+	## Katalog-Instanzen tragen ziel_tags; keine zweite JSON-Ladung.
 	var tags_dict := Dictionary.new()
-	var moebel_pfad := "res://game/data/moebel.json"
-	var datei := FileAccess.open(moebel_pfad, FileAccess.READ)
-	if datei == null:
-		push_warning("Moebel-JSON nicht gefunden: %s" % moebel_pfad)
+	if moebel_registry == null:
 		return tags_dict
-	var text := datei.get_as_text()
-	datei.close()
-	var daten := JSON.parse_string(text)
-	if typeof(daten) != TYPE_ARRAY:
-		push_warning("Möbel-JSON hat ungueltiges Format")
-		return tags_dict
-	for eintrag in daten as Array:
-		if typeof(eintrag) == TYPE_DICTIONARY:
-			var eid := str(eintrag.get("id", ""))
-			var tags := eintrag.get("tags", [])
-			if typeof(tags) == TYPE_ARRAY:
-				var str_tags: Array[String] = []
-				for tag in tags:
-					str_tags.append(str(tag))
-				tags_dict[eid] = str_tags
+	for moebel_objekt: Objekt_Basis in moebel_registry.eintraege:
+		if moebel_objekt == null:
+			continue
+		var str_tags: Array[String] = []
+		for tag: String in moebel_objekt.ziel_tags:
+			str_tags.append(tag)
+		tags_dict[moebel_objekt.id] = str_tags
 	return tags_dict

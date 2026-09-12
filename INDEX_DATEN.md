@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 29 JSON-Pools, davon 29 lesbar und 2 ohne namentlichen Verbraucher.
+Stand: V0.01 — 30 JSON-Pools, davon 30 lesbar und 2 ohne namentlichen Verbraucher.
 
 ## 1. Pools in Besitz einer Domaene
 
@@ -25,6 +25,7 @@ Stand: V0.01 — 29 JSON-Pools, davon 29 lesbar und 2 ohne namentlichen Verbrauc
 | [`needs.json`](population/data/needs.json) | `population` | 3 | `weltrhythmus`, `nahrung`, `waerme` | `game/logic/kategorie_einheit/einheit_manager.gd`, `game/logic/kategorie_einheit/einheit_versorgung.gd`, `population/logic/needs/pop_need_basis.gd` und 5 weitere |
 | [`rassen_schemata.json`](population/data/rassen_schemata.json) | `population` | 3 | `mensch`, `elf`, `ork` | `population/logic/needs/pop_rassen_schema.gd`, `population/logic/needs/pop_rassen_schema_registry.gd`, `world/logic/kategorie_orchestrator/orchestrator_manager.gd` und 2 weitere |
 | [`rassen_vorlagen.json`](population/data/rassen_vorlagen.json) | `population` | 6 | `_kommentar`, `wald`, `berg`, `wasser`, `steppe`, `tundra` | `population/logic/needs/pop_rassen_generator.gd` |
+| [`menue_story.json`](ui/data/menue_story.json) | `ui` | 4 | `hinweis`, `schritte_pro_sekunde`, `untertitel_dauer`, `events` | `ui/logic/kategorie_ui/menue_story_daten.gd` |
 | [`atmosphaere.json`](world/data/atmosphaere.json) | `world/data` | 9 | `_dokumentation_atmosphaere`, `wind`, `partikel`, `sonne`, `papier`, `papier_licht` und 3 weitere | `world/logic/kategorie_atmosphaere/welt_atmosphaere_konfig.gd`, `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` |
 | [`biome.json`](world/data/biome.json) | `world/data` | 3 | `_kommentar`, `thresholds`, `biome` | `world/logic/kategorie_biom/biom_basis.gd`, `world/logic/kategorie_biom/biom_registry.gd`, `world/logic/kategorie_generator/welt_biom_analyser.gd` und 1 weitere |
 | [`element_katalog.json`](world/data/element_katalog.json) | `world/data` | 37 | `[Liste]` | `game/logic/kategorie_einheit/einheit_manager.gd`, `ui/scenes/panels/kontext_menue.gd`, `world/logic/kategorie_objekt/moebel_registry.gd` und 2 weitere |
@@ -191,6 +192,12 @@ Pfad `population/data/rassen_schemata.json`, Domaene `population`, 3 Eintraege.
 Pfad `population/data/rassen_vorlagen.json`, Domaene `population`, 6 Eintraege.
 
 * `population/logic/needs/pop_rassen_generator.gd`
+
+### menue_story.json
+
+Pfad `ui/data/menue_story.json`, Domaene `ui`, 4 Eintraege.
+
+* `ui/logic/kategorie_ui/menue_story_daten.gd`
 
 ### atmosphaere.json
 

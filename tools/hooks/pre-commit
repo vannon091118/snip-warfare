@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# Pre-Commit-Hook für SnipWarfare
+# Reihenfolge ist Pflicht: Erst heilen, dann urteilen.
+# 1. Whitespace-Fix (E042) auf die Arbeitskopie anwenden.
+# 2. Dokumenten-Nachzug (version_bump.py --nachziehen): Version, Statuszahlen
+#    und Index-Familie werden mechanisch angeglichen, bevor E043/E044 urteilen.
+# 3. Selektive Preflight-Kategorien prüfen; Shinon bleibt immer scharf.
+# Ein Fehlschlag bricht den Commit ab.
+
+set -e
+
+GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || {
+    echo "Fehler: Kein Git-Repository gefunden"
+    exit 1
+}
+cd "$GIT_ROOT"
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+if [ -z "$STAGED_FILES" ]; then
+    echo "Keine gestagten Dateien zu pruefen."
+    exit 0
+fi
+
+echo "Gestagte Dateien:"
+echo "$STAGED_FILES"
+
+# Whitespace zuerst heilen: E042-Fix arbeitet auf der Arbeitskopie; die
+# bereinigten Dateien werden sofort neu gestagt, damit die Pruefung den
+# echten Stand sieht.
+echo "Schritt 1: Whitespace automatisch heilen (E042)..."
+python tools/preflight.py --kategorie whitespace --fix
+
+GEFIXT=$(git diff --name-only)
+if [ -n "$GEFIXT" ]; then
+    echo "Bereinigte Dateien werden neu gestagt:"
+    echo "$GEFIXT"
+    git add -- $GEFIXT
+fi
+
+# Dokumenten-Nachzug heilt E043 und E044, bevor sie urteilen koennen.
+# Der Bump schreibt Version, Statuszahlen und die Index-Familie mechanisch.
+echo "Schritt 2: Dokumenten-Nachzug automatisch ausfuehren..."
+python tools/version_bump.py --nachziehen
+
+NACHGEZOGEN=$(git diff --name-only)
+if [ -n "$NACHGEZOGEN" ]; then
+    echo "Nachgezogene Dokumente werden neu gestagt:"
+    echo "$NACHGEZOGEN"
+    git add -- $NACHGEZOGEN
+fi
+
+# Kategorien aus den Dateitypen der gestagten Datei bestimmen.
+CATEGORIES=""
+
+add_category() {
+    local cat="$1"
+    if [[ ",$CATEGORIES," != *",$cat,"* ]]; then
+        if [ -z "$CATEGORIES" ]; then
+            CATEGORIES="$cat"
+        else
+            CATEGORIES="$CATEGORIES,$cat"
+        fi
+    fi
+}
+
+# Shinon bleibt immer scharf: Das Gate urteilt ueber die Commit-Nachricht
+# unabhaengig davon, welche Dateitypen im Wagen liegen.
+add_category "shinon"
+add_category "version"
+add_category "index"
+add_category "whitespace"
+
+while IFS= read -r file; do
+    case "$file" in
+        *.gd)
+            add_category "godot"
+            add_category "warnungen"
+            add_category "registries"
+            add_category "klassen"
+            add_category "trennung"
+            add_category "daten"
+            add_category "biome"
+            add_category "welt"
+            add_category "einheitlich"
+            add_category "pyramide"
+            add_category "locregel"
+            add_category "determinismus"
+            ;;
+        *.json)
+            add_category "daten"
+            add_category "biome"
+            add_category "locregel"
+            ;;
+        *.md)
+            add_category "index"
+            add_category "version"
+            add_category "shinon"
+            ;;
+        *.tscn)
+            add_category "godot"
+            add_category "warnungen"
+            ;;
+        *)
+            ;;
+    esac
+done <<< "$STAGED_FILES"
+
+CATEGORIES=$(echo "$CATEGORIES" | sed 's/,$//')
+
+echo "Gewaehlte Preflight-Kategorien: $CATEGORIES"
+
+echo "Schritt 3: Preflight-Pruefung (Shinon scharf)..."
+if ! python tools/preflight.py --kategorie "$CATEGORIES"; then
+    echo "Preflight fehlgeschlagen. Commit abgebrochen."
+    exit 1
+fi
+
+echo "Alle Preflight-Pruefungen bestanden."
+exit 0

@@ -30,19 +30,24 @@ var _rassen_registry: Pop_RassenSchemaRegistry = null
 func rassen_registry_setzen(registry: Pop_RassenSchemaRegistry) -> void:
 	_rassen_registry = registry
 
-func _ready() -> void:
-	Kern_Weltuhr.bus().tick.connect(_auf_tick)
+func _enter_tree() -> void:
+	# Die Weltuhr wird zur Laufzeit aufgeloesst statt ueber den Autoload-Globalnamen,
+	# damit der Manager auch in Headless-Testlaeufen ohne Autoloads ladbar bleibt.
+	# Im Spiel ist es dieselbe zentrale Uhr aus project.godot.
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_auf_tick):
+		weltuhr.tick.connect(_auf_tick)
 
 func _exit_tree() -> void:
-	if Kern_Weltuhr.bus().tick.is_connected(_auf_tick):
-		Kern_Weltuhr.bus().tick.disconnect(_auf_tick)
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick") and weltuhr.tick.is_connected(_auf_tick):
+		weltuhr.tick.disconnect(_auf_tick)
 
 func referenzen_setzen(einheit_manager: Einheit_Manager, welt_modell: Welt_Model, welt_registry: Welt_Registry, job_registry: Job_Registry) -> void:
 	_einheit_manager = einheit_manager
 	_welt_modell = welt_modell
 	_welt_registry = welt_registry
 	_job_registry = job_registry
-	# Lade die Orchestrator-Konfiguration aus der Daten-Datei
 	load_orchestrator_config()
 
 func load_orchestrator_config() -> void:
@@ -53,7 +58,6 @@ func load_orchestrator_config() -> void:
 		var gelesen: Variant = JSON.parse_string(datei.get_as_text())
 		if typeof(gelesen) == TYPE_DICTIONARY:
 			orchestrator_config = gelesen
-			# Warnung, falls Datei geladen wurde
 			print("Orchestrator-Konfiguration geladen: %d Zonen" % orchestrator_config.size())
 		else:
 			push_warning("Orchestrator-Konfiguration ungültig: %s" % config_pfad)
@@ -91,9 +95,7 @@ func _auf_bedarf_pruefen(_konfig: Orchestrator_Konfiguration) -> void:
 	pass
 
 func _auf_tick(_tick_nummer: int, _delta: float) -> void:
-	# Tick-Zähler erhöhen alle Male
 	_tick_counter += 1
-
 	# Alle 60 Ticks Orchestrierung evaluieren
 	if _tick_counter % 60 != 0:
 		return
@@ -105,9 +107,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 	# Spawn-Cap prüfen: Einheiten_count < max_einheiten aus rassen_schemata.json
 	var max_einheiten := _max_einheiten_fuer_rasse()
 	if _einheit_manager.einheiten_zahl() >= max_einheiten:
-		# Cap erreicht: Neue Orchestrierung deaktivieren bis Platz frei
-		# (Manager tickt weiter, aber keine neuen Einheiten spawning)
-		#print("Orchestrator cap erreicht: %d >= %d" % [einheit_manager.einheiten_zahl(), max_einheiten])
+		# Cap erreicht: Es tickt weiter, aber keine neuen Einheiten mehr.
 		return
 
 	# Freie Einheiten im System holen
@@ -172,13 +172,10 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 					ziel_position
 				)
 
-			# Nach jeder Bedarfsverarbeitung freie Einheiten zurück in Pool geben
-			# (werden vom nächsten Durchlauf wieder erfasst)
 
 func _max_einheiten_fuer_rasse() -> int:
 	# Liefert das max_einheiten für die Standardrasse (mensch) aus dem Rassen-Registry.
 	if _rassen_registry == null:
-		# Fallback: load JSON directly
 		var config_pfad := "res://population/data/rassen_schemata.json"
 		if not FileAccess.file_exists(config_pfad):
 			return 20

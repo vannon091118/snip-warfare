@@ -14,11 +14,11 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 252 |
-| dateien | 278 |
+| klassen | 257 |
+| dateien | 284 |
 | signale | 64 |
 | array_typen | 31 |
-| pools | 29 |
+| pools | 30 |
 
 | Domaene | Klassen | Dateien | Fingerabdruck |
 | --- | --- | --- | --- |
@@ -30,13 +30,13 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | population | 15 | 16 | 4c877f980d9c |
 | rest | 33 | 38 | 6e21ba7cec30 |
 | shinon | 0 | 0 | da39a3ee5e6b |
-| tools | 0 | 8 | da39a3ee5e6b |
-| ui | 19 | 31 | f243e66269b6 |
+| tools | 0 | 9 | da39a3ee5e6b |
+| ui | 23 | 35 | ff577a52dcfa |
 | world/generator | 12 | 12 | 190186145ff4 |
 | world/objekt | 32 | 32 | 037fa65bf0a4 |
 | world/orchestrator | 7 | 7 | 678f53278f05 |
 | world/tier | 17 | 17 | 087fdafacd6e |
-| world/welt | 41 | 41 | 02a29d8fbf6b |
+| world/welt | 42 | 42 | a866762a30b9 |
 
 <!-- STAND:ENDE -->
 

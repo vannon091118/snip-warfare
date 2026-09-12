@@ -383,6 +383,12 @@ func objekt_knoten_anhaengen(index: int) -> Welt_ObjektKnoten:
 	# sortiert; das Standbild bleibt immer der erste Frame desselben Sheets.
 	if eintrag != null and _objekt_darsteller != null:
 		knoten.bewegtbild_setzen(_objekt_darsteller.objekt_darstellen(eintrag, fusspunkt))
+	# Die Schatten-Lage folgt der Katalog-Entscheidung schatten_wurf: Nur
+	# Objekte werfen im Papierlicht, die Kacheln und Tiere bleiben flach.
+	knoten.schatten_wurf_setzen(
+		eintrag != null and bool(eintrag.schluessel_daten.get("schatten_wurf", false)),
+		float(eintrag.anzeige_breite) if eintrag != null else 64.0,
+		float(eintrag.anzeige_hoehe) if eintrag != null else 64.0)
 	# Auch der Neuaufbau trägt die Gesten: Riss, Wuchs und Stadium stehen
 	# aus dem Modell, nicht nur aus den Ereignissen.
 	_risse_und_wuchs_aktualisieren(index, knoten)

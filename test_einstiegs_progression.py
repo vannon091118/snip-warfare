@@ -105,10 +105,10 @@ def test_eingabe_steuerung_blockt_gesperrte_aktionen():
 
 
 def test_bau_panel_liest_moebel_ohne_eigene_stufen_tabelle():
-    """Das Panel liest sein Angebot aus moebel.json und erfindet keine Stufen."""
+    """Das Panel liest sein Angebot aus dem zentralen Element-Katalog (Kategorie Moebel)."""
     panel = _lies("ui/logic/kategorie_ui/ui_bau_panel.gd")
-    assert "moe\u00e6bel.json" not in panel
-    assert "m\u00f6bel.json" in panel, "Angebot kommt aus dem Moebel-Datenpool"
+    assert "moebel.json" not in panel, "keine zweite Moebel-Quelle neben dem Katalog"
+    assert "element_katalog" in panel, "Angebot kommt aus der Moebel-Registry"
     assert 'def.id == "haus"' not in panel, "keine erfundene Stufen-Tabelle im UI"
     definition = _lies("world/logic/kategorie_objekt/gebaeude_definition.gd")
     assert "var gesperrt_ab_stufe: int = 0" in definition

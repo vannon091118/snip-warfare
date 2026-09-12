@@ -82,7 +82,7 @@ func _keimpunkt_zu_fraktion(keimpunkt: Dictionary, welt_seed: int, welt_model: W
 	fraktion.fraktion_id = fraktion_id
 	fraktion.angezeigter_name = fraktions_name
 	fraktion.beschreibung = _generiere_beschreibung(archetyp, keimpunkt)
-	fraktion.bevorzugte_biome = ARCHETYP_BIOME.get(archetyp, ["gemaaessigt"])
+	fraktion.bevorzugte_biome.assign(ARCHETYP_BIOME.get(archetyp, ["gemaaessigt"]))
 	fraktion.farbe = ARCHETYP_FARBEN.get(archetyp, Color.WHITE)
 	fraktion.position_kachel = _welt_pos_zu_kachel(keimpunkt.position, welt_model)
 	fraktion.nachbarn = []  # Wird vom NetzwerkPlaner befüllt

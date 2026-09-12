@@ -45,6 +45,7 @@ var _bereich := 0.0
 var _ladevorgang := Welt_Ladevorgang.new()
 var _map_fabrik := Welt_MapFabrik.new()
 var _gebaeude := Gebaeude_Manager.new()
+var _moebel_platzierer: Objekt_MoebelPlatzierer = null
 var _lager_fabrik := Welt_LagerFabrik.new()
 var _tier_platzierer := Welt_TierPlatzierer.new()
 var _waerme_sammler := Welt_WaermeSammler.new()
@@ -186,6 +187,11 @@ func _bereit_gebaeude_und_fortschritt() -> void:
 	add_child(_gebaeude)
 	_gebaeude.gebaeude_meldung.connect(_auf_gebaeude_meldung)
 	_gebaeude.gebaeude_platziert.connect(_auf_gebaeude_platziert)
+	# Moebel-Platzierer: Die Moebel-Domaene haengt ihre Platzierungen an
+	# denselben Renderer-Nachzug wie die Gebaeude.
+	_moebel_platzierer = Objekt_MoebelPlatzierer.new()
+	_moebel_platzierer.einrichten(_model, _registry)
+	_moebel_platzierer.moebel_platziert.connect(_auf_gebaeude_platziert)
 	# Produktionszeile als Ereignis statt Frame-Abfrage: Der Manager meldet
 	# jede Zustandsänderung selbst, das HUD liest nur die Meldung.
 	_gebaeude.status_geaendert.connect(_auf_produktion_status)
@@ -255,6 +261,7 @@ func _bereit_orchestrator_und_ui() -> void:
 		"karten_viewer": _karten_viewer,
 		"schnellwahl": _schnellwahl,
 		"gebaeude": _gebaeude,
+		"moebel_platzierer": _moebel_platzierer,
 		"map_fabrik": _map_fabrik,
 		"modell_ersetzen": _modell_ersetzen,
 		"fortschritt": _fortschritt,
@@ -271,7 +278,7 @@ func _bereit_orchestrator_und_ui() -> void:
 	# CanvasLayer eingehängt; sie lesen nur über ihre Panel-Controller aus
 	# den bestehenden Maschinen. Kein neuer Schnittpunkt, nur Sichtbarkeit.
 	_ui_aufbau.debug_panel_bauen(%UILayer as CanvasLayer, _auswahl, _stockmaenner, _tiere)
-	_ui_aufbau.bau_panel_bauen(%UILayer as CanvasLayer, _gebaeude_definitionen, _fortschritt, _steuerung, _auf_bau_gewaehlt)
+	_ui_aufbau.bau_panel_bauen(%UILayer as CanvasLayer, _gebaeude_definitionen, _fortschritt, _steuerung, _auf_bau_gewaehlt, _registry)
 	_ui_aufbau.pop_einheit_panel_bauen(%UILayer as CanvasLayer, _need_baum, _stockmaenner, _ressourcen)
 	_eingabe_steuerung.debug_umgeschaltet.connect(_auf_debug_umgeschaltet)
 	# Warum-Fenster: Die Status-Anzeige besitzt die Begründungsliste, die Szene
@@ -343,6 +350,9 @@ func _auf_gebaeude_platziert(objekt_index: int) -> void:
 func _process(delta: float) -> void:
 	_kamera_steuerung.kamera_bewegen(delta, _kamera)
 	_tiere.spieler_position_setzen(_kamera.position)
+	# Sprint 3: Die Kamerastelle führt die Tiefen-Neige mit; das Licht
+	# selbst ist gerichtet und braucht keinen Ort.
+	_atmosphaere.kamera_stelle(_kamera.position, _bereich)
 	# RTS-Prinzip: Kamera und Einheiten sind entkoppelt. Stickmen bewegen
 	# sich ausschließlich über Jobs (Einheit_Status + Rathaus/Orchestrator),
 	# niemals durch unmittelbares Setzen ihrer Position pro Frame.

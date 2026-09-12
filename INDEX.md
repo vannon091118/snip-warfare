@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 252 Klassen mit `class_name` im Projekt, davon 219 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 64 Signale, 31 Array-Elementtypen und 29 JSON-Pools._
+_Stand: V0.01 — 257 Klassen mit `class_name` im Projekt, davon 224 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 64 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -119,7 +119,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (41)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (42)
 
 | Klasse | Datei |
 | --- | --- |
@@ -151,6 +151,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` |
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` |
+| `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` |
 | `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` |
@@ -332,10 +333,14 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Lager_MutationEntnehmen` | `economy/logic/storage/lager_entnahme.gd` |
 | `Lager_Registry` | `economy/logic/storage/lager_registry.gd` |
 
-### ui — Prefix `Ui_` — `ui/` (19)
+### ui — Prefix `Ui_` — `ui/` (23)
 
 | Klasse | Datei |
 | --- | --- |
+| `Menue_BuehnenMeister` | `ui/logic/kategorie_ui/menue_buehnen_meister.gd` |
+| `Menue_StoryDaten` | `ui/logic/kategorie_ui/menue_story_daten.gd` |
+| `Menue_StoryRegisseur` | `ui/logic/kategorie_ui/menue_story_regisseur.gd` |
+| `Menue_Unterschrift` | `ui/logic/kategorie_ui/menue_unterschrift.gd` |
 | `Ui_AuswahlManager` | `ui/scenes/selection/auswahl_manager.gd` |
 | `Ui_AuswahlMarkierung` | `ui/logic/kategorie_ui/ui_auswahl_markierung.gd` |
 | `Ui_BauAuftragMaschine` | `ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd` |
