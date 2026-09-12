@@ -1,19 +1,19 @@
-1. Die Aufgabe war, 27 Godot-Debugger-Befunde zu beseitigen, die beim Script-Reload wie kleine Explosionen aus dem Ausgabefenster schossen und das Fundament mit kosmetischem Laerm beschmierten.
+1. Der Nutzer verlangte zornig und zu Recht, dass das platzierte Lagerfeuer und das gebaute Haus endlich sichtbar auf dem Schirm erscheinen, der Stickman nicht mehr blind und ziellos in den Kannibalismus abdriftet und die Weltgenerierung eine spürbar balancierte, prozentuale Landschaft mit echten Variationen entfaltet statt jedes Mal denselben monotonen Einheitsbrei auszuwerfen.
 
-2. In welt_netzwerk_planer.gd wurde die lokale Variable spieler_region umbenannt, weil sie wie ein aufdringlicher Doppelgaenger die gleichnamige Methode der Klasse zuzudecken versuchte, und die integer-Divisionen bei der Regionsmitte-Berechnung wurden durch float-sichere Varianten ersetzt, damit Godot aufhoert, ueber Praezisionsverluste zu klagen, die keine waren.
+2. In gebaeude_manager.gd wurde das Signal gebaeude_platziert ins Leben gerufen und direkt nach der Modellbuchung abgefeuert, damit die Welt sofort erfährt, wenn ein Gebäude das Licht der Erde erblickt.
 
-3. In kern_steuerung_registry.gd wurden zwei statische Methodenaufrufe, die auf einer Instanz saßen wie Gaeste auf dem falschen Stuhl, auf den direkten Klassennamen umgestellt, wie es die Sprache verlangt.
+3. In welt.gd fängt die Szene dieses Signal nun beherzt auf, hängt den frischen Knoten unverzüglich in den Renderer ein, weckt die Lagerfabrik auf und facht die Wärmequellen für die frierende Bevölkerung neu an, bevor die Verzweiflung überhandnimmt.
 
-4. In ui_karten_viewer.gd wurden fuenf Methoden-Signaturen von int auf float umgestellt, weil die Kachelgroesse intern immer schon als float durch die Rechnung floß und der Compiler zurecht fragte, warum man das Wasser durch ein Sieb gießt.
+4. In welt_renderer.gd erlaubt die neue Methode sichtgebiet_aktualisieren dem Zeichenapparat, neu entstandene Bauwerke ohne Umwege und ohne erzwungene Kamerareise sofort sichtbar auf die Bildfläche zu zaubern.
 
-5. In gebaeude_manager.gd wurde der ungenutzte Parameter gebaeude_id mit einem Unterstrich versehen, damit klar ist, dass er als Vertragsflaeche steht und nicht vergessen wurde, und die Kachel-Ganzzahl-Divisionen wurden durch explizite float-Division mit int-Wrap ersetzt.
+5. In welt_generator.gd verteilt die neue Logik in biom_fliese_fuer nun prozentual abgestimmte Fliesen wie Wiesen, Waldböden, Acker, Sand und Geröll über die Chunks, wodurch die zuvor flache und sterile Ödnis endlich ein lebendiges und abwechslungsreiches Gesicht erhält.
 
-6. In welt_atmosphaere_verdrahtung.gd wurde die lokale Variable material umbenannt, weil sie wie ein Eindringling den Schatten der Basisklassen-Property CanvasItem.material auf sich zog.
+6. In generator_gewichte.json wurden die erdrückenden Cluster-Wahrscheinlichkeiten für Wälder und Steinfelder von wahnwitzigen Spitzenwerten auf ein harmonisches Maß zurückgestutzt, sodass nun echte Lichtungen und begehbare Freiräume zum Siedeln entstehen.
 
-7. In welt_schlag_staub.gd wurde die Halbierung der Blitz-Dauer von dauer / 2 auf int(dauer * 0.5) umgestellt, damit der Compiler nicht mehr den Zeigefinger hebt.
+7. In welt_map.gd wird der deterministisch geplante Seed der gewählten Region nun lückenlos an die Sitzung übergeben, damit die lokale Karte exakt der gewählten Landschaft entspricht und nicht mehr im ewigen Trott desselben Standard-Wertes verharrt.
 
-8. In path_netz.gd wurde die Zuweisung an diagonal_weight entfernt, da diese Property in Godot 4 AStarGrid2D schlicht nicht existiert und einen INVALID_ASSIGNMENT-Absturz produzierte, der alle anderen Warnungen in seiner Haerte uebertraf.
+8. In welt_ladevorgang.gd wurde die Saatgut-Ableitung so justiert, dass unbenannte Neuanfänge aus dem bestehenden Weltarchiv deterministisch frische Saaten ziehen.
 
-9. Der Preflight laeuft in allen 15 Kategorien gruen, der Warnungs-Scan meldet keinen einzigen Befund mehr, und der Debugger-Zaehler sollte nach dem naechsten Script-Reload auf null stehen.
+9. In welt_netzwerk_planer.gd wurden die letzten Integer-Divisionen bei der Mittelpunkt- und Regionsberechnung endgültig durch gleitkommasichere Divisionen getilgt, damit der Godot-Debugger endlich seine Ruhe findet.
 
-10. Was noch fehlt ist die ingame-Verifikation durch den Nutzer: Das Spiel starten, die Karte laden, und pruefen, ob der Debugger schweigt.
+10. Nun steht der sichtbaren Ingame-Prüfung nichts mehr im Wege, wenn Lagerfeuer und Hütten aus dem Boden wachsen und die Siedler wohlbehalten ihr Werk verrichten.

@@ -8,6 +8,9 @@ class_name Gebaeude_Manager
 
 signal gebaeude_meldung(text: String)
 signal gebaeude_fertiggestellt(gebaeude_id: String)
+## Renderer-Signal: Der Renderer muss jeden neu platzierten Gebäude-Knoten sofort
+## anhängen, ohne auf den nächsten Sichtbereichs-Scan zu warten.
+signal gebaeude_platziert(objekt_index: int)
 ## Statuszeilen für das HUD: Der Manager meldet sie nur, wenn sie sich
 ## wirklich ändern. Das HUD muss nicht mehr in jedem Frame nachfragen.
 signal status_geaendert(zeilen: Array[String])
@@ -91,6 +94,7 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	_model.objekt_feld_setzen(objekt_index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
 	_startbestand_einbuchen(definition, lager_index)
 	gebaeude_meldung.emit("Bau angefordert: %s (%d Ticks)" % [definition.angezeigter_name, definition.bauzeit_ticks])
+	gebaeude_platziert.emit(objekt_index)
 	# Die neue Baustelle erscheint sofort im HUD; kein Frame muss darauf warten.
 	_melde_status_wenn_neu()
 	return {"ok": true}

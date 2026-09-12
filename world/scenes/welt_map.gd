@@ -16,6 +16,8 @@ var _netzwerk_planer := Welt_NetzwerkPlaner.new()
 var _makro := Welt_MakroGenerator.new()
 var _seed_offset: int = 0
 var _gewaehlte_region: Vector2i = Vector2i.ZERO
+var _basis_seed: int = 0
+var _aktueller_seed_wert: int = 0
 
 @onready var _karten_flaeche: Control = %KartenFlaeche
 @onready var _info_label: Label = %InfoLabel
@@ -25,6 +27,15 @@ var _gewaehlte_region: Vector2i = Vector2i.ZERO
 @onready var _zurueck_knopf: Button = %ZurueckKnopf
 
 func _ready() -> void:
+	if WeltSitzung.seed_wunsch != 0:
+		_basis_seed = WeltSitzung.seed_wunsch
+	else:
+		var speicher_leser := Welt_Speicher.new()
+		var anzahl := speicher_leser.welt_namen().size()
+		var ableitung := Kern_Zufall.abgeleitet_fuer(421337 + anzahl * 1337, anzahl + 1)
+		_basis_seed = int(ableitung.naechste_zahl() % 1000000000)
+		if _basis_seed == 0:
+			_basis_seed = 421337
 	_starten_knopf.pressed.connect(_auf_starten)
 	_neu_knopf.pressed.connect(_auf_neu_platzieren)
 	_zurueck_knopf.pressed.connect(_auf_zurueck)
@@ -34,16 +45,14 @@ func _ready() -> void:
 	_details_aktualisieren()
 
 func _welt_planen() -> void:
-	var seed_wert: int = WeltSitzung.seed_wunsch
-	if seed_wert == 0:
-		seed_wert = int(hash("world_map_%d" % _seed_offset) & 0x7FFFFFFF)
-		if seed_wert == 0:
-			seed_wert = 421337
+	_aktueller_seed_wert = (_basis_seed + _seed_offset * 10007) & 0x7FFFFFFF
+	if _aktueller_seed_wert == 0:
+		_aktueller_seed_wert = 421337
 	# Makroebene statt lokaler Erzeugung: Die Weltkarte plant nur ihre
 	# Regionen. Kein Chunk, kein Objekt, kein Tier — die Weltkarte ist in
 	# einem Bruchteil der Zeit da und die lokale Karte bleibt die einzige
 	# Stelle mit Inhalt.
-	_makro.karte_planen(_model, _registry, seed_wert)
+	_makro.karte_planen(_model, _registry, _aktueller_seed_wert)
 	_netzwerk_planer.netzwerk_planen(_model, _registry, _seed_offset, _biome)
 	_gewaehlte_region = _netzwerk_planer.spieler_region()
 	_karten_flaeche.queue_redraw()
@@ -184,6 +193,7 @@ func _auf_starten() -> void:
 	var region: Dictionary = _model.region_an_kachel(_gewaehlte_region.x * _model.region_kante, _gewaehlte_region.y * _model.region_kante)
 	var biom_id: String = str(region.get("biom_id", "gemaaessigt"))
 	WeltSitzung.startbereich_setzen(_gewaehlte_region.x, _gewaehlte_region.y, biom_id)
+	WeltSitzung.seed_wunsch = int(region.get("seed", _aktueller_seed_wert))
 	WeltSitzung.fraktionen_netzwerk = _netzwerk_planer.nach_array()
 	WeltSitzung.uebergang_ziel = SZENE_KARTE
 	WeltSitzung.uebergang_text = "Die lokale Spielkarte wird generiert …"

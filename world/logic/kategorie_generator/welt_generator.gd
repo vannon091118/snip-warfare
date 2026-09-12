@@ -165,6 +165,7 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 			var y := start_y + dy
 			if x < model.raster_breite and y < model.raster_hoehe:
 				plaetze.append(Vector2i(x, y))
+				model.fliese_setzen(x, y, _biom_fliese_fuer(biom_id, chunk_zufall))
 	while versuche < kacheln * 3:
 		versuche += 1
 		if plaetze.is_empty():
@@ -278,3 +279,32 @@ func _cluster_plaetze(model: Welt_Model, mitte: Vector2i, radius: int, anzahl: i
 		plaetze.append(kandidaten[index])
 		kandidaten.remove_at(index)
 	return plaetze
+
+func _biom_fliese_fuer(biom_id: String, zufall: Kern_Zufall) -> String:
+	# Prozentuale Fliesen-Verteilung passend zum Biom: bricht die monotone
+	# Standardkachel und erzeugt sofort optische Differenzierung.
+	var wurf := int(zufall.naechste_zahl() % 100)
+	match biom_id:
+		"gemaaessigt":
+			if wurf < 55:
+				return "wiese"
+			elif wurf < 80:
+				return "waldboden"
+			else:
+				return "boden"
+		"steppe":
+			if wurf < 45:
+				return "boden"
+			elif wurf < 75:
+				return "acker"
+			else:
+				return "sand"
+		"tundra":
+			if wurf < 45:
+				return "boden"
+			elif wurf < 75:
+				return "geroell"
+			else:
+				return "fels"
+		_:
+			return "boden"

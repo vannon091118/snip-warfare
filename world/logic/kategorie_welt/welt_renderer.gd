@@ -357,6 +357,13 @@ func sichtbereich_deaktivieren() -> void:
 	# Der Editor und Prüfläufe ohne Kamera hängen alles an, wie bisher.
 	_sichtbereich = Rect2()
 
+func sichtgebiet_aktualisieren() -> void:
+	# Erzwingt den Neuabgleich der sichtbaren Objekte bei Gebäudeplatzierung
+	# oder Spawn-Ereignissen, ohne auf Kamerabewegung warten zu müssen.
+	_sichtgebiet_dirty = true
+	if _sichtbereich.size != Vector2.ZERO:
+		_sichtbar_anwenden()
+
 func _sichtbar_anwenden() -> void:
 	if _model == null or _sichtbereich.size == Vector2.ZERO:
 		return

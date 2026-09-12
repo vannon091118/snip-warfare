@@ -96,7 +96,7 @@ func _start_region_waehlen(model: Welt_Model, regionen: Vector2i, belegte: Array
 	# Startbereich: möglichst nahe der Mitte, niemals auf einer Barriere und
 	# möglichst mit zwei offenen Wegen zu Fraktionen. Die Wahl ist
 	# deterministisch, damit dieselbe Karte denselben Start liefert.
-	var mitte := Vector2i(int(regionen.x / 2), int(regionen.y / 2))
+	var mitte := Vector2i(int(float(regionen.x) * 0.5), int(float(regionen.y) * 0.5))
 	var kandidaten: Array[Vector2i] = []
 	for ry in regionen.y:
 		for rx in regionen.x:
@@ -131,7 +131,7 @@ func _offene_nachbarn(model: Welt_Model, region_pos: Vector2i) -> Array[Welt_Fra
 
 func _region_von_fraktion(model: Welt_Model, fraktion: Welt_Fraktion) -> Vector2i:
 	var kante := maxi(model.region_kante, 1)
-	return Vector2i(int(fraktion.position_kachel.x) / kante, int(fraktion.position_kachel.y) / kante)
+	return Vector2i(int(float(fraktion.position_kachel.x) / float(kante)), int(float(fraktion.position_kachel.y) / float(kante)))
 
 func _linie_frei(model: Welt_Model, von: Vector2i, nach: Vector2i) -> bool:
 	# Wege umgehen Barrieren: Die Zellen zwischen zwei Regionen werden

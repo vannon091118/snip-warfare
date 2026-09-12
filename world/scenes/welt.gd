@@ -138,6 +138,7 @@ func _ready() -> void:
 	_gebaeude.einrichten(_model, _registry, _ressourcen, _lager, _fortschritt)
 	add_child(_gebaeude)
 	_gebaeude.gebaeude_meldung.connect(_auf_gebaeude_meldung)
+	_gebaeude.gebaeude_platziert.connect(_auf_gebaeude_platziert)
 	# Produktionszeile als Ereignis statt Frame-Abfrage: Der Manager meldet
 	# jede Zustandsänderung selbst, das HUD liest nur die Meldung.
 	_gebaeude.status_geaendert.connect(_auf_produktion_status)
@@ -327,6 +328,13 @@ func _auf_zurueck() -> void:
 func _auf_gebaeude_meldung(meldung_text: String) -> void:
 	_hud.meldung_setzen(meldung_text)
 
+func _auf_gebaeude_platziert(objekt_index: int) -> void:
+	# Das neue Gebäude sofort visuell einhängen und die Domänen nachziehen.
+	_karte.objekt_knoten_anhaengen(objekt_index)
+	_karte.sichtgebiet_aktualisieren()
+	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
+	_waerme_sammler.sammeln(_model, _stockmaenner)
+
 func _auf_ziel_erreicht(stufe: Dictionary) -> void:
 	_hud.meldung_setzen("Ziel erreicht: %s" % str(stufe.get("id", "")))
 	_hud.meldung_setzen(_fortschritt.ziel_zeile())
@@ -336,6 +344,8 @@ func _auf_erste_einheit(_stufe: Dictionary) -> void:
 	# Karte allein von ihrem Ziel, und die Einwanderung startet nicht doppelt.
 	if _stockmaenner.einheit_zahl() > 0:
 		return
+	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
+	_waerme_sammler.sammeln(_model, _stockmaenner)
 	_stockmaenner.einheit_hinzufuegen(_stockmaenner.lager_anker_position() + Vector2(0, 48))
 	_hud.meldung_setzen("Der erste Siedler ist am Lagerfeuer angekommen.")
 
