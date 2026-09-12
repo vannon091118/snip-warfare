@@ -426,7 +426,7 @@ func _eskalation_anwenden(geladene_version: int) -> void:
 		if regionen.is_empty() and welt_seed == 0:
 			# Alter Save ohne Seed: deterministisch aus biom_id ableiten,
 			# damit gleiche alte Welt nicht zufällig neu würfelt.
-			welt_seed = int(Pop_NamensGenerator.hash(biom_id) & 0x7FFFFFFF)
+			welt_seed = int(Kern_Hash.wort(biom_id) & 0x7FFFFFFF)
 		for region in regionen:
 			if int(region.get("chunk_kante", 0)) == 2:
 				region["chunk_kante"] = Welt_Generator.CHUNK_GROESSE

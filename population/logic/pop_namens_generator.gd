@@ -77,7 +77,7 @@ const FRAKTION_SILBEN_POOLS: Dictionary = {
 
 static func generiere_rassen_name(archetyp: String, keimpunkt_id: String, welt_seed: int) -> String:
 	## Erzeuge RNG für diese spezifische Kombination
-	var rng := Kern_Zufall.abgeleitet_fuer(welt_seed, hash(keimpunkt_id + "_rasse_" + archetyp))
+	var rng := Kern_Zufall.abgeleitet_fuer(welt_seed, Kern_Hash.wort_gesalzen(keimpunkt_id + "_rasse_" + archetyp, "rasse"))
 	var pools: Dictionary = RASSEN_SILBEN_POOLS.get(archetyp, RASSEN_SILBEN_POOLS["wald"])
 
 	## Name-Struktur: Anfang + 1-2 Silben + Ende
@@ -104,7 +104,7 @@ static func generiere_rassen_name(archetyp: String, keimpunkt_id: String, welt_s
 
 static func generiere_fraktions_name(archetyp: String, keimpunkt_id: String, welt_seed: int) -> String:
 	## Erzeuge RNG für diese spezifische Kombination
-	var rng := Kern_Zufall.abgeleitet_fuer(welt_seed, hash(keimpunkt_id + "_fraktion_" + archetyp))
+	var rng := Kern_Zufall.abgeleitet_fuer(welt_seed, Kern_Hash.wort_gesalzen(keimpunkt_id + "_fraktion_" + archetyp, "fraktion"))
 	var pools: Dictionary = FRAKTION_SILBEN_POOLS.get(archetyp, FRAKTION_SILBEN_POOLS["wald"])
 
 	## Name-Struktur: Anfang + Mitte + Ende (mit Bindestrich oder Leerzeichen)
@@ -125,11 +125,3 @@ static func generiere_fraktions_name(archetyp: String, keimpunkt_id: String, wel
 	name += trennzeichen + ende_pool[ende_idx].to_lower()
 
 	return name
-
-static func hash(input: String) -> int:
-	## FNV-1a 64-bit Hash für deterministische Seed-Ableitung
-	var h: int = int(0x84222325) | (int(0xcbf29ce4) << 32)
-	for zeichen in input:
-		h ^= ord(zeichen)
-		h = int((h * 0x100000001b3) & 0x7FFFFFFFFFFFFFFF)
-	return h

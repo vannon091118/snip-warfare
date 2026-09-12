@@ -5,7 +5,8 @@ keine Zeit-Seeds, Mutationsschemata mit Startzustand und Matrix-Zuordnung."""
 import re
 
 from .kern import (PROJEKT_STAMM, ERLAUBTE_ZUFALLS_KLASSEN, ZUFALLS_MUSTER,
-                   ZEIT_SEED_MUSTER, ZWEITER_RNG_MUSTER,
+                   ZEIT_SEED_MUSTER, ZWEITER_RNG_MUSTER, BUILTIN_HASH_MUSTER,
+                   ERLAUBTE_HASH_KLASSEN,
                    fehler, zeile_von, zeile_bei, klassen_name_lesen)
 
 
@@ -13,6 +14,12 @@ def _sammle_zufallsfundstellen(code, klasse):
     if klasse in ERLAUBTE_ZUFALLS_KLASSEN:
         return []
     return list(ZUFALLS_MUSTER.finditer(code))
+
+
+def _sammle_hash_fundstellen(code, klasse):
+    if klasse in ERLAUBTE_HASH_KLASSEN:
+        return []
+    return list(BUILTIN_HASH_MUSTER.finditer(code))
 
 
 def _matrix_zuordnung_aus_code(code):
@@ -34,6 +41,11 @@ def pruefe_determinismus(dateien):
                    "Verbotener Zufallsaufruf '%s' in '%s'; Zufall läuft nur in "
                    "Kern_Zufall innerhalb einer Mutation und wird als Zustand "
                    "festgehalten" % (treffer.group(0).strip(), name or rel_pfad))
+        for treffer in _sammle_hash_fundstellen(code, name):
+            fehler("E012", rel_pfad, zeile_bei(code, treffer.start()),
+                   "Eingebauter hash() Aufruf '%s' in '%s'; der Builtin ist nur "
+                   "pro Engine-Version stabil, Hashwerte für Ableitung kommen "
+                   "nur aus Kern_Hash" % (treffer.group(0).strip(), name or rel_pfad))
         for treffer in ZEIT_SEED_MUSTER.finditer(code):
             fehler("E012", rel_pfad, zeile_bei(code, treffer.start()),
                    "Zeitbasierte Seedquelle '%s' in '%s'; Seed kommt ausschließlich aus Weltzustand und Kern_Zufall, keine Zeitquelle" %

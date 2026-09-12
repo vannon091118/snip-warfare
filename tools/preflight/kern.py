@@ -31,11 +31,27 @@ ERLAUBTE_ZUFALLS_KLASSEN = ("Kern_Zufall",)
 ZUFALLS_MUSTER = re.compile(
     r"\b(randi|randf|randi_range|randf_range|randfn|randomize)\s*\(")
 
+# Zeitquellen sind verbotene Seeds: Wer die Uhr liest, macht die Welt vom
+# Rechner abhaengig. Die Familie deckt Godot 4 voll ab: Zeitstempel aus dem
+# System (from_system), laufende Takt-Zaehler (get_ticks_*) in allen
+# Einheiten und die OS-Spiegel der alten Engine. Bewusst ausgenommen sind
+# reine Konvertierungen ohne Uhr, zum Beispiel Time.get_unix_time_from_datetime_dict:
+# Sie rechnen nur Zahlen um und lesen nichts vom Rechner.
 ZEIT_SEED_MUSTER = re.compile(
-    r"Time\.get_unix_time_from_system|Time\.get_ticks_msec|OS\.get_unix_time|OS\.get_ticks_msec")
+    r"Time\.get_(?:unix_time|datetime_string|datetime_dict|time_dict|time_string)_from_system"
+    r"|Time\.get_ticks_(?:msec|usec|nsec)"
+    r"|OS\.get_(?:unix_time|ticks_msec|ticks_usec|ticks_nsec|system_time_msecs|system_time_secs|datetime)\b")
 
 ZWEITER_RNG_MUSTER = re.compile(
     r"\bRandomNumberGenerator\b|\.seed\s*=|randomize\s*\(")
+
+# Der eingebaute Godot hash() ist nur pro Engine-Version stabil und darf
+# deshalb nie in Seed-Ketten landen. Erlaubt ist nur Kern_Hash (und die
+# Kompatibilitaets-Weiterleitung in Pop_NamensGenerator, die selbst nur
+# delegiert). Ein Punkt davor (obj.hash()) ist ein Methodenaufruf und kein
+# Builtin, deshalb wird er nicht getroffen.
+ERLAUBTE_HASH_KLASSEN = ("Kern_Hash",)
+BUILTIN_HASH_MUSTER = re.compile(r"(?<![\w.])hash\s*\(")
 
 ARRAY_BASISTYPEN = {
     "String", "int", "float", "bool", "Vector2", "Vector2i", "Vector3",

@@ -68,7 +68,10 @@ func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> b
 		# gleiche Welt liefert und keine zweite Zeitquelle entsteht.
 		var speicher_leser := Welt_Speicher.new()
 		var anzahl := speicher_leser.welt_namen().size()
-		var namens_hash := int(hash(welt_name) & 0x7FFFFFFF) if welt_name != "" else 841745713
+		# Namens-Ableitung ohne eingebauten Hash: Kern_Hash ist die
+		# vertragsstabile Stelle, damit derselbe Name dieselbe Welt laedt,
+		# unabhaengig von der Engine-Version.
+		var namens_hash := Kern_Hash.wort(welt_name) & 0x7FFFFFFF if welt_name != "" else 841745713
 		var ableitung := Kern_Zufall.abgeleitet_fuer(namens_hash + anzahl * 7919, anzahl + 1)
 		basis_seed = int(ableitung.naechste_zahl() % 1000000000)
 		if basis_seed == 0:

@@ -54,7 +54,7 @@ func generiere_aus_keimpunkten(keimpunkte: Array[Dictionary], welt_seed: int) ->
 		neue_rasse._initialisiere_generiert(rassen_id, rassen_name, str(vorlage.get("beschreibung", "")))
 
 		## Deterministischer RNG für diese Rasse (Seed + Keimpunkt + Archetyp)
-		var rassen_rng := Kern_Zufall.abgeleitet_fuer(welt_seed, Pop_NamensGenerator.hash(keimpunkt_id + "_werte_" + archetyp))
+		var rassen_rng := Kern_Zufall.abgeleitet_fuer(welt_seed, Kern_Hash.wort(keimpunkt_id + "_werte_" + archetyp))
 
 		## Jeden Wertbereich zeichnen: Float-Range [min, max]
 		var werte: Dictionary = vorlage.get("werte", {})
@@ -96,7 +96,7 @@ func generiere_aus_keimpunkten(keimpunkte: Array[Dictionary], welt_seed: int) ->
 
 func _generiere_rassen_id(archetyp: String, keimpunkt_id: String, welt_seed: int) -> String:
 	## Deterministische ID: archetyp_keimpunkt_seedhash
-	var seed_hash := Pop_NamensGenerator.hash(str(welt_seed) + "_" + keimpunkt_id)
+	var seed_hash := Kern_Hash.wort(str(welt_seed) + "_" + keimpunkt_id)
 	return "%s_%s_%d" % [archetyp, keimpunkt_id, seed_hash % 10000]
 
 func _archetyp_zu_icon(archetyp: String) -> String:

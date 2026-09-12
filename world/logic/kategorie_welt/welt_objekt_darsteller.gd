@@ -53,7 +53,9 @@ func objekt_darstellen(objekt: Objekt_Basis, fusspunkt: Vector2) -> AnimatedSpri
 	sprite.play(objekt.funktions_animation)
 	if objekt.schluessel_daten.has("beeren_wahrscheinlichkeit"):
 		var chance := float(objekt.schluessel_daten.get("beeren_wahrscheinlichkeit", 0.0))
-		var pos_hash := int(abs(hash(Vector2i(int(round(fusspunkt.x)), int(round(fusspunkt.y)))))) % 100
+		# Beeren-Urteil ohne eingebauten Hash: Kern_Hash.vektor ist die
+		# vertragsstabile Identität einer Position.
+		var pos_hash := absi(Kern_Hash.vektor(Vector2i(int(round(fusspunkt.x)), int(round(fusspunkt.y))))) % 100
 		if chance > 0.0 and ResourceLoader.exists(BEEREN_OVERLAY_PFAD):
 			var overlay_sprite := _beeren_overlay(breite, hoehe, eintrag, chance, pos_hash)
 			if overlay_sprite != null:

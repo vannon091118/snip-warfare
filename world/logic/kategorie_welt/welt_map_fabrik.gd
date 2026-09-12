@@ -39,8 +39,10 @@ func neue_karte_erzeugen(world: Welt_World, map_id: String, biom_id: String) -> 
 	# Basis markiert, damit die Sitzung auf sie zeigt.
 	if world == null:
 		return null
+	# Seed-Ableitung ohne eingebauten Hash: Der Weltname geht gesalzen in
+	# Kern_Hash, damit kein Engine-Wechsel die Zahlenwahrheit dreht.
 	var ableitung := Kern_Zufall.abgeleitet_fuer(
-		int(hash(world.world_name) & 0x7FFFFFFF), world.map_zahl() + 1)
+		Kern_Hash.wort_gesalzen(world.world_name, "karte_expansion"), world.map_zahl() + 1)
 	var seed_wert := int(ableitung.naechste_zahl() % 1000000000)
 	if seed_wert == 0:
 		seed_wert = 13371337

@@ -5,8 +5,11 @@ ausgeführt; weicht ein Ergebnis ab, ist der Preflight selbst unbrauchbar."""
 import importlib.util
 import sys
 
-from .kern import PROJEKT_STAMM, ERLAUBTE_ZUFALLS_KLASSEN, ZUFALLS_MUSTER
-from .pruef_determinismus import _sammle_zufallsfundstellen, _matrix_zuordnung_aus_code
+from .kern import (PROJEKT_STAMM, ERLAUBTE_ZUFALLS_KLASSEN, ZUFALLS_MUSTER,
+                   ZEIT_SEED_MUSTER, ERLAUBTE_HASH_KLASSEN, BUILTIN_HASH_MUSTER)
+from .pruef_determinismus import (_sammle_zufallsfundstellen,
+                                  _sammle_hash_fundstellen,
+                                  _matrix_zuordnung_aus_code)
 
 
 def _lade_shinon_klasse(rel_pfad, modul_name, klassen_name):
@@ -39,6 +42,49 @@ def selbsttest():
         probleme.append("Zufallsmuster aus dem Kern findet randi() nicht")
     if "Kern_Zufall" not in ERLAUBTE_ZUFALLS_KLASSEN:
         probleme.append("Kern_Zufall fehlt in der Erlaubnisliste")
+    # Hash-Zaun Selbsttest: Der Builtin hash() muss außerhalb von Kern_Hash
+    # gefunden, in Kern_Hash aber durchgelassen werden.
+    hash_probe = "extends RefCounted\nclass_name E000_HashProbe\nvar wert := hash(\"x\")\n"
+    if len(_sammle_hash_fundstellen(hash_probe, "E000_HashProbe")) != 1:
+        probleme.append("Hash-Detektor fand Builtin hash() in einer Fremdklasse nicht")
+    hash_kern = "extends RefCounted\nclass_name Kern_Hash\nvar wert := hash(\"x\")\n"
+    if len(_sammle_hash_fundstellen(hash_kern, "Kern_Hash")) != 0:
+        probleme.append("Hash-Detektor meldet hash() in der erlaubten Kern_Hash-Klasse")
+    methode_probe = "extends RefCounted\nclass_name E000_HashProbe2\nvar wert := irgendein_objekt.hash(\"x\")\n"
+    if len(_sammle_hash_fundstellen(methode_probe, "E000_HashProbe2")) != 0:
+        probleme.append("Hash-Detektor meldet fälschlich einen Methodenaufruf objekt.hash()")
+    if BUILTIN_HASH_MUSTER.search("Kern_Hash.wort_gesalzen(\"x\", \"y\")") is not None:
+        probleme.append("Hash-Detektor meldet fälschlich Kern_Hash.wort_gesalzen()")
+    if "Kern_Hash" not in ERLAUBTE_HASH_KLASSEN:
+        probleme.append("Kern_Hash fehlt in der Hash-Erlaubnisliste")
+    # Zeit-Zaun Selbsttest: Jede Uhr der Godot-4-Familie muss gemeldet werden,
+    # reine Konvertierungen ohne Uhr duerfen nicht gemeldet werden.
+    uhr_ausdruecke = [
+        "Time.get_unix_time_from_system()",
+        "Time.get_datetime_string_from_system()",
+        "Time.get_datetime_dict_from_system()",
+        "Time.get_time_dict_from_system()",
+        "Time.get_time_string_from_system()",
+        "Time.get_ticks_msec()",
+        "Time.get_ticks_usec()",
+        "Time.get_ticks_nsec()",
+        "OS.get_unix_time()",
+        "OS.get_ticks_msec()",
+        "OS.get_ticks_usec()",
+        "OS.get_system_time_msecs()",
+        "OS.get_datetime()",
+    ]
+    for uhr in uhr_ausdruecke:
+        if ZEIT_SEED_MUSTER.search(uhr) is None:
+            probleme.append("Zeit-Detektor ueberliest die Uhrquelle %s" % uhr)
+    unschuldige_zeilen = [
+        "var sekunden := Time.get_unix_time_from_datetime_dict(aufzeichnung)",
+        "var iso := Time.get_datetime_string_from_datetime_dict(aufzeichnung, false)",
+        "var ticks := Kern_Weltuhr.ticks_aus_faktor(faktor)",
+    ]
+    for zeile in unschuldige_zeilen:
+        if ZEIT_SEED_MUSTER.search(zeile) is not None:
+            probleme.append("Zeit-Detektor meldet faelschlich die reine Konvertierung %s" % zeile.strip())
     # Versionswaechter Selbsttest: Bump, Auslesen und Abweichung muessen stimmen.
     try:
         from .pruef_version import (dokument_version, statuszahlen_nachziehen,

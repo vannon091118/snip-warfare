@@ -30,9 +30,9 @@ func _init() -> void:
 func initialisiere(welt_seed: int, generator_gewichte: Dictionary) -> void:
 	# Deterministische Seed-Ableitung fuer jede Noise-Instanz via Kern_Zufall.
 	# Das zweite Argument ist ein integer-Identifikator fuer die Noise-Art.
-	var height_id := int(Pop_NamensGenerator.hash("hoehe") & 0x7FFFFFFFFFFFFFFF)
-	var moisture_id := int(Pop_NamensGenerator.hash("feuchtigkeit") & 0x7FFFFFFFFFFFFFFF)
-	var temperature_id := int(Pop_NamensGenerator.hash("temperatur") & 0x7FFFFFFFFFFFFFFF)
+	var height_id := int(Kern_Hash.wort("hoehe") & 0x7FFFFFFFFFFFFFFF)
+	var moisture_id := int(Kern_Hash.wort("feuchtigkeit") & 0x7FFFFFFFFFFFFFFF)
+	var temperature_id := int(Kern_Hash.wort("temperatur") & 0x7FFFFFFFFFFFFFFF)
 
 	var height_kern := Kern_Zufall.abgeleitet_fuer(welt_seed, height_id)
 	var moisture_kern := Kern_Zufall.abgeleitet_fuer(welt_seed, moisture_id)
