@@ -12,6 +12,10 @@ class_name Welt_Renderer
 ## Zeichenreihenfolge; jeder Weltobjekt-Knoten trägt den Fußpunkt als Ursprung
 ## und das Bewegtbild als eigenes Kind, damit es mit seinem Standbild zusammen
 ## sortiert wird.
+##
+## Z-Layer Erweiterung: Pro Z-Ebene (0, -1, -2, -3, -4) ein eigener
+## _fliesen_knoten als Geschwister-Knoten. Sichtbarkeit wird über
+## z_ebene_setzen() umgeschaltet. Nur die aktive Ebene wird gerendert.
 
 const OBJEKT_DARSTELLER_SKRIPT := preload("res://world/logic/kategorie_welt/welt_objekt_darsteller.gd")
 const SWAY_AKTUALISIERER_SKRIPT := preload("res://world/logic/kategorie_atmosphaere/welt_sway_aktualisierer.gd")
@@ -24,7 +28,8 @@ const BAU_GEIST_SKRIPT := preload("res://world/logic/kategorie_welt/welt_bau_gei
 var _model: Welt_Model
 var _registry: Welt_Registry
 var _biome: Welt_BiomRegistry = null
-var _fliesen_knoten: Node2D
+## Dictionary: z_ebene (0, -1, -2, ...) -> Node2D (Fliesen-Container für diese Ebene)
+var _fliesen_knoten_pro_ebene: Dictionary = {}
 var _objekte_knoten: Node2D
 var _objekt_darsteller: Welt_ObjektDarsteller
 var _sway_aktualisierer := SWAY_AKTUALISIERER_SKRIPT.new()
@@ -37,6 +42,9 @@ var _baustellen_bedarf := BAUSTELLEN_BEDARF_SKRIPT.new()
 ## Rueckschnitt: Die Szene reicht die Progressions-Maschine herein, damit
 ## der Renderer jeden echten Stadiumswechsel sofort am Sprite zeigt.
 var _progressions_maschine: Object = null
+
+## Aktuell sichtbare Z-Ebene (0 = Oberfläche, negativ = Untergrund)
+var _aktive_z_ebene: int = 0
 
 ## Sichtbarkeits-Scheibe: Nur Objekte im Kamera-Bereich haengen als Knoten.
 ## Das Modell bleibt die volle Wahrheit; der Knotenbestand folgt dem Blick.
@@ -52,20 +60,40 @@ var _knoten_nach_id: Dictionary = {}
 var _objekt_gitter := Welt_ObjektGitter.new()
 
 
-
 func _ready() -> void:
 	y_sort_enabled = true
-	_fliesen_knoten = Node2D.new()
-	_fliesen_knoten.name = "Fliesen"
-	_fliesen_knoten.z_index = -1
 	_objekte_knoten = Node2D.new()
 	_objekte_knoten.name = "Objekte"
 	# Der Objekt-Container sortiert nach der Fußposition und reicht die
 	# Sortierung über den gemeinsamen Y-Sort-Knoten an die Szene weiter.
 	_objekte_knoten.y_sort_enabled = true
 	_objekt_darsteller = OBJEKT_DARSTELLER_SKRIPT.new()
-	add_child(_fliesen_knoten)
 	add_child(_objekte_knoten)
+	# Fliesen-Knoten für alle Z-Ebenen erstellen (0 bis -4)
+	for z in range(Welt_Model.MAX_Z_EBENEN):
+		var z_ebene := -z
+		var knoten := Node2D.new()
+		knoten.name = "Fliesen_Z%d" % z_ebene
+		knoten.z_index = -1
+		knoten.visible = (z_ebene == 0)  # Nur Oberfläche initial sichtbar
+		_fliesen_knoten_pro_ebene[z_ebene] = knoten
+		add_child(knoten)
+
+func _fliesen_knoten_fuer_ebene(z_ebene: int) -> Node2D:
+	return _fliesen_knoten_pro_ebene.get(z_ebene, null)
+
+func z_ebene_setzen(z_ebene: int) -> void:
+	# Schaltet die sichtbare Z-Ebene um: Blendet alle Fliesen-Knoten aus,
+	# zeigt nur den der angeforderten Ebene.
+	_aktive_z_ebene = clampi(z_ebene, -Welt_Model.MAX_Z_EBENEN + 1, 0)
+	for ebene, knoten in _fliesen_knoten_pro_ebene:
+		knoten.visible = (ebene == _aktive_z_ebene)
+	# Modell auch auf die Ebene setzen für kachel_ersetzen etc.
+	if _model != null:
+		_model.z_ebene_setzen(_aktive_z_ebene)
+
+func z_ebene_holen() -> int:
+	return _aktive_z_ebene
 
 func sway_material_quelle_setzen(quelle: Callable) -> void:
 	# Die Atmosphären-Domäne reicht ihre Sway-Material-Spitze herein; der
@@ -150,27 +178,99 @@ func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegi
 	# Aktualisierer, die Wind-Details liegen in der eigenen Domäne. Jeder
 	# Neuaufbau sammelt die Materials der frischen Sprites neu.
 	_sway_aktualisierer.einrichten(_sway_material_quelle.call())
-	_fliesen_erneuern()
+	# Fliesen für ALLE Z-Ebenen aufbauen (einmalig bei darstellen()), sichtbar wird nur aktive
+	_fliesen_alle_ebenen_erneuern()
 	_objekte_erneuern()
 	## Slice B: Gitter nach vollständigem Neuaufbau initialisieren.
 	_objekt_gitter.aufbauen(_model)
 
 
-
-func kachel_ersetzen(x: int, y: int) -> void:
+func kachel_ersetzen(x: int, y: int, z_ebene: int = 0) -> void:
 	if _model == null:
 		return
+	var z := z_ebene if z_ebene != 0 else _aktive_z_ebene
+	var fliesen_knoten := _fliesen_knoten_fuer_ebene(z)
+	if fliesen_knoten == null:
+		return
 	var kachel_index := y * _model.raster_breite + x
-	if kachel_index < 0 or kachel_index >= _fliesen_knoten.get_child_count():
+	if kachel_index < 0 or kachel_index >= fliesen_knoten.get_child_count():
 		return
 	# Einzelkachel: derselbe Weg wie beim vollen Aufbau, damit Variante und
 	# Maßstab nie auseinanderlaufen. Der Knoten bleibt an seinem Platz, weil
 	# der Index die Kachelposition im Raster ist.
-	var sprite := _fliesen_knoten.get_child(kachel_index) as Sprite2D
+	var sprite := fliesen_knoten.get_child(kachel_index) as Sprite2D
 	if sprite == null:
 		return
 	sprite.position = Vector2(x, y) * float(_model.kachel_groesse)
-	_fliese_anwenden(sprite, x, y, float(_model.kachel_groesse))
+	_fliese_anwenden(sprite, x, y, z, float(_model.kachel_groesse))
+
+func _fliesen_alle_ebenen_erneuern() -> void:
+	# Baut Fliesen für ALLE Z-Ebenen auf (einmalig bei darstellen())
+	if _model == null:
+		return
+	var kante := float(_model.kachel_groesse)
+	for z in range(Welt_Model.MAX_Z_EBENEN):
+		var z_ebene := -z
+		var fliesen_knoten := _fliesen_knoten_fuer_ebene(z_ebene)
+		if fliesen_knoten == null:
+			continue
+		# Kinder löschen
+		for kind: Node in fliesen_knoten.get_children():
+			kind.queue_free()
+		# Neu aufbauen
+		for y in _model.raster_hoehe:
+			for x in _model.raster_breite:
+				_fliese_anhaengen(fliesen_knoten, x, y, z_ebene, kante)
+
+func _fliese_anhaengen(fliesen_knoten: Node2D, x: int, y: int, z_ebene: int, kante: float) -> void:
+	var sprite := Sprite2D.new()
+	sprite.centered = false
+	sprite.position = Vector2(x, y) * kante
+	_fliese_anwenden(sprite, x, y, z_ebene, kante)
+	fliesen_knoten.add_child(sprite)
+
+func _fliese_anwenden(sprite: Sprite2D, x: int, y: int, z_ebene: int, kante: float) -> void:
+	# Eine Kachel: Bild aus dem Katalog, Variante aus dem Terrain-Blatt,
+	# Tönung aus Biom und Kachel-Daten. Fehlt das Bild, tritt ein sichtbarer
+	# Platzhalter an seine Stelle (Regel 7: lieber sichtbar als leer).
+	if sprite == null or _model == null:
+		return
+	var element_id := _model.fliese(x, y, z_ebene)
+	var kachel := _kachel_daten(element_id)
+	var biom_farbe := _biom_farbe_fuer_kachel(x, y, z_ebene)
+	var textur := _textur_fuer(element_id)
+	if textur == null:
+		textur = _platzhalter_textur(biom_farbe)
+	sprite.texture = textur
+	if textur.get_width() > 0 and textur.get_height() > 0:
+		sprite.scale = Vector2(kante / float(textur.get_width()), kante / float(textur.get_height()))
+	var entscheidung := _terrain_blatt.entscheidung_fuer(kachel, x, y, _model.welt_seed)
+	sprite.flip_h = bool(entscheidung.get("spiegel_x", false))
+	sprite.flip_v = bool(entscheidung.get("spiegel_y", false))
+	sprite.self_modulate = biom_farbe * (entscheidung.get("toenumg", Color.WHITE) as Color)
+
+func _biom_farbe_fuer_kachel(x: int, y: int, z_ebene: int) -> Color:
+	# Biom-Tönung aus der Biom-Registry: Jede Kachel trägt die Farbe ihres
+	# Region-Bioms. Keine zweite Biomlogik, nur das gefrorene farbe-Feld.
+	if _biome == null or _model == null:
+		return Color.WHITE
+	var biom := _biome.biom_fuer(_model.biom_an_kachel(x, y, z_ebene))
+	if biom == null:
+		return Color.WHITE
+	return Color.from_string(biom.farbe, Color.WHITE)
+
+func _kachel_daten(element_id: String) -> Objekt_Kachel:
+	if _registry == null:
+		return null
+	var eintrag := _registry.finde_objekt(element_id)
+	if eintrag is Objekt_Kachel:
+		return eintrag as Objekt_Kachel
+	return null
+
+func _platzhalter_textur(farbe: Color) -> Texture2D:
+	var bild := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	bild.fill(farbe)
+	return ImageTexture.create_from_image(bild)
 
 func objekt_knoten_anhaengen(index: int) -> Welt_ObjektKnoten:
 	if _model == null:
@@ -284,69 +384,6 @@ func _textur_fuer(element_id: String) -> Texture2D:
 		return anim_atlas
 	return textur
 
-func _biom_farbe_fuer_kachel(x: int, y: int) -> Color:
-	# Biom-Tönung aus der Biom-Registry: Jede Kachel trägt die Farbe ihres
-	# Region-Bioms. Keine zweite Biomlogik, nur das gefrorene farbe-Feld.
-	if _biome == null or _model == null:
-		return Color.WHITE
-	var biom := _biome.biom_fuer(_model.biom_an_kachel(x, y))
-	if biom == null:
-		return Color.WHITE
-	return Color.from_string(biom.farbe, Color.WHITE)
-
-func _fliesen_erneuern() -> void:
-	for kind: Node in _fliesen_knoten.get_children():
-		kind.queue_free()
-	if _model == null:
-		return
-	# Maßstab: Die Kantenlänge einer Kachel ist ausschließlich model.kachel_groesse
-	# aus world/data/welt_definition.json. Eine zweite Zahl hier verrutscht das
-	# Raster gegen die Objekte und reißt sichtbare Fugen auf.
-	var kante := float(_model.kachel_groesse)
-	for y in _model.raster_hoehe:
-		for x in _model.raster_breite:
-			_fliese_anhaengen(x, y, kante)
-
-func _fliese_anhaengen(x: int, y: int, kante: float) -> void:
-	var sprite := Sprite2D.new()
-	sprite.centered = false
-	sprite.position = Vector2(x, y) * kante
-	_fliese_anwenden(sprite, x, y, kante)
-	_fliesen_knoten.add_child(sprite)
-
-func _fliese_anwenden(sprite: Sprite2D, x: int, y: int, kante: float) -> void:
-	# Eine Kachel: Bild aus dem Katalog, Variante aus dem Terrain-Blatt,
-	# Tönung aus Biom und Kachel-Daten. Fehlt das Bild, tritt ein sichtbarer
-	# Platzhalter an seine Stelle (Regel 7: lieber sichtbar als leer).
-	if sprite == null or _model == null:
-		return
-	var element_id := _model.fliese(x, y)
-	var kachel := _kachel_daten(element_id)
-	var biom_farbe := _biom_farbe_fuer_kachel(x, y)
-	var textur := _textur_fuer(element_id)
-	if textur == null:
-		textur = _platzhalter_textur(biom_farbe)
-	sprite.texture = textur
-	if textur.get_width() > 0 and textur.get_height() > 0:
-		sprite.scale = Vector2(kante / float(textur.get_width()), kante / float(textur.get_height()))
-	var entscheidung := _terrain_blatt.entscheidung_fuer(kachel, x, y, _model.welt_seed)
-	sprite.flip_h = bool(entscheidung.get("spiegel_x", false))
-	sprite.flip_v = bool(entscheidung.get("spiegel_y", false))
-	sprite.self_modulate = biom_farbe * (entscheidung.get("toenumg", Color.WHITE) as Color)
-
-func _kachel_daten(element_id: String) -> Objekt_Kachel:
-	if _registry == null:
-		return null
-	var eintrag := _registry.finde_objekt(element_id)
-	if eintrag is Objekt_Kachel:
-		return eintrag as Objekt_Kachel
-	return null
-
-func _platzhalter_textur(farbe: Color) -> Texture2D:
-	var bild := Image.create(8, 8, false, Image.FORMAT_RGBA8)
-	bild.fill(farbe)
-	return ImageTexture.create_from_image(bild)
-
 func _objekte_erneuern() -> void:
 	# Der Objekt-Container trägt ausschließlich Weltobjekt-Knoten; die
 	# alten werden vor dem Neuaufbau freigegeben.
@@ -391,7 +428,6 @@ func sichtgebiet_aktualisieren() -> void:
 		_sichtbar_anwenden()
 
 
-
 func _sichtbar_anwenden() -> void:
 	if _model == null or _sichtbereich.size == Vector2.ZERO:
 		return
@@ -417,4 +453,3 @@ func _sichtbar_anwenden() -> void:
 		if not _sichtbereich.has_point(knoten.fusspunkt()):
 			_knoten_nach_id.erase(id)
 			knoten.queue_free()
-

@@ -121,6 +121,8 @@ func einlagern(ressource: String, menge: int, lager_index: int) -> bool:
 		return false
 	var ergebnis := mutation.anwenden(zustand, _zufall)
 	_lager = ergebnis["lager"]
+	# Signal an alle Observer über Lager-Bestand ändern
+	lager_geaendert_emit(lager_index, ressource, menge)
 	return true
 
 func entnehmen(ressource: String, menge: int, lager_index: int) -> bool:
@@ -132,7 +134,18 @@ func entnehmen(ressource: String, menge: int, lager_index: int) -> bool:
 		return false
 	var ergebnis := mutation.anwenden(zustand, _zufall)
 	_lager = ergebnis["lager"]
+	# Signal an alle Observer über Lager-Bestand ändern
+	lager_geaendert_emit(lager_index, ressource, -menge)
 	return true
+
+func lager_geaendert_emit(lager_index: int, ressource: String, menge_delta: int) -> void:
+	var lager_id := "lager_%d" % lager_index
+	var bus := Kern_SignalBus.bus()
+	if bus != null and bus.has_signal("lager_geaendert"):
+		bus._emit_lager_geaendert(lager_id)
+
+func _ready() -> void:
+	_zufall.start_zustand_setzen(42)
 
 ## Für Speicher/Tests.
 

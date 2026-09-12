@@ -9,11 +9,14 @@ class_name Welt_Model
 ## KACHEL_GROESSE ist nur der RUECKFALL fuer Testlaeufe ohne Definitions-Registry;
 ## im Spiel setzt der Generator den Wert aus world/data/welt_definition.json
 ## ueber kachel_groesse_setzen. Es gibt damit genau eine Quelle je Lauf.
+## Zusatz: Z-Ebene (höhe). Standard 0, negativ = Untergrund.
 const KACHEL_GROESSE := 512
 const RASTER_BREITE := 32
 const RASTER_HOEHE := 24
 const RASTER_MIN := 4
 const RASTER_MAX := 128
+const MAX_Z_EBENEN := 5 ## 0 (Oberfläche) bis -4 (Tiefster Untergrund)
+var aktive_z_ebene: int = 0 ## Standard 0, negativ = Untergrund
 
 ## Kategorie daten: Regionen als räumliche Makrostruktur der Welt.
 ## Jede Region trägt Biom, Seed-Beitrag und Chunk-Anzahl; Chunks sind die
@@ -24,13 +27,21 @@ var welt_seed: int = 0
 ## map_id: Kennung dieser Karte innerhalb einer World. Leer bedeutet, dass
 ## die Karte als eigenständige Einzelwelt geführt wird (abwärtskompatibel).
 var map_id: String = ""
-const SPEICHER_VERSION := 5
+const SPEICHER_VERSION := 6
 const MIN_KOMPATIBLE_VERSION := 2
 
-## Kategorie logik: Aufbau, Änderung und Ein-/Auslesen der Welt-Daten.
+## Kategorie daten: Raster biom_ids (separates Dictionary parallell zum raster).
+## Keys: "x:y:z" für jede Z-Ebene separat.
+var biom_raster: Dictionary = {}
+
+## Kategorie daten: Tile-Leben für abbaubare Tiles (Fels, Geröll).
+## Keys: "x:y:z" -> int (Leben). Wird bei Generierung aus Katalog initialisiert.
+var tile_leben: Dictionary = {}
+
 var raster_breite: int = RASTER_BREITE
 var raster_hoehe: int = RASTER_HOEHE
-var raster: Array[String] = []
+## raster: Dictionary mit Key "x:y:z" -> element_id für jede Z-Ebene.
+var raster: Dictionary = {}
 var objekte: Array[Dictionary] = []
 var biom_id: String = "gemaaessigt"
 ## Kantenlaenge einer Rasterkachel in Pixeln; aus der Definitions-Registry.
@@ -40,14 +51,20 @@ var chunk_groesse: int = 8
 var _naechste_objekt_nummer: int = 1
 var _biom_manager: Welt_BiomManager = null
 var _welt_registry: Welt_Registry = null
+var _biom_analyzer: Biom_Analyzer = null
 
 func _init() -> void:
 	ueberziehe_fliesen("boden")
 
 func _raster_anlegen(element_id: String) -> void:
 	raster.clear()
-	for _i in raster_breite * raster_hoehe:
-		raster.append(element_id)
+	biom_raster.clear()
+	for z in range(MAX_Z_EBENEN):
+		var z_ebene := -z
+		for y in range(raster_hoehe):
+			for x in range(raster_breite):
+				raster["%d:%d:%d" % [x, y, z_ebene]] = element_id
+				biom_raster["%d:%d:%d" % [x, y, z_ebene]] = "gemaaessigt"
 
 func karte_erzeugen(breite: int, hoehe: int, element_id: String) -> void:
 	raster_breite = clampi(breite, RASTER_MIN, RASTER_MAX)
@@ -68,18 +85,69 @@ func chunk_groesse_setzen(neue_groesse: int) -> void:
 func ueberziehe_fliesen(element_id: String) -> void:
 	_raster_anlegen(element_id)
 
-func ist_in_raster(x: int, y: int) -> bool:
-	return x >= 0 and y >= 0 and x < raster_breite and y < raster_hoehe
+func z_ebene_setzen(z_ebene: int) -> void:
+	aktive_z_ebene = clampi(z_ebene, -MAX_Z_EBENEN + 1, 0)
 
-func fliese_setzen(x: int, y: int, element_id: String) -> void:
-	if not ist_in_raster(x, y):
+func ist_in_raster(x: int, y: int, z_ebene: int = 0) -> bool:
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	return x >= 0 and y >= 0 and x < raster_breite and y < raster_hoehe and z >= -MAX_Z_EBENEN + 1 and z <= 0
+
+func fliese_setzen(x: int, y: int, element_id: String, z_ebene: int = 0) -> void:
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	if not ist_in_raster(x, y, z):
 		return
-	raster[y * raster_breite + x] = element_id
+	raster["%d:%d:%d" % [x, y, z]] = element_id
 
-func fliese(x: int, y: int) -> String:
-	if not ist_in_raster(x, y):
+func fliese(x: int, y: int, z_ebene: int = 0) -> String:
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	if not ist_in_raster(x, y, z):
 		return ""
-	return raster[y * raster_breite + x]
+	return str(raster.get("%d:%d:%d" % [x, y, z], ""))
+
+func fliese_entfernen(x: int, y: int, z_ebene: int = 0) -> void:
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	if not ist_in_raster(x, y, z):
+		return
+	raster.erase("%d:%d:%d" % [x, y, z])
+	# Tile-Leben auch entfernen
+	tile_leben.erase("%d:%d:%d" % [x, y, z])
+
+func tile_leben_initialisieren(x: int, y: int, z_ebene: int, leben: int) -> void:
+	if not ist_in_raster(x, y, z_ebene):
+		return
+	tile_leben["%d:%d:%d" % [x, y, z_ebene]] = leben
+
+func tile_leben_holen(x: int, y: int, z_ebene: int) -> int:
+	if not ist_in_raster(x, y, z_ebene):
+		return 0
+	return int(tile_leben.get("%d:%d:%d" % [x, y, z_ebene], 0))
+
+func tile_leben_setzen(x: int, y: int, z_ebene: int, leben: int) -> void:
+	if not ist_in_raster(x, y, z_ebene):
+		return
+	tile_leben["%d:%d:%d" % [x, y, z_ebene]] = leben
+
+func tile_leben_schaden(x: int, y: int, z_ebene: int, schaden: int) -> int:
+	# Wendet Schaden an, gibt neues Leben zurück. Bei <= 0 Tile entfernen.
+	var aktuell := tile_leben_holen(x, y, z_ebene)
+	var neu := aktuell - schaden
+	if neu <= 0:
+		fliese_entfernen(x, y, z_ebene)
+		return 0
+	tile_leben_setzen(x, y, z_ebene, neu)
+	return neu
+
+func fliese_unterhalb(x: int, y: int, z_ebene: int = 0) -> String:
+	# Liefert die Fliese genau eine Ebene tiefer (z-1)
+	var z_ziel := (z_ebene if z_ebene != 0 else aktive_z_ebene) - 1
+	if z_ziel < -MAX_Z_EBENEN + 1:
+		return ""
+	return fliese(x, y, z_ziel)
+
+func ziel_ebene_unterhalb(z_ebene: int = 0) -> int:
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	var z_ziel := z - 1
+	return z_ziel if z_ziel >= -MAX_Z_EBENEN + 1 else z
 
 func objekt_hinzufuegen(element_id: String, position: Vector2) -> int:
 	# Liefert den Array-Index des neuen Objekts zurück, damit Aufrufer sofort
@@ -189,6 +257,40 @@ func biom_zustand() -> Dictionary:
 	var basis := {"biom_id": biom_id, "raster_breite": raster_breite, "raster_hoehe": raster_hoehe}
 	return manager.zustand_fuer_tick(basis)
 
+func biom_raster_holen(kachel_x: int, kachel_y: int, z_ebene: int = 0) -> String:
+	# Liefert das biom_id einer Kachel aus dem separaten biom_raster.
+	# Gibt "gemaaessigt" zurueck, wenn out of bounds.
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	if not ist_in_raster(kachel_x, kachel_y, z):
+		return "gemaaessigt"
+	var key := "%d:%d:%d" % [kachel_x, kachel_y, z]
+	return str(biom_raster.get(key, "gemaaessigt"))
+
+func biom_raster_anlegen(z_ebene: int = 0) -> void:
+	# Initialisiert biom_raster für die angegebene Z-Ebene.
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	for y in range(raster_hoehe):
+		for x in range(raster_breite):
+			biom_raster["%d:%d:%d" % [x, y, z]] = "gemaaessigt"
+
+func biom_raster_schreiben(hoehe_raster: Array[float], feuchtigkeit_raster: Array[float], temperatur_raster: Array[float], z_ebene: int = 0) -> void:
+	# Wendet die Biom-Analyse auf jedes Tile an und schreibt das biom_id
+	# in das biom_raster. Dies ist das "separate dictionary" parallell zum raster.
+	if hoehe_raster.size() < raster_breite * raster_hoehe or feuchtigkeit_raster.size() < raster_breite * raster_hoehe or temperatur_raster.size() < raster_breite * raster_hoehe:
+		push_warning("Biom-Analyzer: Noise-Rastergroesse stimmt nicht mit Welt-Raster überein.")
+		return
+	if _biom_analyzer == null:
+		_biom_analyzer = Biom_Analyzer.new()
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	for y in range(raster_hoehe):
+		for x in range(raster_breite):
+			var index := y * raster_breite + x
+			var height := hoehe_raster[index]
+			var moisture := feuchtigkeit_raster[index]
+			var temperature := temperatur_raster[index]
+			var biom_id := _biom_analyzer.analysiere_biom(height, moisture, temperature)
+			biom_raster["%d:%d:%d" % [x, y, z]] = biom_id
+
 func objekte_leeren() -> void:
 	objekte.clear()
 
@@ -204,13 +306,14 @@ func region_ergaenzen(region_x: int, region_y: int, biom: String, seed_beitrag: 
 		"chunk_kante": chunk_kante,
 	})
 
-func region_an(position: Vector2) -> Dictionary:
+func region_an(position: Vector2, z_ebene: int = 0) -> Dictionary:
 	# Liefert die Region der Kachel unter der Welt-Position; sonst leer.
 	var kachel_x := int(position.x / float(kachel_groesse))
 	var kachel_y := int(position.y / float(kachel_groesse))
-	return region_an_kachel(kachel_x, kachel_y)
+	return region_an_kachel(kachel_x, kachel_y, z_ebene)
 
-func region_an_kachel(kachel_x: int, kachel_y: int) -> Dictionary:
+func region_an_kachel(kachel_x: int, kachel_y: int, z_ebene: int = 0) -> Dictionary:
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
 	for region: Dictionary in regionen:
 		var start_x := int(region.get("region_x", 0)) * region_kante
 		var start_y := int(region.get("region_y", 0)) * region_kante
@@ -218,10 +321,11 @@ func region_an_kachel(kachel_x: int, kachel_y: int) -> Dictionary:
 			return region
 	return {}
 
-func biom_an_kachel(kachel_x: int, kachel_y: int) -> String:
+func biom_an_kachel(kachel_x: int, kachel_y: int, z_ebene: int = 0) -> String:
 	# Einziger Ort der die Biom-Zugehörigkeit einer Kachel ableitet:
 	# Region zuerst, sonst das globale Welt-Biom.
-	var region := region_an_kachel(kachel_x, kachel_y)
+	var z := z_ebene if z_ebene != 0 else aktive_z_ebene
+	var region := region_an_kachel(kachel_x, kachel_y, z)
 	if not region.is_empty():
 		return str(region.get("biom_id", biom_id))
 	return biom_id
@@ -234,12 +338,14 @@ func nach_woerterbuch() -> Dictionary:
 		"raster_breite": raster_breite,
 		"raster_hoehe": raster_hoehe,
 		"raster": raster,
+		"biom_raster": biom_raster,
 		"objekte": objekte,
 		"biom_id": biom_id,
 		"region_kante": region_kante,
 		"regionen": regionen,
 		"welt_seed": welt_seed,
 		"map_id": map_id,
+		"aktive_z_ebene": aktive_z_ebene,
 	}
 
 func aus_woerterbuch(daten: Dictionary) -> bool:
@@ -255,15 +361,17 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 	chunk_groesse = maxi(int(daten.get("chunk_groesse", 8)), 1)
 	biom_id = str(daten.get("biom_id", "gemaaessigt"))
 	biom_manager().biom_wechseln(biom_id)
+	aktive_z_ebene = int(daten.get("aktive_z_ebene", 0))
 	_raster_anlegen("boden")
-	var neues_raster: Variant = daten.get("raster", [])
-	if typeof(neues_raster) == TYPE_ARRAY:
-		var index := 0
-		for wert: Variant in neues_raster:
-			if index >= raster.size():
-				break
-			raster[index] = str(wert)
-			index += 1
+	var neues_raster: Variant = daten.get("raster", {})
+	if typeof(neues_raster) == TYPE_DICTIONARY:
+		# Format: Dictionary mit "x:y:z" Schlüsseln
+		for key, wert in neues_raster:
+			raster[key] = str(wert)
+	var neues_biom_raster: Variant = daten.get("biom_raster", {})
+	if typeof(neues_biom_raster) == TYPE_DICTIONARY:
+		for key, wert in neues_biom_raster:
+			biom_raster[key] = str(wert)
 	objekte.clear()
 	_naechste_objekt_nummer = 1
 	var neue_objekte: Variant = daten.get("objekte", [])
@@ -301,6 +409,7 @@ func _eskalation_anwenden(geladene_version: int) -> void:
 	# Abwärtskompatibel: Neue Systeme ab Update in neu generierten Chunks,
 	# alte Saves bleiben lesbar. Version 5 führt welt_seed und erweiterte
 	# Regionen ein; fehlende Felder werden deterministisch ergänzt.
+	# Version 6 führt Z-Ebenen und biom_raster als Dictionary mit "x:y:z" Keys ein.
 	if geladene_version >= SPEICHER_VERSION:
 		return
 	if geladene_version < 5:
@@ -313,3 +422,131 @@ func _eskalation_anwenden(geladene_version: int) -> void:
 		for region in regionen:
 			if int(region.get("chunk_kante", 0)) == 2:
 				region["chunk_kante"] = Welt_Generator.CHUNK_GROESSE
+	if geladene_version < 6:
+		# Version 5 hatte biom_raster als Array oder Dictionary ohne Z-Ebene — ab 6 ist es Dictionary mit "x:y:z" Keys.
+		# Migration: alten Array/Dict in neues Format mit Z=0 konvertieren.
+		var alt_biom_raster := biom_raster.duplicate()
+		biom_raster.clear()
+		if typeof(alt_biom_raster) == TYPE_ARRAY:
+			for i in range(alt_biom_raster.size()):
+				var y := int(i / raster_breite)
+				var x := i % raster_breite
+				biom_raster["%d:%d:0" % [x, y]] = str(alt_biom_raster[i])
+		elif typeof(alt_biom_raster) == TYPE_DICTIONARY:
+			for key, wert in alt_biom_raster:
+				# Alte Keys ohne Z: "x:y" -> "x:y:0"
+				var teile := key.split(":")
+				if teile.size() == 2:
+					biom_raster["%s:0" % [key]] = str(wert)
+				else:
+					biom_raster[key] = str(wert)
+		# Raster migrieren falls altes Format
+		var alt_raster := raster.duplicate()
+		raster.clear()
+		if typeof(alt_raster) == TYPE_ARRAY:
+			for i in range(alt_raster.size()):
+				var y := int(i / raster_breite)
+				var x := i % raster_breite
+				raster["%d:%d:0" % [x, y]] = str(alt_raster[i])
+		elif typeof(alt_raster) == TYPE_DICTIONARY:
+			for key, wert in alt_raster:
+				var teile := key.split(":")
+				if teile.size() == 2:
+					raster["%s:0" % [key]] = str(wert)
+				else:
+					raster[key] = str(wert)
+
+## Erschöpfungssystem: Pro Chunk und Ressourcentyp.
+## Erschöpfung wird einmalig bei Generierung gesetzt und kann nur durch
+## neue Chunkgenerierung via Expansion erhöht (bzw. zurückgesetzt) werden.
+## Wenn lager_bestand / erschoepfungs_maximum > 0.8 blockiert Spawn.
+const ERSCHOEPFUNG_MAXIMUM := 100
+const ERSCHOEPFUNG_SPAWN_SCHWELLE := 0.8
+var _erschoepfung_pro_chunk: Dictionary = {}
+
+## Standard-Ressourcentypen für Erschöpfungstracking.
+const RESSOURCE_TYPEN: Array[String] = ["holz", "stein", "erz", "beeren", "wasser", "fisch", "wild", "kraut", "eis", "pilz"]
+
+func _chunk_key_aus_position(x: int, y: int) -> String:
+	var cx := int(x / chunk_groesse)
+	var cy := int(y / chunk_groesse)
+	return "%d_%d" % [cx, cy]
+
+func _chunk_key_aus_kachel(kachel_x: int, kachel_y: int) -> String:
+	var cx := int(kachel_x / chunk_groesse)
+	var cy := int(kachel_y / chunk_groesse)
+	return "%d_%d" % [cx, cy]
+
+func erschoepfung_initialisieren() -> void:
+	# Setzt Erschöpfung für alle Chunks auf 0 bei Weltgenerierung.
+	_erschoepfung_pro_chunk.clear()
+	var chunk_x_max := maxi(1, raster_breite / chunk_groesse)
+	var chunk_y_max := maxi(1, raster_hoehe / chunk_groesse)
+	for cx in range(chunk_x_max):
+		for cy in range(chunk_y_max):
+			var chunk_key := "%d_%d" % [cx, cy]
+			var chunk_daten: Dictionary = {}
+			for typ in RESSOURCE_TYPEN:
+				chunk_daten[typ] = 0
+			_erschoepfung_pro_chunk[chunk_key] = chunk_daten
+
+func erschoepfung_holen(chunk_key: String, ressource_typ: String) -> int:
+	# Liefert aktuellen Erschöpfungswert für Ressource in Chunk (0-100).
+	if not _erschoepfung_pro_chunk.has(chunk_key):
+		return 0
+	var chunk_daten := _erschoepfung_pro_chunk[chunk_key]
+	return int(chunk_daten.get(ressource_typ, 0))
+
+func erschoepfung_setzen(chunk_key: String, ressource_typ: String, wert: int) -> void:
+	# Setzt Erschöpfungswert (geklemmt 0-100). Nur Generator/Expansion darf schreiben.
+	if not _erschoepfung_pro_chunk.has(chunk_key):
+		var chunk_daten: Dictionary = {}
+		for typ in RESSOURCE_TYPEN:
+			chunk_daten[typ] = 0
+		_erschoepfung_pro_chunk[chunk_key] = chunk_daten
+	_erschoepfung_pro_chunk[chunk_key][ressource_typ] = clampi(wert, 0, ERSCHOEPFUNG_MAXIMUM)
+
+func erschoepfung_erhoehen(chunk_key: String, ressource_typ: String, delta: int) -> void:
+	# Erhöht Erschöpfung beim Abbau/Ernte. Kann nicht über Maximum hinaus.
+	var aktuell := erschoepfung_holen(chunk_key, ressource_typ)
+	erschoepfung_setzen(chunk_key, ressource_typ, aktuell + delta)
+
+func erschoepfung_prozent(chunk_key: String, ressource_typ: String) -> float:
+	# Liefert Erschöpfung als 0.0-1.0 Wert.
+	return float(erschoepfung_holen(chunk_key, ressource_typ)) / float(ERSCHOEPFUNG_MAXIMUM)
+
+func kann_ressource_spawnen(chunk_key: String, ressource_typ: String, lager_bestand: int) -> bool:
+	# Prüft ob Ressource in Chunk spawnen darf.
+	# Blockiert wenn lager_bestand / erschoepfungs_maximum > 0.8
+	# (d.h. Erschöpfung > 80% bei vollem Lagerbestand relativ zum Maximum).
+	var erschoepfung := erschoepfung_holen(chunk_key, ressource_typ)
+	if float(erschoepfung) / float(ERSCHOEPFUNG_MAXIMUM) > ERSCHOEPFUNG_SPAWN_SCHWELLE:
+		return false
+	# Zusatzprüfung: Wenn Lagerbestand hoch aber Erschöpfung auch hoch -> kein Spawn
+	# Dies erzwingt Expansion als einzige Wachstumsstrategie.
+	if lager_bestand > 0 and float(erschoepfung) / float(ERSCHOEPFUNG_MAXIMUM) > 0.5:
+		var verh := float(lager_bestand) / float(ERSCHOEPFUNG_MAXIMUM)
+		if verh > ERSCHOEPFUNG_SPAWN_SCHWELLE:
+			return false
+	return true
+
+func erschoepfung_zuruecksetzen_fuer_chunk(chunk_key: String) -> void:
+	# Setzt Erschöpfung für alle Ressourcentypen eines Chunks auf 0.
+	# Wird bei Expansion (neue Karte) aufgerufen.
+	if _erschoepfung_pro_chunk.has(chunk_key):
+		var chunk_daten := _erschoepfung_pro_chunk[chunk_key]
+		for typ in RESSOURCE_TYPEN:
+			chunk_daten[typ] = 0
+
+func erschoepfung_alle_chunks_zuruecksetzen() -> void:
+	# Setzt alle Chunks auf 0 (für neue Karten bei Expansion).
+	for chunk_key in _erschoepfung_pro_chunk:
+		erschoepfung_zuruecksetzen_fuer_chunk(chunk_key)
+
+func erschoepfung_zustand_holen() -> Dictionary:
+	# Für Speicherung und Debugging.
+	return _erschoepfung_pro_chunk.duplicate(true)
+
+func erschoepfung_zustand_setzen(daten: Dictionary) -> void:
+	# Für Laden aus Savegame.
+	_erschoepfung_pro_chunk = daten.duplicate(true)

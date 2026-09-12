@@ -247,3 +247,26 @@ func nach_array() -> Array[Dictionary]:
 	for f in _fraktionen:
 		daten.append(f.nach_woerterbuch())
 	return daten
+
+## Kategorie logik: Öffentliche Helfer für FraktionsGenerator-Integration.
+
+func _berechne_regionen(model: Welt_Model) -> Vector2i:
+	var regionen_x := ceili(float(model.raster_breite) / float(maxi(model.region_kante, 1)))
+	var regionen_y := ceili(float(model.raster_hoehe) / float(maxi(model.region_kante, 1)))
+	return Vector2i(regionen_x, regionen_y)
+
+func _belegte_regionen_ermitteln(model: Welt_Model, fraktionen: Array[Welt_Fraktion]) -> Array[Vector2i]:
+	var belegte: Array[Vector2i] = []
+	for f in fraktionen:
+		var region := _region_von_fraktion(model, f)
+		if not belegte.has(region):
+			belegte.append(region)
+	return belegte
+
+func _wege_berechnen_mit_fraktionen(model: Welt_Model, fraktionen: Array[Welt_Fraktion]) -> void:
+	# Weise übergebene Fraktionen dem internen Array zu
+	_fraktionen.clear()
+	for f in fraktionen:
+		_fraktionen.append(f)
+	# Berechne Wege wie im Original
+	_wege_berechnen(model)

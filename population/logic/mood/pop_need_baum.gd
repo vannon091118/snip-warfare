@@ -51,14 +51,17 @@ func bewegungs_faktor_fuer(rasse_id: String) -> float:
 	return schema.faktor_bewegung
 
 func einheit_need_anlegen(rasse_id: String, welt_position: Vector2) -> Pop_MoodMaschine:
-	# Erzeugt die eigene Need-Maschine der Einheit als Kind dieses Baums
-	# und weist ihr das Rassen-Schema zu. Die Maschine tickt weiterhin über
-	# den Einheit_Manager; dieser Baum bleibt ihr struktureller Besitzer.
-	var maschine := Pop_MoodMaschine.new()
-	maschine.name = "NeedMaschine_%d" % _naechste_kind_nummer
-	_naechste_kind_nummer += 1
-	maschine.einrichten(_need_registry, null)
-	maschine.rassen_schema_setzen(rassen_schema(rasse_id))
-	maschine.welt_position_setzen(welt_position)
-	add_child(maschine)
-	return maschine
+ 	# Erzeugt die eigene Need-Maschine der Einheit als Kind dieses Baums
+ 	# und weist ihr das Rassen-Schema zu. Die Maschine tickt weiterhin über
+ 	# den Einheit_Manager; dieser Baum bleibt ihr struktureller Besitzer.
+ 	var maschine := Pop_MoodMaschine.new()
+ 	maschine.name = "NeedMaschine_%d" % _naechste_kind_nummer
+ 	_naechste_kind_nummer += 1
+ 	maschine.einrichten(_need_registry, null)
+ 	maschine.rassen_schema_setzen(rassen_schema(rasse_id))
+ 	maschine.welt_position_setzen(welt_position)
+ 	add_child(maschine)
+ 	return maschine
+
+func need_registry() -> Pop_NeedRegistry:
+	return _need_registry

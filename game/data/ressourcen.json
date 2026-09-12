@@ -3,36 +3,42 @@
     "script": "res://game/logic/kategorie_ressourcen/ressource_holz.gd",
     "name": "Holz",
     "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
-    "farbe": "#8B5A2B"
+    "farbe": "#8B5A2B",
+    "erschoepfung_typ": "holz"
   },
   "stein": {
     "script": "res://game/logic/kategorie_ressourcen/ressource_stein.gd",
     "name": "Stein",
     "icon_pfad": "res://world/assets/ui/ressource_stein.svg",
-    "farbe": "#B9B2A2"
+    "farbe": "#B9B2A2",
+    "erschoepfung_typ": "stein"
   },
   "fleisch": {
     "script": "res://game/logic/kategorie_ressourcen/ressource_fleisch.gd",
     "name": "Fleisch",
     "icon_pfad": "res://world/assets/ui/ressource_fleisch.svg",
-    "farbe": "#C75B39"
+    "farbe": "#C75B39",
+    "erschoepfung_typ": "wild"
   },
   "werkzeug": {
     "script": "res://game/logic/kategorie_ressourcen/ressource_werkzeug.gd",
     "name": "Werkzeug",
     "icon_pfad": "res://world/assets/ui/ressource_werkzeug.svg",
-    "farbe": "#5A7A9A"
+    "farbe": "#5A7A9A",
+    "erschoepfung_typ": "erz"
   },
   "raeuchelfleisch": {
     "script": "res://game/logic/kategorie_ressourcen/ressource_raeuchelfleisch.gd",
     "name": "Räucherfleisch",
     "icon_pfad": "res://world/assets/ui/ressource_raeuchelfleisch.svg",
-    "farbe": "#A64B2A"
+    "farbe": "#A64B2A",
+    "erschoepfung_typ": "wild"
   },
   "beeren": {
     "script": "res://game/logic/kategorie_ressourcen/ressource_beeren.gd",
     "name": "Beeren",
     "icon_pfad": "res://world/assets/ui/ressource_beeren.svg",
-    "farbe": "#7B2D8B"
+    "farbe": "#7B2D8B",
+    "erschoepfung_typ": "beeren"
   }
 }

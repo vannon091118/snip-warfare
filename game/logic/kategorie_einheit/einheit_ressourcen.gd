@@ -120,6 +120,9 @@ func timeline_setzen(timeline: Kern_Timeline) -> void:
 			ursprung = _lager.gesamt_bestand_alle()
 		_timeline.ursprung_festlegen(ursprung)
 
+func timeline_holen() -> Kern_Timeline:
+	return _timeline
+
 func _timeline_buchung(quelle: String, beschreibung: String, ressource: String, alte_menge: int, neue_menge: int) -> void:
 	if _timeline == null:
 		return

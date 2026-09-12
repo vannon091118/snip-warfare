@@ -29,6 +29,9 @@ var _fortschritt: Welt_FortschrittsMaschine = null
 var _schlag_ort_empfaenger: Callable = Callable()
 var _schlag_empfaenger: Callable = Callable()
 
+## Parallel-Map: Referenz auf die Welt für 1/6 Tick-Gate.
+var _welt_world: Welt_World = null
+
 func _ready() -> void:
 	y_sort_enabled = true
 
@@ -45,16 +48,17 @@ func _exit_tree() -> void:
 	if weltuhr != null and weltuhr.has_signal("tick") and weltuhr.tick.is_connected(_auf_tick):
 		weltuhr.tick.disconnect(_auf_tick)
 
-func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ressourcen) -> void:
+func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ressourcen, welt_world: Welt_World = null) -> void:
 	_model = model
 	_tiere = tiere
 	_ressourcen = ressourcen
+	_welt_world = welt_world
 	_weg_planung_erneuern()
 	_ziel_suche = Einheit_ZielSuche.new()
 	_ziel_suche.einrichten(model, tiere)
 	_ziel_suche.einheiten_quelle_setzen(self)
 	_ernte = Einheit_ErnteMaschine.new()
-	_ernte.einrichten(ressourcen, model, tiere)
+	_ernte.einrichten(null, ressourcen, model, tiere)  # Inventar wird pro Einheit gesetzt
 	_ernte.zufall_setzen(_zufall)
 	_ernte.manager_setzen(self)
 	_ernte.beute_erlegt.connect(_auf_beute_erlegt)
@@ -62,6 +66,7 @@ func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ress
 	# Domaene zeigt dort Staub. Der Manager reicht nur durch.
 	_ernte.schlag_ort_gemeldet.connect(_auf_schlag_ort)
 	_ernte.schlag_objekt_gemeldet.connect(_auf_schlag_objekt)
+	_ernte.inventar_voll.connect(_auf_inventar_voll)
 	_versorgung = Einheit_Versorgung.new()
 	_versorgung.einrichten(ressourcen)
 	# Verbrauchs-Vorgabe aus dem Datenpool: Der Wert aus needs.json gilt, bis
@@ -220,7 +225,7 @@ func tag_minuten() -> float:
 func nacht_minuten() -> float:
 	return _need_registry.nacht_minuten()
 
-func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
+func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> int:
 	var status := Einheit_Status.new()
 	status.welt_position_setzen(welt_position)
 	var darsteller := Einheit_Darsteller.new()
@@ -251,6 +256,14 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt.bind(status))
 	status.job_loop_gefragt.connect(_auf_job_loop_gefragt.bind(status))
 	status.naechster_job_aus_queue.connect(_auf_naechster_job_aus_queue.bind(status))
+	
+	# Physisches Inventar pro Einheit
+	var inventar := Einheit_Inventar.new()
+	var ei := _einheiten.size()
+	inventar.einheit_id_setzen("einheit_%d" % ei)
+	inventar.timeline_setzen(_ressourcen.timeline_holen() if _ressourcen.has_method("timeline_holen") else null)
+	inventar.inventar_voll.connect(_auf_inventar_voll.bind(ei))
+	
 	_einheiten.append({
 		"status": status,
 		"darsteller": darsteller,
@@ -258,11 +271,27 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 		"denkblase": denkblase,
 		"position": welt_position,
 		"rasse": rasse,
+		"inventar": inventar,
 		"_letzter_zustand": status.zustand,
 	})
+	
+	# Ernte-Maschine bekommt Referenz auf das Inventar dieser Einheit
+	if _ernte != null:
+		_ernte.inventar_fuer_einheit_setzen(ei, inventar)
+	
+	return ei
 
 func einheit_zahl() -> int:
 	return _einheiten.size()
+
+func idle_einheiten() -> Array[int]:
+	# Gibt die Indizes aller Einheiten zurück, die aktuell keinen Job haben
+	# (d.h. sie sind im Idle-Zustand und können neue Aufträge übernehmen).
+	var gefundene: Array[int] = []
+	for idx in _einheiten.size():
+		if job_id_einheit(idx) == "":
+			gefundene.append(idx)
+	return gefundene
 
 func einheit_bei(welt_position: Vector2, radius: float) -> int:
 	## Linksklick-Einheitenwahl: Liefert den Index der nächsten Einheit
@@ -293,12 +322,13 @@ func weg_planung_aktualisieren() -> void:
 	## privat und wurde nur bei einrichten() aufgerufen.
 	_weg_planung_erneuern()
 
-func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager) -> void:
+func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager, welt_world: Welt_World = null) -> void:
 	## Kartenwechsel-Handshake: Alle internen Modellreferenzen werden atomar
 	## auf das neue Modell umgestellt. Wegnetz, Zielsuche und Ernte werden
 	## neu aufgebaut, damit kein Job auf der alten Karte weiterläuft.
 	_model = neues_modell
 	_tiere = neue_tiere
+	_welt_world = welt_world
 	_weg_planung_erneuern()
 	if _ziel_suche != null:
 		_ziel_suche.einrichten(_model, _tiere)
@@ -363,6 +393,14 @@ func einheit_position(index: int) -> Vector2:
 	if status != null:
 		return status.welt_position
 	return _einheiten[index]["position"]
+
+func einheit_mood(index: int) -> Pop_MoodMaschine:
+	if index < 0 or index >= _einheiten.size():
+		return null
+	return _einheiten[index].get("mood", null) as Pop_MoodMaschine
+
+func need_baum() -> Pop_NeedBaum:
+	return _need_baum
 
 func einheit_position_setzen(index: int, welt_position: Vector2) -> void:
 	# Bewegung kommt vom Spieler oder aus dem GEHEN-Zustand der Maschine;
@@ -436,6 +474,14 @@ func einheit_bewegen_nach(einheit_index: int, ziel_position: Vector2) -> bool:
 	return true
 
 func _auf_tick(nummer: int, delta: float) -> void:
+	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
+	if _welt_world != null and _model != null:
+		var aktive_map_id := _welt_world.aktive_map_id()
+		var eigene_map_id := _model.map_id
+		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
+			if Engine.get_process_frames() % 6 != 0:
+				return
+	
 	# Der Tageszyklus tickt nicht mehr hier: Die Weltmaschine hängt seit
 	# der Besitzkorrektur direkt an der Weltuhr und lebt nicht mehr in
 	# der Einheiten-Domäne. Dieser Takt kennt nur Einheiten-Arbeit.
@@ -463,6 +509,31 @@ func _auf_tick(nummer: int, delta: float) -> void:
 			var darsteller: Einheit_Darsteller = einheit["darsteller"]
 			darsteller.animation_setzen(status.animation())
 			continue
+		
+		# Transport-Job Phasen prüfen
+		if status.job != null and status.job.job_id == "transport":
+			var transport_job: Job_Transport = status.job as Job_Transport
+			if transport_job != null:
+				match transport_job.phase():
+					Job_Transport.PHASE_GEHE_ZU_LAGER:
+						if status.zustand == Einheit_Status.Zustand.ARBEITEN:
+							# Am Lager angekommen: Ablieferung starten
+							transport_job.phase_wechseln(Job_Transport.PHASE_ABLIEFERN)
+							# Inventar in Lager einlagern
+							var inventar_vorher := transport_job.inventar_vorher()
+							for ressource: String in inventar_vorher:
+								var menge := inventar_vorher[ressource]
+								if menge > 0 and _lager != null:
+									_lager.einlagern(ressource, menge, transport_job.lager_index())
+							transport_job.phase_wechseln(Job_Transport.PHASE_FERTIG)
+					Job_Transport.PHASE_ABLIEFERN:
+						# Wird direkt in GEHE_ZU_LAGER abgehandelt
+						pass
+					Job_Transport.PHASE_FERTIG:
+						# Transport fertig: Job beenden, zur Queue zurückkehren
+						status.job_beendet.emit()
+						transport_job.zuruecksetzen()
+		
 		status.tick(delta)
 		if status.welt_position != einheit["position"]:
 			# Bewegung hat direkte Auswirkung: Position, Darsteller und Mood
@@ -541,20 +612,51 @@ func _auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp,
 	var eintrag := status.queue_naechster()
 	if eintrag.is_empty():
 		return
-	var job := _job_registry.job_erzeugen(str(eintrag.get("job_id", "")))
+	var job_id := str(eintrag.get("job_id", ""))
+	var ziel_typ := int(eintrag.get("ziel_typ", 0)) as Job_Basis.ZielTyp
+	var ziel_index := int(eintrag.get("ziel_index", -1))
+	var ressource := str(eintrag.get("ressource", ""))
+	
+	# Transport-Job wird speziell behandelt: Inventar wird übergeben
+	if job_id == "transport":
+		var ei := _einheiten_find_index_by_status(status)
+		if ei >= 0:
+			var inventar: Einheit_Inventar = _einheiten[ei].get("inventar", null)
+			if inventar != null and not inventar.ist_leer():
+				var lager_idx := ziel_index
+				if lager_idx >= 0 and lager_idx < _lager.lager_zahl():
+					var lager_pos := _lager.lager_position(lager_idx)
+					var job := _job_registry.job_erzeugen("transport")
+					if job != null:
+						job.lager_index_setzen(lager_idx)
+						job.lager_position_setzen(lager_pos)
+						job.inventar_vorher_setzen(inventar.alles_abgeben())
+						status.queue_vorne_entfernen()
+						status.geh_ziel_setzen(lager_pos)
+						_planner_fuer(status, lager_pos)
+						status.job_vergeben(job, ziel_typ, lager_idx, "")
+						return
+		# Falls kein Inventar oder Lager nicht gefunden: Queue-Eintrag entfernen
+		status.queue_vorne_entfernen()
+		return
+	
+	var job := _job_registry.job_erzeugen(job_id)
 	if job == null:
 		status.queue_vorne_entfernen()
 		return
 	status.queue_vorne_entfernen()
-	var ziel_typ := int(eintrag.get("ziel_typ", 0)) as Job_Basis.ZielTyp
-	var ziel_index := int(eintrag.get("ziel_index", -1))
 	# G1: Auch aus der Queue startet der Job mit dem Faktor seines Ziels.
 	job.ziel_faktor_setzen(_ziel_suche.ziel_faktor_fuer(ziel_typ, ziel_index))
 	var ziel_position := _ziel_position_fuer(int(eintrag.get("ziel_typ", 0)), ziel_index)
 	status.geh_ziel_setzen(ziel_position)
 	_planner_fuer(status, ziel_position)
-	status.job_vergeben(job, int(eintrag.get("ziel_typ", 0)),
-		int(eintrag.get("ziel_index", -1)), str(eintrag.get("ressource", "")))
+	status.job_vergeben(job, ziel_typ, ziel_index, ressource)
+
+func _einheiten_find_index_by_status(status: Einheit_Status) -> int:
+	for idx in _einheiten.size():
+		if _einheiten[idx]["status"] == status:
+			return idx
+	return -1
 
 func _auf_job_loop_gefragt(job: Job_Basis, ziel_typ: Job_Basis.ZielTyp, alter_ziel_index: int, status: Einheit_Status) -> void:
 	# Die Schleife endet nie hart im Idle: Der Manager sucht das naechste
@@ -595,6 +697,25 @@ func _auf_beute_erlegt(status: Einheit_Status) -> void:
 	for einheit: Dictionary in _einheiten:
 		if einheit["status"] == status:
 			(einheit["darsteller"] as Einheit_Darsteller).animation_setzen(status.animation())
+
+func _auf_inventar_voll(einheit_index: int) -> void:
+	# Inventar ist voll: Transport-Job vormerken
+	if _lager == null or _lager.lager_zahl() == 0:
+		return
+	if einheit_index < 0 or einheit_index >= _einheiten.size():
+		return
+	var status: Einheit_Status = _einheiten[einheit_index]["status"]
+	var inventar: Einheit_Inventar = _einheiten[einheit_index].get("inventar", null)
+	if inventar == null or inventar.ist_leer():
+		return
+	# Nächstes Lager suchen
+	var lager_index := _lager.naechstes_lager_fuer(status.welt_position)
+	if lager_index < 0:
+		return
+	# Transport-Job vormerken
+	status.job_vormerken("transport", Job_Basis.ZielTyp.OBJEKT, lager_index, "")
+	# Signal an Manager für nächste Queue-Verarbeitung
+	status.naechster_job_aus_queue.emit("transport", Job_Basis.ZielTyp.OBJEKT, lager_index, "")
 
 func _auf_zustand_geaendert(_neu: int, status: Einheit_Status, mood: Pop_MoodMaschine) -> void:
 	var vorher: int = 0

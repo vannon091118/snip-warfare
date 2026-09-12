@@ -1,0 +1,114 @@
+[gd_scene format=3 uid="uid://popeinheitpanel"]
+
+[ext_resource type="Script" path="res://ui/scenes/panels/pop_einheit_panel.gd" id="1_panel"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.06, 0.08, 0.1, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.2)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="PopEinheitPanel" type="PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+anchors_preset = 9
+offset_left = 20.0
+offset_top = 80.0
+offset_right = -20.0
+offset_bottom = -20.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+script = ExtResource("1_panel")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+anchors_preset = 15
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+theme_override_constants/separation = 8
+
+[node name="Titel" type="Label" parent="ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Einheit —"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.9, 0.7, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
+theme_override_constants/separation = 16
+
+[node name="JobLabel" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+text = "Job: keiner"
+horizontal_alignment = 0
+autowrap_mode = 3
+
+[node name="ZustandLabel" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+text = "Zustand: IDLE"
+horizontal_alignment = 0
+autowrap_mode = 3
+
+[node name="HpLabel" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+text = "HP: 0"
+horizontal_alignment = 0
+autowrap_mode = 3
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+
+[node name="HungerBar" type="ProgressBar" parent="ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+
+[node name="HungerLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Hunger: 0%"
+horizontal_alignment = 0
+
+[node name="WaermeBar" type="ProgressBar" parent="ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+
+[node name="WaermeLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+text = "Wärme: 0.00"
+horizontal_alignment = 0
+
+[node name="HSeparator2" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+
+[node name="MoodLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+text = "Stimmungs-Modifikatoren:"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9, 0.9, 0.7, 1)
+
+[node name="MoodContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+theme_override_constants/separation = 4
+
+[node name="HSeparator3" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+
+[node name="InventarLabel" type="Label" parent="ScrollContainer/VBoxContainer"]
+text = "Inventar:"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9, 0.9, 0.7, 1)
+
+[node name="InventarGrid" type="GridContainer" parent="ScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+columns = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 6

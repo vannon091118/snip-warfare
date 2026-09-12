@@ -1,0 +1,17 @@
+{
+  "_kommentar": "Konfiguration der Fraktions-KI Maschine und Keimling-Analysator. Wird pro Fraktion gelesen alle 120 Weltuhr-Ticks. Schwellenwert steuert, ab welchem archetype_score ein Keimpunkt entsteht. Aggressions-Basis wird mit Ressourcenbedarf / Lagerbestand multipliziert für aktuellen Aggressionswert.",
+  "expansion": 0.6,
+  "handel": 0.4,
+  "konflikt": 0.7,
+  "aggressions_basis": 1.0,
+  "keimling_schwellenwert": 0.35,
+  "archetyp_gewichtung": {
+    "gemaaessigt": 1.0,
+    "wald": 1.2,
+    "wasser": 0.8,
+    "steppe": 1.0,
+    "tundra": 1.1,
+    "gebirge": 1.3,
+    "ozean": 0.5
+  }
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "tisch",
+    "tags": ["holz", "tisch"],
+    "script-reference": "res://game/logic/kategorie_möbel/script_tisch.gd",
+    "asset-path": "res://world/assets/möbel/tisch.svg"
+  },
+  {
+    "id": "stuhl",
+    "tags": ["holz", "stuhl"],
+    "script-reference": "res://game/logic/kategorie_möbel/script_stuhl.gd",
+    "asset-path": "res://world/assets/möbel/stuhl.svg"
+  },
+  {
+    "id": "betten",
+    "tags": ["holz", "bett"],
+    "script-reference": "res://game/logic/kategorie_möbel/script_bett.gd",
+    "asset-path": "res://world/assets/möbel/bett.svg"
+  },
+  {
+    "id": "schrank",
+    "tags": ["holz", "schrank"],
+    "script-reference": "res://game/logic/kategorie_möbel/script_schrank.gd",
+    "asset-path": "res://world/assets/möbel/schrank.svg"
+  },
+  {
+    "id": "tisch_stahl",
+    "tags": ["stahl", "tisch"],
+    "script-reference": "res://game/logic/kategorie_möbel/script_tisch_stahl.gd",
+    "asset-path": "res://world/assets/möbel/tisch_stahl.svg"
+  }
+]

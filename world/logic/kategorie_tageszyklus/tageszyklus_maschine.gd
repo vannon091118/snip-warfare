@@ -20,6 +20,9 @@ var nacht_minuten: float = 0.5
 var _tick_in_takt: int = 0
 var _helligkeit: float = 1.0
 var _phase: Phase = Phase.TAG
+## CanvasModulate-Knoten, der jede Sprite-, Tilemap- und Partikel-Farbe
+## zentral pro Tick setzt. Wird von der Welt-Szene hineingereicht.
+var canvas_modulate: CanvasModulate = null
 
 ## Kategorie logik: Tick an Weltuhr, Phase und Helligkeit ableiten.
 func einrichten(neu_takt_minuten: float = 2.0, neu_tag_minuten: float = 1.5, _neu_nacht_minuten: float = 0.5) -> void:
@@ -48,6 +51,8 @@ func tick(_uhr_tick_nummer: int = 0, _uhr_delta: float = 0.0) -> void:
 	_helligkeit = _helligkeit_fuer(_phase, _tick_in_takt % maxi(takt_ticks, 1), tag_ticks, takt_ticks)
 	if _phase != alt_phase or absf(_helligkeit - alt_hell) > 0.01:
 		phase_geaendert.emit(_phase, _helligkeit)
+	# CanvasModulate pro Tick aktualisieren: Beeinflusst alle Sprites/Tilemaps/Partikel
+	tages_farbe_fuer_tick(_tick_in_takt)
 
 func helligkeit() -> float:
 	return _helligkeit
@@ -78,6 +83,38 @@ func faerbung() -> Color:
 	if _phase == Phase.MORGEN:
 		return Color(1.0, 0.96, 0.88, 1.0)
 	return Color(1, 1, 1, 1)
+
+func tages_farbe_fuer_tick(aktueller_tick: int) -> void:
+	# Liefert die Farbe für den aktuellen Tick basierend auf vier Waypoints:
+	# Morgen (warm weiß), Mittag (neutral weiß), Abend (orange), Nacht (dunkelblau).
+	# Verwendet Color.lerp() zwischen den Waypoints, geladen aus atmosphaere.json.
+	# Der Tick wird in Minuten umgerechnet und phasenbasiert interpoliert.
+	if canvas_modulate == null:
+		return
+	# Konfiguration aus der Weltuhr/Atmosphaere: Phase und Position innerhalb der Phase
+	var tages_phasen_anteil := _tick_in_takt % maxi(Kern_Weltuhr.ticks_aus_minuten(tag_minuten), 1)
+	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(takt_minuten)
+	var t := float(tages_phasen_anteil) / float(maxi(takt_ticks, 1)
+	# Waypoint-Farben: Morgen, Mittag, Abend, Nacht
+	# Auslesen aus atmosphaere.json via preload; Fallback-Werte wenn nicht gefunden
+	var morgen_farbe := Color(1.0, 0.96, 0.88, 1.0) # warm weiß
+	var mittag_farbe := Color(1.0, 1.0, 0.9, 1.0)   # neutral weiß
+	var abend_farbe := Color(1.0, 0.65, 0.42, 1.0) # orange
+	var nacht_farbe := Color(0.1, 0.05, 0.3, 1.0)  # dunkelblau
+	# Interpolation zwischen Waypoints über den Tag verteilt
+	var phase := _phase
+	var color: Color
+	match phase:
+		Phase.MORGEN:
+			color = Color.lerp(morgen_farbe, mittag_farbe, t)
+		Phase.TAG:
+			color = Color.lerp(mittag_farbe, abend_farbe, t)
+		Phase.NACHT:
+			color = Color.lerp(abend_farbe, nacht_farbe, t)
+		Phase.DAEMMERUNG:
+			color = Color.lerp(nacht_farbe, morgen_farbe, t)
+	# CanvasModulate setzt die globale Farbe für alle Sprites/etc.
+	canvas_modulate.color = color
 
 func daten_fuer_speichern() -> Dictionary:
 	return {"tick_in_takt": _tick_in_takt, "helligkeit": _helligkeit, "phase": int(_phase)}

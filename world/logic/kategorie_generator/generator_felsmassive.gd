@@ -10,13 +10,18 @@ const KACHEL_FELS := "fels"
 const KACHEL_GEROELL := "geroell"
 const KACHEL_WASSER := "wasser"
 
-func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall) -> void:
+func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall, z_ebene: int = 0) -> void:
 	if model == null or zufall == null:
 		return
 	var breite := model.raster_breite
 	var hoehe := model.raster_hoehe
 	if breite <= 4 or hoehe <= 4:
 		return
+	
+	# Tiefe beeinflusst Erz-Affinität: Je tiefer (negativer z_ebene), desto höher die Chance auf Erzadern
+	var erz_chance_base := 0.05
+	var erz_tiefe_factor := max(0.0, -z_ebene) * 0.01  # Je tiefer (negativer z), desto höher
+	var erz_chance := min(0.3, erz_chance_base + erz_tiefe_factor)
 	
 	# Anzahl Massiv-Zentren (hoeher in Tundra/Steppe, normal im gemaessigten Biom)
 	var zentren_basis := 2 if biom_id == "gemaaessigt" else 3
@@ -47,11 +52,8 @@ func erzeugen(model: Welt_Model, biom_id: String, zufall: Kern_Zufall) -> void:
 							if not fels_kacheln.has(pos):
 								fels_kacheln.append(pos)
 	
-	# Geroellsaum um alle Felskacheln
-	_geroellsaum_bilden(model, breite, hoehe, fels_kacheln)
-	
-	# Gezielt Bergbauelemente und Felsformationen platzieren
-	_bergbau_elemente_platzieren(model, fels_kacheln, zufall)
+	# Gezielt Bergbauelemente und Felsformationen platzieren - mit tieferabhängiger Erz-Chance
+	_bergbau_elemente_platzieren(model, fels_kacheln, zufall, erz_chance)
 
 func _geroellsaum_bilden(model: Welt_Model, breite: int, hoehe: int, fels_kacheln: Array[Vector2i]) -> void:
 	var geroell_kandidaten: Array[Vector2i] = []
@@ -72,7 +74,7 @@ func _geroellsaum_bilden(model: Welt_Model, breite: int, hoehe: int, fels_kachel
 	for gpos in geroell_kandidaten:
 		model.fliese_setzen(gpos.x, gpos.y, KACHEL_GEROELL)
 
-func _bergbau_elemente_platzieren(model: Welt_Model, fels_kacheln: Array[Vector2i], zufall: Kern_Zufall) -> void:
+func _bergbau_elemente_platzieren(model: Welt_Model, fels_kacheln: Array[Vector2i], zufall: Kern_Zufall, erz_chance: float = 0.05) -> void:
 	if fels_kacheln.is_empty():
 		return
 	var kante := float(model.kachel_groesse)
@@ -84,5 +86,5 @@ func _bergbau_elemente_platzieren(model: Welt_Model, fels_kacheln: Array[Vector2
 			model.objekt_hinzufuegen("berg", welt_pos)
 		elif wurf < 65:
 			model.objekt_hinzufuegen("felswand", welt_pos)
-		elif wurf < 85:
+		elif wurf < 85 + (erz_chance * 100):  # Erzader Chance erhoeht sich mit Tiefe
 			model.objekt_hinzufuegen("erzader", welt_pos)

@@ -1,0 +1,23 @@
+{
+  "schema_name": "Einheit_Inventar",
+  "start_zustaende": {
+    "bestaende": {}
+  },
+  "mutationen": [
+    {
+      "name": "StartBestaendeUebernehmen",
+      "quelle": "start_zustand",
+      "beschreibung": "Initialisiert das Inventar mit leeren Beständen."
+    },
+    {
+      "name": "InventarAufnahme",
+      "quelle": "ressource",
+      "beschreibung": "Bucht Ressourcen in das Einheit-Inventar ein (Ernte, Sammeln)."
+    },
+    {
+      "name": "InventarAbgabe",
+      "quelle": "ressource",
+      "beschreibung": "Entnimmt Ressourcen aus dem Einheit-Inventar (Einlagern)."
+    }
+  ]
+}

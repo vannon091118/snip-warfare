@@ -1,5 +1,12 @@
 {
   "_kommentar": "Menschenlesbar: Biome mutieren Zustaende, nicht Logiken. Ein Biom wirkt nur ueber seine Mutation auf dem Schema, die Logik bleibt wiederverwendbar. faktor 1.0 bedeutet 10 Sekunden auf der Weltuhr.",
+  "thresholds": {
+    "ozean": {"height_max": 0.15},
+    "gebirge": {"height_min": 0.6},
+    "tundra": {"temperature_max": 0.3},
+    "steppe": {"moisture_max": 0.3, "height_min": 0.15, "height_max": 0.6},
+    "gemaaessigt": {}
+  },
   "biome": [
     {
       "id": "gemaaessigt",

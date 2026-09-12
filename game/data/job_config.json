@@ -13,7 +13,8 @@
     "reichweite": 140.0,
     "sammel_auf_flaeche": true,
     "loop": true,
-    "mindest_tragekraft": 5
+    "mindest_tragekraft": 5,
+    "folge_job_id": "transport"
   },
   "steinmetz": {
     "script": "res://game/logic/kategorie_job/job_steinmetz.gd",
@@ -29,7 +30,8 @@
     "reichweite": 140.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 10
+    "mindest_tragekraft": 10,
+    "folge_job_id": "transport"
   },
   "jaeger": {
     "script": "res://game/logic/kategorie_job/job_jaeger.gd",
@@ -45,7 +47,8 @@
     "reichweite": 160.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 3
+    "mindest_tragekraft": 3,
+    "folge_job_id": "transport"
   },
   "holzfaeller_stumpf": {
     "script": "res://game/logic/kategorie_job/job_holzfaeller_stumpf.gd",
@@ -61,7 +64,8 @@
     "reichweite": 120.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 3
+    "mindest_tragekraft": 3,
+    "folge_job_id": "transport"
   },
   "jaeger_kadaver": {
     "script": "res://game/logic/kategorie_job/job_jaeger_kadaver.gd",
@@ -77,7 +81,8 @@
     "reichweite": 120.0,
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 2
+    "mindest_tragekraft": 2,
+    "folge_job_id": "transport"
   },
   "heiler": {
     "script": "res://game/logic/kategorie_job/job_heiler.gd",
@@ -126,7 +131,8 @@
     "ziel_objekte": ["busch"],
     "sammel_auf_flaeche": false,
     "loop": true,
-    "mindest_tragekraft": 0
+    "mindest_tragekraft": 0,
+    "folge_job_id": "transport"
   },
   "baustelle_beliefern": {
     "script": "res://game/logic/kategorie_job/job_baustelle_beliefern.gd",
@@ -143,5 +149,56 @@
     "sammel_auf_flaeche": false,
     "loop": false,
     "mindest_tragekraft": 0
+  },
+  "transport": {
+    "script": "res://game/logic/kategorie_job/job_transport.gd",
+    "name": "Transport",
+    "ressource": "",
+    "animation": "gehen",
+    "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
+    "logik_id": "transport",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 60,
+    "harvest_menge": 0,
+    "reichweite": 160.0,
+    "sammel_auf_flaeche": false,
+    "loop": false,
+    "mindest_tragekraft": 0
+  },
+  "orchestrieren": {
+    "script": "res://game/logic/kategorie_job/job_orchestrieren.gd",
+    "name": "Orchestrieren",
+    "ressource": "",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_holz.svg",
+    "logik_id": "orchestrieren",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 1,
+    "harvest_menge": 0,
+    "reichweite": 0.0,
+    "sammel_auf_flaeche": false,
+    "loop": true,
+    "mindest_tragekraft": 0
+  },
+  "graben": {
+    "script": "res://game/logic/kategorie_job/job_graben.gd",
+    "name": "Graben",
+    "ressource": "stein",
+    "animation": "hacken",
+    "icon_pfad": "res://world/assets/ui/ressource_stein.svg",
+    "logik_id": "ressource_stein",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 240,
+    "harvest_menge": 5,
+    "reichweite": 140.0,
+    "sammel_auf_flaeche": false,
+    "loop": true,
+    "mindest_tragekraft": 10,
+    "graben_schaden": 25,
+    "ziel_objekte": ["fels", "geroell"],
+    "folge_job_id": "transport"
   }
 }

@@ -26,6 +26,8 @@ var _model: Welt_Model = null
 var _registry: Welt_Registry = null
 var _ressourcen: Einheit_Ressourcen = null
 var _lager: Lager_Manager = null
+## Parallel-Map: Referenz auf die Welt für 1/6 Tick-Gate.
+var _welt_world: Welt_World = null
 ## Zuletzt gemeldete Statuszeilen: Vergleichsgrundlage gegen Doppelmeldungen.
 var _letzte_statuszeilen: String = ""
 
@@ -50,18 +52,20 @@ func _exit_tree() -> void:
 	if bus != null and bus.has_signal("menue_geoeffnet") and bus.menue_geoeffnet.is_connected(_auf_menue_geoeffnet):
 		bus.menue_geoeffnet.disconnect(_auf_menue_geoeffnet)
 
-func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_Ressourcen, lager: Lager_Manager, fortschritt: Welt_FortschrittsMaschine = null) -> void:
+func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_Ressourcen, lager: Lager_Manager, fortschritt: Welt_FortschrittsMaschine = null, welt_world: Welt_World = null) -> void:
 	_model = model
 	_registry = registry
 	_ressourcen = ressourcen
 	_lager = lager
 	_fortschritt = fortschritt
+	_welt_world = welt_world
 
-func modell_wechseln(neues_modell: Welt_Model) -> void:
+func modell_wechseln(neues_modell: Welt_Model, welt_world: Welt_World = null) -> void:
 	## Kartenwechsel-Handshake: Tauscht die Modell-Referenz atomar aus.
 	## Der Tick-Empfang läuft ohne Unterbrechung weiter; neue Gebäude
 	## werden auf der neuen Karte gesucht und getickt.
 	_model = neues_modell
+	_welt_world = welt_world
 	_letzte_statuszeilen = ""
 
 
@@ -251,6 +255,14 @@ func status_zeilen() -> Array[String]:
 	return zeilen
 
 func _auf_tick(_tick_nummer: int, _delta: float) -> void:
+	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
+	if _welt_world != null and _model != null:
+		var aktive_map_id := _welt_world.aktive_map_id()
+		var eigene_map_id := _model.map_id
+		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
+			if Engine.get_process_frames() % 6 != 0:
+				return
+	
 	if _model == null or _ressourcen == null or _lager == null:
 		return
 	_melde_status_wenn_neu()

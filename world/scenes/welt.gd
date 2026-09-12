@@ -11,6 +11,9 @@ const _AuswahlManagerSkript := preload("res://ui/scenes/selection/auswahl_manage
 const _BauPanelSzene := preload("res://ui/scenes/panels/bau_panel.tscn")
 const _DebugPanelSkript := preload("res://ui/scenes/hud/hud_debug_panel.gd")
 const _LandeplatzAnzeigeSkript := preload("res://world/logic/kategorie_welt/welt_landeplatz_anzeige.gd")
+const _PopEinheitPanelSzene := preload("res://ui/scenes/panels/pop_einheit_panel.tscn")
+const _PopEinheitUebersetzerSkript := preload("res://ui/logic/kategorie_ui/pop_einheit_uebersetzer.gd")
+const _OrchestratorPriorityPanelSkript := preload("res://ui/scenes/panels/orchestrator_priority_panel.gd")
 
 ## Kategorie daten: Modell und Registries als Quellen der Visualisierung.
 ## Kategorie logik: Verdrahtung der Observer- und Visualisierungs-Spitzen.
@@ -23,10 +26,13 @@ var _job_registry := Job_Registry.new()
 var _stockmaenner := Einheit_Manager.new()
 var _tageszyklus := Welt_TageszyklusMaschine.new()
 var _tages_overlay: CanvasLayer = null
+var _waerme_overlay: CanvasLayer = null
 var _auswahl := _AuswahlManagerSkript.new()
 var _schnellwahl: Array[int] = []
 var _orchestrator_registry := Orchestrator_Registry.new()
 var _orchestrator_manager := Orchestrator_Manager.new()
+var _pop_einheit_uebersetzer: Pop_EinheitUebersetzer = null
+var _pop_einheit_panel: Control = null
 var _biome := Welt_BiomRegistry.new()
 var _generator := Welt_Generator.new()
 var _gebaeude_definitionen := Gebaeude_DefinitionRegistry.new()
@@ -53,6 +59,10 @@ var _kamera_steuerung := Ui_KameraSteuerung.new()
 var _eingabe_steuerung := Ui_EingabeSteuerung.new()
 var _pause_menue: Welt_PauseMenue = null
 var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
+var _fraktions_ki_maschinen: Array[Fraktions_KI_Maschine] = []
+var _netzwerk_planer := Welt_NetzwerkPlaner.new()
+var _fraktions_ki_config: Dictionary = {}
+var _orchestrator_priority_panel: Orchestrator_PriorityPanel = null
 ## Das Debug-Fenster hält Einheit- und Tierbeobachter; es ist im Normalbetrieb
 ## unsichtbar. Die Spielszene kennt nur diesen einen Sichtbarkeits-Schalter.
 var _debug_panel: Control = null
@@ -86,11 +96,14 @@ func _ready() -> void:
 	var weltuhr := get_node_or_null("/root/Weltuhr")
 	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_tageszyklus.tick):
 		weltuhr.tick.connect(_tageszyklus.tick)
-	_tages_overlay = preload("res://world/scenes/tageszyklus_overlay.gd").new()
-	(_tages_overlay as CanvasLayer).layer = 20
-	add_child(_tages_overlay)
-	(_tages_overlay as Object).call("einrichten", _tageszyklus)
-	var start_position := Vector2(_model.groesse()) * float(_model.kachel_groesse) / 2.0
+_tages_overlay = preload("res://world/scenes/tageszyklus_overlay.gd").new()
+ 	(_tages_overlay as CanvasLayer).layer = 20
+ 	add_child(_tages_overlay)
+ 	(_tages_overlay as Object).call("einrichten", _tageszyklus)
+ 	_waerme_overlay = preload("res://world/scenes/waerme_overlay.tscn").instantiate()
+ 	(_waerme_overlay as CanvasLayer).layer = 10
+ 	add_child(_waerme_overlay)
+ 	var start_position := Vector2(_model.groesse()) * float(_model.kachel_groesse) / 2.0
 	var bereich := maxf(_model.groesse().x, _model.groesse().y) * float(_model.kachel_groesse) * 0.6
 	_karte.darstellen(_model, _registry, _biome)
 	_karte.progressions_maschine_setzen(_progression)
@@ -111,6 +124,7 @@ func _ready() -> void:
 	_tiere.spieler_position_setzen(_kamera_steuerung.kamera_position)
 	_kamera.position = _kamera_steuerung.kamera_position
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
+	_lager_darsteller_einrichten()
 	_ressourcen.lager_setzen(_lager)
 	# Die Zustands-Timeline beobachtet jede Buchung der Ressourcen und
 	# meldet sie ueber den Bus, damit das HUD den Einfluss der
@@ -131,11 +145,11 @@ func _ready() -> void:
 	add_child(_progression)
 	_progression.objekt_erschoepft.connect(_atmosphaere.staub_zeigen)
 	_stockmaenner.fortschritt_setzen(_fortschritt)
-	_stockmaenner.need_baum_setzen(_need_baum)
-	_stockmaenner.lager_setzen(_lager)
-	_stockmaenner.tageszyklus_setzen(_tageszyklus)
-	_waerme_sammler.sammeln(_model, _stockmaenner)
-	_stockmaenner.y_sort_enabled = true
+_stockmaenner.need_baum_setzen(_need_baum)
+ 	_stockmaenner.lager_setzen(_lager)
+ 	_stockmaenner.tageszyklus_setzen(_tageszyklus)
+ 	_waerme_sammler.sammeln(_model, _stockmaenner, _waerme_overlay)
+ 	_stockmaenner.y_sort_enabled = true
 	add_child(_stockmaenner)
 	_landeplatz = _LandeplatzAnzeigeSkript.new()
 	_landeplatz.name = "LandeplatzAnzeige"
@@ -164,46 +178,64 @@ func _ready() -> void:
 	_hud.einrichten(_ressourcen)
 	_kontext.einrichten(_steuerung, _fortschritt)
 	_kontext.aktion_gewaehlt.connect(_auf_kontext_aktion)
+
+	# Orchestrator-Priority-Panel für Spieler-Steuerung
+	_orchestrator_priority_panel = _OrchestratorPriorityPanelSkript.new()
+	_orchestrator_priority_panel.name = "OrchestratorPriorityPanel"
+	_orchestrator_priority_panel.einrichten(_orchestrator_manager, _auswahl)
+	add_child(_orchestrator_priority_panel)
+
+	# Verbinde Fortschritts-Maschine mit Orchestrator-Manager für Rathaus-Spawn
+	_fortschritt.einheit_manager_setzen(_stockmaenner)
+	_fortschritt.orchestrator_manager_setzen(_orchestrator_manager)
+
+	## Fraktions-KI initialisieren: Netzwerk planen und KI-Maschinen pro Fraktion starten
+	_fraktions_ki_initialisieren()
+
 	# Erste Einheit erst mit dem ersten Lagerfeuer: Sie wandert am Anker
 	# ein, sobald die Einstiegs-Kette das Lagerfeuer meldet. Vorher ist die
 	# Karte leer und das Ziel sichtbar.
 	_fortschritt.stufe_erreicht.connect(_auf_erste_einheit)
 	_hud.job_anzeigen("")
 	_biom_anzeigen()
-	_eingabe_steuerung.einrichten({
-		"steuerung": _steuerung,
-		"model": _model,
-		"registry": _registry,
-		"job_registry": _job_registry,
-		"stockmaenner": _stockmaenner,
-		"tiere": _tiere,
-		"lager": _lager,
-		"auswahl": _auswahl,
-		"karte": _karte,
-		"kamera": _kamera,
-		"hud": _hud,
-		"rechteck": _rechteck,
-		"kontext": _kontext,
-		"kamera_steuerung": _kamera_steuerung,
-		"karten_ebene": _karten_ebene,
-		"karten_viewer": _karten_viewer,
-		"schnellwahl": _schnellwahl,
-		"gebaeude": _gebaeude,
-		"map_fabrik": _map_fabrik,
-		"modell_ersetzen": _modell_ersetzen,
-		"fortschritt": _fortschritt,
-	})
-	var zurueck_knopf: Button = %ZurueckKnopf
-	zurueck_knopf.pressed.connect(_auf_zurueck)
-	_pause_menue = Welt_PauseMenue.new()
-	add_child(_pause_menue)
-	_pause_menue.menue_gewuenscht.connect(_auf_zurueck)
-	# Fenster-Panels: alle als modulare Control-Spitzen unter dem HUD-
-	# CanvasLayer eingehängt; sie lesen nur über ihre Panel-Controller aus
-	# den bestehenden Maschinen. Kein neuer Schnittpunkt, nur Sichtbarkeit.
-	_debug_panel_bauen()
-	_bau_panel_bauen()
-	_eingabe_steuerung.debug_umgeschaltet.connect(_auf_debug_umgeschaltet)
+_eingabe_steuerung.einrichten({
+  		"steuerung": _steuerung,
+  		"model": _model,
+  		"registry": _registry,
+  		"job_registry": _job_registry,
+  		"stockmaenner": _stockmaenner,
+  		"tiere": _tiere,
+  		"lager": _lager,
+  		"auswahl": _auswahl,
+  		"karte": _karte,
+  		"kamera": _kamera,
+  		"hud": _hud,
+  		"rechteck": _rechteck,
+  		"kontext": _kontext,
+  		"kamera_steuerung": _kamera_steuerung,
+  		"karten_ebene": _karten_ebene,
+  		"karten_viewer": _karten_viewer,
+  		"schnellwahl": _schnellwahl,
+  		"gebaeude": _gebaeude,
+  		"map_fabrik": _map_fabrik,
+  		"modell_ersetzen": _modell_ersetzen,
+  		"fortschritt": _fortschritt,
+  		"signal_bus": Kern_SignalBus.bus(),
+  		"orchestrator_panel": _orchestrator_priority_panel,
+  		"orchestrator_manager": _orchestrator_manager,
+  	})
+ 	var zurueck_knopf: Button = %ZurueckKnopf
+ 	zurueck_knopf.pressed.connect(_auf_zurueck)
+ 	_pause_menue = Welt_PauseMenue.new()
+ 	add_child(_pause_menue)
+ 	_pause_menue.menue_gewuenscht.connect(_auf_zurueck)
+ 	# Fenster-Panels: alle als modulare Control-Spitzen unter dem HUD-
+ 	# CanvasLayer eingehängt; sie lesen nur über ihre Panel-Controller aus
+ 	# den bestehenden Maschinen. Kein neuer Schnittpunkt, nur Sichtbarkeit.
+ 	_debug_panel_bauen()
+ 	_bau_panel_bauen()
+ 	_pop_einheit_panel_bauen()
+ 	_eingabe_steuerung.debug_umgeschaltet.connect(_auf_debug_umgeschaltet)
 	# Warum-Fenster: Die Status-Anzeige besitzt die Begründungsliste, die Szene
 	# übergibt nur ihre drei Spitzen. Reine Verdrahtung, keine Timeline-Logik.
 	_hud.warum_verdrahten(%WarumKnopf, %WarumFenster, %WarumText)
@@ -257,11 +289,14 @@ func _modell_ersetzen(neues_modell: Welt_Model) -> void:
 	_kamera.position = Vector2(neues_modell.groesse()) * float(neues_modell.kachel_groesse) / 2.0
 	# Lager + Tiere: Lagerfabrik und Tier-Platzierer setzen intern zurück.
 	_lager_fabrik.anlegen_aus_welt(neues_modell, _lager, _kamera.position)
+	_lager_darsteller_einrichten()
 	_tier_platzierer.platzieren(neues_modell, _registry, _tiere)
 	# Wärme neu berechnen
-	_waerme_sammler.sammeln(neues_modell, _stockmaenner)
+	_waerme_sammler.sammeln(neues_modell, _stockmaenner, _waerme_overlay)
 	# Domänen atomar umschalten
 	_domaenen_modell_setzen(neues_modell)
+	# Fraktions-KI auf neue Karte umstellen (Expansion)
+	_fraktions_ki_auf_kartenwechsel(neues_modell)
 	# Karten-Minimap und Beobachter
 	if _karten_viewer != null:
 		_karten_viewer.einrichten(_model, _registry, _biome)
@@ -278,7 +313,8 @@ func _auf_gebaeude_platziert(objekt_index: int) -> void:
 	_karte.objekt_knoten_anhaengen(objekt_index)
 	_karte.sichtgebiet_aktualisieren()
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
-	_waerme_sammler.sammeln(_model, _stockmaenner)
+	_lager_darsteller_einrichten()
+	_waerme_sammler.sammeln(_model, _stockmaenner, _waerme_overlay)
 	## Befund 6: Das Wegenetz kennt neue Gebäude erst nach diesem Aufruf.
 	## Vorher liefen Einheiten planerisch durch jedes nach dem ersten Haus
 	## errichtete Gebäude, weil das Netz beim initialen einrichten() eingefroren blieb.
@@ -325,14 +361,25 @@ func _auf_produktion_status(zeilen: Array[String]) -> void:
 	(_hud as Variant).produktion_anzeigen(zeilen)
 
 func _bau_panel_bauen() -> void:
+ 	var canvas: CanvasLayer = %UILayer as CanvasLayer
+ 	if canvas == null:
+ 		return
+ 	_bau_panel = _BauPanelSzene.instantiate()
+ 	_bau_panel.name = "BauPanel"
+ 	_bau_panel.einrichten(_gebaeude_definitionen, _fortschritt, _steuerung)
+ 	_bau_panel.bau_gewaehlt.connect(_auf_bau_gewaehlt)
+ 	canvas.add_child(_bau_panel)
+
+func _pop_einheit_panel_bauen() -> void:
 	var canvas: CanvasLayer = %UILayer as CanvasLayer
 	if canvas == null:
 		return
-	_bau_panel = _BauPanelSzene.instantiate()
-	_bau_panel.name = "BauPanel"
-	_bau_panel.einrichten(_gebaeude_definitionen, _fortschritt, _steuerung)
-	_bau_panel.bau_gewaehlt.connect(_auf_bau_gewaehlt)
-	canvas.add_child(_bau_panel)
+	_pop_einheit_uebersetzer = _PopEinheitUebersetzerSkript.new()
+	_pop_einheit_uebersetzer.einrichten(_need_baum, _stockmaenner, _ressourcen)
+	_pop_einheit_panel = _PopEinheitPanelSzene.instantiate()
+	_pop_einheit_panel.name = "PopEinheitPanel"
+	_pop_einheit_panel.einrichten(_pop_einheit_uebersetzer)
+	canvas.add_child(_pop_einheit_panel)
 
 func _auf_bau_gewaehlt(gebaeude_id: String) -> void:
 	_eingabe_steuerung.bau_auftrag_setzen(gebaeude_id)
@@ -389,9 +436,9 @@ func _auf_erste_einheit(_stufe: Dictionary) -> void:
 	if _landeplatz != null:
 		_landeplatz.ausblenden()
 		_landeplatz = null
-	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
-	_waerme_sammler.sammeln(_model, _stockmaenner)
-	_stockmaenner.einheit_hinzufuegen(_stockmaenner.lager_anker_position() + Vector2(0, 48))
+_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
+ 	_waerme_sammler.sammeln(_model, _stockmaenner, _waerme_overlay)
+ 	_stockmaenner.einheit_hinzufuegen(_stockmaenner.lager_anker_position() + Vector2(0, 48))
 	_hud.meldung_setzen("Der erste Siedler ist am Lagerfeuer angekommen.")
 
 func _auf_stufe_erreicht(stufe: Dictionary) -> void:
@@ -413,3 +460,76 @@ func _auf_timeline_eintrag(eintrag: Kern_TimelineEintrag) -> void:
 	var bus := Kern_SignalBus.bus()
 	if bus != null:
 		bus._emit_timeline_eintrag(eintrag.delta_text())
+
+## Fraktions-KI Initialisierung: Netzwerk planen und pro Fraktion eine KI-Maschine starten.
+func _fraktions_ki_initialisieren() -> void:
+	# Fraktions-KI Konfiguration laden
+	var config_pfad := "res://world/data/fraktions_ki_config.json"
+	if FileAccess.file_exists(config_pfad):
+		var text := FileAccess.open(config_pfad, FileAccess.READ).get_as_text()
+		_fraktions_ki_config = JSON.parse_string(text)
+	else:
+		push_warning("fraktions_ki_config.json nicht gefunden, nutze Standardwerte")
+		_fraktions_ki_config = {"expansion": 0.6, "handel": 0.4, "konflikt": 0.7, "aggressions_basis": 1.0}
+
+	# Welt-Netzwerk planen (platziert Fraktionen deterministisch)
+	if not _netzwerk_planer.netzwerk_planen(_model, Welt_GeneratorRegistry.new(), 0, _biome):
+		push_warning("Fraktions-Netzwerk konnte nicht geplant werden")
+		return
+
+	# Rassen-Schemata für jede Fraktion generieren (aus Keimpunkten)
+	var keimling_analysator := Welt_FraktionsKeimlingAnalysator.new()
+	keimling_analysator.analyse_ausfuehren(_model, _fraktions_ki_config)
+	var keimpunkte := keimling_analysator.get_keimpunkte()
+
+	# Rassen-Generator für Keimpunkte
+	var rassen_generator := Bevölkerung_RassenGenerator.new()
+	rassen_generator.generiere_aus_keimpunkten(keimpunkte, _model.welt_seed)
+
+	# Pro Fraktion eine KI-Maschine erstellen und einrichten
+	for fraktion in _netzwerk_planer.fraktionen():
+		var rassen_id := fraktion.fraktion_id  # Vereinfacht: Fraktion-ID als Rassen-ID
+		var rassen_schema := Pop_RassenSchemaRegistry.schema_fuer(rassen_id)
+		if rassen_schema == null:
+			# Fallback: Mensch-Schema aus rassen_schemata.json
+			var schema := Pop_RassenSchema.new()
+			var vorlagen_pfad := "res://population/data/rassen_schemata.json"
+			if FileAccess.file_exists(vorlagen_pfad):
+				var text := FileAccess.open(vorlagen_pfad, FileAccess.READ).get_as_text()
+				var daten := JSON.parse_string(text)
+				if daten.has("mensch"):
+					schema.aus_eintrag("mensch", daten["mensch"])
+			rassen_schema = schema
+
+		var ki := Fraktions_KI_Maschine.new()
+		ki.einrichten(fraktion, _model, WeltSitzung.world, _map_fabrik, _lager, rassen_schema, _fraktions_ki_config)
+		_fraktions_ki_maschinen.append(ki)
+
+	# Weltuhr-Tick verbinden für alle KI-Maschinen
+	var weltuhr := get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_signal("tick"):
+		for ki in _fraktions_ki_maschinen:
+			if not weltuhr.tick.is_connected(ki.tick):
+				weltuhr.tick.connect(ki.tick)
+
+func _fraktions_ki_auf_kartenwechsel(neues_modell: Welt_Model) -> void:
+	# Bei Kartenwechsel (Expansion) die KI-Maschinen auf das neue Modell umstellen
+	for ki in _fraktions_ki_maschinen:
+		ki.modell_aktualisieren(neues_modell)
+
+func _lager_darsteller_einrichten() -> void:
+	# Alte Darsteller entfernen
+	for kind in get_children():
+		if kind.name.begins_with("LagerDarsteller_"):
+			kind.queue_free()
+	# Erstellt einen Lager_Darsteller für jedes Lager und hängt ihn an die Szene
+	for idx in _lager.lager_zahl():
+		var darsteller := Lager_Darsteller.new()
+		darsteller.name = "LagerDarsteller_%d" % idx
+		darsteller.lager_index_setzen(idx)
+		darsteller.lager_manager_setzen(_lager)
+		darsteller.ressourcen_setzen(_ressourcen)
+		# Position auf Lager-Kachel setzen
+		var lager_pos := _lager.lager_position(idx)
+		darsteller.position = lager_pos
+		add_child(darsteller)

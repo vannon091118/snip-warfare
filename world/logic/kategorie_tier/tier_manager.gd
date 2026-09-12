@@ -15,6 +15,10 @@ var _naechste_tier_nummer: int = 1
 var _spieler_position := Vector2.ZERO
 var _darsteller_ebene: Node2D
 
+## Parallel-Map: Referenz auf die Welt für 1/6 Tick-Gate.
+var _welt_world: Welt_World = null
+var _model: Welt_Model = null
+
 ## Kategorie logik: Platzierung, Tick-Abwicklung, Angriff und Ernte.
 
 func _ready() -> void:
@@ -43,6 +47,11 @@ func _exit_tree() -> void:
 	var weltuhr := get_node_or_null("/root/Weltuhr")
 	if weltuhr != null and weltuhr.has_signal("tick") and weltuhr.tick.is_connected(_auf_tick):
 		weltuhr.tick.disconnect(_auf_tick)
+
+func modell_setzen(model: Welt_Model, welt_world: Welt_World = null) -> void:
+	## Setzt das Welt-Modell und die Welt-Referenz für 1/6 Tick-Gate.
+	_model = model
+	_welt_world = welt_world
 
 func tier_platzieren(tier_id: String, welt_position: Vector2) -> int:
 	if not _verhalten.hat_eintrag(tier_id):
@@ -166,6 +175,14 @@ func _nachruecken() -> void:
 	_tiere = aufgerueckt
 
 func _auf_tick(_nummer: int, delta: float) -> void:
+	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
+	if _welt_world != null and _model != null:
+		var aktive_map_id := _welt_world.aktive_map_id()
+		var eigene_map_id := _model.map_id
+		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
+			if Engine.get_process_frames() % 6 != 0:
+				return
+	
 	var entfernte: Array[int] = []
 	for index in _tiere.size():
 		var tier: Dictionary = _tiere[index]

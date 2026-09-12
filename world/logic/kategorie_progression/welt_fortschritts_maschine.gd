@@ -7,13 +7,20 @@ class_name Welt_FortschrittsMaschine
 ## der Gebaeude_Manager meldet Bauabschlüsse, der Einwanderungs-Zustand wird
 ## von außen gesetzt. Freischaltungen und Zielabschluss werden als Signale
 ## sichtbar, damit HUD und Eingabe ohne Umwege reagieren können.
+## Wenn ein Rathaus-Möbel-Set den Produktionsraum "rathaus" vervollständigt,
+## spawnt diese Maschine die Orchestrator_Einheit über den Einheit_Manager.
 
 signal stufe_erreicht(stufe: Dictionary)
 signal ziel_erreicht(stufe: Dictionary)
+signal orchestrator_gespawnt(position: Vector2)
 
 ## Kategorie daten: der aktuelle Stufen-Zustand.
 var stufe_index: int = 0
 var abgeschlossen: Dictionary = {}
+
+## Kategorie logik: Verbindungen zu anderen Domänen.
+var _einheit_manager: Einheit_Manager = null
+var _orchestrator_manager: Orchestrator_Manager = null
 
 ## Kategorie logik: Ziel prüfen, Fortschalten, Freischalten lesen.
 
@@ -22,6 +29,15 @@ func _init() -> void:
 
 func registry_setzen(registry: Welt_FortschrittsRegistry) -> void:
 	_registry = registry
+
+func einheit_manager_setzen(manager: Einheit_Manager) -> void:
+	_einheit_manager = manager
+	var bus := Kern_SignalBus.bus()
+	if bus != null and bus.has_signal("produktionsraum_entstanden") and not bus.produktionsraum_entstanden.is_connected(_auf_produktionsraum_entstanden):
+		bus.produktionsraum_entstanden.connect(_auf_produktionsraum_entstanden)
+
+func orchestrator_manager_setzen(manager: Orchestrator_Manager) -> void:
+	_orchestrator_manager = manager
 
 func aktive_stufe() -> Dictionary:
 	if _registry == null:
@@ -53,6 +69,42 @@ func einwanderer_angekommen() -> void:
 	if str(stufe.get("ziel_typ", "")) != "einwanderung":
 		return
 	_fortschalten()
+
+## Reaktion auf Rathaus-Fertigstellung: Spawnt die Orchestrator-Einheit.
+func _auf_produktionsraum_entstanden(raum_id: String, profil: String) -> void:
+	if profil != "rathaus":
+		return
+	if _einheit_manager == null:
+		push_warning("Welt_FortschrittsMaschine: Einheit_Manager nicht gesetzt, Orchestrator kann nicht gespawnt werden")
+		return
+	# Spawn-Position: Verwende die Position des Raums (hier vereinfacht: Anker-Position)
+	var spawn_position := Vector2(500, 300)  # Standard-Position, könnte aus Raum-Daten kommen
+	# Prüfe Spawn-Cap vor dem Spawn (Rasse = "mensch" als Default)
+	if _spawn_cap_erreicht("mensch"):
+		push_warning("Welt_FortschrittsMaschine: Spawn-Cap für Mensch erreicht, Orchestrator nicht gespawnt")
+		return
+	var einheit_index := _einheit_manager.einheit_hinzufuegen(spawn_position, "mensch")
+	# Registriere die Einheit als Orchestrator für die erste Zone (Index 0)
+	if _orchestrator_manager != null:
+		_orchestrator_manager.einheit_als_orchestrator_registrieren(einheit_index, 0)
+	orchestrator_gespawnt.emit(spawn_position)
+
+func _spawn_cap_erreicht(rasse_id: String) -> bool:
+	if _einheit_manager == null:
+		return false
+	# Lade rassen_schemata.json direkt für max_einheiten
+	var config_pfad := "res://population/data/rassen_schemata.json"
+	if not FileAccess.file_exists(config_pfad):
+		return false
+	var datei := FileAccess.open(config_pfad, FileAccess.READ)
+	var gelesen: Variant = JSON.parse_string(datei.get_as_text())
+	if typeof(gelesen) != TYPE_DICTIONARY:
+		return false
+	var rassen := gelesen as Dictionary
+	if not rassen.has(rasse_id):
+		return false
+	var max_einheiten := int(rassen[rasse_id].get("max_einheiten", 20))
+	return _einheit_manager.einheiten_zahl() >= max_einheiten
 
 func _fortschalten() -> void:
 	var stufe := aktive_stufe()

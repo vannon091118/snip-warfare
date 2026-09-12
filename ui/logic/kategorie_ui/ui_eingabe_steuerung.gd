@@ -39,6 +39,8 @@ var _fortschritt: Welt_FortschrittsMaschine = null
 var _rechtsklick_welt_position := Vector2.ZERO
 var _aktiver_bau_auftrag: String = ""
 var _debug_sichtbar: bool = false
+var _orchestrator_panel: Orchestrator_PriorityPanel = null
+var _orchestrator_manager: Orchestrator_Manager = null
 
 ## Kategorie logik: Eingabe in Maschinen-Aufrufe übersetzen.
 
@@ -63,6 +65,8 @@ func einrichten(p: Dictionary) -> void:
 	_map_fabrik = p.get("map_fabrik")
 	_modell_ersetzen = p.get("modell_ersetzen", Callable())
 	_fortschritt = p.get("fortschritt")
+	_orchestrator_panel = p.get("orchestrator_panel")
+	_orchestrator_manager = p.get("orchestrator_manager")
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
 
@@ -177,11 +181,13 @@ func hotkey_verarbeiten(ereignis: InputEventKey) -> void:
 			_schnellwahl.resize(slot + 1)
 		_schnellwahl[slot] = _auswahl.aktiver_einheit_index
 		(_hud as Variant).meldung_setzen("Schnellwahl %d gesetzt auf Einheit %d" % [slot + 1, _auswahl.aktiver_einheit_index])
-	elif slot < _schnellwahl.size() and _schnellwahl[slot] < _stockmaenner.einheit_zahl():
-		_auswahl.aktiver_einheit_index = _schnellwahl[slot]
-		_auswahl.auswahl_einheiten = [_schnellwahl[slot]]
-		_stockmaenner.auswahl_markierung_erneuern(_schnellwahl[slot], [_schnellwahl[slot]])
-		(_hud as Variant).meldung_setzen("Einheit %d gewählt" % (_auswahl.aktiver_einheit_index + 1))
+elif slot < _schnellwahl.size() and _schnellwahl[slot] < _stockmaenner.einheit_zahl():
+ 		_auswahl.aktiver_einheit_index = _schnellwahl[slot]
+ 		_auswahl.auswahl_einheiten = [_schnellwahl[slot]]
+ 		_stockmaenner.auswahl_markierung_erneuern(_schnellwahl[slot], [_schnellwahl[slot]])
+ 		(_hud as Variant).meldung_setzen("Einheit %d gewählt" % (_auswahl.aktiver_einheit_index + 1))
+ 		if _signal_bus != null:
+ 			_signal_bus._emit_einheit_ausgewaehlt(_schnellwahl[slot])
 
 func auf_verteilung(nahrung_je_takt: float) -> void:
 	if _stockmaenner != null:
@@ -378,10 +384,16 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 	## sofort Jobs an den unveränderlichen aktiver_einheit_index 0.
 	var einheit_treffer := _stockmaenner.einheit_bei(klick, radius)
 	if einheit_treffer >= 0:
+		# Prüfen, ob es sich um eine Orchestrator-Einheit handelt
+		if _ist_orchestrator_einheit(einheit_treffer):
+			_orchestrator_panel_oeffnen(einheit_treffer)
+			return
 		_auswahl.aktiver_einheit_index = einheit_treffer
 		_auswahl.auswahl_einheiten = [einheit_treffer]
 		_stockmaenner.auswahl_markierung_erneuern(einheit_treffer, [einheit_treffer])
 		(_hud as Variant).meldung_setzen("Einheit %d gewaehlt." % (einheit_treffer + 1))
+		if _signal_bus != null:
+			_signal_bus._emit_einheit_ausgewaehlt(einheit_treffer)
 		return
 	# Kein Einheitentreffer: Job an aktive Einheit vergeben, sofern eine gewählt ist
 	var aktiv := _auswahl.aktiver_einheit_index
@@ -409,6 +421,26 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 		_auswahl.auswahl_leeren()
 		_stockmaenner.auswahl_markierung_erneuern(-1, [])
 		(_hud as Variant).meldung_setzen("Auswahl aufgehoben.")
+
+func _ist_orchestrator_einheit(einheit_index: int) -> bool:
+	# Eine Orchestrator-Einheit hat den Job_Orchestrieren als aktiven Job
+	if _stockmaenner == null:
+		return false
+	var job_id := _stockmaenner.job_id_einheit(einheit_index)
+	return job_id == "orchestrieren"
+
+func _orchestrator_panel_oeffnen(einheit_index: int) -> void:
+	# Finde den Orchestrator-Config-Index für diese Einheit
+	# Der Orchestrator_Manager verwaltet die Zonen; wir müssen die Zone
+	# finden, die dieser Einheit zugeordnet ist
+	if _orchestrator_panel == null or _orchestrator_manager == null:
+		return
+	var zonen_index := _orchestrator_manager.zonen_index_fuer_einheit(einheit_index)
+	if zonen_index >= 0:
+		_orchestrator_panel.fuer_orchestrator_oeffnen(zonen_index)
+	else:
+		# Fallback: Erste Zone
+		_orchestrator_panel.fuer_orchestrator_oeffnen(0)
 
 
 

@@ -87,6 +87,7 @@
     "textur_pfad": "res://world/assets/terrain/kacheln/fels.svg",
     "spiegelbar": true,
     "toenungen": ["#FFFFFF", "#EFEFEA"],
+    "leben": 100,
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -97,6 +98,7 @@
     "textur_pfad": "res://world/assets/terrain/kacheln/geroell.svg",
     "spiegelbar": true,
     "toenungen": ["#FFFFFF", "#F2F2EC"],
+    "leben": 50,
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {

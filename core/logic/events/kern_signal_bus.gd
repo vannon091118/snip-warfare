@@ -21,8 +21,30 @@ signal kannibalismus_erreignis(tatort: Vector2)
 signal menue_geoeffnet()
 # Zustands-Timeline: Jede protokollierte Buchung wird gemeldet, damit die
 # UI den Einfluss der Modifikatoren zeigen kann. Nichts passiert ohne Feedback.
-@warning_ignore("unused_signal")
 signal timeline_eintrag(beschreibung: String)
+# Lager-Bestand ändert: Wird ausgestoßen, wenn ein Lager seinen Bestand
+# ändert (Ressourcen eingelagert oder entnommen). Der Darsteller liest hier
+# und aktualisiert die visuelle Darstellung.
+signal lager_geaendert(lager_id: String)
+# Produktionsraum entstanden: Wird ausgestoßen, wenn ein Möbel-Set einen
+# Raum mit passendem Profil (z. B. "rathaus") vervollständigt. Der
+# Welt_FortschrittsMaschine hört zu und spawnt den Orchestrator.
+@warning_ignore("unused_signal")
+signal produktionsraum_entstanden(raum_id: String, profil: String)
+# Fraktions-Konflikt: Wenn die Fraktions-KI Maschine den Konfliktschwellenwert
+# überschreitet, wird dieses Signal ausgestoßen. Die Weltkarte visualisiert
+# dies als Farbänderung der Verbindungslinien zwischen Fraktionsknoten.
+@warning_ignore("unused_signal")
+signal konflikt_erklaert(fraktion_a: String, fraktion_b: String)
+# Einheiten-Auswahl: Wird ausgestoßen, wenn der Spieler eine Einheit
+# auswählt. Das Pop_EinheitPanel hört zu und zeigt die Details.
+@warning_ignore("unused_signal")
+signal einheit_ausgewaehlt(einheit_id: int)
+# Z-Layer: Wird ausgestoßen, wenn Job_Graben die Decke einer Z-Ebene entfernt
+# (Fels-Tile auf 0 Leben). Der Wasser_Automat hört darauf und fügt die
+# Wasser-Tiles direkt über dem Loch zur Dirty-Queue hinzu.
+@warning_ignore("unused_signal")
+signal decken_entfernt(position: Vector2, z_ebene: int)
 
 static func bus() -> Kern_SignalBus:
 	# Während des Szenen-Aufbaus erzeugen Manager ihre Maschinen als
@@ -54,3 +76,18 @@ func _emit_menue_geoeffnet() -> void:
 
 func _emit_timeline_eintrag(beschreibung: String) -> void:
 	timeline_eintrag.emit(beschreibung)
+
+func _emit_lager_geaendert(lager_id: String) -> void:
+	lager_geaendert.emit(lager_id)
+
+func _emit_konflikt_erklaert(fraktion_a: String, fraktion_b: String) -> void:
+	konflikt_erklaert.emit(fraktion_a, fraktion_b)
+
+func _emit_produktionsraum_entstanden(raum_id: String, profil: String) -> void:
+	produktionsraum_entstanden.emit(raum_id, profil)
+
+func _emit_einheit_ausgewaehlt(einheit_id: int) -> void:
+	einheit_ausgewaehlt.emit(einheit_id)
+
+func _emit_decke_entfernt(position: Vector2, z_ebene: int) -> void:
+	decken_entfernt.emit(position, z_ebene)

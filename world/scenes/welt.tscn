@@ -31,6 +31,12 @@ corner_radius_bottom_left = 6
 y_sort_enabled = true
 script = ExtResource("1_karte")
 
+# CanvasModulate: Beeinflusst jeden Sprite, Tilemap und Particle gleichzeitig
+# über die zentrale Weltzeit. Jeder Tick setzt die Farbe via
+# Welt_TageszyklusMaschine.tages_farbe_fuer_tick().
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+unique_name_in_owner = true
+
 [node name="Karte" type="Node2D" parent="."]
 unique_name_in_owner = true
 y_sort_enabled = true
