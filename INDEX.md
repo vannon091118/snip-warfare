@@ -60,11 +60,22 @@ Spielkette der Eingabe: `Ui_EingabeSteuerung` + `Ui_KameraSteuerung` → Manager
 
 <!-- INVENTAR:START -->
 
-## 4. Klasseninventar (auto-generiert)
+## 4. Index-Familie (auto-generiert)
+
+_Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem Code erzeugt._
+
+| Index | Datei | Inhalt |
+| --- | --- | --- |
+| Wurzel | [`INDEX.md`](INDEX.md) | Index-Familie und Klasseninventar |
+| Domaenen | [`INDEX_DOMAENEN.md`](INDEX_DOMAENEN.md) | Klassen, Signal- und Array-Matrix je Domaene |
+| Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
+| Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
+
+_Stand: V0.01 — 227 Klassen mit `class_name` im Projekt, davon 199 in den 14 Domaenen-Ordnern und 28 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
+
+## 5. Klasseninventar (auto-generiert)
 
 _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
-
-_Stand: V0.01 — 227 Klassen mit `class_name` im Projekt, davon 199 in den 14 Domaenen-Ordnern dieser Tabelle._
 
 ### core — Prefix `Kern_` — `core/` (19)
 
@@ -332,6 +343,39 @@ _keine `class_name`-Klassen_
 ### tools — Prefix `-` — `tools/` (0)
 
 _keine `class_name`-Klassen_
+
+### rest — Prefix `-` — `(kein Domaenen-Ordner)` (28)
+
+| Klasse | Datei |
+| --- | --- |
+| `Welt_AtmosphaereKonfig` | `world/logic/kategorie_atmosphaere/welt_atmosphaere_konfig.gd` |
+| `Welt_AtmosphaereVerdrahtung` | `world/logic/kategorie_atmosphaere/welt_atmosphaere_verdrahtung.gd` |
+| `Welt_BiomBasis` | `world/logic/kategorie_biom/biom_basis.gd` |
+| `Welt_BiomManager` | `world/logic/kategorie_biom/biom_manager.gd` |
+| `Welt_BiomMutation` | `world/logic/kategorie_biom/biom_mutation.gd` |
+| `Welt_BiomRegistry` | `world/logic/kategorie_biom/biom_registry.gd` |
+| `Welt_ComicOverlayer` | `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` |
+| `Welt_FeedbackManager` | `world/logic/kategorie_feedback/feedback_manager.gd` |
+| `Welt_FeedbackTexturCache` | `world/logic/kategorie_feedback/feedback_textur_cache.gd` |
+| `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` |
+| `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` |
+| `Welt_PlusAnzeige` | `world/logic/kategorie_feedback/feedback_plus_anzeige.gd` |
+| `Welt_ProgressionsMaschine` | `world/logic/kategorie_progression/welt_progressions_maschine.gd` |
+| `Welt_ProgressionsRegistry` | `world/logic/kategorie_progression/welt_progressions_registry.gd` |
+| `Welt_RessourcenZustand` | `world/logic/kategorie_progression/welt_ressourcen_zustand.gd` |
+| `Welt_SchadenAnzeige` | `world/logic/kategorie_feedback/feedback_schaden_anzeige.gd` |
+| `Welt_SchlagStaub` | `world/logic/kategorie_atmosphaere/welt_schlag_staub.gd` |
+| `Welt_SeedSpawnMaschine` | `world/logic/kategorie_progression/welt_seed_spawn_maschine.gd` |
+| `Welt_SonnenEffekt` | `world/logic/kategorie_atmosphaere/welt_sonnen_effekt.gd` |
+| `Welt_StufenBilder` | `world/logic/kategorie_progression/welt_stufen_bilder.gd` |
+| `Welt_SwayAktualisierer` | `world/logic/kategorie_atmosphaere/welt_sway_aktualisierer.gd` |
+| `Welt_SwayMaterial` | `world/logic/kategorie_atmosphaere/welt_sway_material.gd` |
+| `Welt_TageszyklusMaschine` | `world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd` |
+| `Welt_TodAnzeige` | `world/logic/kategorie_feedback/feedback_tod_anzeige.gd` |
+| `Welt_WaermeFaktor` | `world/logic/kategorie_progression/welt_waerme_faktor.gd` |
+| `Welt_WaermeFeld` | `world/logic/kategorie_waerme/waerme_feld.gd` |
+| `Welt_WaermeShader` | `world/logic/kategorie_waerme/waerme_shader.gd` |
+| `Welt_WindRechner` | `world/logic/kategorie_atmosphaere/welt_wind_rechner.gd` |
 
 <!-- INVENTAR:ENDE -->
 

@@ -10,8 +10,9 @@ Dieses Dokument ist die **einzige verbindliche Planungs- und Roadmap-Quelle** f�
 * **Klassenbestand:** 227 Klassen auf 251 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
 * **JSON-Datenpools:** 14 Pools (Wirtschaft, Bevölkerung, Welt, Jobs, Gebäude, Progression, Steuerung, Modifikatoren, Animationen)
 * **Szenen:** 11 aktive `.tscn`-Szenen
+* **Indizes:** `INDEX.md` als Wurzel, `INDEX_DOMAENEN.md` mit der Signal- und Array-Matrix je Domäne, `INDEX_DATEN.md` mit jedem JSON-Pool samt Besitzer und Verbrauchern und die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`, alle vier von `python tools/index_generieren.py` erzeugt und von der Prüfkategorie `index` (E044) bewacht
 * **Autoloads:** `Weltuhr` (`Kern_Weltuhr`, 24 Hz), `WeltSitzung` (`Ui_WeltSitzung`), `KernSignalBusAutoload` (`Kern_SignalBus`)
-* **Testabdeckung:** 85/85 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–18 inkl. Whitespace E042 und Version E043) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
+* **Testabdeckung:** 85/85 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–19 inkl. Whitespace E042, Version E043 und Index E044) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
 
 ---
 
@@ -38,6 +39,7 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [x] **CP-0.12 (Gebäude-Maschinen):** `Gebaeude_BauMaschine` und `Gebaeude_ProduktionsMaschine` gesteuert über `Gebaeude_Manager`; atomare Ressourcenbuchung mit Rollback-Schutz.
 - [x] **CP-0.13 (Lager-System):** `Lager_Manager` mit Mutationsklassen `Lager_MutationEinlagern`/`Lager_MutationEntnehmen`; Bestände werden ortsabhängig geführt.
 - [x] **CP-0.14 (Ressourcen-Plugin-Naht):** `game/data/ressourcen.json` instanziiert Klassen deklarativ über das `script`-Feld (`Ressource_Raeuchelfleisch`, `Ressource_Werkzeug`, etc.).
+- [x] **CP-0.15 (Index-Familie):** `python tools/index_generieren.py` erzeugt vier Indizes aus dem Code: `INDEX.md` mit der Index-Familie und dem Klasseninventar, `INDEX_DOMAENEN.md` mit der Signal-Matrix (Deklaration D, Senden S, Verbinden V) und der Array-Matrix (`Array[Typ]` je Domäne), `INDEX_DATEN.md` mit jedem JSON-Pool samt Besitzer, Schluesseln und namentlichen Verbrauchern sowie die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`, die den Delta des letzten Laufs mitschreibt. Das Paket liegt granular in `tools/index/` (kern, inventar, matrix, daten, root_index, domaenen_index, daten_index, letzte_aenderung, erzeugen), die Prüfkategorie `index` (E044) vergleicht jede Datei mit dem Code und meldet Abweichungen mit Datei und Zeile.
 
 ### Bevölkerung, Jobs & Steuerung (Game, Population, UI)
 - [x] **CP-0.15 (Einstiegs-Progression):** `Welt_FortschrittsMaschine` steuert Stufen (Lagerfeuer -> Erstes Haus -> Einwanderung) basierend auf `progression.json`.
@@ -197,12 +199,12 @@ Alle Qualitäts-, Status- und Testprüfungen des Projekts lassen sich mit einem 
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 18 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043) aus.
+* **Vollprüfung:** Führt alle 19 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus.
 * **Scope-Gezielt:**
   * `python tools/preflight.py --kategorie warnungen` (GDScript-Warnungs-Scan nach Regel 6)
   * `python tools/preflight.py --kategorie shinon` (Shinon Gate Prüfung E030–E039)
   * `python tools/preflight.py --kategorie godot` (Headless Engine-Kompilierung)
 * **Unittests:** `python -m pytest` führt alle 85 Unittests aus.
-* **Index:** `python tools/index_generieren.py` frischt das Klasseninventar in `INDEX.md` auf.
+* **Index:** `python tools/index_generieren.py` frischt die Index-Familie auf: Root-, Domänen- und Datenindex plus die eine Last-Datei.
 
 Version: V0.01

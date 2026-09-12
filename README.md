@@ -8,7 +8,7 @@
 <br/>
 
 [![Godot Engine](https://img.shields.io/badge/Godot-4.7.2%20GL--Compatibility-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org)
-[![Preflight Status](https://img.shields.io/badge/Preflight-100%25%20Gr%C3%BCn%20(E001--E043)-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)
+[![Preflight Status](https://img.shields.io/badge/Preflight-100%25%20Gr%C3%BCn%20(E001--E044)-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)
 [![Version](https://img.shields.io/badge/Version-V0.01-1f6feb?style=for-the-badge&logo=semver&logoColor=white)](#-versionierung-eine-zahl-f%C3%BCr-alle-dokumente)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
 [![Tests](https://img.shields.io/badge/pytest-85%2F85%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
 [![Index](https://img.shields.io/badge/Index-INDEX.md%20(LLM--%C3%9Cbersicht)-8a2be2?style=for-the-badge)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
@@ -149,7 +149,7 @@ Jede Ressource besitzt ihr eigenes SVG-Icon und eine dedizierte Datenklasse:
 
 ## 🗺️ Aktueller Zustand & Master-Roadmap
 
-Der aktuelle **Zustand** und **Stand** umfasst ein gehärtetes Fundament mit 227 Klassen, 11 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 85 bestandenen Pytest-Prüfungen. Diese README ist Teil des Vertrags: Sie wird bei jedem Versionsbump mechanisch mitgezogen und beschreibt den echten Stand, nie einen Wunsch. Der maschinenlesbare Router ist [`INDEX.md`](INDEX.md) — Domänen-Tabelle, Zuständigkeiten, Abhängigkeits-Graph und auto-generiertes Klasseninventar (`python tools/index_generieren.py`).
+Der aktuelle **Zustand** und **Stand** umfasst ein gehärtetes Fundament mit 227 Klassen, 11 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 85 bestandenen Pytest-Prüfungen. Diese README ist Teil des Vertrags: Sie wird bei jedem Versionsbump mechanisch mitgezogen und beschreibt den echten Stand, nie einen Wunsch. Der maschinenlesbare Router ist [`INDEX.md`](INDEX.md) — Index-Familie, Domänen-Tabelle, Zuständigkeiten, Abhängigkeits-Graph und auto-generiertes Klasseninventar. Dazu kommen [`INDEX_DOMAENEN.md`](INDEX_DOMAENEN.md) mit der Signal- und Array-Matrix je Domäne, [`INDEX_DATEN.md`](INDEX_DATEN.md) mit jedem JSON-Pool samt Besitzer und Verbrauchern sowie die eine Last-Datei [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md), die den Delta des letzten Index-Laufs mitschreibt. Alle vier erzeugt `python tools/index_generieren.py`, alle vier bewacht die Prüfkategorie `index` (E044).
 
 Unsere konsolidierte **Vision** ist in der [`ROADMAP.md`](ROADMAP.md) nach Slices strukturiert:
 
@@ -190,9 +190,9 @@ Bevor irgendein Commit ins Repo wandert, muss er durch mein mechanisches Schafot
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 18 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043) aus — `python tools/preflight.py --kategorie whitespace --fix` repariert Leerzeichen idempotent.
+* **Vollprüfung:** Führt alle 19 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus — `python tools/preflight.py --kategorie whitespace --fix` repariert Leerzeichen idempotent.
 * **Unittests:** `python -m pytest` führt alle 85 Unittests aus.
-* **LLM-Übersicht:** `python tools/index_generieren.py` frischt das Klasseninventar in `INDEX.md` auf.
+* **LLM-Übersicht:** `python tools/index_generieren.py` frischt die ganze Index-Familie auf: `INDEX.md`, `INDEX_DOMAENEN.md`, `INDEX_DATEN.md` und die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`.
 
 > [!IMPORTANT]
 > **Shinon Gate Pflicht (Regel 5):** Commits werden nicht geschludert. Jede Nachricht entsteht in nummerierten Sätzen, bildlicher Sprache und ohne dekorative Banner. Wer schlampt, fängt sich einen Fehlercode ein.
