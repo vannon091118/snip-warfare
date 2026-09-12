@@ -35,5 +35,13 @@
   },
   "tageslicht": {
     "daemmerung_anteil": 0.08
+  },
+  "budget": {
+    "_kommentar": "Tick-Intervalle steuern die Bewegungsfrequenz der Atmosphaeren-Partikel. 1 = jeder Tick (24x/Sek), 3 = jeder dritte Tick (8x/Sek). kamera_aktivierungsradius_px: Partikel werden deaktiviert wenn die Kamera weiter als dieser Radius vom Bereich entfernt ist.",
+    "partikel_tick_intervall": 3,
+    "windlinien_tick_intervall": 6,
+    "blaetter_tick_intervall": 3,
+    "kamera_aktivierungsradius_px": 1200.0
   }
 }
+

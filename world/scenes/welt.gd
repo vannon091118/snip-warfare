@@ -72,10 +72,9 @@ func _ready() -> void:
 	# abfragt. Die Zahl ist der Registrier-Nachweis für den Lauf-Log.
 	var aktionen_neu := _steuerung.inputmap_registrieren()
 	print("Steuerung: %d Eingabe-Tasten aus steuerung.json in die InputMap geschrieben." % aktionen_neu)
-	_ladevorgang.einrichten(_model, _generator)
-	_map_fabrik.einrichten(_generator)
-	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)
+	_ladevorgang_ausfuehren()
 	# Spielrhythmus aus dem Datenpool: Taktdauer und Tag-/Nachtanteil kommen
+
 	# über den Need-Baum aus population/data/needs.json; der Baum besitzt die
 	# Registry und reicht die Werte weiter, statt sie hier hart zu setzen.
 	_tageszyklus.einrichten(_need_baum.takt_minuten(), _need_baum.tag_minuten(), _need_baum.nacht_minuten())
@@ -232,30 +231,37 @@ func _karten_ebene_bauen() -> void:
 	add_child(_karten_ebene)
 	_karten_info = info
 
+func _ladevorgang_ausfuehren() -> void:
+	## Slice D: Kapselt den Ladevorgang aus welt_ladevorgang.gd und map_fabrik.gd.
+	_ladevorgang.einrichten(_model, _generator)
+	_map_fabrik.einrichten(_generator)
+	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)
+
+func _domaenen_modell_setzen(neues_modell: Welt_Model) -> void:
+
+	## Slice D: Zentrale atomare Umstellung aller fachlichen Domänen auf ein Modell.
+	## Wird sowohl beim ersten Start als auch beim Kartenwechsel genutzt.
+	_model = neues_modell
+	_stockmaenner.modell_wechseln(_model, _tiere)
+	_eingabe_steuerung.modell_wechseln(_model, _tiere)
+	_gebaeude.modell_wechseln(_model)
+	_progression.einrichten(_model, _biome, _tageszyklus)
+
 func _modell_ersetzen(neues_modell: Welt_Model) -> void:
 	## Atomarer Kartenwechsel-Handshake: Alle modellhaltenden Domänen werden
-	## auf das neue Modell umgestellt, bevor die Darstellung folgt. Vorher
-	## blieben Einheitenmanager, Eingabe, Gebäude und Progression auf der
-	## alten Karte und arbeiteten gegen eine neue Darstellung.
+	## auf das neue Modell umgestellt, bevor die Darstellung folgt.
 	if neues_modell == null:
 		return
-	_model = neues_modell
 	# Darstellung zuerst: Die neue Karte ist die Wahrheit.
-	_karte.darstellen(_model, _registry, _biome)
-	_kamera.position = Vector2(_model.groesse()) * float(_model.kachel_groesse) / 2.0
-	# Lager + Tiere: Lagerfabrik und Tier-Platzierer setzen intern zurück (Befund 3).
-	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera.position)
-	_tier_platzierer.platzieren(_model, _registry, _tiere)
+	_karte.darstellen(neues_modell, _registry, _biome)
+	_kamera.position = Vector2(neues_modell.groesse()) * float(neues_modell.kachel_groesse) / 2.0
+	# Lager + Tiere: Lagerfabrik und Tier-Platzierer setzen intern zurück.
+	_lager_fabrik.anlegen_aus_welt(neues_modell, _lager, _kamera.position)
+	_tier_platzierer.platzieren(neues_modell, _registry, _tiere)
 	# Wärme neu berechnen
-	_waerme_sammler.sammeln(_model, _stockmaenner)
-	# Einheitenmanager: Modell, Tiere, Wegnetz, Zielsuche und Ernte neu (Befund 2).
-	_stockmaenner.modell_wechseln(_model, _tiere)
-	# Eingabe-Domain: Modell und Tiere neu (Befund 2).
-	_eingabe_steuerung.modell_wechseln(_model, _tiere)
-	# Gebäudemanager: Modell neu (Befund 2).
-	_gebaeude.modell_wechseln(_model)
-	# Progression: Biom-Checks auf neuer Karte (Befund 2).
-	_progression.einrichten(_model, _biome, _tageszyklus)
+	_waerme_sammler.sammeln(neues_modell, _stockmaenner)
+	# Domänen atomar umschalten
+	_domaenen_modell_setzen(neues_modell)
 	# Karten-Minimap und Beobachter
 	if _karten_viewer != null:
 		_karten_viewer.einrichten(_model, _registry, _biome)
@@ -264,6 +270,7 @@ func _modell_ersetzen(neues_modell: Welt_Model) -> void:
 
 func _input(ereignis: InputEvent) -> void:
 	_eingabe_steuerung.eingabe(ereignis, self, _auf_verteilung)
+
 
 func _auf_gebaeude_platziert(objekt_index: int) -> void:
 

@@ -97,6 +97,10 @@ func fortschritt_setzen(maschine: Welt_FortschrittsMaschine) -> void:
 ## die Opfersuche bleibt leer, und mit der Einwanderung aus der
 ## Einstiegs-Kette gibt es erstmals Nachbarn. Der Auslöser sitzt am eigenen
 ## Idle, der Job läuft wie jede Jagd über dieselben Maschinen.
+## Slice C: Performance-Cache für den teuren Tier- und Nachbarschafts-Scan.
+var _tier_reichweite_cache: Dictionary = {}
+var _tier_cache_tick: int = -1
+
 func _pruefe_verhalten(einheit: Dictionary, index: int) -> void:
 	var status: Einheit_Status = einheit["status"]
 	if status.zustand != Einheit_Status.Zustand.IDLE or _mood_mod_registry == null:
@@ -148,12 +152,18 @@ func _jagd_nachbarn(jaeger_index: int) -> int:
 func _tier_in_reichweite(jaeger_index: int) -> bool:
 	if _tiere == null:
 		return false
+	if _tier_reichweite_cache.has(jaeger_index):
+		return bool(_tier_reichweite_cache[jaeger_index])
 	var eigene := einheit_position(jaeger_index)
+	var treffer := false
 	for tier_index in _tiere.tier_zahl():
 		var tier_pos := _tiere.tier_position(tier_index)
 		if tier_pos != Vector2.INF and tier_pos.distance_to(eigene) <= 160.0:
-			return true
-	return false
+			treffer = true
+			break
+	_tier_reichweite_cache[jaeger_index] = treffer
+	return treffer
+
 
 func schlag_ort_empfaenger_setzen(empfaenger: Callable) -> void:
 	# Die Welt-Szene reicht die Atmosphaeren-Spitze herein; der Manager
@@ -268,6 +278,14 @@ func einheit_bei(welt_position: Vector2, radius: float) -> int:
 			beste_distanz = distanz
 			bester = idx
 	return bester
+
+func auswahl_markierung_erneuern(aktiver_index: int, auswahl_liste: Array[int] = []) -> void:
+	## CP-6.1: Aktualisiert die goldene Auswahl-Markierung aller Einheiten.
+	for idx in _einheiten.size():
+		var darsteller: Variant = _einheiten[idx].get("darsteller")
+		if darsteller != null and darsteller.has_method("markierung_setzen"):
+			var ist_gewaehlt := (idx == aktiver_index) or auswahl_liste.has(idx)
+			darsteller.markierung_setzen(ist_gewaehlt)
 
 func weg_planung_aktualisieren() -> void:
 	## Öffentlicher Aufruf nach Gebäudeplatzierung: Das Netz kennt das
@@ -424,6 +442,9 @@ func _auf_tick(nummer: int, delta: float) -> void:
 	# Taktdauer aus dem Datenpool: Der Wert kommt über die Need-Registry aus
 	# population/data/needs.json und wird von der Weltuhr in Ticks übersetzt;
 	# dieselbe Zahl steuert auch den Tageszyklus.
+	if _tier_cache_tick != nummer:
+		_tier_cache_tick = nummer
+		_tier_reichweite_cache.clear()
 	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(_need_registry.takt_minuten())
 	var verbrauch_faellig := takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0
 	if verbrauch_faellig:
@@ -457,8 +478,10 @@ func _auf_tick(nummer: int, delta: float) -> void:
 		(status.vital as Einheit_VitalStatus).umgebungsschaden_anwenden(w, _mood_mod_registry, _zufall)
 		if ziel != Vector2.INF and status.zustand == Einheit_Status.Zustand.IDLE:
 			_in_sicherheit_bringen(einheit, ziel)
-		if status.zustand == Einheit_Status.Zustand.IDLE:
+		# Slice C: Verhaltensprüfung auf 12 Ticks gestreut verteilen (0.5s Reaktionszeit)
+		if status.zustand == Einheit_Status.Zustand.IDLE and (nummer % 12 == (ei % 12)):
 			_pruefe_verhalten(einheit, ei)
+
 
 func _ziel_position_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> Vector2:
 	return _ziel_suche.ziel_position_fuer(ziel_typ, ziel_index)

@@ -48,6 +48,10 @@ var _sichtbereich := Rect2()
 var _scan_mitte := Vector2.INF
 var _sichtgebiet_dirty := true
 var _knoten_nach_id: Dictionary = {}
+## Slice B: Räumlicher Vorfilter – ersetzt linearen Vollscan in _sichtbar_anwenden().
+var _objekt_gitter := Welt_ObjektGitter.new()
+
+
 
 func _ready() -> void:
 	y_sort_enabled = true
@@ -148,6 +152,10 @@ func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegi
 	_sway_aktualisierer.einrichten(_sway_material_quelle.call())
 	_fliesen_erneuern()
 	_objekte_erneuern()
+	## Slice B: Gitter nach vollständigem Neuaufbau initialisieren.
+	_objekt_gitter.aufbauen(_model)
+
+
 
 func kachel_ersetzen(x: int, y: int) -> void:
 	if _model == null:
@@ -375,15 +383,23 @@ func sichtbereich_deaktivieren() -> void:
 func sichtgebiet_aktualisieren() -> void:
 	# Erzwingt den Neuabgleich der sichtbaren Objekte bei Gebäudeplatzierung
 	# oder Spawn-Ereignissen, ohne auf Kamerabewegung warten zu müssen.
+	## Slice B: Gitter nach Gebäudeplatzierung neu aufbauen, damit das neue
+	## Objekt in den richtigen Zellen auftaucht.
+	_objekt_gitter.aufbauen(_model)
 	_sichtgebiet_dirty = true
 	if _sichtbereich.size != Vector2.ZERO:
 		_sichtbar_anwenden()
 
+
+
 func _sichtbar_anwenden() -> void:
 	if _model == null or _sichtbereich.size == Vector2.ZERO:
 		return
+	if _objekt_gitter.ist_leer():
+		_objekt_gitter.aufbauen(_model)
 	var anhaenge := 0
-	for index in _model.objekt_anzahl():
+	var kandidaten := _objekt_gitter.kandidaten_in(_sichtbereich)
+	for index in kandidaten:
 		if anhaenge >= MAX_ANHAENGE_PRO_RUF:
 			break
 		if not _sichtbereich.has_point(_model.objekt_position(index)):
@@ -401,3 +417,4 @@ func _sichtbar_anwenden() -> void:
 		if not _sichtbereich.has_point(knoten.fusspunkt()):
 			_knoten_nach_id.erase(id)
 			knoten.queue_free()
+

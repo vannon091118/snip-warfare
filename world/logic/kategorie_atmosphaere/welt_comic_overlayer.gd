@@ -74,28 +74,38 @@ func _pool_position(index: int) -> Vector2:
 func auf_tick(tick_nummer: int) -> void:
 	if _wind == null or _konfig == null:
 		return
+	## Slice A: Partikelgruppen werden nur alle N Ticks bewegt, nicht bei
+	## jedem der 24 Weltuhr-Ticks. Die Intervalle kommen aus dem Budget-Pool
+	## in atmosphaere.json – kein harter Wert hier.
+	var blatt_intervall := maxi(int(_konfig.budget_wert("blaetter_tick_intervall", 3.0)), 1)
+	var linien_intervall := maxi(int(_konfig.budget_wert("windlinien_tick_intervall", 6.0)), 1)
+	var pollen_intervall := maxi(int(_konfig.budget_wert("partikel_tick_intervall", 3.0)), 1)
 	var staerke := _wind.staerke()
 	var richtung := _wind.richtung()
 	var zeit := float(tick_nummer)
-	for i in _blaetter.size():
-		var blatt := _blaetter[i]
-		var base_x := _center.x + (_zufalls_feld(i + 3) * 2.0 - 1.0) * _bereich
-		var base_y := _center.y + (_zufalls_feld(i + 5) * 2.0 - 1.0) * _bereich
-		var eigen := _zufalls_feld(i + 31) * ZWEI_PI
-		blatt.position.x = base_x + richtung * staerke * 60.0 * (0.5 + 0.5 * sin(zeit * 0.02 + eigen))
-		blatt.position.y = base_y + staerke * 18.0 * sin(zeit * 0.013 + eigen * 2.0)
-		blatt.rotation = 0.6 * sin(zeit * 0.017 + eigen) * staerke * 3.0
-	for i in _windlinien.size():
-		var linie := _windlinien[i]
-		var linie_x := _center.x + (_zufalls_feld(i + 103) * 2.0 - 1.0) * _bereich
-		var linie_y := _center.y + (_zufalls_feld(i + 107) * 2.0 - 1.0) * _bereich
-		linie.position.x = linie_x + richtung * staerke * 90.0 * sin(zeit * 0.01 + float(i))
-		linie.position.y = linie_y + 8.0 * sin(zeit * 0.008 + float(i) * 1.7)
-		linie.modulate.a = clampf(0.2 + staerke * 0.8, 0.1, 0.7)
-	for i in _pollen.size():
-		var punkt := _pollen[i]
-		punkt.position.x = _center.x + (_zufalls_feld(i + 203) * 2.0 - 1.0) * _bereich + richtung * staerke * 24.0 * sin(zeit * 0.011 + float(i))
-		punkt.position.y = base_y_fuer(i) + _steig_fuer(i, zeit)
+	if tick_nummer % blatt_intervall == 0:
+		for i in _blaetter.size():
+			var blatt := _blaetter[i]
+			var base_x := _center.x + (_zufalls_feld(i + 3) * 2.0 - 1.0) * _bereich
+			var base_y := _center.y + (_zufalls_feld(i + 5) * 2.0 - 1.0) * _bereich
+			var eigen := _zufalls_feld(i + 31) * ZWEI_PI
+			blatt.position.x = base_x + richtung * staerke * 60.0 * (0.5 + 0.5 * sin(zeit * 0.02 + eigen))
+			blatt.position.y = base_y + staerke * 18.0 * sin(zeit * 0.013 + eigen * 2.0)
+			blatt.rotation = 0.6 * sin(zeit * 0.017 + eigen) * staerke * 3.0
+	if tick_nummer % linien_intervall == 0:
+		for i in _windlinien.size():
+			var linie := _windlinien[i]
+			var linie_x := _center.x + (_zufalls_feld(i + 103) * 2.0 - 1.0) * _bereich
+			var linie_y := _center.y + (_zufalls_feld(i + 107) * 2.0 - 1.0) * _bereich
+			linie.position.x = linie_x + richtung * staerke * 90.0 * sin(zeit * 0.01 + float(i))
+			linie.position.y = linie_y + 8.0 * sin(zeit * 0.008 + float(i) * 1.7)
+			linie.modulate.a = clampf(0.2 + staerke * 0.8, 0.1, 0.7)
+	if tick_nummer % pollen_intervall == 0:
+		for i in _pollen.size():
+			var punkt := _pollen[i]
+			punkt.position.x = _center.x + (_zufalls_feld(i + 203) * 2.0 - 1.0) * _bereich + richtung * staerke * 24.0 * sin(zeit * 0.011 + float(i))
+			punkt.position.y = base_y_fuer(i) + _steig_fuer(i, zeit)
+
 
 func _steig_fuer(index: int, zeit: float) -> float:
 	var hoehe := _konfig.partikel_wert("pollen_bereich_px", 640.0)

@@ -179,6 +179,8 @@ func hotkey_verarbeiten(ereignis: InputEventKey) -> void:
 		(_hud as Variant).meldung_setzen("Schnellwahl %d gesetzt auf Einheit %d" % [slot + 1, _auswahl.aktiver_einheit_index])
 	elif slot < _schnellwahl.size() and _schnellwahl[slot] < _stockmaenner.einheit_zahl():
 		_auswahl.aktiver_einheit_index = _schnellwahl[slot]
+		_auswahl.auswahl_einheiten = [_schnellwahl[slot]]
+		_stockmaenner.auswahl_markierung_erneuern(_schnellwahl[slot], [_schnellwahl[slot]])
 		(_hud as Variant).meldung_setzen("Einheit %d gewählt" % (_auswahl.aktiver_einheit_index + 1))
 
 func auf_verteilung(nahrung_je_takt: float) -> void:
@@ -377,12 +379,17 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 	var einheit_treffer := _stockmaenner.einheit_bei(klick, radius)
 	if einheit_treffer >= 0:
 		_auswahl.aktiver_einheit_index = einheit_treffer
+		_auswahl.auswahl_einheiten = [einheit_treffer]
+		_stockmaenner.auswahl_markierung_erneuern(einheit_treffer, [einheit_treffer])
 		(_hud as Variant).meldung_setzen("Einheit %d gewaehlt." % (einheit_treffer + 1))
 		return
 	# Kein Einheitentreffer: Job an aktive Einheit vergeben, sofern eine gewählt ist
 	var aktiv := _auswahl.aktiver_einheit_index
 	if aktiv < 0 or aktiv >= _stockmaenner.einheit_zahl():
 		if not ketten_nachfrage:
+			_auswahl.aktiver_einheit_index = -1
+			_auswahl.auswahl_leeren()
+			_stockmaenner.auswahl_markierung_erneuern(-1, [])
 			(_hud as Variant).meldung_setzen("Zuerst eine Einheit auswaehlen.")
 		return
 	var tier_nummer := _tiere.tier_id_bei(klick, radius)
@@ -397,7 +404,11 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 			_job_vergeben_fuer_objekt(objekt_index, _model.objekt_position(objekt_index), element_id, ketten_nachfrage)
 			return
 	if not ketten_nachfrage:
-		(_hud as Variant).meldung_setzen("Hier gibt es nichts zu tun")
+		# CP-6.2: Klick ins Leere hebt die Einheiten-Auswahl auf
+		_auswahl.aktiver_einheit_index = -1
+		_auswahl.auswahl_leeren()
+		_stockmaenner.auswahl_markierung_erneuern(-1, [])
+		(_hud as Variant).meldung_setzen("Auswahl aufgehoben.")
 
 
 

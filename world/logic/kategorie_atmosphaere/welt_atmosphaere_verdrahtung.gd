@@ -79,6 +79,17 @@ func ernte_ort_melden(welt_position: Vector2) -> void:
 	if _staub != null:
 		_staub.ernte_ort_setzen(welt_position)
 
+func sichtbar_setzen(aktiv: bool) -> void:
+	## Slice A: Schaltet alle Partikel-Darstellungen ein oder aus.
+	## Wird von der Szene aufgerufen, wenn die Kamera den Budget-Radius
+	## ueberschreitet. Spart GPU-Zeichenaufwaende bei weit entfernter Kamera.
+	if _overlayer != null:
+		_overlayer.visible = aktiv
+	if _sonne != null:
+		_sonne.visible = aktiv
+
+
+
 func sway_material_quelle() -> Callable:
 	return func() -> RefCounted: return _sway
 

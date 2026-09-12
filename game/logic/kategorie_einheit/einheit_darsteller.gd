@@ -70,3 +70,13 @@ func _auf_zustand(_neuer_zustand: Einheit_Status.Zustand) -> void:
 	if _status != null:
 		animation_setzen(_status.animation())
 		_wende_richtung(_status.blick_richtung_rechts())
+
+var _markierung: Node2D = null
+const _MarkierungSkript := preload("res://ui/logic/kategorie_ui/ui_auswahl_markierung.gd")
+
+func markierung_setzen(sichtbar: bool) -> void:
+	if _markierung == null and sichtbar:
+		_markierung = _MarkierungSkript.new()
+		add_child(_markierung)
+	if _markierung != null:
+		(_markierung as Variant).aktiv_setzen(sichtbar)

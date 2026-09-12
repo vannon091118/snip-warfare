@@ -22,7 +22,7 @@ func einrichten(start_pos: Vector2, kachel_groesse: float = 64.0, radius_kacheln
 	position = start_pos
 	var seite := float(radius_kacheln * 2 + 1) * kachel_groesse
 	_bereich_groesse = Vector2(seite, seite)
-	z_index = -1
+	z_index = 0
 	queue_redraw()
 
 func ausblenden(dauer: float = 1.0) -> void:

@@ -52,3 +52,9 @@ func windlinien_anzahl() -> int:
 
 func pollen_anzahl() -> int:
 	return maxi(int(partikel_wert("pollen_anzahl", 30.0)), 1)
+
+func budget_wert(schluessel: String, rueckfall: float) -> float:
+	## Slice A: Budget-Werte steuern Partikel-Frequenz und Kamera-Radius.
+	## Alle Zahlen kommen aus dem Pool; kein Wert ist im Code hart verdrahtet.
+	return float(_abschnitt("budget").get(schluessel, rueckfall))
+
