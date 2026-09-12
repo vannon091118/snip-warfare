@@ -7,7 +7,7 @@
     "ist_zeilen": 165
   },
   "economy/logic/storage/lager_darsteller.gd": {
-    "ist_zeilen": 163
+    "ist_zeilen": 164
   },
   "economy/logic/storage/lager_manager.gd": {
     "ist_zeilen": 164
@@ -32,7 +32,7 @@
     "ist_zeilen": 106
   },
   "population/logic/needs/pop_rassen_schema_registry.gd": {
-    "ist_zeilen": 105
+    "ist_zeilen": 106
   },
   "world/logic/kategorie_generator/generator_registry.gd": {
     "ist_zeilen": 109
@@ -49,7 +49,7 @@
     "ist_zeilen": 140
   },
   "world/logic/kategorie_orchestrator/orchestrator_manager.gd": {
-    "ist_zeilen": 228
+    "ist_zeilen": 229
   },
   "world/logic/kategorie_progression/welt_fortschritts_maschine.gd": {
     "ist_zeilen": 145
@@ -64,13 +64,13 @@
     "ist_zeilen": 121
   },
   "world/logic/kategorie_tier/tier_status.gd": {
-    "ist_zeilen": 149
+    "ist_zeilen": 150
   },
   "world/logic/kategorie_welt/fraktions_ki_maschine.gd": {
-    "ist_zeilen": 165
+    "ist_zeilen": 166
   },
   "world/logic/kategorie_welt/welt_karawanen_manager.gd": {
-    "ist_zeilen": 238
+    "ist_zeilen": 239
   },
   "world/logic/kategorie_welt/welt_model.gd": {
     "ist_zeilen": 505

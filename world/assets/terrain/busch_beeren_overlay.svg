@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 88" width="384" height="88">
   <!-- Beeren-Overlay für Busch: 4 Frames à 96x88 mit farbigen Beerenpunkten, exakt abgestimmt auf die Wind-Animation -->
-  
+
   <!-- Frame 1: Grundhaltung -->
   <g transform="translate(0 0)">
     <!-- Dunkle Beeren / Brombeeren & Heidelbeeren -->

@@ -1,6 +1,6 @@
-1. Der Nutzer verlangte, dass die vielen Leerzeichen-Fehler verschwinden und das Repo atmen kann, also schickte Shinon den Waecher fuer Teil 1 von 5 los.
-2. Ich bereinigte mit E042 --fix die Haelfte kern_logik.json, kern_modifikatoren.json, einheit_inventar_schema.gd, einheit_manager.gd, job_graben.gd, job_orchestrieren.gd, job_registry.gd und weitere Nachbarn im selben Fach.
-3. Auch job_transport.gd, rassen_schemata.json, rassen_vorlagen.json, pop_need_baum.gd, pop_rassen_schema.gd, pop_rassen_schema_registry.gd, pop_namens_generator.gd, shinon_stil_pruefer.py tragen nun LF statt CRLF und saubere Abschluesse ohne trailing Leerzeichen, Tabs nur in .gd.
+1. Der Nutzer verlangte, dass die vielen Leerzeichen-Fehler verschwinden und das Repo atmen kann, also schickte Shinon den Waecher fuer Teil 2 von 5 los.
+2. Ich bereinigte mit E042 --fix die Haelfte lauf_pruefung_welt.gd, locregel_nachlass.json, warnungs_scan.py, ui_auswahl_markierung.gd, ui_orchestrator_priority_panel.gd, ui_pop_einheit_uebersetzer.gd, hud_produktion_anzeige.gd und weitere Nachbarn im selben Fach.
+3. Auch bau_panel.gd, pop_einheit_panel.gd, pop_einheit_panel.tscn, uebergang.tscn, busch_beeren_overlay.svg, eisbaer.svg, ressource_raeuchelfleisch.svg, atmosphaere.json tragen nun LF statt CRLF und saubere Abschluesse ohne trailing Leerzeichen, Tabs nur in .gd.
 4. Der Nachlass in tools/preflight/locregel_nachlass.json glich bereits sechs Eintraege an das neue Mass an.
 5. Der volle Preflight meldet null Befunde fuer whitespace und die 85 Tests laufen gruen wie frischer Rasen.
 6. Noch zu tun bleiben die uebrigen Stapel und danach der Monolith tools/lauf_pruefung_welt.gd.

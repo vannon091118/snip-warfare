@@ -45,12 +45,12 @@ func _anzeigen() -> void:
 	if daten.is_empty():
 		visible = false
 		return
-	
+
 	_titel.text = "Einheit %d — %s" % [daten.index, daten.rasse]
 	_job_label.text = "Job: %s" % (daten.job if daten.job != "" else "keiner")
 	_zustand_label.text = "Zustand: %s" % daten.zustand
 	_hp_label.text = "HP: %d" % daten.hp
-	
+
 	# Hunger mit Farbskala
 	var hunger: float = daten.hunger_wert
 	_hunger_bar.value = hunger * 100.0
@@ -59,7 +59,7 @@ func _anzeigen() -> void:
 	_hunger_bar.modulate = hunger_farbe
 	_hunger_label.text = "Hunger: %d%%" % int(hunger * 100)
 	_hunger_label.add_theme_color_override("font_color", hunger_farbe)
-	
+
 # Wärme-Wert
 	var waerme: float = daten.waerme_wert
 	_waerme_bar.value = (waerme + 1.0) * 50.0  # -1..1 auf 0..100
@@ -68,7 +68,7 @@ func _anzeigen() -> void:
 	_waerme_bar.modulate = waerme_farbe
 	_waerme_label.text = "Wärme: %.2f" % waerme
 	_waerme_label.add_theme_color_override("font_color", waerme_farbe)
-	
+
 	# Stimmungs-Modifikatoren als scrollbare Liste
 	_mood_container.queue_free_children()
 	if daten.mood:
@@ -77,7 +77,7 @@ func _anzeigen() -> void:
 		mood_label.autowrap_mode = TextServer.AUTOWRAP_WORD
 		mood_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		_mood_container.add_child(mood_label)
-		
+
 		if daten.mood.grund != "":
 			var grund_label := Label.new()
 			grund_label.text = "Grund: %s" % daten.mood.grund
@@ -85,7 +85,7 @@ func _anzeigen() -> void:
 			grund_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			grund_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8, 1.0))
 			_mood_container.add_child(grund_label)
-		
+
 		if daten.mood.wirkung != "":
 			var wirkung_label := Label.new()
 			wirkung_label.text = "Wirkung: %s" % daten.mood.wirkung
@@ -93,7 +93,7 @@ func _anzeigen() -> void:
 			wirkung_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			wirkung_label.add_theme_color_override("font_color", Color(0.7, 0.9, 0.7, 1.0))
 			_mood_container.add_child(wirkung_label)
-		
+
 		if daten.mood.kette != "":
 			var kette_label := Label.new()
 			kette_label.text = "Kette: %s (Stufe %d)" % [daten.mood.kette, daten.mood.stufe]
@@ -101,7 +101,7 @@ func _anzeigen() -> void:
 			kette_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			kette_label.add_theme_color_override("font_color", Color(0.9, 0.7, 0.9, 1.0))
 			_mood_container.add_child(kette_label)
-	
+
 	# Inventar-Slots
 	_inventar_grid.queue_free_children()
 	if daten.inventar:

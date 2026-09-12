@@ -31,7 +31,7 @@ func aktualisieren() -> void:
 		return
 	for kind in _button_container.get_children():
 		kind.queue_free()
-	
+
 	var eintraege := _panel_logik.eintraege_ermitteln(_definitionen, _fortschritt, _steuerung)
 	for eintrag: Dictionary in eintraege:
 		var btn := Button.new()
@@ -39,17 +39,17 @@ func aktualisieren() -> void:
 		var gesperrt := bool(eintrag.get("gesperrt", false))
 		var label_text := str(eintrag.get("name", geb_id))
 		var kosten_text := str(eintrag.get("kosten_text", ""))
-		
+
 		btn.text = "%s\n(%s)" % [label_text, kosten_text]
 		btn.tooltip_text = str(eintrag.get("tooltip", ""))
 		btn.disabled = gesperrt
 		btn.custom_minimum_size = Vector2(130, 52)
-		
+
 		var icon_pfad := str(eintrag.get("icon_pfad", ""))
 		if icon_pfad != "" and ResourceLoader.exists(icon_pfad):
 			btn.icon = load(icon_pfad)
 			btn.expand_icon = true
-		
+
 		btn.pressed.connect(func() -> void:
 			bau_gewaehlt.emit(geb_id)
 		)
