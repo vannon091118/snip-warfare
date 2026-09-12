@@ -40,7 +40,10 @@ def test_gebaeude_manager_bauplan():
     manager_pfad = ROOT / "world" / "logic" / "kategorie_objekt" / "gebaeude_manager.gd"
     inhalt = manager_pfad.read_text(encoding="utf-8")
     assert "func bauplan_anfordern(" in inhalt
-    assert "_ist_material_vollstaendig(" in inhalt
+    laufzeit_pfad = ROOT / "world" / "logic" / "kategorie_objekt" / "gebaeude_laufzeit.gd"
+    laufzeit = laufzeit_pfad.read_text(encoding="utf-8")
+    assert "_ist_material_vollstaendig(" in laufzeit, "Die Material-Pruefung wohnt in der Laufzeit"
+    assert "_laufzeit.gebaeude_ticken(" in inhalt, "Der Manager leitet den Tick an die Laufzeit weiter"
 
 def test_ui_rechtsklick_priorisierung():
     maschine_pfad = ROOT / "ui" / "logic" / "kategorie_ui" / "ui_job_vergabe_maschine.gd"

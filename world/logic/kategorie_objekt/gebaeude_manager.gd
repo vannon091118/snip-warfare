@@ -19,6 +19,9 @@ signal status_geaendert(zeilen: Array[String])
 var _definitionen := Gebaeude_DefinitionRegistry.new()
 var _bau_maschine := Gebaeude_BauMaschine.new()
 var _produktions_maschine := Gebaeude_ProduktionsMaschine.new()
+## Die Laufzeit trägt den Tick-Ausführungsblock: Sie bucht die Beschlüsse
+## der zwei Zustandsmaschinen und besitzt selbst keine Übergangsrechnung.
+var _laufzeit := Gebaeude_Laufzeit.new()
 var _fortschritt: Welt_FortschrittsMaschine = null
 
 ## Kategorie logik: Verbindungen zu anderen Domänen und Tick.
@@ -59,6 +62,7 @@ func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_
 	_lager = lager
 	_fortschritt = fortschritt
 	_welt_world = welt_world
+	_laufzeit.einrichten(model, ressourcen, lager, _definitionen, _bau_maschine, _produktions_maschine, fortschritt, _meldung_text, _gebaeude_fertig_call)
 
 func modell_wechseln(neues_modell: Welt_Model, welt_world: Welt_World = null) -> void:
 	## Kartenwechsel-Handshake: Tauscht die Modell-Referenz atomar aus.
@@ -66,9 +70,8 @@ func modell_wechseln(neues_modell: Welt_Model, welt_world: Welt_World = null) ->
 	## werden auf der neuen Karte gesucht und getickt.
 	_model = neues_modell
 	_welt_world = welt_world
+	_laufzeit.model_setzen(neues_modell)
 	_letzte_statuszeilen = ""
-
-
 
 func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	# Spieler löst den Bau aus: Freigabe, Kosten und Lager werden vorher
@@ -254,6 +257,12 @@ func status_zeilen() -> Array[String]:
 			zeilen.append("%s: %s" % [definition.angezeigter_name, phase_text])
 	return zeilen
 
+func _meldung_text(meldung: String) -> void:
+	gebaeude_meldung.emit(meldung)
+
+func _gebaeude_fertig_call(gebaeude_id: String) -> void:
+	gebaeude_fertiggestellt.emit(gebaeude_id)
+
 func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
 	if _welt_world != null and _model != null:
@@ -263,7 +272,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 			if Engine.get_process_frames() % 6 != 0:
 				return
 	
-	if _model == null or _ressourcen == null or _lager == null:
+	if not _laufzeit.bereit():
 		return
 	_melde_status_wenn_neu()
 	for index in _model.objekt_anzahl():
@@ -273,9 +282,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 		var definition := _definitionen.definition_fuer(gebaeude_id)
 		if definition == null:
 			continue
-		_bau_ticken(index, definition)
-		if _bau_fertig(index):
-			_produktion_ticken(index, definition)
+		_laufzeit.gebaeude_ticken(index, definition)
 
 func _melde_status_wenn_neu() -> void:
 	# Doppelmeldungsschutz: Nur ein echter Wechsel der Zeilen wird gemeldet.
@@ -286,110 +293,9 @@ func _melde_status_wenn_neu() -> void:
 	_letzte_statuszeilen = zusammengefasst
 	status_geaendert.emit(zeilen)
 
-func _bau_fertig(index: int) -> bool:
-	var zustand := {
-		"phase": int(_model.objekt_feld(index, "bau_phase", 0)),
-		"fortschritt": int(_model.objekt_feld(index, "bau_fortschritt", 0)),
-	}
-	return _bau_maschine.ist_fertig(zustand)
-
-func _ist_material_vollstaendig(index: int) -> bool:
-	var bedarf: Dictionary = _model.objekt_feld(index, "bedarf", {})
-	if bedarf.is_empty():
-		return true
-	var geliefert: Dictionary = _model.objekt_feld(index, "geliefert", {})
-	for ressource: String in bedarf.keys():
-		var soll := int(bedarf.get(ressource, 0))
-		var ist := int(geliefert.get(ressource, 0))
-		if ist < soll:
-			return false
-	return true
-
-func _bau_ticken(index: int, definition: Gebaeude_Definition) -> void:
-	var zustand := {
-		"phase": int(_model.objekt_feld(index, "bau_phase", 0)),
-		"fortschritt": int(_model.objekt_feld(index, "bau_fortschritt", 0)),
-	}
-	if _bau_maschine.ist_fertig(zustand):
-		return
-	var material_voll := _ist_material_vollstaendig(index)
-	var neu := _bau_maschine.tick(zustand, definition.bauzeit_ticks, material_voll)
-	_model.objekt_feld_setzen(index, "bau_phase", int(neu["phase"]))
-	_model.objekt_feld_setzen(index, "bau_fortschritt", int(neu["fortschritt"]))
-	_model.objekt_feld_setzen(index, "bau_ziel_ticks", int(neu.get("ziel_ticks", definition.bauzeit_ticks)))
-	if _bau_maschine.ist_fertig(neu):
-		# Bau abgeschlossen: Produktion geht in den Wartezustand.
-		var prod := _produktions_maschine.starten(Gebaeude_ProduktionsMaschine.neuer_zustand())
-		_model.objekt_feld_setzen(index, "prod_phase", int(prod["phase"]))
-		_model.objekt_feld_setzen(index, "prod_fortschritt", 0)
-		_model.objekt_feld_setzen(index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
-		gebaeude_meldung.emit("%s ist fertig gebaut und wartet auf Eingänge." % definition.angezeigter_name)
-		# Die Progressions-Kette erfährt den Abschluss direkt: Wer dem Manager
-		# eine Maschine reicht, muss sie nicht zusätzlich verdrahten; das
-		# Signal bleibt für reine Beobachter wie das HUD daneben stehen.
-		if _fortschritt != null:
-			_fortschritt.gebaeude_fertiggestellt(definition.id)
-		gebaeude_fertiggestellt.emit(definition.id)
-
-func _produktion_ticken(index: int, definition: Gebaeude_Definition) -> void:
-	var zustand := {
-		"phase": int(_model.objekt_feld(index, "prod_phase", 0)),
-		"fortschritt": int(_model.objekt_feld(index, "prod_fortschritt", 0)),
-	}
-	var lager_index := _lager.naechstes_lager_fuer(_model.objekt_position(index))
-	var eingang_ok := lager_index >= 0 and _eingang_verfuegbar(definition, lager_index)
-	var lager_ok := lager_index >= 0 and _lager.hat_lagerplatz(lager_index, _output_menge(definition))
-	var neu := _produktions_maschine.tick(zustand, definition, eingang_ok, lager_ok)
-	match str(neu.get("aktion", "keine")):
-		"input_ziehen":
-			if _inputs_entnehmen(definition, lager_index):
-				gebaeude_meldung.emit("%s beginnt zu produzieren." % definition.angezeigter_name)
-			else:
-				neu = _produktions_maschine.phase_erzwingen(neu, Gebaeude_ProduktionsMaschine.Phase.WARTET_EINGANG)
-		"output_legen":
-			if _outputs_einlagern(definition, index):
-				var namen: Array[String] = []
-				for output: Dictionary in definition.outputs:
-					namen.append("%d %s" % [int(output.get("menge", 0)), str(output.get("ressource", ""))])
-				gebaeude_meldung.emit("%s hat %s hergestellt und eingelagert." % [definition.angezeigter_name, ", ".join(namen)])
-			else:
-				neu = _produktions_maschine.phase_erzwingen(neu, Gebaeude_ProduktionsMaschine.Phase.WARTET_AUSGANG)
-	_model.objekt_feld_setzen(index, "prod_phase", int(neu.get("phase", zustand["phase"])))
-	_model.objekt_feld_setzen(index, "prod_fortschritt", int(neu.get("fortschritt", zustand["fortschritt"])))
-	_model.objekt_feld_setzen(index, "prod_ziel_ticks", int(neu.get("ziel_ticks", definition.dauer_ticks)))
-
-func _eingang_verfuegbar(definition: Gebaeude_Definition, lager_index: int) -> bool:
-	# Kumulative Pruefung ueber die Ressourcen-Zustaendigkeit: Gleiche
-	# Eingangsressourcen werden summiert, bevor gegen den Bestand geprueft
-	# wird, damit doppelte Eingaenge nicht faelschlich als gedeckt gelten.
-	return _ressourcen.kann_mehrfach_entnehmen(definition.inputs, lager_index)
-
-func _inputs_entnehmen(definition: Gebaeude_Definition, lager_index: int) -> bool:
-	# Atomare Entnahme aller Eingaenge: Erst kumulativ geprueft, dann gebucht.
-	return _ressourcen.mehrfach_entnehmen(definition.inputs, lager_index)
-
-func _outputs_einlagern(definition: Gebaeude_Definition, index: int) -> bool:
-	if _model == null or _ressourcen == null:
-		return false
-	# Outputs gehen über die Erntebuchung ins Lager, das der Produktions-
-	# position am nächsten liegt; keine zweite Lagerlogik.
-	for output: Dictionary in definition.outputs:
-		var menge := int(output.get("menge", 0))
-		if menge <= 0:
-			continue
-		_ressourcen.ernte_position_setzen(_model.objekt_position(index))
-		_ressourcen.hinzufuegen(str(output.get("ressource", "")), menge)
-	return true
-
-func _output_menge(definition: Gebaeude_Definition) -> int:
-	var summe := 0
-	for output: Dictionary in definition.outputs:
-		summe += int(output.get("menge", 0))
-	return summe
-
 func _auf_menue_geoeffnet() -> void:
-	# Menü-Gegenprüfung: Alle Gebäude-Fortschritte werden prozentual auf die
-	# aktuell geltenden effektiven Zeiten skaliert (nur bei Menü-Öffnung).
+	# Menü-Gegenprüfung: Die Skalierung rechnet die Laufzeit; der Manager
+	# leitet nur pro Gebäude an sie weiter.
 	if _model == null:
 		return
 	for index in _model.objekt_anzahl():
@@ -399,19 +305,4 @@ func _auf_menue_geoeffnet() -> void:
 		var definition := _definitionen.definition_fuer(gebaeude_id)
 		if definition == null:
 			continue
-		var bau_zustand := {
-			"phase": int(_model.objekt_feld(index, "bau_phase", 0)),
-			"fortschritt": int(_model.objekt_feld(index, "bau_fortschritt", 0)),
-			"ziel_ticks": int(_model.objekt_feld(index, "bau_ziel_ticks", definition.bauzeit_ticks)),
-		}
-		var bau_neu := _bau_maschine.abstimmen(bau_zustand, definition.bauzeit_ticks)
-		_model.objekt_feld_setzen(index, "bau_fortschritt", int(bau_neu["fortschritt"]))
-		_model.objekt_feld_setzen(index, "bau_ziel_ticks", int(bau_neu.get("ziel_ticks", definition.bauzeit_ticks)))
-		var prod_zustand := {
-			"phase": int(_model.objekt_feld(index, "prod_phase", 0)),
-			"fortschritt": int(_model.objekt_feld(index, "prod_fortschritt", 0)),
-			"ziel_ticks": int(_model.objekt_feld(index, "prod_ziel_ticks", definition.dauer_ticks)),
-		}
-		var prod_neu := _produktions_maschine.abstimmen(prod_zustand, definition)
-		_model.objekt_feld_setzen(index, "prod_fortschritt", int(prod_neu["fortschritt"]))
-		_model.objekt_feld_setzen(index, "prod_ziel_ticks", int(prod_neu.get("ziel_ticks", definition.dauer_ticks)))
+		_laufzeit.abstimmen(index, definition)

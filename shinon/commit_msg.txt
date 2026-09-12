@@ -1,8 +1,15 @@
-1. Der Kommandant schickte mich in die Generatorwerkstatt, wo welt_generator.gd mit 510 Zeilen Rechnung und Stempel-Regeln in einem Kessel kochte.
-2. Zuerst warf ich den toten Legacy-Zweig _biom_fliese_fuer_legacy hinaus, der nur ein leerer Umschlag zum eigenen Doppelsprung war und von niemandem mehr gelesen wurde.
-3. Dann zog das Cluster-Stempeln in sein eigenes Haus generator_objekt_stempel.gd, das jetzt Chance, Mittelpunkt und Platz-Ziehung ortsfest aus dem Chunk-Zustand wuerfelt.
-4. Die Biom-Fliesen-Verteilung zog in generator_fliesen_wahl.gd und trägt dort den Tiefen-Modifikator, der je Ebene tiefer mehr Fels und weniger organisches tischt.
-5. Der Generator blieb bei 383 Zeilen als reiner Ablauf-Herr, sein Nachlass-Eintrag sank auf den neuen Ist-Wert, und die zwei neuen Maschinen halten ihre Grenzen von Anfang an.
-6. Der Preflight-Voll-Lauf meldet keinen Befund, alle 85 Tests laufen gruen, und die Weltkarte stempelt dieselben Cluster wie zuvor, weil jede Wurfzahl ortsfest bleibt.
-7. Auf der Baustelle sichtbar: Neue Karten zeigen Wälder, Steinfields und Tier-Bauten in denselben Mustern, nur kocht jetzt jede Rechnung in ihrem eigenen Kessel.
-8. Als Naechstes zerlege ich gebaeude_manager.gd und lagere den Produktions-Loop in eine eigene Maschine aus.
+1. Der Nutzer hat befohlen, die Monster-Dateien des Projekts zu zerlegen, und der Gebäude-Manager mit 417 Zeilen war das nächste Opfer auf der Liste.
+
+2. Der Manager trug zwei Leben: Er verwaltete den Bau und führte zugleich jeden Tick der Bau- und Produktionsmaschinen samt aller Lager-Buchungen selbst aus, weil frühere Slices immer nur den Manager verlängert haben statt eine eigene Spitze zu bauen.
+
+3. In world/logic/kategorie_objekt/gebaeude_manager.gd habe ich den gesamten Tick-Ausführungsblock herausgetrennt: Bau-Ausführung, Produktions-Ausführung mit Ein- und Ausgangs-Buchung und die Menü-Abstimmung wohnen nun in der neuen Klasse Gebaeude_Laufzeit in world/logic/kategorie_objekt/gebaeude_laufzeit.gd, die nur noch die Beschlüsse der zwei Zustandsmaschinen bucht.
+
+4. Der Manager selbst ist auf 308 Zeilen geschrumpft und behält nur, was ihm gebührt: Bauaufträge, Baupläne, die Platz- und Voraussetzungs-Prüfung, die Statuszeilen für das HUD und die Weiterleitung der Weltuhr-Ticks an die Laufzeit über zwei Rückruf-Verbindungen.
+
+5. Der Test in test_baustellen_logistik.py hat die Material-Prüfung noch im Manager gesucht; ich habe die Assertion auf die neue Wohnort-Ordnung gerichtet und verlange nun zusätzlich, dass der Manager den Tick wirklich an die Laufzeit weiterleitet.
+
+6. In tools/preflight/locregel_nachlass.json habe ich den Ist-Wert des Managers von 418 auf 308 Zeilen gesenkt, damit die Datei nicht heimlich wieder in ihre alte Monster-Gestalt zurückwachsen kann.
+
+7. Der volle Preflight läuft ohne Befunde, alle 85 Tests sind grün, und die Warnungs-Prüfung ist still, nachdem der verschattete Parameter im Meldungs-Rückruf umbenannt wurde.
+
+8. Noch offen sind der Renderer mit seinem Sichtbereich-Sammler, die Basis-Klassen, die Lager- und Tier-Domäne, die Population, die übrigen Maschinen und am Ende das leere Nachlass-Verzeichnis, denn jede Zeile, die heute überlebt, ist eine Zeile, die morgen wiederkommt.
