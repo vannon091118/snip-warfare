@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 96" width="112" height="96">
+  <ellipse cx="56" cy="86" rx="46" ry="8" fill="#7A9549"/>
+  <!-- Zerfallene Mauerzinnen -->
+  <polygon points="18,84 18,48 30,48 30,56 42,56 42,38 58,38 58,84" fill="#6A6256"/>
+  <polygon points="20,82 20,50 28,50 28,58 40,58 40,40 56,40 56,82" fill="#888074"/>
+  <!-- Rechter Mauerrest -->
+  <polygon points="68,84 68,44 82,44 82,60 94,60 94,84" fill="#6A6256"/>
+  <polygon points="70,82 70,46 80,46 80,62 92,62 92,82" fill="#888074"/>
+  <!-- Verfallene Trümmer am Boden -->
+  <polygon points="44,82 52,74 60,78 54,84" fill="#A49C90"/>
+  <polygon points="32,84 38,78 44,82" fill="#787064"/>
+</svg>

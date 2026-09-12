@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <ellipse cx="64" cy="116" rx="52" ry="9" fill="#7A9549"/>
+  <ellipse cx="64" cy="114" rx="48" ry="7" fill="#8FAB58"/>
+  <!-- Berg Basis / Massiv -->
+  <polygon points="16,112 36,52 64,16 92,52 112,112" fill="#5A5248"/>
+  <polygon points="18,110 38,54 64,20 90,54 110,110" fill="#787064"/>
+  <!-- Schattenseite / Schichten -->
+  <polygon points="64,20 90,54 110,110 64,110" fill="#655E54"/>
+  <!-- Lichtseite & Felskanten -->
+  <polygon points="64,20 38,54 18,110 64,110" fill="#8C8478"/>
+  <polygon points="64,20 50,60 64,100" fill="#ABA294"/>
+  <polygon points="64,20 60,35 64,40 68,35" fill="#EAE5DC"/>
+</svg>

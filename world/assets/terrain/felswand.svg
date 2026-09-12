@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
+  <ellipse cx="48" cy="86" rx="38" ry="7" fill="#7A9549"/>
+  <!-- Steile Klippenwand -->
+  <polygon points="12,84 10,28 32,16 68,14 84,26 82,84" fill="#5A5248"/>
+  <polygon points="14,82 12,30 34,18 66,16 82,28 80,82" fill="#787064"/>
+  <!-- Schichtung & Kanten -->
+  <polygon points="14,82 38,40 54,82" fill="#8C8478"/>
+  <polygon points="54,82 68,34 80,82" fill="#655E54"/>
+  <polygon points="34,18 52,24 66,16 48,16" fill="#ABA294"/>
+  <path d="M 38,40 L 44,56 L 40,70" stroke="#48423A" stroke-width="2" fill="none"/>
+</svg>

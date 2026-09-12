@@ -1,23 +1,8 @@
-1. Der Nutzer verlangte mit Schärfe und Übersicht, dass die peinlichen visuellen Lücken der bisherigen Welt endlich geschlossen werden, indem die hierarchische Tiefensortierung für Bäume, Tiere und Siedler greift und ein dezent pulsierender Landeplatz dem Spieler auf der lokalen Karte den ersten Bauplatz weist.
-
-2. In welt.tscn aktiviert Shinon das hierarchische Tiefensortieren auf der Wurzel der Welt sowie auf Karte und Tieren, damit der visuelle Baum nicht länger wie ein ungestapelter Haufen von Scherenschnitten wirkt.
-
-3. In welt_renderer.gd bekommt der Renderer selbst das Sortierfeuer eingehaucht, während der Fliesenboden fest auf eine negative Tiefenebene verbannt wird, damit kein saftiges Grasbüschel je wieder einen ausgewachsenen Baumstamm überblendet.
-
-4. In tier_manager.gd schaltet die Tierverwaltung die Ebenensortierung für ihre wandernden Geschöpfe scharf, sodass Bären und Hasen sauber durch die Flora schreiten.
-
-5. In tier_darsteller.gd wird der geometrische Fußpunkt der Tiere exakt auf die Bodenkante kalibriert, statt die Bestien an ihrer Magenmitte im Raum schweben zu lassen.
-
-6. In einheit_manager.gd erhält die Siedlerverwaltung den Befehl zur räumlichen Einordnung, damit arbeitende Strichmännchen den Erdboden unter ihren Füßen spüren.
-
-7. In einheit_darsteller.gd wird die Darstellungsachse der Pioniere auf die Fußspitzen verschoben, wodurch der Kopf der Holzfäller nun stolz vor Baumkronen und hinter dicken Felsblöcken aufragt.
-
-8. In welt_landeplatz_anzeige.gd erwacht eine neue visuelle Markierung zum Leben, die den Startbereich mit gestrichelten Kanten, taktischen Eckwinkeln und feinem Atem-Pulsieren umhüllt, ohne die Simulationslogik mit weltfremden Daten zu belasten.
-
-9. In welt.gd wird der Landeplatz zur Geburtsstunde der Welt feierlich verankert und beim allerersten Bau des wärmenden Lagerfeuers elegant ins Nichts verabschiedet.
-
-10. In test_y_sort_und_landeplatz.py beweisen sechs frische Prüfungen unbestechlich, dass Tiefensortierung, Fußpunkte, Kachelhintergrund und Landeplatzanzeige im Einklang schwingen.
-
-11. In ROADMAP.md sind die Checkpunkte für Maßstab und Landeplatzanzeige feierlich als erfüllt abgehakt, während in commit_msg.txt Shinon diese gelungene Schlichtung der visuellen Ebenen für die Nachwelt festhält.
-
-12. Als Nächstes müssen die Landschaftsgeneratoren für Flüsse, Felsmassive und Erzadern aus Slice drei in Angriff genommen werden, damit die Siedler nicht auf einer sterilen Einöde verhungern.
+1. Der Kommandant verlangte nach mehr als nur trostlosem Grasland und forderte neue monumentale Landschaftsobjekte fuer die Wildnis ein.
+2. Shinon meisselte daher finstere Gebirgsspitzen in objekt_berg.gd und gab ihnen mit berg.svg ein schroffes Antlitz fuer die Kachelwelt.
+3. Unpassierbare Felsmassive ragen nun ueber objekt_felswand.gd empor und schneiden Wanderern mit felswand.svg den Weg ab.
+4. Tief im Stein schlummern funkelnde Reichtuemer, codiert in objekt_erzader.gd und visualisiert ueber erzader.svg fuer gierige Spitzhacken.
+5. Verfallene Mauern vergangener Epochen erwachen in objekt_ruine.gd zum Leben und locken mit ruine.svg mutige Schatzsucher an.
+6. Uralte Mysterien versammeln sich um monolithische Steine in objekt_steinkreis.gd mit der passenden Silhouette in steinkreis.svg.
+7. Die mechanische Integritaet dieser Artefakte wird unerbittlich durch test_landschaft_objekte.py im Teststand abgesichert.
+8. Nun muessen im naechsten Schritt die Generatoren fuer Gewaesser und Felsmassive verankert werden, damit die Natur sich selbst ordnet.

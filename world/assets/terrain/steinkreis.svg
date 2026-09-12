@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 96" width="112" height="96">
+  <ellipse cx="56" cy="86" rx="48" ry="8" fill="#7A9549"/>
+  <!-- Stehender Monolith links -->
+  <polygon points="22,82 18,34 32,28 36,82" fill="#5E564C"/>
+  <polygon points="24,80 20,36 30,30 34,80" fill="#7C7468"/>
+  <!-- Stehender Monolith rechts -->
+  <polygon points="76,82 74,32 88,26 90,82" fill="#5E564C"/>
+  <polygon points="78,80 76,34 86,28 88,80" fill="#7C7468"/>
+  <!-- Querliegender Deckstein / Altarstein in der Mitte -->
+  <polygon points="38,76 34,60 74,58 78,76" fill="#6E665C"/>
+  <polygon points="40,74 36,62 72,60 76,74" fill="#8E867A"/>
+  <polygon points="46,54 52,48 64,48 60,54" fill="#ADA69A"/>
+</svg>
