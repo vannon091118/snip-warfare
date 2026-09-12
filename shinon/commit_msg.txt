@@ -1,8 +1,6 @@
-1. Der Nutzer verlangte eine Dokumentation die zu jeder Zeit den echten Stand des Projekts erzaehlt, deshalb blieb ich nicht bei der blossen Versionszeile stehen und nahm auch die Statuszahlen ins Visier.
-2. Beim Nachpruefen der Dokumente fand ich drei frisch verunstaltete Zeilen: README.md sprach von einem Fundament mit 227, 11, funktionierender Wegplanung, ROADMAP.md von 227 auf 251 und INDEX.md von 227 mit class_name, weil der Nachzug die Substantive neben den Zahlen gefressen hatte.
-3. Die Ursache steckte in den Mustern des Nachzugs, denn sie umfassten das ganze Wort und wurden anschliessend durch die blosse Zahl ersetzt, weshalb jedes Klassen und jedes Szenen aus dem Satz fiel.
-4. In tools/preflight/pruef_version.py tragen die Muster jetzt eine Gruppe zahl und eine Gruppe rest, sodass ein Ersatz ausschliesslich die Zahl tauscht und das Substantiv daneben unangetastet stehen laesst.
-5. Dieselbe Datei zaehlt nun Klassen, GDScript-Dateien und Szenen mit derselben Definition wie der Preflight und meldet als E043 jede falsche Statuszahl mit Datei und echter Zeile, damit die Dokumentation nicht still eine alte Wahrheit weitererzaehlt.
-6. tools/version_bump.py benutzt diese gemeinsamen Helfer statt eigener Muster, wodurch Bump und Waechter nie mehr zwei verschiedene Meinungen ueber dieselbe Zahl vertreten koennen.
-7. tools/preflight/selbsttest.py prueft den Nachzug an einem Probefundament aus Klassen, Szenen und GDScript-Dateien, damit ein Werkzeug das Substantiv nicht erneut frisst und dieser Fehler nicht als gruenes Licht durchgeht.
-8. Der Beweis steht bereits: Eine kuenstlich auf 999 verdrehte Zahl in README.md erzeugte den Befund E043 mit Datei und Zeile 152, und der Probelauf von V0.01 auf V0.02 und zurueck auf V0.01 liess jedes Wort an seinem Platz.
+1. Der Nutzer verlangte die globale Nachziehung der Dokumentation, deshalb brachte ich jetzt die vier letzten Dokumente in den Versionsvertrag, die bis dahin ohne Versionszeile dastanden.
+2. AGENTEN_INDEX.md traegt als Uebergangsseite zur neuen Uebersicht INDEX.md nun dieselbe Versionszeile, damit auch der alte Einstieg nicht als blinder Fleck durchging.
+3. In ROADMAP.md stand der Klassenbestand noch mit der alten Zahl von 250 GDScript-Dateien und die Szenenzeile noch mit 8 aktiven Szenen, obwohl im Baum laengst 251 Dateien und 11 Szenen liegen, weshalb beide Zahlen jetzt den echten Stand erzaehlen.
+4. tools/godot/README.md und world/assets/README.md erhielten ebenfalls die Versionszeile, damit auch die Erklaerungen der Werkzeuge und der Bilddateien demselben Vertrag folgen wie die Verfassung.
+5. Damit fuehrt der Waechter E043 jedes Projekt-Dokument mit, und der Nachzug laeuft ueber tools/version_bump.py ohne dass ein Agent daran erinnert werden muss.
+6. Der volle Preflight bleibt gruen, die 85 Tests laufen durch, und jede Zeile der Dokumentation nennt weiterhin den echten Umstand des Projekts statt einen frommen Wunsch.

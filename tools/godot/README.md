@@ -24,3 +24,5 @@ Siehe `python tools/preflight.py --hilfe-fehler` für Zuordnung.
 
 Prozess Kill ist fail-closed: Timeout 300s, hängende Godot Prozesse werden
 gekilled und als E018 gemeldet, kein stilles Grün.
+
+Version: V0.01

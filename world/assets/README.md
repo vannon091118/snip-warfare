@@ -193,3 +193,5 @@ Die Tierbewegung läuft ebenfalls über den globalen Tick (Weltuhr, 24 Ticks/Sek
 - Platzierte Objekte lassen sich erneut anfassen und per Drag & Drop verschieben; mit dem Werkzeug „Entfernen" löscht man Objekte.
 - Karten sind relativ groß: Standard 32x24 Kacheln à 512 Pixel (16384x12288 Pixel Weltgröße), beliebig zwischen 4x4 und 64x64 Kacheln möglich. Die Kamera folgt den Pfeiltasten, das Mausrad zoomt.
 - Gespeicherte Welten liegen als JSON im Benutzerordner und enthalten Kartengröße, Fliesenraster und Objektliste mit Positionen.
+
+Version: V0.01
