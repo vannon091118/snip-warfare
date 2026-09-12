@@ -13,7 +13,6 @@ const GRENZE_LINKS := -140.0
 var _zustaende := Ui_MenueZustaende.new()
 var _zustand: Ui_MenueZustaende.Zustand = Ui_MenueZustaende.Zustand.HAUPTMENUE
 var _laeufer: Array[AnimatedSprite2D] = []
-var _richtungen: Array[float] = []
 
 ## Kategorie logik: Menüführung, Dialoge und Läufer-Darstellung.
 
@@ -45,19 +44,19 @@ func _erzeuge_laeufer() -> void:
 	var textur_rechts: Texture2D = load("res://world/assets/ui/laeufer_rechts.svg")
 	var textur_links: Texture2D = load("res://world/assets/ui/laeufer_links.svg")
 	var konfigurationen := [
-		{"textur": textur_rechts, "start": Vector2(-60, 150), "geschwindigkeit": 65.0},
-		{"textur": textur_rechts, "start": Vector2(-140, 250), "geschwindigkeit": 85.0},
-		{"textur": textur_links, "start": Vector2(2100, 360), "geschwindigkeit": -75.0},
+		{"textur": textur_rechts, "y": 150.0, "geschwindigkeit": 65.0},
+		{"textur": textur_rechts, "y": 250.0, "geschwindigkeit": 85.0},
+		{"textur": textur_links, "y": 360.0, "geschwindigkeit": -75.0},
 	]
 	for konfig: Dictionary in konfigurationen:
 		var laeufer := AnimatedSprite2D.new()
 		laeufer.sprite_frames = _frames_aus_quelle(konfig["textur"])
 		laeufer.animation = "laufen"
-		laeufer.position = konfig["start"]
+		laeufer.position = _heimat_fuer(konfig["geschwindigkeit"], konfig["y"])
 		laeufer.play()
 		_laeufer.append(laeufer)
-		_richtungen.append(signf(konfig["geschwindigkeit"]))
 		_laeufer_ebene.add_child(laeufer)
+		_patrouille_starten(laeufer, konfig["geschwindigkeit"])
 
 func _frames_aus_quelle(textur: Texture2D) -> SpriteFrames:
 	# Schneidet die vier Frames (je 48x64) aus dem Sprite-Sheet.
@@ -72,14 +71,25 @@ func _frames_aus_quelle(textur: Texture2D) -> SpriteFrames:
 		frames.add_frame("laufen", atlas)
 	return frames
 
-func _process(delta: float) -> void:
-	for index in _laeufer.size():
-		var laeufer := _laeufer[index]
-		laeufer.position.x += _richtungen[index] * 75.0 * delta
-		if laeufer.position.x > GRENZE_RECHTS:
-			laeufer.position.x = GRENZE_LINKS
-		elif laeufer.position.x < GRENZE_LINKS:
-			laeufer.position.x = GRENZE_RECHTS
+func _heimat_fuer(geschwindigkeit: float, y: float) -> Vector2:
+	# Der Start liegt an der Grenze, in die der Läufer hineinläuft.
+	if geschwindigkeit > 0.0:
+		return Vector2(GRENZE_LINKS, y)
+	return Vector2(GRENZE_RECHTS, y)
+
+func _patrouille_starten(laeufer: AnimatedSprite2D, geschwindigkeit: float) -> void:
+	# Die Deko-Patrouille gehört dem Tween der Engine: konstante Fahrt
+	# bis zur gegenüberliegenden Grenze, dort der Sprung zur Heimat, im Loop.
+	# Die Höhe bleibt unverändert, nur die X-Achse patrouilliert.
+	var ziel_x := GRENZE_RECHTS if geschwindigkeit > 0.0 else GRENZE_LINKS
+	var heimat_x := GRENZE_LINKS if geschwindigkeit > 0.0 else GRENZE_RECHTS
+	var dauer := absf(ziel_x - heimat_x) / absf(geschwindigkeit)
+	var tween := laeufer.create_tween().set_loops()
+	tween.tween_property(laeufer, "position:x", ziel_x, dauer)
+	tween.tween_callback(_auf_grenze_angekommen.bind(laeufer, heimat_x))
+
+func _auf_grenze_angekommen(laeufer: AnimatedSprite2D, heimat_x: float) -> void:
+	laeufer.position.x = heimat_x
 
 func _auf_start() -> void:
 	# Neues Spiel startet über die World Map: Der Spieler wählt zuerst

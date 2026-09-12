@@ -1,21 +1,20 @@
 extends Node2D
 class_name Welt_SchadenAnzeige
 ## Visuelles Feedback eines Schadens-Ereignisses: Sie zeigt am Ziel eine
-## rote Zahl mit Schadensart, schwebt tick-basiert nach oben und verblasst.
-## Sie liest nur die Weltuhr und ändert keinen Zustand.
+## rote Zahl mit Schadensart, schwebt als Tween der Engine nach oben und
+## verblasst. Kein Uhr-Abo, keine Tick-Buchhaltung: Der Knoten rechnet
+## nichts, die Dauer kommt aus derselben zentralen Faktor-Übersetzung
+## wie vorher der Tick-Lauf.
 
 ## Kategorie daten: der anzuzeigende Zustand.
 var schaden: int = 0
 var art: String = "physisch"
 var icon_pfad: String = "res://world/assets/ui/schaden.svg"
 var _start_position := Vector2.ZERO
-var _verbleibende_ticks: int = 0
-var _gesamt_ticks: int = 0
 
 ## Kategorie logik: Lebenszyklus der Anzeige.
 const DAUER_FAKTOR := 0.09
 const HUB_HOEHE := 48.0
-const BEWEGUNG_PRO_TICK := 38.0 / 24.0
 const SKALIERUNG_MAX := 0.12
 
 var _icon: TextureRect = null
@@ -27,8 +26,6 @@ func einrichten(schaden_erhalten: int, art_erhalten: String, welt_position: Vect
 	art = art_erhalten
 	_start_position = welt_position + Vector2(0, -HUB_HOEHE)
 	position = _start_position
-	_verbleibende_ticks = Kern_Weltuhr.ticks_aus_faktor(DAUER_FAKTOR)
-	_gesamt_ticks = _verbleibende_ticks
 
 func _ready() -> void:
 	_kasten = HBoxContainer.new()
@@ -56,19 +53,15 @@ func _ready() -> void:
 	schatten.z_index = -1
 	add_child(schatten)
 	move_child(schatten, 0)
+	_hub_starten()
 
-func _enter_tree() -> void:
-	Weltuhr.tick.connect(_auf_tick)
-
-func _exit_tree() -> void:
-	if Weltuhr.tick.is_connected(_auf_tick):
-		Weltuhr.tick.disconnect(_auf_tick)
-
-func _auf_tick(_tick_nummer: int, _delta: float) -> void:
-	_verbleibende_ticks -= 1
-	var anteil: float = 1.0 - float(_verbleibende_ticks) / float(_gesamt_ticks)
-	position.y -= BEWEGUNG_PRO_TICK
-	modulate.a = 1.0 - anteil
-	scale = Vector2.ONE * (1.0 + anteil * SKALIERUNG_MAX)
-	if _verbleibende_ticks <= 0:
-		queue_free()
+func _hub_starten() -> void:
+	# Der Hub ist Darstellung, nicht Simulation: Die Dauer entsteht aus
+	# derselben zentralen Faktor-Übersetzung (faktor -> ticks -> Sekunden),
+	# der Ablauf gehört dem Tween der Engine. Am Ende freigeben.
+	var dauer := float(Kern_Weltuhr.ticks_aus_faktor(DAUER_FAKTOR)) / Kern_Weltuhr.TICK_RATE_HZ
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(self, "position:y", _start_position.y - HUB_HOEHE, dauer)
+	tween.tween_property(self, "modulate:a", 0.0, dauer)
+	tween.tween_property(self, "scale", Vector2.ONE * (1.0 + SKALIERUNG_MAX), dauer)
+	tween.chain().tween_callback(queue_free)

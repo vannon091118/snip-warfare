@@ -5,12 +5,18 @@ extends Node2D
 ## der später Events und Cutscenes zwischen Szenen eingefügt werden können.
 ## Sie liest das Ziel ausschließlich aus der Sitzung und besitzt keine
 ## Simulationslogik, keine eigene Zeitwahrheit und kein fachliches Wissen.
+## Das Warten und Blenden gehört dem Timer und dem Tween der Engine; die
+## Szene selbst führt keinen Zähler mehr und rechnet nichts.
 
 const FALLBACK_ZIEL := "res://ui/scenes/hauptmenue.tscn"
 const WARTE_SEKUNDEN := 1.4
+const EINBLEND_SEKUNDEN := 0.7
+const BLINK_SEKUNDEN := 0.5
+const SPRUNGSCHUTZ_SEKUNDEN := 0.3
 
-var _verstrichen: float = 0.0
 var _ziel: String = ""
+var _sprung_erlaubt: bool = false
+var _weiter_gestartet: bool = false
 
 @onready var _text_label: Label = %TextLabel
 @onready var _hinweis_label: Label = %HinweisLabel
@@ -25,23 +31,23 @@ func _ready() -> void:
 		ankündigung = "Die Welt erwacht …"
 	_text_label.text = ankündigung
 	_deckel.color = Color(0, 0, 0, 1.0)
-	_deckel.color.a = 1.0
+	var deckel_tween := create_tween()
+	deckel_tween.tween_property(_deckel, "color:a", 0.0, EINBLEND_SEKUNDEN)
+	var hinweis_tween := create_tween().set_loops()
+	hinweis_tween.tween_interval(BLINK_SEKUNDEN)
+	hinweis_tween.tween_callback(_hinweis_umschalten)
+	get_tree().create_timer(SPRUNGSCHUTZ_SEKUNDEN).timeout.connect(_sprung_freigeben)
+	get_tree().create_timer(WARTE_SEKUNDEN).timeout.connect(_weiter)
 
-func _process(delta: float) -> void:
-	_verstrichen += delta
-	# Einblenden in den ersten Sekunden, danach die nächste Szene einläuten.
-	if _verstrichen < 0.7:
-		_deckel.color.a = clampf(1.0 - _verstrichen / 0.7, 0.0, 1.0)
-	else:
-		_deckel.color.a = 0.0
-	if _verstrichen >= WARTE_SEKUNDEN:
-		_weiter()
-		return
-	_hinweis_label.visible = int(_verstrichen * 2.0) % 2 == 0
+func _sprung_freigeben() -> void:
+	_sprung_erlaubt = true
+
+func _hinweis_umschalten() -> void:
+	_hinweis_label.visible = not _hinweis_label.visible
 
 func _unhandled_input(ereignis: InputEvent) -> void:
 	# Überspringen: Linksklick, Leertaste oder Enter läuten sofort weiter.
-	if _verstrichen < 0.3:
+	if _weiter_gestartet or not _sprung_erlaubt:
 		return
 	var ueberspringen := false
 	if ereignis is InputEventMouseButton and ereignis.pressed and ereignis.button_index == MOUSE_BUTTON_LEFT:
@@ -53,5 +59,7 @@ func _unhandled_input(ereignis: InputEvent) -> void:
 
 func _weiter() -> void:
 	# Einmalige Verbindung: Die nächste Szene wird nur einmal eingeläutet.
-	set_process(false)
+	if _weiter_gestartet:
+		return
+	_weiter_gestartet = true
 	get_tree().change_scene_to_file(_ziel)

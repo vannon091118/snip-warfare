@@ -3,21 +3,19 @@ class_name Welt_PlusAnzeige
 ## Visuelles Feedback einer abgeschlossenen Arbeit (Preflight-Gate E022):
 ## Jede Aktion zeigt am Ziel-Objekt das passende Ressourcen-Icon und einen
 ## +X Zähler (Menge des Jobs). Die Registries liefern über logik_id und
-## faktor die Logik; die Anzeige schwebt tick-basiert nach oben und verblasst.
+## faktor die Logik; der Hub läuft als Tween der Engine, die Dauer kommt
+## aus derselben zentralen Faktor-Übersetzung wie vorher der Tick-Lauf.
+## Kein Uhr-Abo, keine Tick-Buchhaltung: Der Knoten rechnet nichts.
 
 ## Kategorie daten: der anzuzeigende Zustand.
 var ressource: String = ""
 var menge: int = 0
 var icon_pfad: String = ""
 var _start_position := Vector2.ZERO
-var _verbleibende_ticks: int = 0
-var _gesamt_ticks: int = 0
-var _tick_nummer: int = 0
 
 ## Kategorie logik: Lebenszyklus der Anzeige.
 const DAUER_FAKTOR := 0.09
 const HUB_HOEHE := 48.0
-const BEWEGUNG_PRO_TICK := 38.0 / 24.0
 const SKALIERUNG_MAX := 0.12
 
 var _icon: TextureRect = null
@@ -30,8 +28,6 @@ func einrichten(ressource_id: String, menge_erhalten: int, icon: String, welt_po
 	icon_pfad = icon
 	_start_position = welt_position + Vector2(0, -HUB_HOEHE)
 	position = _start_position
-	_verbleibende_ticks = Kern_Weltuhr.ticks_aus_faktor(DAUER_FAKTOR)
-	_gesamt_ticks = _verbleibende_ticks
 
 func _ready() -> void:
 	_kasten = HBoxContainer.new()
@@ -59,19 +55,15 @@ func _ready() -> void:
 	schatten.z_index = -1
 	add_child(schatten)
 	move_child(schatten, 0)
+	_hub_starten()
 
-func _enter_tree() -> void:
-	Weltuhr.tick.connect(_auf_tick)
-
-func _exit_tree() -> void:
-	Weltuhr.tick.disconnect(_auf_tick)
-
-func _auf_tick(tick_nummer: int, _delta: float) -> void:
-	_tick_nummer = tick_nummer
-	_verbleibende_ticks -= 1
-	var anteil: float = 1.0 - float(_verbleibende_ticks) / float(_gesamt_ticks)
-	position.y -= BEWEGUNG_PRO_TICK
-	modulate.a = 1.0 - anteil
-	scale = Vector2.ONE * (1.0 + anteil * SKALIERUNG_MAX)
-	if _verbleibende_ticks <= 0:
-		queue_free()
+func _hub_starten() -> void:
+	# Der Hub ist Darstellung, nicht Simulation: Die Dauer entsteht aus
+	# derselben zentralen Faktor-Übersetzung (faktor -> ticks -> Sekunden),
+	# der Ablauf gehört dem Tween der Engine. Am Ende freigeben.
+	var dauer := float(Kern_Weltuhr.ticks_aus_faktor(DAUER_FAKTOR)) / Kern_Weltuhr.TICK_RATE_HZ
+	var tween := create_tween().set_parallel(true)
+	tween.tween_property(self, "position:y", _start_position.y - HUB_HOEHE, dauer)
+	tween.tween_property(self, "modulate:a", 0.0, dauer)
+	tween.tween_property(self, "scale", Vector2.ONE * (1.0 + SKALIERUNG_MAX), dauer)
+	tween.chain().tween_callback(queue_free)

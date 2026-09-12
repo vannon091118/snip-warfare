@@ -227,6 +227,8 @@ Regeln der Pyramide:
 
 Es gibt genau einen globalen Tick: das Autoload `Weltuhr` (Klasse `Kern_Weltuhr`, 24 Ticks/Sekunde, klassischer RTS-Standard). Jede State Machine abonniert `Weltuhr.tick`; keine Domäne besitzt eine eigene Weltzeit. Darstellung läuft über die Frames der Sprite-Sheets, deren Geschwindigkeit an die 24 Ticks gekoppelt ist.
 
+Ausnahme für reine Effekt-Darstellung: Flüchtige Anzeigen ohne Simulationsanteil (Plus-, Schaden- und Tod-Anzeige, Übergangs-Blende, Menü-Deko) laufen als `Tween` beziehungsweise `SceneTreeTimer` der Engine statt als Tick-Abo. Ihre Dauer entsteht dabei aus derselben zentralen Übersetzung wie der alte Tick-Lauf (`ticks_aus_faktor` geteilt durch die Tick-Rate), damit Effekt und Simulation im selben Rhythmus bleiben; der Effekt selbst liest keinen Zustand, ändert nichts und trägt keine eigene Zeitwahrheit. Simulationslogik bleibt vom dieser Ausnahme ausgeschlossen: Maschinen und Zustandsübergänge hören weiterhin ausschließlich auf den globalen Tick.
+
 ## 7. Domänengrenzen
 
 1. **UI-Domäne** (`ui/`): Menüführung, Weltauswahl, Sitzungszustand. Sie ruft Szenen auf und schreibt `WeltSitzung`; sie ändert keine Welt-Daten.
