@@ -1,6 +1,6 @@
-1. Der Nutzer verlangte einen maschinenlesbaren Router statt doppelter Erzaehlungen, also baute Shinon einen neuen Wegweiser im Stamm.
-2. Ich legte INDEX.md als LLM-Uebersicht an mit Domaenen-Tabelle und Zustaendigkeiten und Abhaengigkeits-Graph und einem auto-generierten Klasseninventar fuer 198 Klassen.
-3. Das Werkzeug tools/index_generieren.py scannt class_name je Domaene und frischt den Inventar-Abschnitt in INDEX.md idempotent auf ohne AGENTS.md zu beruehren.
-4. Die Datei AGENTEN_INDEX.md schrumpfte zum Redirect auf INDEX.md, damit kein Inhalt doppelt erzaehlt wird und die Pflege nur noch an einer Stelle haengt.
-5. Die Dateien README.md und Architektur.md und ROADMAP.md bekamen Querverweise auf INDEX.md und frische Badges fuer 85 Tests und die neue Kategorie whitespace E042.
-6. Noch zu tun bleibt die grosse Whitespace-Politur ueber alle Dateien und danach der Monolith lauf_pruefung_welt.gd als naechste Baustelle.
+1. Der Nutzer verlangte, dass die vielen Leerzeichen-Fehler verschwinden und das Repo atmen kann, also schickte Shinon den Waecher fuer Teil 1 von 5 los.
+2. Ich bereinigte mit E042 --fix die Haelfte kern_logik.json, kern_modifikatoren.json, einheit_inventar_schema.gd, einheit_manager.gd, job_graben.gd, job_orchestrieren.gd, job_registry.gd und weitere Nachbarn im selben Fach.
+3. Auch job_transport.gd, rassen_schemata.json, rassen_vorlagen.json, pop_need_baum.gd, pop_rassen_schema.gd, pop_rassen_schema_registry.gd, pop_namens_generator.gd, shinon_stil_pruefer.py tragen nun LF statt CRLF und saubere Abschluesse ohne trailing Leerzeichen, Tabs nur in .gd.
+4. Der Nachlass in tools/preflight/locregel_nachlass.json glich bereits sechs Eintraege an das neue Mass an.
+5. Der volle Preflight meldet null Befunde fuer whitespace und die 85 Tests laufen gruen wie frischer Rasen.
+6. Noch zu tun bleiben die uebrigen Stapel und danach der Monolith tools/lauf_pruefung_welt.gd.

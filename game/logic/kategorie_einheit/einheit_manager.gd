@@ -219,14 +219,14 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> int:
 	status.arbeitsschritt_erledigt.connect(_auf_arbeitsschritt.bind(status))
 	status.job_loop_gefragt.connect(_auf_job_loop_gefragt.bind(status))
 	status.naechster_job_aus_queue.connect(_auf_naechster_job_aus_queue.bind(status))
-	
+
 	# Physisches Inventar pro Einheit
 	var inventar := Einheit_Inventar.new()
 	var ei := _einheiten.size()
 	inventar.einheit_id_setzen("einheit_%d" % ei)
 	inventar.timeline_setzen(_ressourcen.timeline_holen() if _ressourcen.has_method("timeline_holen") else null)
 	inventar.inventar_voll.connect(_auf_inventar_voll.bind(ei))
-	
+
 	_einheiten.append({
 		"status": status,
 		"darsteller": darsteller,
@@ -237,11 +237,11 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> int:
 		"inventar": inventar,
 		"_letzter_zustand": status.zustand,
 	})
-	
+
 	# Ernte-Maschine bekommt Referenz auf das Inventar dieser Einheit
 	if _ernte != null:
 		_ernte.inventar_fuer_einheit_setzen(ei, inventar)
-	
+
 	return ei
 
 func einheit_zahl() -> int:
@@ -412,7 +412,7 @@ func _auf_tick(nummer: int, delta: float) -> void:
 		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
 			if Engine.get_process_frames() % 6 != 0:
 				return
-	
+
 	# Der Tageszyklus tickt nicht mehr hier: Die Weltmaschine hängt seit
 	# der Besitzkorrektur direkt an der Weltuhr und lebt nicht mehr in
 	# der Einheiten-Domäne. Dieser Takt kennt nur Einheiten-Arbeit.
@@ -438,7 +438,7 @@ func _auf_tick(nummer: int, delta: float) -> void:
 			var darsteller: Einheit_Darsteller = einheit["darsteller"]
 			darsteller.animation_setzen(status.animation())
 			continue
-		
+
 		# Transport-Job Phasen prüfen: Die Trupp-Maschine bucht die Ablieferung.
 		if status.job != null and status.job.job_id == "transport":
 			var transport_job: Job_Transport = status.job as Job_Transport
@@ -456,7 +456,7 @@ func _auf_tick(nummer: int, delta: float) -> void:
 						# Transport fertig: Job beenden, zur Queue zurückkehren
 						status.job_beendet.emit()
 						transport_job.zuruecksetzen()
-		
+
 		status.tick(delta)
 		if status.welt_position != einheit["position"]:
 			# Bewegung hat direkte Auswirkung: Position, Darsteller und Mood

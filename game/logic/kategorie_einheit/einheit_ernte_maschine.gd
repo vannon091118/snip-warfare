@@ -39,7 +39,7 @@ func einrichten(inventar: Einheit_Inventar, ressourcen: Einheit_Ressourcen, mode
 
 func inventar_fuer_einheit_setzen(einheit_index: int, inventar: Einheit_Inventar) -> void:
 	_inventare[einheit_index] = inventar
-	
+
 func _inventar_fuer_einheit(einheit_index: int) -> Einheit_Inventar:
 	return _inventare.get(einheit_index, _inventar)
 
