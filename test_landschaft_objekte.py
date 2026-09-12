@@ -35,7 +35,10 @@ def test_element_katalog_enthaelt_neue_objekte():
         assert eintrag['script'] == f'res://world/logic/kategorie_objekt/objekt_{name}.gd'
 
 def test_welt_registry_fallbacks():
-    inhalt = (ROOT / 'world' / 'logic' / 'kategorie_welt' / 'welt_registry.gd').read_text(encoding='utf-8')
+    """Die Klassen-Zuordnung der Landschaftsobjekte lebt seit dem
+    Zerlegungs-Slice in der eigenen Tabelle welt_registry_klassen_zuordnung.gd;
+    die Registry-Fassade laedt sie ueber den Plugin-Naht-Pfad."""
+    zuordnung = (ROOT / 'world' / 'logic' / 'kategorie_welt' / 'welt_registry_klassen_zuordnung.gd').read_text(encoding='utf-8')
     for name in ['berg', 'felswand', 'erzader', 'ruine', 'steinkreis']:
-        assert f'"{name}":' in inhalt
-        assert f'Objekt_{name.capitalize()}.new()' in inhalt
+        assert f'"{name}":' in zuordnung
+        assert f'"Objekt_{name.capitalize()}"' in zuordnung

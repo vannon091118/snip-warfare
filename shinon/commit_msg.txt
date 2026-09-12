@@ -1,17 +1,13 @@
-1. Der Nutzer verlangte Slices fuer die Warteschlange und den anschliessenden Reisebericht nach oben, deshalb begann ich mit dem Menue-Thread, der still am Baum gewachsen war, und richtete ihn, bevor irgendein Wagen rollt.
+1. Der Nutzer verlangte Slices fuer die Warteschlange, deshalb trug ich als zweiten Wagen die Moebel-Abschlussarbeit, die der Parallel-Thread zurueckgelassen hatte, und die neue Ordnung der Klassen-Zuordnung, die mein eigener Schritt aus der Fassade gezogen hatte.
 
-2. In ui/logic/kategorie_ui/menue_buehnen_meister.gd, menue_story_daten.gd, menue_story_regisseur.gd und menue_unterschrift.gd spielt die Buehne des Hauptmenues ihre dreissig Ereignisse: Figuren treten auf, der Holzhacker schlaegt dreimal, das Feuer atmet, der Untertitel blendet sanft.
+2. Die alten Umlaut-Dateien game/data/moebel.json und die fuenf svg unter world/assets/moebel verschwanden endgueltig aus dem Baum, der abschliessende Strich unter der doppelten Kodierung, die frueher sieben E015-Befunde erfand.
 
-3. Der Regisseur hoert dabei auf genau einen Takt, den der Weltuhr, und weil ihr Ruf Nummer und Delta traegt, trug ich seinen Vertrag in menue_story_regisseur.gd nach, statt die Uhr anzugreifen.
+3. In world/logic/kategorie_objekt/objekt_moebel_platzierer.gd zog der neue Platzierer ein, der Moebel auf ihre Kacheln setzt, und in tools/lauf_moebel_beweis.gd liegt der Beweislauf dazu, der Platzierung sichtbar am Modell zeigt.
 
-4. In ui/data/menue_story.json steht die ganze Auffuehrung als Daten, und der Whitespace-Helfer liess sie nach dem ersten Reinigen wie eine frisch gefaltete Karte daliegen.
+4. In world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd wohnt jetzt die Tabelle, die je Element-ID die konkrete Klasse nennt, und in welt_registry.gd fragt die Fassade nur noch dort nach, laedt ueber den Plugin-Naht-Pfad und warnt bildlich, wenn eine Zeile der Tabelle ohne Datei bleibt.
 
-5. In ui/scenes/hauptmenue.gd wurde die Buehne angesteckt, in bau_panel.gd, kontext_menue.gd, ui_bau_auftrag_maschine.gd, ui_eingabe_steuerung.gd und ui_welt_sitzung.gd zogen kleine Naehfäden durch die Sitzung, die der Parallel-Thread begonnen hatte.
+5. In world/logic/kategorie_objekt/moebel_registry.gd behaelt die Moebel-Logik ihren eigenen Fallback und ihre eigene Sicht, in ui/logic/kategorie_ui/ui_bau_panel.gd liest das Bau-Panel direkt bei der Fach-Registry statt an der Fassade zu klopfen.
 
-6. In tools/preflight/kern.py durfte das Menue-Präfix in die Ehrentafel der Kategorien, damit die vier neuen Buehnen-Klassen nicht als Namenlose am Preflight scheitern.
+6. In test_landschaft_objekte.py zog der Test der Fallbacks in sein neues Zuhause um, denn er prueft die Zuordnung, nicht mehr die Fassade, und alle 97 Pruefungen bestehen.
 
-7. check_ui_strings.py und humanize_check.py sind neue Schraubzieher des Alltags, die Texte- und Ton-Pruefung dem naechsten Beweislauf beilegen.
-
-8. textsprach_onboarding.md und textsprach_onboarding_natural.md liegen als Ansage-Zettel im Regal, damit die Sprache des Spiels nicht dem Zufall gehoert.
-
-9. Der volle Preflight mit allen Kategorien laeuft gruen durch, 97 Pruefungen bestehen, und im Hauptmenue tritt die kleine Truppe beim naechsten Start sichtbar auf die Buehne.
+7. Der Preflight laeuft gruen, der Moebel-Thread ist damit vollstaendig geborgen, und auf der Karte stehen Tisch und Stuhl wieder da, wo der Spieler sie hinstellt.
