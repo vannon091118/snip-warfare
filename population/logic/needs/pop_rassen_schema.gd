@@ -24,6 +24,7 @@ var faktor_schwellwert: float = 1.0
 var faktor_bewegung: float = 1.0
 var grab_bonus: float = 1.0
 var icon_pfad: String = ""
+var max_einheiten: int = 1
 
 ## Interner Zustand
 var _finalisiert: bool = false

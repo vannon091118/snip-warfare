@@ -16,33 +16,38 @@ var letzte_eintraege: Array[Dictionary] = []
 
 func eintraege_ermitteln(definitionen: Gebaeude_DefinitionRegistry, fortschritt: Welt_FortschrittsMaschine, _steuerung: Kern_SteuerungRegistry = null) -> Array[Dictionary]:
 	var ergebnis: Array[Dictionary] = []
-	if definitionen == null:
+	# Statt Gebäude lesen wir Möbel aus möbel.json
+	var moebel_pfad := "res://game/data/möbel.json"
+	var datei := FileAccess.open(moebel_pfad, FileAccess.READ)
+	if datei == null:
+		push_warning("Möbel-JSON nicht gefunden: %s" % moebel_pfad)
 		letzte_eintraege = ergebnis
 		return ergebnis
-	var alle := definitionen.alle_definitionen()
-	for def: Gebaeude_Definition in alle:
-		# Die Stufe kommt ausschließlich aus der Definition; der Parameter
-		# _steuerung bleibt als Vertrag für bestehende Aufrufer erhalten.
-		var stufe := def.gesperrt_ab_stufe
-		var gesperrt := false
-		if fortschritt != null:
-			gesperrt = not fortschritt.stufe_frei(stufe)
-		var kosten_teile: Array[String] = []
-		for ressource: String in def.baukosten:
-			var menge := int(def.baukosten[ressource])
-			if menge > 0:
-				kosten_teile.append("%d %s" % [menge, ressource.capitalize()])
-		var kosten_str := ", ".join(kosten_teile) if not kosten_teile.is_empty() else "Kostenlos"
-		var tooltip_str := "%s\nKosten: %s\nBauzeit: %d Ticks" % [def.angezeigter_name, kosten_str, def.bauzeit_ticks]
-		if gesperrt:
-			tooltip_str = "🔒 Gesperrt (Benötigt Stufe %d)\n%s" % [stufe, tooltip_str]
+	var text := datei.get_as_text()
+	datei.close()
+	var daten := JSON.parse_string(text)
+	if typeof(daten) != TYPE_ARRAY:
+		push_warning("Möbel-JSON hat ungueltiges Format")
+		letzte_eintraege = ergebnis
+		return ergebnis
+	for eintrag in daten as Array:
+		if typeof(eintrag) != TYPE_DICTIONARY:
+			continue
+		var eid := str(eintrag.get("id", ""))
+		var name := str(eintrag.get("name", eid))
+		var tags := eintrag.get("tags", [])
+		var icon_pfad := str(eintrag.get("asset-path", ""))
+		# Für Möbel gibt es keine Baukosten oder Bauzeit im Sinne des Panels;
+		# wir zeigen einfache Infos.
+		var kosten_str := "Kostenlos"  # oder könnte aus tags bestehen
+		var tooltip_str := "%s\nTags: %s" % [name, tags.join(", ")]
 		ergebnis.append({
-			"id": def.id,
-			"name": def.angezeigter_name,
-			"icon_pfad": def.icon_pfad,
+			"id": eid,
+			"name": name,
+			"icon_pfad": icon_pfad,
 			"kosten_text": kosten_str,
-			"gesperrt": gesperrt,
-			"stufe": stufe,
+			"gesperrt": false,
+			"stufe": 0,
 			"tooltip": tooltip_str,
 		})
 	letzte_eintraege = ergebnis

@@ -55,6 +55,7 @@ var _biom_analyzer: Biom_Analyzer = null
 
 func _init() -> void:
 	ueberziehe_fliesen("boden")
+	_lade_erschopfung_config()
 
 func _raster_anlegen(element_id: String) -> void:
 	raster.clear()
@@ -460,12 +461,29 @@ func _eskalation_anwenden(geladene_version: int) -> void:
 ## Erschöpfung wird einmalig bei Generierung gesetzt und kann nur durch
 ## neue Chunkgenerierung via Expansion erhöht (bzw. zurückgesetzt) werden.
 ## Wenn lager_bestand / erschoepfungs_maximum > 0.8 blockiert Spawn.
-const ERSCHOEPFUNG_MAXIMUM := 100
-const ERSCHOEPFUNG_SPAWN_SCHWELLE := 0.8
+var ERSCHOEPFUNG_MAXIMUM := 100
+var ERSCHOEPFUNG_SPAWN_SCHWELLE := 0.8
 var _erschoepfung_pro_chunk: Dictionary = {}
+var _erschopfung_config_geladen := false
 
 ## Standard-Ressourcentypen für Erschöpfungstracking.
 const RESSOURCE_TYPEN: Array[String] = ["holz", "stein", "erz", "beeren", "wasser", "fisch", "wild", "kraut", "eis", "pilz"]
+
+func _lade_erschopfung_config() -> void:
+	if _erschopfung_config_geladen:
+		return
+	var config_pfad := "res://world/data/fraktions_ki_config.json"
+	var datei := FileAccess.open(config_pfad, FileAccess.READ)
+	if datei != null:
+		var text := datei.get_as_text()
+		datei.close()
+		var config := JSON.parse_string(text)
+		if typeof(config) == TYPE_DICTIONARY:
+			if config.has("erschoepfung_spawn_schwelle"):
+				ERSCHOEPFUNG_SPAWN_SCHWELLE = float(config["erschoepfung_spawn_schwelle"])
+			if config.has("erschoepfung_maximum"):
+				ERSCHOEPFUNG_MAXIMUM = int(config["erschoepfung_maximum"])
+	_erschopfung_config_geladen = true
 
 func _chunk_key_aus_position(x: int, y: int) -> String:
 	var cx := int(x / chunk_groesse)
@@ -517,8 +535,8 @@ func erschoepfung_prozent(chunk_key: String, ressource_typ: String) -> float:
 
 func kann_ressource_spawnen(chunk_key: String, ressource_typ: String, lager_bestand: int) -> bool:
 	# Prüft ob Ressource in Chunk spawnen darf.
-	# Blockiert wenn lager_bestand / erschoepfungs_maximum > 0.8
-	# (d.h. Erschöpfung > 80% bei vollem Lagerbestand relativ zum Maximum).
+	# Blockiert wenn lager_bestand / erschoepfungs_maximum > erschoepfung_spawn_schwelle
+	# (d.h. Erschöpfung > erschoepfung_spawn_schwelle bei vollem Lagerbestand relativ zum Maximum).
 	var erschoepfung := erschoepfung_holen(chunk_key, ressource_typ)
 	if float(erschoepfung) / float(ERSCHOEPFUNG_MAXIMUM) > ERSCHOEPFUNG_SPAWN_SCHWELLE:
 		return false

@@ -21,6 +21,7 @@ var abgeschlossen: Dictionary = {}
 ## Kategorie logik: Verbindungen zu anderen Domänen.
 var _einheit_manager: Einheit_Manager = null
 var _orchestrator_manager: Orchestrator_Manager = null
+var _rassen_registry: Pop_RassenSchemaRegistry = null
 
 ## Kategorie logik: Ziel prüfen, Fortschalten, Freischalten lesen.
 
@@ -38,6 +39,9 @@ func einheit_manager_setzen(manager: Einheit_Manager) -> void:
 
 func orchestrator_manager_setzen(manager: Orchestrator_Manager) -> void:
 	_orchestrator_manager = manager
+
+func rassen_registry_setzen(registry: Pop_RassenSchemaRegistry) -> void:
+	_rassen_registry = registry
 
 func aktive_stufe() -> Dictionary:
 	if _registry == null:
