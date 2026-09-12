@@ -1,32 +1,14 @@
 extends Objekt_RegistryBasis
 class_name Welt_Registry
-## Fassade über die Fach-Registries Terrain, Natur und Gebäude.
-## RT-Pyramide: Spitze fasst alle Untersysteme zusammen ohne deren
-## Logik zu verdoppeln. Fachregistries sind gefilterte Sichten über
-## denselben Katalog: Welt_Registry lädt den Element-Katalog einmalig
-## als eigene Instanz und reicht dieselben Objekt-Instanzen an die drei
-## Fach-Registries weiter; Aufrufer erhalten immer dieselben Objekte.
-## Zentrale Erzeugung der Datenklassen in _objekt_klasse_fuer.
-
-## Kategorie daten: die drei Fach-Registries als gefilterte Sichten.
+## Fassade ueber Terrain, Natur, Gebaeude. Laedt den Katalog einmalig und reicht Instanzen weiter.
 var _terrain: Objekt_Registry = null
 var _natur: Natur_Registry = null
 var _gebaeude: Gebaeude_Registry = null
 
-## Kategorie logik: Aufbau und delegierende Zugriffe. Die Fach-Registries
-## werden ohne eigenen Katalog-Lauf aus derselben Katalog-Tabelle befüllt;
-## es gibt keine zweite JSON-Ladung und keine zweite Klassen-Erzeugung.
-
 func _init(quelle_pfad: String = KATALOG_PFAD) -> void:
-	# Die Fassade ist die einzige Ladestelle des Element-Katalogs: Sie
-	# übergibt den Pfad explizit an die Basis und verteilt die Instanzen
-	# über _registrieren_in_kategorie an ihre Fach-Sichten.
 	super(quelle_pfad)
 
 func registries_vorbereiten() -> void:
-	# Fach-Registries sind gefilterte Sichten: Sie laden den Katalog nicht
-	# selbst (Default-Pfad leer), sondern werden ausschließlich hier befüllt.
-	# Ein Aufruf, eine Ladung, keine doppelten IDs mehr.
 	_terrain = Objekt_Registry.new()
 	_natur = Natur_Registry.new()
 	_gebaeude = Gebaeude_Registry.new()
@@ -38,9 +20,6 @@ func _registrieren_in_kategorie(kategorie: String, element_id: String, objekt: O
 	super._registrieren_in_kategorie(kategorie, element_id, objekt)
 
 func _zentrale_klasse_fuer(element_id: String) -> Objekt_Basis:
-	# Übergangs-Fallback für Katalog-Einträge ohne script-Feld: Dieselbe
-	# Zuordnung wie zuvor in _objekt_klasse_fuer. Die Plugin-Naht liegt in
-	# Objekt_RegistryBasis und fragt zuerst das script-Feld des Eintrags.
 	match element_id:
 		"baum":
 			return Objekt_Baum.new()
@@ -73,9 +52,6 @@ func _zentrale_klasse_fuer(element_id: String) -> Objekt_Basis:
 	return Objekt_Basis.new()
 
 func ziel_tags_fuer(element_id: String) -> Array[String]:
-	# Lesende Auskunft für das Kontextmenü: Welche Ziel-Tags trägt dieses
-	# Element? Unbekannte Elemente haben keine Tags, das Menü zeigt dort nur
-	# die globalen Aktionen. Keine zweite Tag-Tabelle im UI.
 	var objekt := finde_objekt(element_id)
 	if objekt == null:
 		return []

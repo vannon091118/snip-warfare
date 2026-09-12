@@ -1,17 +1,11 @@
 extends RefCounted
 class_name Pop_RassenSchemaRegistry
-## Registry der Rassen-Schemata. Liest population/data/rassen_schemata.json
-## und erzeugt je Eintrag ein Pop_RassenSchema. Einzige Quelle für Rassen;
-## Erweiterung nur über Datenpool + Registry, keine Streuung.
-## Unterstützt Runtime-Registrierung generierter Rassen via registriere_generiert().
-
+## Liest population/data/rassen_schemata.json, erzeugt je Eintrag ein Schema.
 const QUELLE := "res://population/data/rassen_schemata.json"
-
 ## Kategorie daten: Schemata je rasse_id.
 var _schemata_nach_id: Dictionary = {}
 var _schemata: Array[Pop_RassenSchema] = []
-
-## Kategorie logik: Laden und zentrale Zuordnung.
+## Kategorie logik: Laden und Zuordnung.
 func _init() -> void:
 	laden()
 
@@ -47,10 +41,6 @@ func standard_rasse() -> String:
 		return "mensch"
 	return _schemata[0].rasse_id
 
-## Kategorie logik: Runtime-Registrierung generierter Rassen.
-## Wird vom Rassen_Generator aufgerufen nach Generierung aus Keimpunkten.
-## Generierte Schemata sind bereits finalisiert (immutabel).
-
 func registriere_generiert(rasse_id: String, schema: Pop_RassenSchema) -> void:
 	if not schema.ist_finalisiert():
 		push_error("Versuch, nicht-finalisiertes Schema zu registrieren: %s" % rasse_id)
@@ -66,8 +56,6 @@ func registriere_generiert(rasse_id: String, schema: Pop_RassenSchema) -> void:
 	_schemata_nach_id[rasse_id] = schema
 	print("Generiertes Rassen-Schema registriert: %s (%s)" % [rasse_id, schema.angezeigter_name])
 
-## Kategorie logik: Entfernen generierter Schemata (z.B. bei Welt-Neugenerierung).
-
 func entferne_generiert(rasse_id: String) -> void:
 	if _schemata_nach_id.has(rasse_id):
 		var schema: Pop_RassenSchema = _schemata_nach_id[rasse_id]
@@ -78,9 +66,7 @@ func entferne_generiert(rasse_id: String) -> void:
 		print("Generiertes Rassen-Schema entfernt: %s" % rasse_id)
 
 func entferne_alle_generierten() -> void:
-	## Entfernt alle Schemata, die nicht aus der Basis-JSON stammen
-	## Basis-IDs sind bekannt: mensch, elf, ork
-	var basis_ids := ["mensch", "elf", "ork"]
+	var basis_ids := ["mensch", "elf", "ork"] as Array[String]
 	var zu_entfernen: Array[String] = []
 	for id in _schemata_nach_id.keys():
 		if not basis_ids.has(id):

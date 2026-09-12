@@ -1,7 +1,7 @@
 {
   "_kommentar": "E041 Nachlass-Liste: Jede Datei traegt ihren Ist-Wert zum Einfuehrungszeitpunkt, bis ihr Zerlegungs-Slice sie streicht. Eine Datei darf nie ueber ihren Ist-Wert wachsen; neue Dateien muessen die Grenze sofort halten. Die Liste muss leer enden.",
   "core/logic/kern_mutationsschema.gd": {
-    "ist_zeilen": 82
+    "ist_zeilen": 60
   },
   "core/logic/kern_steuerung_basis.gd": {
     "ist_zeilen": 165
@@ -10,10 +10,10 @@
     "ist_zeilen": 164
   },
   "economy/logic/storage/lager_manager.gd": {
-    "ist_zeilen": 164
+    "ist_zeilen": 136
   },
   "game/logic/kategorie_einheit/einheit_ernte_maschine.gd": {
-    "ist_zeilen": 145
+    "ist_zeilen": 114
   },
   "game/logic/kategorie_einheit/einheit_manager.gd": {
     "ist_zeilen": 534,
@@ -29,20 +29,20 @@
     "ist_zeilen": 285
   },
   "population/logic/needs/pop_need_registry.gd": {
-    "ist_zeilen": 106
+    "ist_zeilen": 79
   },
   "population/logic/needs/pop_rassen_schema_registry.gd": {
-    "ist_zeilen": 106
+    "ist_zeilen": 92
   },
   "world/logic/kategorie_generator/generator_registry.gd": {
-    "ist_zeilen": 109
+    "ist_zeilen": 87
   },
   "world/logic/kategorie_generator/welt_generator.gd": {
     "ist_zeilen": 383,
     "slice": "E"
   },
   "world/logic/kategorie_objekt/gebaeude_manager.gd": {
-    "ist_zeilen": 310,
+    "ist_zeilen": 309,
     "slice": "F"
   },
   "world/logic/kategorie_objekt/objekt_registry_basis.gd": {
@@ -52,19 +52,19 @@
     "ist_zeilen": 229
   },
   "world/logic/kategorie_progression/welt_fortschritts_maschine.gd": {
-    "ist_zeilen": 145
+    "ist_zeilen": 109
   },
   "world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd": {
-    "ist_zeilen": 151
+    "ist_zeilen": 123
   },
   "world/logic/kategorie_tier/tier_manager.gd": {
     "ist_zeilen": 234
   },
   "world/logic/kategorie_tier/tier_registry.gd": {
-    "ist_zeilen": 121
+    "ist_zeilen": 109
   },
   "world/logic/kategorie_tier/tier_status.gd": {
-    "ist_zeilen": 150
+    "ist_zeilen": 149
   },
   "world/logic/kategorie_welt/fraktions_ki_maschine.gd": {
     "ist_zeilen": 166
@@ -73,16 +73,16 @@
     "ist_zeilen": 239
   },
   "world/logic/kategorie_welt/welt_model.gd": {
-    "ist_zeilen": 505
+    "ist_zeilen": 513
   },
   "world/logic/kategorie_welt/welt_objekt_darsteller.gd": {
-    "ist_zeilen": 107
+    "ist_zeilen": 88
   },
   "world/logic/kategorie_welt/welt_registry.gd": {
-    "ist_zeilen": 116
+    "ist_zeilen": 92
   },
   "world/logic/kategorie_welt/welt_renderer.gd": {
-    "ist_zeilen": 443,
+    "ist_zeilen": 471,
     "slice": "G"
   }
 }

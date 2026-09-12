@@ -1,18 +1,10 @@
 extends Welt_RegistryBasis
 class_name Tier_Registry
-## Registry der Tiere: lädt tier_verhalten.json und hält je Tierart eine
-## eigene Datenklasse (Tier_Baer, Tier_Hase, Tier_Vogel, Tier_Vogelgruppe).
-## State Machines lesen ihre Werte ausschließlich aus diesen Instanzen;
-## nichts wird hart codiert. Der Preflight zieht seine Referenzen aus dieser
-## Registry.
-
 const VERHALTEN_PFAD := "res://world/data/tier_verhalten.json"
-
-## Kategorie daten: getypte Liste aller Tierarten.
+## Kategorie daten: Tierarten je id.
 var tier_arten: Array[Tier_Basis] = []
-
-## Kategorie logik: Laden und Zuordnung der exakten Tierklassen.
 var _arten_nach_id: Dictionary = {}
+## Kategorie logik: Laden und Zuordnung.
 
 func _init() -> void:
 	super(VERHALTEN_PFAD)
@@ -44,9 +36,6 @@ func _eintraege_uebernehmen(gelesen: Variant) -> bool:
 	return true
 
 func _tier_klasse_fuer(tier_id: String) -> Tier_Basis:
-	# Zentrale Zuordnung: jede Tierart erhält ihre eigene Datenklasse.
-	# Kombinationsprinzip: Eisbär nutzt dieselbe Logik wie Bär (baer_verfolgen)
-	# und einen eigenen Modifikator (aggressiv, Faktor 1.2). Keine neue Maschine.
 	match tier_id:
 		"baer":
 			return Tier_Baer.new()
@@ -74,7 +63,6 @@ func hp(tier_id: String) -> int:
 	return 1 if tier == null else tier.hp
 
 func wert(tier_id: String, schluessel: String, standard: float) -> float:
-	# Feld-Zugriff über die Datenklasse; unbekannte Schlüssel liefern den Standard.
 	var tier := tier_daten(tier_id)
 	if tier == null:
 		return standard

@@ -1,18 +1,10 @@
 extends RefCounted
-class_name Lager_Manager
-## Verwaltung aller lokalen Lager-Instanzen einer Partie.
-## Jedes Haus/Gebäude ist ein Lager: Ressourcen liegen verortet, nie global.
-## Der Manager ist die einzige Stelle, die Lager anlegt und die Mutationen
-## darauf anwendet. Der globale Bestand ist nur die abgeleitete UX-Summe.
-
+class_name Lager_Manager## Verortete Lager je Gebaeude; einziger Schreiber ueber Mutationen.
 ## Kategorie daten: Lager-Instanzen mit Position und Bestand.
-
 var _lager: Array[Dictionary] = []
 var _registry := Lager_Registry.new()
 var _zufall := Kern_Zufall.new()
-
-## Kategorie logik: Anlegen, Befüllen, Entnehmen, Abfragen.
-
+## Kategorie logik: Anlegen, Befuellen, Entnehmen, Abfragen.
 func _init() -> void:
 	_zufall.start_zustand_setzen(42)
 
@@ -31,15 +23,10 @@ func lager_anlegen(typ_id: String, welt_position: Vector2) -> int:
 	return _lager.size() - 1
 
 func zuruecksetzen() -> void:
-	## Idempotenz-Gate: Leert den gesamten Lagerbestand, damit wiederholte
-	## Aufrufe von anlegen_aus_welt() keine Duplikate erzeugen. Wird vor
-	## jedem Neuaufbau aus dem Modell aufgerufen.
 	_lager.clear()
 
 func lager_zahl() -> int:
 	return _lager.size()
-
-
 func lager_position(index: int) -> Vector2:
 	if index < 0 or index >= _lager.size():
 		return Vector2.INF
@@ -50,8 +37,6 @@ func lager_typ_id(index: int) -> String:
 	if index < 0 or index >= _lager.size():
 		return ""
 	return str(_lager[index].get("typ_id", ""))
-
-## Lokale Bestände je Lager.
 
 func bestand_im_lager(lager_index: int, ressource: String) -> int:
 	if lager_index < 0 or lager_index >= _lager.size():
@@ -80,8 +65,6 @@ func gesamt_bestand_alle() -> Dictionary:
 	return summe
 
 func startbestand_setzen(ressource: String, menge: int, lager_index: int) -> void:
-	# Deterministischer Startbestand für Tests und Editor-Setup: schreibt die
-	# Menge direkt als Anfangszustand, ohne die Ernte-Varianz des Schemas.
 	if lager_index < 0 or lager_index >= _lager.size() or menge < 0:
 		return
 	var bestaende: Dictionary = _lager[lager_index].get("bestaende", {})
@@ -89,8 +72,6 @@ func startbestand_setzen(ressource: String, menge: int, lager_index: int) -> voi
 	_lager[lager_index]["bestaende"] = bestaende
 
 func hat_lagerplatz(lager_index: int, menge: int) -> bool:
-	# Produktions-Gate: Ausgänge dürfen nur gebucht werden, wenn das Lager
-	# genug freie Kapazität hat; blockiert sonst die Produktion.
 	if lager_index < 0 or lager_index >= _lager.size() or menge <= 0:
 		return false
 	var eintrag: Dictionary = _lager[lager_index]
@@ -100,8 +81,6 @@ func hat_lagerplatz(lager_index: int, menge: int) -> bool:
 	for ressource: String in bestaende.keys():
 		belegt += int(bestaende[ressource])
 	return belegt + menge <= kapazitaet
-
-## Nächstes Lager für eine Weltposition (für Ernte und Verbrauch).
 
 func naechstes_lager_fuer(welt_position: Vector2) -> int:
 	if _lager.is_empty():
@@ -115,8 +94,6 @@ func naechstes_lager_fuer(welt_position: Vector2) -> int:
 			bester = idx
 	return bester
 
-## Über Mutationen schreiben — nie direkt.
-
 func einlagern(ressource: String, menge: int, lager_index: int) -> bool:
 	if menge <= 0 or lager_index < 0 or lager_index >= _lager.size():
 		return false
@@ -126,10 +103,8 @@ func einlagern(ressource: String, menge: int, lager_index: int) -> bool:
 		return false
 	var ergebnis := mutation.anwenden(zustand, _zufall)
 	_lager = ergebnis["lager"]
-	# Signal an alle Observer über Lager-Bestand ändern
 	lager_geaendert_emit(lager_index, ressource, menge)
 	return true
-
 func entnehmen(ressource: String, menge: int, lager_index: int) -> bool:
 	if menge <= 0 or lager_index < 0 or lager_index >= _lager.size():
 		return false
@@ -139,7 +114,6 @@ func entnehmen(ressource: String, menge: int, lager_index: int) -> bool:
 		return false
 	var ergebnis := mutation.anwenden(zustand, _zufall)
 	_lager = ergebnis["lager"]
-	# Signal an alle Observer über Lager-Bestand ändern
 	lager_geaendert_emit(lager_index, ressource, -menge)
 	return true
 
@@ -151,8 +125,6 @@ func lager_geaendert_emit(lager_index: int, _ressource: String, _menge_delta: in
 
 func _ready() -> void:
 	_zufall.start_zustand_setzen(42)
-
-## Für Speicher/Tests.
 
 func nach_woerterbuch() -> Dictionary:
 	return {"lager": _lager.duplicate(true)}

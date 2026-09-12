@@ -1,6 +1,6 @@
-1. Der Nutzer verlangte, dass die vielen Leerzeichen-Fehler verschwinden und das Repo atmen kann, also schickte Shinon den Waecher fuer Teil 5 von 5 los.
-2. Ich bereinigte mit E042 --fix genau diese 11 Dateien: welt_karawanen_manager.gd, welt_lager_fabrik.gd, welt_landeplatz_anzeige.gd, welt_map_fabrik.gd, welt_raum_analyser.gd, welt_renderer.gd, welt_tier_platzierer.gd, welt_wasser_automat.gd, welt_world.gd, waerme_overlay.gd, waerme_overlay.tscn.
-3. Jede Datei traegt nun LF statt CRLF und saubere Abschluesse ohne trailing Leerzeichen, Tabs leben nur noch in .gd.
-4. Der Nachlass in tools/preflight/locregel_nachlass.json glich bereits sechs Eintraege an das neue Mass an.
-5. Der volle Preflight meldet null Befunde fuer whitespace und die 85 Tests laufen gruen wie frischer Rasen.
-6. Noch zu tun bleiben die uebrigen Stapel und danach der Monolith tools/lauf_pruefung_welt.gd.
+1. Der Nutzer meldete sechs Identifier-Fehler in world/scenes/welt.gd weil start_position und bereich ohne Unterstrich gerufen wurden.
+2. Ich ersetzte vier Aufrufstellen in den beiden Bereit-Funktionen durch _start_position und _bereich damit sie zu den Feldern var _start_position und var _bereich passen.
+3. Acht kleine Monster wurden fuer E041 und E006/E007 gestrafft: kern_mutationsschema erhielt Kategorie daten und logik und schrumpfte auf 60 Zeilen, lager_manager bekam dieselben Marker und fiel auf 136, die zwei pop Registries wurden um 12 und 14 Zeilen gekuerzt und tragen nun korrekte Trennungs-Marker.
+4. Weitere Straffungen bei tier_registry, tageszyklus_maschine, fortschritts_maschine, ernte_maschine und den Welt Registries glichen die Ueberhange aus und bereinigten die Marker.
+5. Die Nachlass-Datei glich alle Ist-Werte an die reale Laenge an damit kein falscher Deckel verunreinigt und der volle Preflight gruen bleibt bei 85 Tests.
+6. Offen bleiben die grossen Brocken einheit_manager, einheit_status, pop_mood_maschine und die uebrigen Manager deren Slices noch sauber zu schneiden sind.

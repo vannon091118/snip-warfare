@@ -1,8 +1,6 @@
 extends RefCounted
 class_name Tier_Status
-## Zustandsmaschine eines Tieres: Ruhe, Aufgeschreckt, Wegfliegen, Verfolgen, Tot.
-## Reagiert ausschließlich auf den globalen Tick und auf Trigger-Ereignisse;
-## Darstellung macht der Tier_Darsteller, Daten kommen aus den Tier-Klassen.
+## Ruhe, Aufgeschreckt, Wegfliegen, Verfolgen, Tot.
 
 enum Zustand {
 	RUHE,
@@ -26,7 +24,9 @@ var fleisch: int = 1
 var _faktor: float = 1.0
 var _modifikator_id: String = "normal"
 var _logik_id: String = ""
+## Kategorie daten: lebender Zustand der Instanz.
 var _welt_position: Vector2 = Vector2.ZERO
+## Kategorie logik: Zustand und Tick.
 
 func _init(tier: String, verhaltens_daten: Tier_Registry) -> void:
 	tier_id = tier
@@ -110,7 +110,6 @@ func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
 
 func ticks_fuer_faktor() -> int:
 	return Kern_Weltuhr.ticks_aus_faktor(effektiver_faktor())
-	# Hinweis: Nur Weltuhr rechnet zentral; diese Methode delegiert ausschliesslich.
 
 func tick(delta: float, eigene_position: Vector2, spieler_position: Vector2) -> Vector2:
 	_welt_position = eigene_position

@@ -55,6 +55,9 @@ var _timeline := Kern_Timeline.new()
 var _feedback := Welt_FeedbackManager.new()
 var _atmosphaere := Welt_AtmosphaereVerdrahtung.new()
 var _progression := Welt_ProgressionsMaschine.new()
+## Der Wasser-Automat gehört zur Welt-Domäne: Er schreibt nur übers Modell
+## und läuft nur, wenn der Schalter in welt_definition.json ihn läßt.
+var _wasser := Welt_WasserAutomat.new()
 var _orchestrator_verdrahtung := Orchestrator_Verdrahtung.new()
 var _kamera_steuerung := Ui_KameraSteuerung.new()
 var _eingabe_steuerung := Ui_EingabeSteuerung.new()
@@ -120,12 +123,16 @@ func _bereit_karte_und_atmosphaere() -> void:
 	_bereich = maxf(_model.groesse().x, _model.groesse().y) * float(_model.kachel_groesse) * 0.6
 	_karte.darstellen(_model, _registry, _biome)
 	_karte.progressions_maschine_setzen(_progression)
+	# Wasser-Domäne: Der Automat wird erstmals richtig instanziiert und
+	# lauscht an Uhr und Signalbus; ob er eingreift, entscheidet allein der
+	# Daten-Schalter in welt_definition.json.
+	_wasser.einrichten(_model, _registry)
 	# Atmosphaeren-Domaene: Die Szene haengt nur die Spitze an und reicht
 	# Tageszyklus, Kartenmitte und Radius weiter. Jede Fachlogik bleibt in
 	# der Domaene; die Sway-Quelle fuer den Renderer kommt von dort.
-	_atmosphaere.bereich_setzen(start_position, bereich)
+	_atmosphaere.bereich_setzen(_start_position, _bereich)
 	add_child(_atmosphaere)
-	_atmosphaere.einrichten(_tageszyklus, start_position, bereich)
+	_atmosphaere.einrichten(_tageszyklus, _start_position, _bereich)
 	_atmosphaere.weltuhr_verbinden()
 	_karte.sway_material_quelle_setzen(_atmosphaere.sway_material_quelle())
 	_stockmaenner.schlag_ort_empfaenger_setzen(_atmosphaere.staub_zeigen)
@@ -136,7 +143,7 @@ func _bereit_karte_und_atmosphaere() -> void:
 	_karten_viewer = _ui_aufbau.karten_viewer
 	_karten_info = _ui_aufbau.karten_info
 	_tier_platzierer.platzieren(_model, _registry, _tiere)
-	_kamera_steuerung.einrichten(_steuerung, _model, start_position)
+	_kamera_steuerung.einrichten(_steuerung, _model, _start_position)
 	_tiere.spieler_position_setzen(_kamera_steuerung.kamera_position)
 	_kamera.position = _kamera_steuerung.kamera_position
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
@@ -171,7 +178,7 @@ func _bereit_domaenen_und_einheiten() -> void:
 	add_child(_stockmaenner)
 	_landeplatz = _LandeplatzAnzeigeSkript.new()
 	_landeplatz.name = "LandeplatzAnzeige"
-	_landeplatz.einrichten(start_position, float(_model.kachel_groesse))
+	_landeplatz.einrichten(_start_position, float(_model.kachel_groesse))
 	add_child(_landeplatz)
 
 func _bereit_gebaeude_und_fortschritt() -> void:

@@ -1,24 +1,13 @@
 extends RefCounted
 class_name Welt_ObjektDarsteller
-## Übersetzt einen Katalog-Eintrag mit Registry-Animation in ein fertiges
-## Bewegtbild: Für jeden Eintrag mit funktions_animation entsteht ein
-## AnimatedSprite2D, dessen Frames aus dem Sheet in game/data/animationen.json
-## geschnitten werden. Die Geschwindigkeit läuft wie beim Einheit_Darsteller
-## über die 24 Ticks der zentralen Weltuhr (24 geteilt durch ticks_pro_frame).
-## Das Bewegtbild ist bereits am Fuß ausgerichtet: Seine Unterkante liegt auf
-## dem Ursprung des Objekt-Knotens, in den es gehängt wird. Diese Klasse hält
-## selbst keine Knoten, besitzt keine Simulationslogik und keine eigene Zeit.
-## Die Registries bleiben der einzige Aktivierungspunkt: Ein Objekt ohne
-## funktions_animation erhält nie ein Bewegtbild.
+## Baut fuer Katalog-Eintraege mit funktions_animation ein AnimatedSprite2D aus game/data/animationen.json.
 
 const ANIMATIONEN_PFAD := "res://game/data/animationen.json"
 const BEEREN_OVERLAY_PFAD := "res://world/assets/terrain/busch_beeren_overlay.svg"
 
-## Kategorie daten: die geladenen Animationseinträge je Name.
+## Kategorie daten: geladene Animationseintraege je Name.
 var _animationen: Dictionary = {}
-
 ## Kategorie logik: Einlesen und Bauen des Bewegtbildes.
-
 func _init() -> void:
 	var datei := FileAccess.open(ANIMATIONEN_PFAD, FileAccess.READ)
 	if datei != null:
@@ -32,9 +21,6 @@ func hat_bewegtbild(objekt: Objekt_Basis) -> bool:
 	return _animationen.has(objekt.funktions_animation)
 
 func objekt_darstellen(objekt: Objekt_Basis, fusspunkt: Vector2) -> AnimatedSprite2D:
-	# Bewegtbild nur auf Anweisung der Registry: Ohne Eintrag geschieht nichts.
-	# Der Fußpunkt kommt herein, weil der Knoten selbst keine Weltposition
-	# mehr trägt: Er ist der Ursprung, an dem das Bewegtbild steht.
 	if not hat_bewegtbild(objekt):
 		return null
 	var eintrag: Dictionary = _animationen[objekt.funktions_animation]
@@ -61,13 +47,10 @@ func objekt_darstellen(objekt: Objekt_Basis, fusspunkt: Vector2) -> AnimatedSpri
 	sprite.name = "Bewegtbild"
 	sprite.sprite_frames = frames
 	sprite.animation = objekt.funktions_animation
-	# Fußausrichtung: Der Knoten trägt den Fußpunkt als Ursprung, deshalb
-	# zeichnet das Bewegtbild mittig und um die halbe Frame-Höhe gehoben.
 	sprite.centered = true
 	sprite.offset = Vector2(0.0, -float(hoehe) * 0.5)
 	sprite.position = Vector2.ZERO
 	sprite.play(objekt.funktions_animation)
-	# Beeren-Overlay für Büsche: datengetriebene Wahrscheinlichkeit aus dem Element-Katalog
 	if objekt.schluessel_daten.has("beeren_wahrscheinlichkeit"):
 		var chance := float(objekt.schluessel_daten.get("beeren_wahrscheinlichkeit", 0.0))
 		var pos_hash := int(abs(hash(Vector2i(int(round(fusspunkt.x)), int(round(fusspunkt.y)))))) % 100
@@ -79,8 +62,6 @@ func objekt_darstellen(objekt: Objekt_Basis, fusspunkt: Vector2) -> AnimatedSpri
 	return sprite
 
 func _beeren_overlay(breite: int, hoehe: int, eintrag: Dictionary, chance: float, pos_hash: int) -> AnimatedSprite2D:
-	# Der Beerenbewuchs ist eine Datenentscheidung des Katalogs: Nur über der
-	# gezogenen Wahrscheinlichkeit erscheint das zweite Blatt.
 	if pos_hash >= int(chance * 100.0):
 		return null
 	var overlay_textur: Texture2D = load(BEEREN_OVERLAY_PFAD)
