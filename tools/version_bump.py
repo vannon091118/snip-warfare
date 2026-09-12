@@ -40,7 +40,9 @@ def _setze_version(texte, alt, neu):
             continue
         neu_text = _versionszeile_ersetzen(text, alt, neu)
         if neu_text != text:
-            pfad.write_text(neu_text, encoding="utf-8")
+            # newline="\n" ist Pflicht: Ohne die Angabe schreibt Python unter
+            # Windows CRLF und der Whitespace-Waechter E042 schlaegt zu Recht an.
+            pfad.write_text(neu_text, encoding="utf-8", newline="\n")
             geaendert.append(relativ)
     return geaendert
 
@@ -64,6 +66,8 @@ def hauptprogramm():
     parser = argparse.ArgumentParser(description="Globale Version pflegen")
     parser.add_argument("--pruefen", action="store_true", help="nur den Ist-Stand melden")
     parser.add_argument("--setzen", default="", help="genau diese Version setzen, zum Beispiel V0.07")
+    # Hinweis fuer den Leser: Alle Schreibzugriffe dieses Werkzeugs nutzen
+    # newline="\n", damit die Versionierung nie CRLF in die Dokumente traegt.
     argumente = parser.parse_args()
 
     aktuell = version_lesen()
@@ -96,7 +100,7 @@ def hauptprogramm():
         print("Version bleibt %s; nichts zu tun." % aktuell)
         return 0
 
-    (PROJEKT_STAMM / VERSIONSDATEI).write_text(neu + "\n", encoding="utf-8")
+    (PROJEKT_STAMM / VERSIONSDATEI).write_text(neu + "\n", encoding="utf-8", newline="\n")
     print("Version: %s -> %s" % (aktuell, neu))
     geaendert = _setze_version(VERSIONIERTE_DOKUMENTE, aktuell, neu)
     for relativ in geaendert:

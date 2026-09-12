@@ -1,6 +1,5 @@
-1. Der Nutzer meldete sechs Identifier-Fehler in world/scenes/welt.gd weil start_position und bereich ohne Unterstrich gerufen wurden.
-2. Ich ersetzte vier Aufrufstellen in den beiden Bereit-Funktionen durch _start_position und _bereich damit sie zu den Feldern var _start_position und var _bereich passen.
-3. Acht kleine Monster wurden fuer E041 und E006/E007 gestrafft: kern_mutationsschema erhielt Kategorie daten und logik und schrumpfte auf 60 Zeilen, lager_manager bekam dieselben Marker und fiel auf 136, die zwei pop Registries wurden um 12 und 14 Zeilen gekuerzt und tragen nun korrekte Trennungs-Marker.
-4. Weitere Straffungen bei tier_registry, tageszyklus_maschine, fortschritts_maschine, ernte_maschine und den Welt Registries glichen die Ueberhange aus und bereinigten die Marker.
-5. Die Nachlass-Datei glich alle Ist-Werte an die reale Laenge an damit kein falscher Deckel verunreinigt und der volle Preflight gruen bleibt bei 85 Tests.
-6. Offen bleiben die grossen Brocken einheit_manager, einheit_status, pop_mood_maschine und die uebrigen Manager deren Slices noch sauber zu schneiden sind.
+1. Der Nutzer verlangte Doku die zu jeder Zeit sauber bleibt, deshalb jagte ich die eigentliche Ursache der wiederkehrenden Zeilenende-Fehler statt nur die Symptome zu glätten.
+2. Die Ursache war das Schreiben ohne Zeilenende-Angabe: Python setzt unter Windows still CRLF, wodurch VERSION, README.md und shinon/commit_msg.txt nach jedem Werkzeuglauf erneut auffielen.
+3. tools/version_bump.py und tools/index_generieren.py schreiben Versionsdatei, Vertragsdokumente und INDEX.md nun mit newline LF, damit ein Bump keine Fehler mehr erzeugen kann.
+4. Ein kompletter Probelauf des Bumps auf V0.02 und zurueck auf V0.01 liess alle sechs Dokumente sauber auf LF, ohne dass der Whitespace-Waechter etwas zu melden hatte.
+5. Der volle Preflight ist gruen und alle 85 Tests laufen weiter durch.

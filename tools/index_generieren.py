@@ -116,12 +116,13 @@ def hauptprogramm() -> int:
         vor = vor.rstrip() + "\n\n" if vor.strip() else ""
         nach = nach.lstrip("\n")
         nach = "\n" + nach if nach else "\n"
-        INDEX_PFAD.write_text(vor + block + nach, encoding="utf-8")
+        # newline="\n" haelt die Datei frei von CRLF, sonst meldet E042 zu Recht.
+        INDEX_PFAD.write_text(vor + block + nach, encoding="utf-8", newline="\n")
     else:
         # Haenge Inventar an.
         if not text.endswith("\n"):
             text += "\n"
-        INDEX_PFAD.write_text(text + "\n" + block, encoding="utf-8")
+        INDEX_PFAD.write_text(text + "\n" + block, encoding="utf-8", newline="\n")
     print(f"Inventar geschrieben: {sum(len(v) for v in inventar.values())} Klassen in {INDEX_PFAD}")
     return 0
 
