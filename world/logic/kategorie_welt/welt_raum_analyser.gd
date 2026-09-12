@@ -103,10 +103,10 @@ func _objekte_auf_tile(tile: Vector2i) -> Array[int]:
 
 func _lade_moebel_tags() -> Dictionary:
 	var tags_dict := Dictionary.new()
-	var moebel_pfad := "res://game/data/möbel.json"
+	var moebel_pfad := "res://game/data/moebel.json"
 	var datei := FileAccess.open(moebel_pfad, FileAccess.READ)
 	if datei == null:
-		push_warning("Möbel-JSON nicht gefunden: %s" % moebel_pfad)
+		push_warning("Moebel-JSON nicht gefunden: %s" % moebel_pfad)
 		return tags_dict
 	var text := datei.get_as_text()
 	datei.close()

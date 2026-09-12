@@ -13,6 +13,12 @@ PFAD_ZIEL_ENDUNGEN = (".svg", ".png", ".json", ".tscn", ".gd", ".ogg",
 def pruefe_pfade(dateien):
     for pfad, code in dateien:
         rel_pfad = pfad.relative_to(PROJEKT_STAMM)
+        # ASCII-Pflicht: Der Moebel-Umlaut-Fehler (NFC gegen NFD) zeigte,
+        # dass nicht-ASCII-Dateinamen bei Zip-, Git- und OS-Uebergaben
+        # still auseinanderfallen. Projektpfade bleiben daher rein ASCII.
+        if not str(rel_pfad).isascii():
+            fehler("E015", rel_pfad, 1,
+                   "Dateipfad enthaelt nicht-ASCII-Zeichen; Namen ohne Umlaute fuehren (res-Regel)")
         for treffer in re.finditer(r'"(res://[^"]+)"', code):
             _pruefe_res_pfad(treffer.group(1), rel_pfad, code, treffer.start())
     for tscn_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.tscn") if not _verzeichnis_ignoriert(p)):
@@ -48,6 +54,9 @@ def _pruefe_res_pfad(pfad_angabe, rel_pfad, code, position):
                "Pfad-Eintrag '%s' ist nicht projektrelativ im Format res://" % pfad_angabe)
         return
     relativ = pfad_angabe[len("res://"):]
+    if not relativ.isascii():
+        fehler("E015", rel_pfad, zeile,
+               "Pfad-Eintrag '%s' enthaelt nicht-ASCII-Zeichen; Namen ohne Umlaute fuehren (res-Regel)" % pfad_angabe)
     ziel = PROJEKT_STAMM / relativ
     if not ziel.is_file():
         fehler("E015", rel_pfad, zeile,

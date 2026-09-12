@@ -17,10 +17,10 @@ var letzte_eintraege: Array[Dictionary] = []
 func eintraege_ermitteln(_definitionen: Gebaeude_DefinitionRegistry, _fortschritt: Welt_FortschrittsMaschine, _steuerung: Kern_SteuerungRegistry = null) -> Array[Dictionary]:
 	var ergebnis: Array[Dictionary] = []
 	# Statt Gebäude lesen wir Möbel aus möbel.json
-	var moebel_pfad := "res://game/data/möbel.json"
+	var moebel_pfad := "res://game/data/moebel.json"
 	var datei := FileAccess.open(moebel_pfad, FileAccess.READ)
 	if datei == null:
-		push_warning("Möbel-JSON nicht gefunden: %s" % moebel_pfad)
+		push_warning("Moebel-JSON nicht gefunden: %s" % moebel_pfad)
 		letzte_eintraege = ergebnis
 		return ergebnis
 	var text := datei.get_as_text()

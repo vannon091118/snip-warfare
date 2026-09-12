@@ -1,12 +1,17 @@
-1. Der Nutzer verlangte den Sprint 2 des Bildplans, das Papier-Gesten-Vokabular, deshalb bekam jede Zustandsveränderung der Welt ihre eigene sichtbare Geste mit genau einer Verantwortung.
-2. In world/logic/kategorie_welt/welt_stadium_geste.gd stoesst das Standbild bei jedem Stufenwechsel kurz auf und kehrt exakt in seine Ruheposition zurück, damit die Tiefensortierung am Fuß nicht driftet.
-3. In world/logic/kategorie_welt/welt_umsturz_geste.gd wirft der gefällte Baum seine Krone als gekipptes Papierstück, das aufstoesst, zur Seite fällt und schwindet, während der Stumpf schon steht.
-4. In world/logic/kategorie_welt/welt_riss_geste.gd legt der Schaden ein Riss-Decal über das Objekt, je zwei Schlägen eine Stufe, nach dem Beeren-Overlay-Muster desselben Fußes.
-5. In world/logic/kategorie_welt/welt_wuchs_geste.gd atmet der Sämling zwischen den Blättern weiter, sein Maßstab folgt der echten Wachstums-Fraktion des Modells statt vier Sprüngen.
-6. In world/assets/progression/riss_leicht.svg und world/assets/progression/riss_schwer.svg stehen die beiden Decal-Bilder im Papier-Schnitt mit hellem Papierrand und abgeplatzten Chips.
-7. In world/logic/kategorie_welt/welt_renderer.gd hängen die vier Gesten an den echten Ereignissen: Der Schlag pulst Blatt und Riss, der Fall spielt die Krone und räumt die alten Spuren, der Neuaufbau trägt Riss und Wuchs aus dem Modell nach.
-8. In world/logic/kategorie_progression/welt_progressions_maschine.gd meldet jeder echte Treffer seine Darstellung sofort und die doppelte Identitäts-Schaltung ist entfernt, der Rest-Wechsel wohnt allein in der Zustands-Maschine.
-9. In tools/lauf_pruefung_gesten.gd steht der Beweis: Echter Renderer, vier Schläge, Riss ab der zweiten Stufe, Krone und Stumpf beim Fall, Wuchs-Maßstab beim Sämling, alle Prüfungen grün.
-10. INDEX.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md tragen die vier neuen Klassen nach, damit der Index nie eine andere Wahrheit erzählt als der Baum.
-11. Der Warnungs-Scan läuft grün, die Progressions- und Wasser-Beweisläufe stehen, alle 85 Prüfungen bestehen.
-12. Sichtbar im laufenden Spiel: Jeder Hieb zittert im Blatt, Risse brechen die Rinde, der Baum kippt und der Stumpf bleibt, junge Pflanzen atmen sichtbar.
+1. Der Nutzer hat die zweite Moebel-Quelle und den kaputten Umlaut-Ordner gemeldet, deshalb habe ich zuerst am Dateisystem selbst operiert statt an den Symptomen.
+
+2. Der Ordner world/assets/moebel trug sein oe als kombiniertes Unicode-Zeichen, waehrend die Verweise es als o mit separatem Trema beschreiben, und genau diese stille Doppelkodierung liess sieben E015-Befunde ueber sichtbar existierende Dateien herfallen.
+
+3. Der Ordner heisst jetzt world/assets/moebel, die Datenquelle heisst game/data/moebel.json, und in den fuenf svg.import-Dateien wurde der eingefrorene source_file-Pfad auf den neuen Namen nachgezogen.
+
+4. Die zweite Quelle bleibt bestehen, aber sie luegt nicht mehr: In game/data/moebel.json zeigen die script-references jetzt auf die real existierenden Klassen Objekt_Tisch, Objekt_Stuhl, Objekt_Bett, Objekt_Schrank und Objekt_TischStahl unter world/logic/kategorie_objekt/ statt auf den erfundenen Ordner kategorie_moebel, und die asset-paths zeigen auf die geretteten Bilder.
+
+5. Die zwei Konsumenten ui/logic/kategorie_ui/ui_bau_panel.gd und world/logic/kategorie_welt/welt_raum_analyser.gd lesen ihre Tags und Eintraege weiter aus derselben Datei, nur unter dem neuen ASCII-Namen.
+
+6. Der Waechter in tools/preflight/pruef_pfade.py prueft nun selbst auf nicht-ASCII-Zeichen, sowohl im Dateipfad jeder geprueften Datei als auch in jedem res://-Eintrag, damit der naechste Umlaut-Ordner nicht erst zur Laufzeit sondern gleich beim Preflight als Fehler E015 auffliegt.
+
+7. Der volle Preflight laeuft gruen durch, alle 85 Pruefungen bestehen, und die Index-Familie traegt die Zahlen von 251 Klassen auf 276 GDScript-Dateien.
+
+8. Offen bleibt die inhaltliche Entscheidung, ob Objekt_MoebelRegistry zur echten Basis des teilebasierten Bauens ausgebaut wird oder moebel.json der neue Weg sein soll; beide Quellen fuer dasselbe Wort im Projekt zu lassen ist kein Zielzustand.
+
+9. Sichtbar im laufenden Spiel: Das Bau-Panel listet die fuenf Moebel mit ihren Bildern, und der Raum-Analyser erkennt Tische, Stuehle, Betten und Schraenke im Raum, sobald Moebel auf der Karte stehen.

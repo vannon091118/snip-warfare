@@ -1,0 +1,37 @@
+[
+  {
+    "id": "tisch",
+    "name": "Tisch",
+    "tags": ["holz", "tisch"],
+    "script-reference": "res://world/logic/kategorie_objekt/objekt_tisch.gd",
+    "asset-path": "res://world/assets/moebel/tisch.svg"
+  },
+  {
+    "id": "stuhl",
+    "name": "Stuhl",
+    "tags": ["holz", "stuhl"],
+    "script-reference": "res://world/logic/kategorie_objekt/objekt_stuhl.gd",
+    "asset-path": "res://world/assets/moebel/stuhl.svg"
+  },
+  {
+    "id": "betten",
+    "name": "Bett",
+    "tags": ["holz", "bett"],
+    "script-reference": "res://world/logic/kategorie_objekt/objekt_bett.gd",
+    "asset-path": "res://world/assets/moebel/bett.svg"
+  },
+  {
+    "id": "schrank",
+    "name": "Schrank",
+    "tags": ["holz", "schrank"],
+    "script-reference": "res://world/logic/kategorie_objekt/objekt_schrank.gd",
+    "asset-path": "res://world/assets/moebel/schrank.svg"
+  },
+  {
+    "id": "tisch_stahl",
+    "name": "Stahltisch",
+    "tags": ["stahl", "tisch"],
+    "script-reference": "res://world/logic/kategorie_objekt/objekt_tisch_stahl.gd",
+    "asset-path": "res://world/assets/moebel/tisch_stahl.svg"
+  }
+]
