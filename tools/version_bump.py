@@ -19,32 +19,55 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from preflight.kern import PROJEKT_STAMM
-from preflight.pruef_version import (VERSIONIERTE_DOKUMENTE, VERSIONSDATEI,
-                                     dokument_version, version_erhoehen,
-                                     version_lesen, version_zeile)
+from preflight.pruef_version import (STATUSDOKUMENTE, VERSIONSDATEI,
+                                     dokument_version, dokumente_finden,
+                                     statuszahlen_lesen, statuszahlen_nachziehen,
+                                     version_erhoehen, version_lesen,
+                                     version_zeile)
 
 
-def _setze_version(texte, alt, neu):
-    """Ersetzt die Versionszeile in allen Dokumenten; liefert geaenderte Namen."""
+def _setze_version(alt, neu):
+    """Zieht jedes Projekt-Dokument nach; fehlende Zeilen werden ergaenzt."""
     geaendert = []
-    for relativ in VERSIONIERTE_DOKUMENTE:
+    for relativ in dokumente_finden():
         pfad = PROJEKT_STAMM / relativ
         if not pfad.is_file():
-            print("  fehlt: %s" % relativ)
             continue
         text = pfad.read_text(encoding="utf-8")
-        if dokument_version(text) is None:
-            print("  ohne Versionszeile: %s wird uebersprungen" % relativ)
-            continue
         if dokument_version(text) == neu:
             continue
-        neu_text = _versionszeile_ersetzen(text, alt, neu)
+        if dokument_version(text) is None:
+            # Ein neues Dokument erhaelt die Zeile ohne Aufforderung.
+            neu_text = text.rstrip("\n") + "\n\n" + version_zeile(neu) + "\n"
+        else:
+            neu_text = _versionszeile_ersetzen(text, alt, neu)
         if neu_text != text:
             # newline="\n" ist Pflicht: Ohne die Angabe schreibt Python unter
             # Windows CRLF und der Whitespace-Waechter E042 schlaegt zu Recht an.
             pfad.write_text(neu_text, encoding="utf-8", newline="\n")
             geaendert.append(relativ)
     return geaendert
+
+
+def _statuszahlen_nachziehen():
+    """Zieht Klassen-, Datei- und Szenenzahl in den Dokumenten nach.
+
+    Ohne diese Stufe wuerde die Dokumentation beim naechsten neuen Skript
+    wieder eine alte Zahl erzaehlen; der Nachzug haelt sie mechanisch aktuell.
+    Der Ersatz tauscht ausschliesslich die Zahl, nie das Substantiv daneben.
+    """
+    zahlen = statuszahlen_lesen()
+    geaendert = []
+    for relativ in STATUSDOKUMENTE:
+        pfad = PROJEKT_STAMM / relativ
+        if not pfad.is_file():
+            continue
+        text = pfad.read_text(encoding="utf-8")
+        neu_text = statuszahlen_nachziehen(text, zahlen)
+        if neu_text != text:
+            pfad.write_text(neu_text, encoding="utf-8", newline="\n")
+            geaendert.append(relativ)
+    return zahlen, geaendert
 
 
 def _versionszeile_ersetzen(text, alt, neu):
@@ -65,6 +88,8 @@ def _versionszeile_ersetzen(text, alt, neu):
 def hauptprogramm():
     parser = argparse.ArgumentParser(description="Globale Version pflegen")
     parser.add_argument("--pruefen", action="store_true", help="nur den Ist-Stand melden")
+    parser.add_argument("--nachziehen", action="store_true",
+                        help="Dokumente an die bestehende Version anpassen, ohne sie zu erhoehen")
     parser.add_argument("--setzen", default="", help="genau diese Version setzen, zum Beispiel V0.07")
     # Hinweis fuer den Leser: Alle Schreibzugriffe dieses Werkzeugs nutzen
     # newline="\n", damit die Versionierung nie CRLF in die Dokumente traegt.
@@ -78,34 +103,45 @@ def hauptprogramm():
     if argumente.pruefen:
         print("Globale Version: %s" % aktuell)
         abweichungen = 0
-        for relativ in VERSIONIERTE_DOKUMENTE:
+        for relativ in dokumente_finden():
             pfad = PROJEKT_STAMM / relativ
-            if not pfad.is_file():
-                print("  fehlt: %s" % relativ)
-                abweichungen += 1
-                continue
             eigene = dokument_version(pfad.read_text(encoding="utf-8"))
             marke = "ok" if eigene == aktuell else "ABWEICHUNG"
-            print("  %-16s %s %s" % (relativ, eigene or "-", marke))
+            print("  %-56s %s %s" % (relativ, eigene or "-", marke))
             if eigene != aktuell:
                 abweichungen += 1
         print("Abweichungen: %d" % abweichungen)
         return 0 if abweichungen == 0 else 1
 
+    if argumente.nachziehen:
+        # Reiner Nachzug: Die Version bleibt, jedes Dokument wird angeglichen.
+        geaendert = _setze_version(aktuell, aktuell)
+        zahlen, zahlen_geaendert = _statuszahlen_nachziehen()
+        for relativ in sorted(set(geaendert) | set(zahlen_geaendert)):
+            print("  nachgezogen: %s" % relativ)
+        print("Nachzug fertig: %d Dokumente angepasst (%d Klassen, %d Dateien, %d Szenen)." %
+              (len(set(geaendert) | set(zahlen_geaendert)),
+               zahlen["klassen"], zahlen["dateien"], zahlen["szenen"]))
+        return 0
+
     neu = argumente.setzen.strip() if argumente.setzen else version_erhoehen(aktuell)
     if neu is None or dokument_version("Version: %s\n" % neu) != neu:
         print("FEHLER: ungeeignete Zielversion %r; erwartet wird das Format V0.01" % neu)
         return 2
-    if neu == aktuell:
-        print("Version bleibt %s; nichts zu tun." % aktuell)
+    if neu == aktuell and not argumente.setzen:
+        print("Version bleibt %s; nur der Nachzug prueft die Dokumente." % aktuell)
+        geaendert = _setze_version(aktuell, aktuell)
+        _, zahlen_geaendert = _statuszahlen_nachziehen()
+        print("Fertig: %d Dokumente angepasst." % len(set(geaendert) | set(zahlen_geaendert)))
         return 0
 
     (PROJEKT_STAMM / VERSIONSDATEI).write_text(neu + "\n", encoding="utf-8", newline="\n")
     print("Version: %s -> %s" % (aktuell, neu))
-    geaendert = _setze_version(VERSIONIERTE_DOKUMENTE, aktuell, neu)
-    for relativ in geaendert:
+    geaendert = _setze_version(aktuell, neu)
+    _, zahlen_geaendert = _statuszahlen_nachziehen()
+    for relativ in sorted(set(geaendert) | set(zahlen_geaendert)):
         print("  nachgezogen: %s" % relativ)
-    print("Fertig: %d Dokumente angepasst." % len(geaendert))
+    print("Fertig: %d Dokumente angepasst." % len(set(geaendert) | set(zahlen_geaendert)))
     return 0
 
 

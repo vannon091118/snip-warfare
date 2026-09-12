@@ -41,7 +41,8 @@ def selbsttest():
         probleme.append("Kern_Zufall fehlt in der Erlaubnisliste")
     # Versionswaechter Selbsttest: Bump, Auslesen und Abweichung muessen stimmen.
     try:
-        from .pruef_version import dokument_version, version_erhoehen
+        from .pruef_version import (dokument_version, statuszahlen_nachziehen,
+                                    statuszahlen_verletzungen, version_erhoehen)
         if version_erhoehen("V0.01") != "V0.02":
             probleme.append("Versionswaechter erhoeht V0.01 nicht auf V0.02")
         if version_erhoehen("V0.99") != "V1.00":
@@ -50,6 +51,16 @@ def selbsttest():
             probleme.append("Versionswaechter liest die Versionszeile eines Dokuments nicht")
         if dokument_version("ohne Zeile\n") is not None:
             probleme.append("Versionswaechter meldet bei fehlender Zeile faelschlich eine Version")
+        # Statuszahlen: Der Nachzug tauscht nur die Zahl und nie das Substantiv.
+        probe_stand = "Fundament mit 227 Klassen, 11 Szenen, 251 GDScript-Dateien.\n"
+        stand = {"klassen": 300, "dateien": 400, "szenen": 12}
+        nachgezogen = statuszahlen_nachziehen(probe_stand, stand)
+        if nachgezogen != "Fundament mit 300 Klassen, 12 Szenen, 400 GDScript-Dateien.\n":
+            probleme.append("Statuszahl-Nachzug frisst das Substantiv neben der Zahl: %r" % nachgezogen)
+        if not statuszahlen_verletzungen("Fundament mit 1 Klassen.\n", stand):
+            probleme.append("Versionswaechter meldet eine falsche Statuszahl nicht")
+        if statuszahlen_verletzungen("Fundament mit 300 Klassen.\n", stand):
+            probleme.append("Versionswaechter meldet eine korrekte Statuszahl als Fehler")
     except ImportError:
         probleme.append("Versionswaechter ist nicht importierbar")
     # Shinon Gate Selbsttest: Banner, Bullet, Nummerierung und Bildsprache muessen sicher greifen.
