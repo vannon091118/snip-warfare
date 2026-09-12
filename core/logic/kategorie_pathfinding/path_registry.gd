@@ -11,6 +11,7 @@ const PFAD_PFAD := "res://game/data/steuerung.json"
 var weg_bonus_nach_kachel: Dictionary = {}
 var ebenen_malus_nach_kachel: Dictionary = {}
 var sperrung_nach_kachel: Dictionary = {}
+var diagonal_faktor_wert: float = 1.4142
 
 ## Kategorie logik: Laden aus der Steuerungsdatei und Abfragen.
 
@@ -39,6 +40,7 @@ func _eintraege_uebernehmen(gelesen: Variant) -> bool:
 		ebenen_malus_nach_kachel[kachel_id] = float((unebenen as Dictionary)[kachel_id])
 	for kachel_id: String in (sperren as Dictionary).keys():
 		sperrung_nach_kachel[kachel_id] = bool((sperren as Dictionary)[kachel_id])
+	diagonal_faktor_wert = float((pfad as Dictionary).get("diagonal_faktor", 1.4142))
 	return true
 
 func weg_bonus_fuer(kachel_id: String) -> float:
@@ -49,6 +51,9 @@ func ebenen_malus_fuer(kachel_id: String) -> float:
 
 func ist_gesperrt(kachel_id: String) -> bool:
 	return bool(sperrung_nach_kachel.get(kachel_id, false))
+
+func diagonal_faktor() -> float:
+	return diagonal_faktor_wert
 
 func datenfeld_arten() -> Dictionary:
 	var arten := super()

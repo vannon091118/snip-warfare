@@ -14,6 +14,11 @@ func _ready() -> void:
 	_label = Label.new()
 	add_child(_label)
 	_label.text = "Tierfenster: bereit."
+	set_process(false)
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_VISIBILITY_CHANGED:
+		set_process(is_visible_in_tree())
 
 func _process(_delta: float) -> void:
 	# Ein unsichtbarer Beobachter liest nichts: Das Debug-Fenster ist im

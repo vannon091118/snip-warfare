@@ -60,15 +60,16 @@ func weg_zu(start: Vector2, ziel: Vector2) -> PackedVector2Array:
 	if _cache.has(schluessel):
 		return _cache[schluessel]
 	# Das Zielfeld darf betreten werden, wenn dort das Arbeitsobjekt steht;
-	# die Sperre gilt nur für den Umweg über fremde Hindernisfelder.
+	# die Sperre gilt nur für den Umweg über fremde Hindernisfelder. Raster
+	# und Knoten-Spiegel werden über den Netz-Spiegel gemeinsam ent- und
+	# wieder gesperrt, damit beide dieselbe Wahrheit tragen.
 	var ziel_knoten: Kern_PathKnoten = _netz.knoten_bei(ziel_zelle)
-	var ziel_gesperrt := false
-	if ziel_knoten != null and ziel_knoten.gesperrt:
-		ziel_gesperrt = true
-		ziel_knoten.gesperrt = false
-	var zellen := _finder.weg_suchen(_netz.knoten_nach_position, start_zelle, ziel_zelle)
-	if ziel_gesperrt and ziel_knoten != null:
-		ziel_knoten.gesperrt = true
+	var ziel_gesperrt := ziel_knoten != null and ziel_knoten.gesperrt
+	if ziel_gesperrt:
+		_netz.zelle_ent_sperren(ziel_zelle, false)
+	var zellen := _finder.weg_suchen(_netz, start_zelle, ziel_zelle)
+	if ziel_gesperrt:
+		_netz.zelle_ent_sperren(ziel_zelle, true)
 	# Nur Zwischenfelder bekommen Zellenmitten: Start- und Zielfeld
 	# tragen keinen Punkt, damit niemand zur Hindernismitte zurückläuft
 	# und der Endanlauf die direkte Linie zum Arbeitsziel bleibt.

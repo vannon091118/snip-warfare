@@ -21,6 +21,8 @@ var _model: Welt_Model = null
 var _biome: Welt_BiomRegistry = null
 var _tageszyklus: Welt_TageszyklusMaschine = null
 var _takt_zaehler: int = 0
+var _need_registry: Pop_NeedRegistry = null
+var _takt_ticks: int = 1
 
 ## Kategorie logik: Einrichten, Tick und Tag-Wechsel.
 
@@ -28,6 +30,8 @@ func einrichten(model: Welt_Model, biome: Welt_BiomRegistry, tageszyklus: Welt_T
 	_registry.laden()
 	_zustand.einrichten(_registry)
 	_waerme.einrichten(_registry)
+	_need_registry = Pop_NeedRegistry.new()
+	_takt_ticks = maxi(Kern_Weltuhr.ticks_aus_minuten(_need_registry.takt_minuten()), 1)
 	_model = model
 	_biome = biome
 	_tageszyklus = tageszyklus
@@ -91,9 +95,7 @@ func _auf_uhr_tick(_tick_nummer: int, _delta: float) -> void:
 			folge_objekt_entstanden.emit(index, folge)
 	# Tag-Wechsel: Der Takt des Weltrhythmus aus der Need-Registry ist die
 	# gemeinsame Tageslaenge; nach jedem vollen Takt spawnt der Nachwuchs.
-	var need_registry := Pop_NeedRegistry.new()
-	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(need_registry.takt_minuten())
-	if _takt_zaehler % maxi(takt_ticks, 1) != 0:
+	if _takt_zaehler % _takt_ticks != 0:
 		return
 	for ereignis: Dictionary in _spawn.tag_spawnen(_model, _biome):
 		saemling_gespawnt.emit(str(ereignis.get("element_id", "")), ereignis.get("position", Vector2.ZERO) as Vector2)

@@ -13,6 +13,8 @@ var _ebene: Node2D = null
 
 func einrichten(ressourcen: Einheit_Ressourcen) -> void:
 	_ressourcen = ressourcen
+	Welt_FeedbackTexturCache.vorladen("res://world/assets/ui/tod.svg")
+	Welt_FeedbackTexturCache.vorladen("res://world/assets/ui/schaden.svg")
 
 func _ready() -> void:
 	_ebene = Node2D.new()

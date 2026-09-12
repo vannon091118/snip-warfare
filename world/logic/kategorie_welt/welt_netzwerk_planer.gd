@@ -12,6 +12,7 @@ class_name Welt_NetzwerkPlaner
 ## Kategorie daten: Platzierte Fraktionen, Wege und Spieler-Startknoten.
 var _fraktionen: Array[Welt_Fraktion] = []
 var _wege: Array[Dictionary] = []
+var _wege_index: Dictionary = {}
 var _spieler_region := Vector2i.ZERO
 var _spieler_nachbarn: Array[String] = []
 var _biome: Welt_BiomRegistry = null
@@ -27,6 +28,7 @@ func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_o
 	# um dieselben Einträge aufbläht.
 	_fraktionen.clear()
 	_wege.clear()
+	_wege_index.clear()
 	_spieler_nachbarn.clear()
 
 	var effektiver_seed := (model.welt_seed + seed_offset * 1337) & 0x7FFFFFFF
@@ -150,6 +152,7 @@ func _linie_frei(model: Welt_Model, von: Vector2i, nach: Vector2i) -> bool:
 
 func _wege_berechnen(model: Welt_Model) -> void:
 	_wege.clear()
+	_wege_index.clear()
 	_spieler_nachbarn.clear()
 	for f: Welt_Fraktion in _fraktionen:
 		f.nachbarn.clear()
@@ -172,13 +175,7 @@ func _wege_berechnen(model: Welt_Model) -> void:
 	var min_nachbarn := mini(2, distanzen.size())
 	for i in min_nachbarn:
 		var f: Welt_Fraktion = distanzen[i]["fraktion"]
-		_wege.append({
-			"von": spieler_pos_kachel,
-			"nach": f.position_kachel,
-			"von_id": "spieler",
-			"nach_id": f.fraktion_id,
-			"typ": "hauptweg"
-		})
+		_weg_hinzufuegen(spieler_pos_kachel, f.position_kachel, "spieler", f.fraktion_id, "hauptweg")
 		f.nachbarn.append("spieler")
 		_spieler_nachbarn.append(f.fraktion_id)
 
@@ -199,23 +196,25 @@ func _wege_berechnen(model: Welt_Model) -> void:
 				min_d = dist_fraktion
 				naechste_f = f2
 		if naechste_f != null and not _hat_weg(f1.fraktion_id, naechste_f.fraktion_id):
-			_wege.append({
-				"von": f1.position_kachel,
-				"nach": naechste_f.position_kachel,
-				"von_id": f1.fraktion_id,
-				"nach_id": naechste_f.fraktion_id,
-				"typ": "handelsweg"
-			})
+			_weg_hinzufuegen(f1.position_kachel, naechste_f.position_kachel, f1.fraktion_id, naechste_f.fraktion_id, "handelsweg")
 			f1.nachbarn.append(naechste_f.fraktion_id)
 			naechste_f.nachbarn.append(f1.fraktion_id)
 
+func _weg_hinzufuegen(von_pos: Vector2i, nach_pos: Vector2i, von_id: String, nach_id: String, typ: String) -> void:
+	_wege.append({
+		"von": von_pos,
+		"nach": nach_pos,
+		"von_id": von_id,
+		"nach_id": nach_id,
+		"typ": typ
+	})
+	_wege_index[_weg_schluessel(von_id, nach_id)] = true
+
+func _weg_schluessel(id_a: String, id_b: String) -> String:
+	return "%s:%s" % [id_a, id_b] if id_a < id_b else "%s:%s" % [id_b, id_a]
+
 func _hat_weg(id_a: String, id_b: String) -> bool:
-	for w in _wege:
-		var v := str(w.get("von_id", ""))
-		var n := str(w.get("nach_id", ""))
-		if (v == id_a and n == id_b) or (v == id_b and n == id_a):
-			return true
-	return false
+	return _wege_index.has(_weg_schluessel(id_a, id_b))
 
 func fraktionen() -> Array[Welt_Fraktion]:
 	return _fraktionen

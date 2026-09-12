@@ -36,8 +36,8 @@ func _ready() -> void:
 	_icon.custom_minimum_size = Vector2(22, 22)
 	_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	if icon_pfad != "" and ResourceLoader.exists(icon_pfad):
-		_icon.texture = load(icon_pfad)
+	if icon_pfad != "":
+		_icon.texture = Welt_FeedbackTexturCache.textur_fuer(icon_pfad)
 	_kasten.add_child(_icon)
 	_label = Label.new()
 	_label.text = "-%d %s" % [schaden, art]
