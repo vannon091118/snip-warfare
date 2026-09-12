@@ -39,6 +39,19 @@ def selbsttest():
         probleme.append("Zufallsmuster aus dem Kern findet randi() nicht")
     if "Kern_Zufall" not in ERLAUBTE_ZUFALLS_KLASSEN:
         probleme.append("Kern_Zufall fehlt in der Erlaubnisliste")
+    # Versionswaechter Selbsttest: Bump, Auslesen und Abweichung muessen stimmen.
+    try:
+        from .pruef_version import dokument_version, version_erhoehen
+        if version_erhoehen("V0.01") != "V0.02":
+            probleme.append("Versionswaechter erhoeht V0.01 nicht auf V0.02")
+        if version_erhoehen("V0.99") != "V1.00":
+            probleme.append("Versionswaechter traegt den Uebertrag V0.99 -> V1.00 nicht")
+        if dokument_version("Kopf\nVersion: V0.07\nRest\n") != "V0.07":
+            probleme.append("Versionswaechter liest die Versionszeile eines Dokuments nicht")
+        if dokument_version("ohne Zeile\n") is not None:
+            probleme.append("Versionswaechter meldet bei fehlender Zeile faelschlich eine Version")
+    except ImportError:
+        probleme.append("Versionswaechter ist nicht importierbar")
     # Shinon Gate Selbsttest: Banner, Bullet, Nummerierung und Bildsprache muessen sicher greifen.
     try:
         gate = _lade_shinon_klasse("shinon/shinon_gate.py", "_shinon_gate_selbsttest", "ShinonGate")()
@@ -68,19 +81,33 @@ def selbsttest():
         _ws_spez = _ilu_ws.spec_from_file_location("_ws_mod", str(_ws_pfad))
         _ws_mod = _ilu_ws.module_from_spec(_ws_spez)
         _ws_spez.loader.exec_module(_ws_mod)
-        _probe_crlf = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1\r\n", "a = 1\r\n")
+        _probe_crlf, _zeile_crlf = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1\r\n", "a = 1\r\n")
         if not any("CRLF" in u for u in _probe_crlf):
             probleme.append("Whitespace Pruefer meldet CRLF nicht")
-        _probe_trail = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1   \n", "a = 1   \n")
+        if _zeile_crlf != 1:
+            probleme.append(f"Whitespace Pruefer meldet CRLF nicht in Zeile 1 sondern { _zeile_crlf }")
+        _probe_trail, _zeile_trail = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1   \n", "a = 1   \n")
         if not any("trailing" in u for u in _probe_trail):
             probleme.append("Whitespace Pruefer meldet trailing Leerzeichen nicht")
-        _probe_final = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1", "a = 1")
+        if _zeile_trail != 1:
+            probleme.append(f"Whitespace trailing Zeile falsch: { _zeile_trail }")
+        _probe_trail2, _zeile_trail2 = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a\n" + b"b   \n", "a\n" + "b   \n")
+        if _zeile_trail2 != 2:
+            probleme.append(f"Whitespace trailing Zeile 2 erwartet, got { _zeile_trail2 }")
+        _probe_final, _zeile_final = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1", "a = 1")
         if not any("finales" in u for u in _probe_final):
             probleme.append("Whitespace Pruefer meldet fehlendes finales Newline nicht")
-        _probe_tab = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a\t= 1\n", "a\t= 1\n")
+        if _zeile_final != 1:
+            probleme.append(f"Whitespace finales Newline Zeile falsch: { _zeile_final }")
+        _probe_tab, _zeile_tab = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a\t= 1\n", "a\t= 1\n")
         if not any("Tab" in u for u in _probe_tab):
             probleme.append("Whitespace Pruefer meldet Tab in py nicht")
-        _probe_gd_tab = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.gd"), b"\ta = 1\n", "\ta = 1\n")
+        if _zeile_tab != 1:
+            probleme.append(f"Whitespace Tab Zeile falsch: { _zeile_tab }")
+        _probe_tab2, _zeile_tab2 = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1\n" + b"b\t\n", "a = 1\n" + "b\t\n")
+        if _zeile_tab2 != 2:
+            probleme.append(f"Whitespace Tab Zeile 2 erwartet, got { _zeile_tab2 }")
+        _probe_gd_tab, _ = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.gd"), b"\ta = 1\n", "\ta = 1\n")
         if any("Tab" in u for u in _probe_gd_tab):
             probleme.append("Whitespace Pruefer darf Tabs in .gd nicht melden")
     except Exception as lauf_fehler:

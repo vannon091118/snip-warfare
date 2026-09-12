@@ -7,11 +7,11 @@ Dieses Dokument ist die **einzige verbindliche Planungs- und Roadmap-Quelle** f�
 ## 1. Systemstatus & Geprüfter Bestand
 
 * **Engine:** Godot 4.7.2 (GL Compatibility)
-* **Klassenbestand:** 198 Klassen auf 249 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
+* **Klassenbestand:** 227 Klassen auf 250 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
 * **JSON-Datenpools:** 14 Pools (Wirtschaft, Bevölkerung, Welt, Jobs, Gebäude, Progression, Steuerung, Modifikatoren, Animationen)
 * **Szenen:** 8 aktive `.tscn`-Szenen
 * **Autoloads:** `Weltuhr` (`Kern_Weltuhr`, 24 Hz), `WeltSitzung` (`Ui_WeltSitzung`), `KernSignalBusAutoload` (`Kern_SignalBus`)
-* **Testabdeckung:** 85/85 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–17 inkl. Whitespace E042) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
+* **Testabdeckung:** 85/85 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–18 inkl. Whitespace E042 und Version E043) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
 
 ---
 
@@ -153,6 +153,19 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [ ] **CP-13.5:** Bespielbarkeit: Der Spieler kann jede eigene Siedlung wie eine Hauptkarte betreten (`Welt_MapFabrik` erzeugt die Region-Karte, genau eine Kartenwahrheit über `Welt_World`); Kriegsereignisse der Spieler-Kolonie melden sich über den `Kern_SignalBus` und die `Kern_Timeline` (Warum-Kette).
 - [ ] **CP-13.6:** Beweis: Pytest-Test über deterministische Auflösung (gleicher Seed, gleiches Ergebnis), Headless-Laufprüfung der Sequenzphasen; Ingame-Verifikation nach Regel 7 mit sichtbarer Schlacht-Sequenz.
 
+### Slice 14: Katzen, Bindung und Moral (Datenschritt zuerst)
+
+Die Daten fragen zuerst, die Klassen folgen danach. Dieser Slice hält die Reihenfolge ein und bleibt in der bestehenden Tier- und Jobarchitektur: Die Katze ist eine Tierart wie jede andere, die Bindung ist ein Wert an der Einheit, die Moral moduliert nur die Zielwahl.
+
+- [ ] **CP-14.1:** `world/data/tier_verhalten.json` erhält Katzen-Einträge mit den Feldern `id`, `name`, `sheet_pfad`, `fleisch`, `hp`, `trigger_radius`, `flucht_geschwindigkeit`, `ausloeser` (zum Beispiel `folgen`, `naeher_kommen`, `warten`), `logik_id`, `modifikator_id` (zum Beispiel `normal`, `bindungsbetont`, `wild`) und `faktor`. Die Datenklasse `Tier_Katze` wird über das `script`-Feld der Registry zugeordnet, kein neues Tier-System.
+- [ ] **CP-14.2:** `population/data/bindung.json` als Datenpool: Bindung gehört zu einer Einheit, kann zu mehreren Katzen bestehen und trägt je Eintrag `katze_id`, `level`, `staerke`, `letzte_interaktion` und `verfall_je_takt` sowie optionale Schutzwerte. Lesen und Setzen läuft ausschließlich über eine Bindungs-Registry an der Weltuhr, nie über direkte Feldschreiber.
+- [ ] **CP-14.3:** `world/data/moral_regeln.json` als Instanz der Kolonie-Grundsätze: `kannibalismus_erlaubt`, `tiere_bevorzugt`, `bindungsobjekt_geschuetzt`, `ersatzhandlung_bei_blockade` und `wirkung_je_rasse`. Die Moral blockiert keine Jagd, sie moduliert Zielwahl und Auswahl.
+- [ ] **CP-14.4:** Die Zielwahl in `Einheit_VerhaltensMaschine.pruefe_verhalten` liest Moral und Bindung über klar definierte Lese-Schnittstellen: gebundenes Tier, moralisch gesperrter Nachbar, Ersatzhandlung statt Verzweiflungstat, notfalls bewusstes Verhungern. Die Ausführung bleibt unverändert in der Ernte-Maschine und der Job-Architektur.
+- [ ] **CP-14.5:** Katzen lesen den Bindungs-Kontext über dieselbe Lese-Schnittstelle, niemals über hartkodierte Werte im Körpermuster; die Tier-Domäne bleibt unbelastet.
+- [ ] **CP-14.6:** Die vorhandene `Pop_Denkblase` erzählt die moralische Verzweigung als Observer-Spitze (Bindung, Verzicht, Nachbarsstreit), ohne Logik zu tragen; Katzen erscheinen auf der Karte und die Bindung wird im Einheit-Panel sichtbar.
+- [ ] **CP-14.7:** Eskalationsstufen und Folgekosten bleiben in `mood_modifikatoren.json` und den bestehenden Balance-Dateien (`needs.json`, `progression.json`, `steuerung.json`); die Balance-Läufe prüfen Nährstoffverbrauch, Einwanderungsraten, Jagd-Reichweite und Katzen-Nahrungsbeitrag über die vorhandenen Datenstellen statt über neue Konstanten.
+- [ ] **CP-14.8:** Beweis: Pytest-Test über Bindungs-Aufbau und Moral-Blockade, Headless-Laufprüfung der Zielwahl, danach die sichtbare Ingame-Verifikation nach Regel 9 mit einer Katze auf der Karte und einer erzählenden Gedankenblase.
+
 ### Slice A: Qualitätssicherung & Release-Gate
 - [ ] **CP-A.1:** Pytest-Suite deckt alle neuen Datenpools und Registry-Nähte ab.
 - [ ] **CP-A.2:** Voller Preflight (`python tools/preflight.py`) meldet 0 Befunde.
@@ -184,10 +197,12 @@ Alle Qualitäts-, Status- und Testprüfungen des Projekts lassen sich mit einem 
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 17 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042) aus.
+* **Vollprüfung:** Führt alle 18 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043) aus.
 * **Scope-Gezielt:**
   * `python tools/preflight.py --kategorie warnungen` (GDScript-Warnungs-Scan nach Regel 6)
   * `python tools/preflight.py --kategorie shinon` (Shinon Gate Prüfung E030–E039)
   * `python tools/preflight.py --kategorie godot` (Headless Engine-Kompilierung)
 * **Unittests:** `python -m pytest` führt alle 85 Unittests aus.
 * **Index:** `python tools/index_generieren.py` frischt das Klasseninventar in `INDEX.md` auf.
+
+Version: V0.01

@@ -16,6 +16,8 @@ Fehlercodes (Übersicht, Details in den Prüf-Modulen):
   E030 bis E039   Shinon Gate
   E040            Datenparitaet
   E041            LOC-Regel: differenzierte Zeilen-Grenze je Datei-Suffix
+  E042            Whitespace-Disziplin (CRLF, BOM, trailing, Tabs, finales Newline)
+  E043            Globale Version: VERSION ist die Quelle, jedes Dokument folgt
 
 Prüfkategorien (Flags):
   klassen        E001 E002 E003 E004 E008 E009 E021
@@ -34,6 +36,8 @@ Prüfkategorien (Flags):
   einheitlich    E023 E024
   welt           E012 E019 E023
   locregel       E041
+  whitespace     E042
+  version        E043
 
 Ausführung aus dem Projektstamm:
     python tools/preflight.py                            volle Abdeckung
@@ -67,6 +71,7 @@ from preflight.pruef_godot import godot_lauf
 from preflight.pruef_warnungen import pruefe_warnungen
 from preflight.pruef_locregel import pruefe_locregel
 from preflight.pruef_whitespace import pruefe_whitespace
+from preflight.pruef_version import pruefe_version
 from preflight.selbsttest import selbsttest
 
 PRUEFKATEGORIEN = {
@@ -87,6 +92,7 @@ PRUEFKATEGORIEN = {
     "welt": ("E012", "E019", "E023"),
     "locregel": ("E041",),
     "whitespace": ("E042",),
+    "version": ("E043",),
 }
 
 ALLE_KLASSEN = set()
@@ -166,6 +172,9 @@ def hauptprogramm():
         pruefe_locregel(dateien)
     if "whitespace" in gewaehlt:
         pruefe_whitespace(dateien)
+    # Die Versionierung ist Vertrag: VERSION fuehrt, jedes Dokument folgt.
+    if "version" in gewaehlt:
+        pruefe_version(dateien)
     if godot_aktiv:
         godot_lauf(argumente.godot_befehl)
 

@@ -64,7 +64,7 @@ Spielkette der Eingabe: `Ui_EingabeSteuerung` + `Ui_KameraSteuerung` → Manager
 
 _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 
-_Stand: 198 Klassen mit `class_name` in 14 Domaenen._
+_Stand: V0.01 — 227 Klassen mit `class_name` im Projekt, davon 199 in den 14 Domaenen-Ordnern dieser Tabelle._
 
 ### core — Prefix `Kern_` — `core/` (19)
 
@@ -107,7 +107,7 @@ _Stand: 198 Klassen mit `class_name` in 14 Domaenen._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (36)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (37)
 
 | Klasse | Datei |
 | --- | --- |
@@ -121,6 +121,7 @@ _Stand: 198 Klassen mit `class_name` in 14 Domaenen._
 | `Welt_FraktionsKiVerdrahtung` | `world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd` |
 | `Welt_GrenzProfil` | `world/logic/kategorie_welt/welt_grenz_profil.gd` |
 | `Welt_HudRueckmeldung` | `world/logic/kategorie_welt/welt_hud_rueckmeldung.gd` |
+| `Welt_KachelGeste` | `world/logic/kategorie_welt/welt_kachel_geste.gd` |
 | `Welt_Karawane` | `world/logic/kategorie_welt/welt_karawane.gd` |
 | `Welt_KarawanenManager` | `world/logic/kategorie_welt/welt_karawanen_manager.gd` |
 | `Welt_KartenBeobachter` | `world/logic/kategorie_welt/welt_karten_beobachter.gd` |
@@ -334,3 +335,4 @@ _keine `class_name`-Klassen_
 
 <!-- INVENTAR:ENDE -->
 
+Version: V0.01

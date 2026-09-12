@@ -31,6 +31,18 @@ DOMAENEN = [
 
 MARKER_START = "<!-- INVENTAR:START -->"
 MARKER_ENDE = "<!-- INVENTAR:ENDE -->"
+VERSIONSPFAD = "VERSION"
+
+
+def version_lesen() -> str:
+    """Liest die globale Version fuer den Inventar-Stand; ohne Datei ein Strich."""
+    pfad = PROJEKT_STAMM / VERSIONSPFAD
+    if not pfad.is_file():
+        return "-"
+    for zeile in pfad.read_text(encoding="utf-8").splitlines():
+        if zeile.strip():
+            return zeile.strip()
+    return "-"
 
 
 def inventar_sammeln() -> dict:
@@ -52,10 +64,27 @@ def inventar_sammeln() -> dict:
     return inventar
 
 
+def gesamt_klassen() -> int:
+    """Zaehlt jede `class_name`-Klasse des Projekts wie der Preflight."""
+    ignorierte_ordner = {".godot", ".git", ".freebuff", "addons", "__pycache__"}
+    gesamt = 0
+    for gd in PROJEKT_STAMM.rglob("*.gd"):
+        if ignorierte_ordner.intersection(gd.parts):
+            continue
+        try:
+            text = gd.read_text(encoding="utf-8")
+        except Exception:
+            continue
+        if re.search(r"^class_name\s+([A-Za-z_][A-Za-z0-9_]*)", text, re.M):
+            gesamt += 1
+    return gesamt
+
+
 def inventar_text(inventar: dict) -> str:
     zeilen = [MARKER_START, "", "## 4. Klasseninventar (auto-generiert)", "", "_Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._", ""]
     gesamt = sum(len(v) for v in inventar.values())
-    zeilen.append(f"_Stand: {gesamt} Klassen mit `class_name` in {len(inventar)} Domaenen._")
+    zeilen.append(f"_Stand: {version_lesen()} — {gesamt_klassen()} Klassen mit `class_name` im Projekt, "
+                  f"davon {gesamt} in den {len(inventar)} Domaenen-Ordnern dieser Tabelle._")
     zeilen.append("")
     for domain, praefix, ordner in DOMAENEN:
         eintraege = inventar.get(domain, [])

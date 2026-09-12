@@ -1,0 +1,84 @@
+{
+  "_kommentar": "Bindung als reine Daten: Eine Bindung gehoert zu einer Einheit und kann zu mehreren Tieren bestehen, vor allem zu Katzen. Der Pool traegt die Stufen, die Wirkung je Stufe und die Ereignisse, die eine Bindung wachsen oder verfallen lassen. Kein Code kennt hier eine Zahl; Lesen und Setzen laeuft spaeter ausschliesslich ueber die Bindungs-Schnittstelle, damit keine fremde Maschine direkt in Einheiten schreibt. Der Verfall ist bewusst langsam: Zuwendung wirkt, Vernachlaessigung nagt, aber nichts springt.",
+  "regeln": {
+    "level_max": 5,
+    "zuwendung_je_ereignis": 0.2,
+    "verfall_je_takt_ohne_kontakt": 0.01,
+    "kontakt_radius": 96,
+    "beschreibung": "Der Kontaktradius beschreibt, ab wann ein Tier die Naehe eines Einheit-Knotens als Zuwendung liest. Verfall greift nur, wenn kein Kontakt im Radius bestand."
+  },
+  "stufen": [
+    {
+      "level": 0,
+      "bezeichnung": "Fremd",
+      "wirkung": "keine",
+      "schutz": false,
+      "beschreibung": "Ein fremdes Tier in Rufweite ohne Beziehung."
+    },
+    {
+      "level": 1,
+      "bezeichnung": "Neugierig",
+      "wirkung": "naeher_kommen",
+      "schutz": false,
+      "beschreibung": "Das Tier kommt von selbst naeher und bleibt in Sichtweite."
+    },
+    {
+      "level": 2,
+      "bezeichnung": "Gewohnt",
+      "wirkung": "folgen",
+      "schutz": false,
+      "beschreibung": "Das Tier folgt der Einheit in einem lockeren Abstand."
+    },
+    {
+      "level": 3,
+      "bezeichnung": "Vertraut",
+      "wirkung": "folgen",
+      "schutz": true,
+      "beschreibung": "Ab hier gilt das Tier als Bindungsobjekt und wird von der Moral geschuetzt."
+    },
+    {
+      "level": 4,
+      "bezeichnung": "Gebunden",
+      "wirkung": "naeher_kommen",
+      "schutz": true,
+      "beschreibung": "Das Tier sucht die Naehe, auch wenn es gerade beschaeftigt war."
+    },
+    {
+      "level": 5,
+      "bezeichnung": "Gefaehrtin",
+      "wirkung": "folgen",
+      "schutz": true,
+      "beschreibung": "Die hoechste Bindung; Verlust trifft die Stimmung der Einheit spuerbar."
+    }
+  ],
+  "ereignisse": [
+    {
+      "id": "fuettern",
+      "zuwendung": 0.3,
+      "anlass": "Die Einheit gibt dem Tier etwas vom eigenen Anteil ab.",
+      "beschreibung": "Der staerkste Zuwachs; kostet Nahrung und ist damit eine echte Entscheidung."
+    },
+    {
+      "id": "streicheln",
+      "zuwendung": 0.2,
+      "anlass": "Kurze Zuwendung ohne Kosten.",
+      "beschreibung": "Der Standardfall fuer Kontakt ohne Verbrauch."
+    },
+    {
+      "id": "beute_teilen",
+      "zuwendung": 0.25,
+      "anlass": "Ein Jagd-Erfolg wird geteilt.",
+      "beschreibung": "Verbindet Jagd und Bindung, ohne die Ernte-Maschine zu veraendern."
+    },
+    {
+      "id": "schrecken",
+      "zuwendung": -0.4,
+      "anlass": "Ein Schlag oder Schrecken in der Naehe.",
+      "beschreibung": "Der einzige negative Anlass; er laesst eine Bindung spuerbar zurueckfallen."
+    }
+  ],
+  "verlust": {
+    "tod_einer_bindung": -0.6,
+    "beschreibung": "Stirbt ein gebundenes Tier, sinkt die Stimmung der Einheit ueber denselben Mood-Pfad wie jeder andere Verlust. Die Stufe der Bindung bleibt erhalten, damit die Erinnerung nicht spurlos verschwindet."
+  }
+}

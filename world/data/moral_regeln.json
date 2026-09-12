@@ -1,0 +1,58 @@
+{
+  "_kommentar": "Moral als reine Daten: Die Kolonie traegt Grundsaetze, die keine Jagd verbieten, sondern Ziele und Auswahl modulieren. Die Moral reiht sich damit in die bestehende Zielwahl der Verhaltens-Maschine ein und ersetzt sie nicht; ein Verbot liefert immer eine Ersatzhandlung, damit eine Einheit nie in einen leeren Auftrag laeuft. Schwellen der Eskalation stehen weiterhin nur in population/data/mood_modifikatoren.json; dieser Pool nennt keine Zahlen, die dort schon wohnen.",
+  "grundsaetze": {
+    "kannibalismus_erlaubt": false,
+    "tiere_bevorzugt": true,
+    "bindungsobjekt_geschuetzt": true,
+    "verhungern_erlaubt": false,
+    "beschreibung": "Vier Schalter fuer die Kolonie. Kannibalismus bleibt verboten, solange die Grundsaetze nicht bewusst geaendert werden; Tiere sind als Nahrung bevorzugt, gebundene Tiere sind geschuetzt, und der eigene Tod durch Verhungern ist keine erlaubte Ersatzhandlung, sondern das letzte Mittel."
+  },
+  "ersatzhandlungen": [
+    {
+      "id": "beeren_suchen",
+      "bei_blockade": "kannibalismus_verboten",
+      "aktion": "beeren_sammeln",
+      "beschreibung": "Statt eines Artgenossen wird die naechste Beerengruppe gesucht; die Regel ist damit kein Verbot, sondern eine Umleitung."
+    },
+    {
+      "id": "kleinwild_jagen",
+      "bei_blockade": "tier_geschuetzt",
+      "aktion": "jagen_kleinwild",
+      "beschreibung": "Ein gebundenes Tier faellt aus der Beute-Auswahl, das naechste ungebundene Tier rueckt nach."
+    },
+    {
+      "id": "lager_vorrat",
+      "bei_blockade": "kein_ziel_in_reichweite",
+      "aktion": "lager_aufnehmen",
+      "beschreibung": "Wenn weder Tier noch Beere in Reichweite sind, fuehrt der Weg zum naechsten Lager statt zum Nachbarn."
+    },
+    {
+      "id": "bett_ruhen",
+      "bei_blockade": "erschoepfung",
+      "aktion": "ausruhen",
+      "beschreibung": "Erschoepfung wird zuerst als Ruhe gelesen, erst danach eskaliert die Kette."
+    }
+  ],
+  "wirkung_je_rasse": {
+    "mensch": {
+      "haltung_staerke": 1.0,
+      "bindung_empfindlich": true,
+      "beschreibung": "Der Mensch traegt die Grundsaetze der Kolonie unveraendert."
+    },
+    "elf": {
+      "haltung_staerke": 0.7,
+      "bindung_empfindlich": true,
+      "beschreibung": "Der Elf wiegt Haltung geringer und Bindung hoeher; Verbote greifen weicher, Verluste schwerer."
+    },
+    "ork": {
+      "haltung_staerke": 1.4,
+      "bindung_empfindlich": false,
+      "beschreibung": "Der Ork traegt Haltung haerter und nimmt Bindungsverluste kuerzer."
+    },
+    "_beschreibung": "Generierte Rassen erben mangels eigener Werte die menschliche Haltung, bis ihr Schema etwas anderes sagt."
+  },
+  "verzweigung": {
+    "kette": "hunger",
+    "beschreibung": "Die Moral haengt an derselben Eskalationskette wie der Hunger. Sie entscheidet nicht, wie stark eskalierte, sondern nur, welches Ziel die Maschine waehlt, sobald die Kette den Verzweiflungsschritt erreicht."
+  }
+}
