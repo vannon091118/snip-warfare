@@ -11,7 +11,6 @@
   "population/logic/mood/pop_mood_maschine.gd": {"ist_zeilen": 285},
   "population/logic/needs/pop_need_registry.gd": {"ist_zeilen": 106},
   "population/logic/needs/pop_rassen_schema_registry.gd": {"ist_zeilen": 105},
-  "ui/logic/kategorie_ui/ui_eingabe_steuerung.gd": {"ist_zeilen": 475, "slice": "B"},
   "world/logic/kategorie_generator/generator_registry.gd": {"ist_zeilen": 109},
   "world/logic/kategorie_generator/welt_generator.gd": {"ist_zeilen": 511, "slice": "E"},
   "world/logic/kategorie_objekt/gebaeude_manager.gd": {"ist_zeilen": 418, "slice": "F"},

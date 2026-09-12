@@ -62,9 +62,10 @@ def test_kontext_menue_hat_keine_harten_namensvergleiche_mehr():
 
 def test_eingabe_uebersetzt_orte_in_ziel_tags():
     code = _lies("ui/logic/kategorie_ui/ui_eingabe_steuerung.gd")
+    jobs = _lies("ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd")
     assert "func _ziel_tags_fuer_ort(" in code
     assert "ziel_tags_fuer(" in code, "Die Tags kommen aus der Registry"
-    assert "func _marschieren_ausfuehren(" in code
+    assert "func marschieren_nach(" in jobs, "Der Marschbefehl wohnt in der Job-Vergabe-Maschine"
     assert 'logik == "marschieren"' in code
 
 

@@ -43,6 +43,6 @@ def test_gebaeude_manager_bauplan():
     assert "_ist_material_vollstaendig(" in inhalt
 
 def test_ui_rechtsklick_priorisierung():
-    steuerung_pfad = ROOT / "ui" / "logic" / "kategorie_ui" / "ui_eingabe_steuerung.gd"
-    inhalt = steuerung_pfad.read_text(encoding="utf-8")
-    assert "_baustelle_priorisieren(" in inhalt
+    maschine_pfad = ROOT / "ui" / "logic" / "kategorie_ui" / "ui_job_vergabe_maschine.gd"
+    inhalt = maschine_pfad.read_text(encoding="utf-8")
+    assert "func baustelle_priorisieren(" in inhalt, "Die Priorisierung wohnt in der Job-Vergabe-Maschine"

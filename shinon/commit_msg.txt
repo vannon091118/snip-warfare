@@ -1,9 +1,7 @@
-1. Der Kommandant rief zur grossen Zerlegung und die Buehne welt.gd war das erste Haus auf der Liste, das mit 537 Zeilen viel zu viel Moebel trug.
-2. Ich hievte das Haus nicht weg, ich ordnete es: Der Aufbau gliedert sich jetzt in fuenf benannte Phasen von der Uhr bis zur UI, und _ready liest sich als fuenf kurze Zeilen statt als ein Rieselband aus 160 Verdrahtungen.
-3. Die Fraktions-KI zog komplett in ihr eigenes Haus welt_fraktions_ki_verdrahtung.gd, wo Config, Netzwerk, Keimlinge, Rassen und KI-Maschinen nun ihr eigenes Leben leben, waehrend die Buehne nur noch die Referenzen reicht.
-4. Das Fenstergeschirr zog in die Werkstatt welt_ui_aufbau.gd: Kartenebene, Debug-Fenster, Bau-Panel, Pop-Einheit-Panel und die Lager-Darsteller werden dort gebaut, und die Buehne liest nur noch die fertigen Referenzen.
-5. Die Rufsaeule welt_hud_rueckmeldung.gd traegt jetzt die reinen Anzeige-Rufe zwischen Maschinen und HUD, vom Produktionsticker bis zur Timeline, damit die Buehne kein zehnfaches Meldefenster mehr haelt.
-6. Drei der alten Tests schrien nach der alten Moeblierung, also haengte ich ihre Schilder auf den neuen Stand, und der Editor-Warnwaechter bekam den durchgereichten Parameter zurueck.
-7. Nach dem Umzug probefuhr ich alles zweimal: 85 Tests gruen, der volle Preflight ohne Befund, und der Nachlass-Eintrag der Buehne ist aus dem Verzeichnis gestrichen.
-8. Auf der Buehne im laufenden Spiel bleibt sichtbar: Die Welt laedt, der erste Siedler wandert am Lagerfeuer ein, F3 oeffnet das Debug-Fenster und M die Weltkarte, alles wie zuvor, nur wohnt es jetzt in getrennten Hausern.
-9. Als Naechstes zerlege ich ui_eingabe_steuerung.gd in drei Maschinen und streiche den naechsten Nachlass-Eintrag.
+1. Der Kommandant zeigte auf den Zettelmeister ui_eingabe_steuerung.gd, der mit 475 Zeilen und fuenfzehn fremden Schnueren nicht mehr nur uebersetzte, sondern selbst rechnete.
+2. Ich band ihm drei Werkzeuggehaeuse an: Die Bauauftrag-Maschine haelt jetzt den Bauwunsch und platziert ihn, die Expansion-Maschine zieht neue Karten aus der Fabrik, und die Job-Vergabe-Maschine verteilt Arbeit an Tier und Objekt samt Baustellen-Vorzug und Marschbefehl.
+3. Der Zettelmeister behielt nur noch das Verteilen der Ereignisse und das Ermitteln der Klick-Orte, und sein Zettel schrumpfte auf 368 Zeilen, der Nachlass-Eintrag ist aus dem Verzeichnis gestrichen.
+4. Drei alte Tests riefen nach den ausgelagerten Werkzeugen an der alten Adresse, also hängte ich ihre Schilder auf die neuen Gehaeuse um.
+5. Nach dem Umzug liefen alle 85 Tests gruen und der volle Preflight meldete keinen Befund.
+6. Auf der Baustelle bleibt sichtbar: Klicken, Bauen, Marschieren und Sammeln gehorchen wie zuvor, nur rechnet jetzt jede Maschine in ihrem eigenen Gehaeuse.
+7. Als Naechstes zerlege ich einheit_manager.gd, das groesste Monster von allen, und streiche seinen Nachlass-Eintrag.

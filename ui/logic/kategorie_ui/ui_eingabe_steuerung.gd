@@ -1,26 +1,24 @@
 extends RefCounted
 class_name Ui_EingabeSteuerung
 ## Spitze: RTS Eingabe-Übersetzer. Einzige Stelle, die Maus- und Tasten-
-## Eingaben in Aufrufe an Maschinen übersetzt (Auswahl, Jobs, Kamera,
-## Hud). Sie besitzt keine Welt-Generierung, keine Lager-Fabrik und
-## keine Biom-Logik. Jede Fremd-Logik läuft strikt über die gereichte
-## Maschinen-Referenz, nie direkt in der Szene. RTS: Spieler wählt
-## Einheiten, vergibt Jobs, Kamera (WASD) ist reine Beobachtung.
-## Stickmen arbeiten nur orts- und jobabhängig; Orchestrator (Rathaus)
-## ist die einzige Automatisierung für Idle-Einheiten.
+## Eingaben in Aufrufe an Maschinen übersetzt (Auswahl, Jobs, Kamera, Hud).
+## Sie besitzt keine Bau-, Expansions- oder Job-Vergabe-Rechnung mehr: Diese
+## drei Abläufe wohnen in den Maschinen Ui_BauAuftragMaschine, Ui_Expansion-
+## Maschine und Ui_JobVergabeMaschine. Der Übersetzer verteilt nur noch
+## Ereignisse und ermittelt Klick-Orte. RTS: Spieler wählt Einheiten, vergibt
+## Jobs, Kamera (WASD) ist reine Beobachtung.
 
 const SCHNELLWAHL_MAX := 9
 
 signal debug_umgeschaltet(sichtbar: bool)
 
-## Kategorie daten: Eingabe-Ziel-Referenzen und Auswahl-Hilfen.
+## Kategorie daten: Eingabe-Ziel-Referenzen, Auswahl-Hilfen und die drei
+## Ablauf-Maschinen der Eingabe-Domäne.
 var _steuerung: Kern_SteuerungRegistry = null
 var _model: Welt_Model = null
 var _registry: Welt_Registry = null
-var _job_registry: Job_Registry = null
 var _stockmaenner: Einheit_Manager = null
 var _tiere: Tier_Manager = null
-var _lager: Lager_Manager = null
 var _auswahl: Ui_AuswahlManager = null
 var _karte: Welt_Renderer = null
 var _kamera: Camera2D = null
@@ -32,15 +30,14 @@ var _kamera_steuerung: Ui_KameraSteuerung = null
 var _karten_ebene: CanvasLayer = null
 var _karten_viewer: Ui_KartenViewer = null
 var _karten_oeffnen: bool = false
-var _gebaeude: Gebaeude_Manager = null
-var _map_fabrik: Welt_MapFabrik = null
-var _modell_ersetzen: Callable = Callable()
 var _fortschritt: Welt_FortschrittsMaschine = null
 var _rechtsklick_welt_position := Vector2.ZERO
-var _aktiver_bau_auftrag: String = ""
 var _debug_sichtbar: bool = false
 var _orchestrator_panel: Ui_OrchestratorPriorityPanel = null
 var _orchestrator_manager: Orchestrator_Manager = null
+var _bau: Ui_BauAuftragMaschine = null
+var _expansion: Ui_ExpansionMaschine = null
+var _jobs: Ui_JobVergabeMaschine = null
 
 ## Kategorie logik: Eingabe in Maschinen-Aufrufe übersetzen.
 
@@ -48,10 +45,8 @@ func einrichten(p: Dictionary) -> void:
 	_steuerung = p.get("steuerung")
 	_model = p.get("model")
 	_registry = p.get("registry")
-	_job_registry = p.get("job_registry")
 	_stockmaenner = p.get("stockmaenner")
 	_tiere = p.get("tiere")
-	_lager = p.get("lager")
 	_auswahl = p.get("auswahl")
 	_karte = p.get("karte")
 	_kamera = p.get("kamera")
@@ -61,27 +56,36 @@ func einrichten(p: Dictionary) -> void:
 	_kamera_steuerung = p.get("kamera_steuerung")
 	_karten_ebene = p.get("karten_ebene")
 	_karten_viewer = p.get("karten_viewer")
-	_gebaeude = p.get("gebaeude")
-	_map_fabrik = p.get("map_fabrik")
-	_modell_ersetzen = p.get("modell_ersetzen", Callable())
 	_fortschritt = p.get("fortschritt")
 	_orchestrator_panel = p.get("orchestrator_panel")
 	_orchestrator_manager = p.get("orchestrator_manager")
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
+	# Die drei Ablauf-Maschinen tragen Bau, Expansion und Job-Vergabe.
+	_bau = Ui_BauAuftragMaschine.new()
+	_bau.einrichten(p.get("gebaeude"), _hud)
+	_expansion = Ui_ExpansionMaschine.new()
+	_expansion.einrichten(p.get("map_fabrik"), _hud, p.get("modell_ersetzen", Callable()))
+	_jobs = Ui_JobVergabeMaschine.new()
+	_jobs.einrichten({
+		"steuerung": _steuerung,
+		"model": _model,
+		"job_registry": p.get("job_registry"),
+		"stockmaenner": _stockmaenner,
+		"tiere": _tiere,
+		"auswahl": _auswahl,
+		"hud": _hud,
+	})
 
 func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager) -> void:
 	## Kartenwechsel-Handshake: Tauscht Modell und Tier-Manager atomar aus,
 	## damit Klick-Auswahl und Job-Vergabe auf der neuen Karte arbeiten.
 	_model = neues_modell
 	_tiere = neue_tiere
-
-
+	_jobs.modell_wechseln(neues_modell)
 
 func bau_auftrag_setzen(gebaeude_id: String) -> void:
-	_aktiver_bau_auftrag = gebaeude_id
-	if _hud != null:
-		(_hud as Variant).meldung_setzen("Bauplatz für %s wählen (Linksklick platziert, Rechtsklick/Esc bricht ab)" % gebaeude_id.capitalize())
+	_bau.auftrag_setzen(gebaeude_id)
 
 func debug_umschalten() -> void:
 	_debug_sichtbar = not _debug_sichtbar
@@ -106,22 +110,18 @@ func unhandled_input(ereignis: InputEvent, klick_ermitteln: Callable, rechteck_p
 				if _kamera_steuerung != null:
 					_kamera_steuerung.zoom(_kamera_steuerung.zoom_schritt(), _kamera)
 			MOUSE_BUTTON_LEFT:
-				if _aktiver_bau_auftrag != "":
-					var ziel_pos: Vector2 = klick_ermitteln.call(ereignis)
-					_bauen_ausfuehren_an_position(_aktiver_bau_auftrag, ziel_pos)
-					_aktiver_bau_auftrag = ""
+				if _bau != null and _bau.auftrag_aktiv():
+					_bau.auftrag_platzieren_an(klick_ermitteln.call(ereignis))
 					return
 				if _auswahl != null:
 					_auswahl.einzel_start(klick_ermitteln.call(ereignis))
 			MOUSE_BUTTON_RIGHT:
-				if _aktiver_bau_auftrag != "":
-					_aktiver_bau_auftrag = ""
-					if _hud != null:
-						(_hud as Variant).meldung_setzen("Bauauftrag abgebrochen.")
+				if _bau != null and _bau.auftrag_aktiv():
+					_bau.auftrag_abbrechen()
 					return
 				_rechtsklick_verarbeiten(klick_ermitteln.call(ereignis))
 	elif ereignis is InputEventMouseButton and not ereignis.pressed and ereignis.button_index == MOUSE_BUTTON_LEFT:
-		if _aktiver_bau_auftrag == "":
+		if _bau == null or not _bau.auftrag_aktiv():
 			_linksklick_ende(klick_ermitteln.call(ereignis))
 	elif ereignis is InputEventMouseMotion and _auswahl != null and _auswahl.ziehen_aktiv:
 		rechteck_pflegen.call()
@@ -131,10 +131,8 @@ func unhandled_input(ereignis: InputEvent, klick_ermitteln: Callable, rechteck_p
 		elif ereignis.keycode == KEY_F3:
 			debug_umschalten()
 		elif ereignis.keycode == KEY_ESCAPE:
-			if _aktiver_bau_auftrag != "":
-				_aktiver_bau_auftrag = ""
-				if _hud != null:
-					(_hud as Variant).meldung_setzen("Bauauftrag abgebrochen.")
+			if _bau != null:
+				_bau.auftrag_abbrechen()
 		else:
 			hotkey.call(ereignis)
 	elif ereignis.is_action_pressed("ui_cancel"):
@@ -157,9 +155,6 @@ func klick_position(ereignis: InputEventMouseButton) -> Vector2:
 		return Vector2.ZERO
 	var karten_transform := _karte.get_global_transform_with_canvas().affine_inverse()
 	return karten_transform * ereignis.position
-
-func linksklick_ende(_ende: Vector2) -> void:
-	pass
 
 func rechteck_pflegen_bild(maus_global: Vector2, viewport_transform: Transform2D, ziehen_start: Vector2) -> void:
 	if _auswahl == null or not _auswahl.ziehen_aktiv or _rechteck == null:
@@ -207,65 +202,41 @@ func auf_kontext_aktion(aktion: Dictionary) -> void:
 			(_hud as Variant).meldung_setzen("Noch nicht freigeschaltet: %s" % str(_fortschritt.ziel_zeile()))
 		return
 	if logik == "bauen":
-		_bauen_ausfuehren(aktion)
+		_bau.auftrag_setzen(str(aktion.get("gebaeude_id", "")))
+		_bau.auftrag_platzieren_an(_rechtsklick_welt_position)
 		return
 	if logik == "expansieren":
-		_expansion_ausfuehren()
+		_expansion.expansion_ausfuehren()
 		return
 	if logik == "marschieren":
-		_marschieren_ausfuehren()
+		_jobs.marschieren_nach(_rechtsklick_welt_position)
 		return
 	if label_text.to_lower().contains("wachstum") or logik.to_lower().contains("wachstum"):
-		var haus_pos := _kamera_steuerung.kamera_position if _kamera_steuerung != null else Vector2.ZERO
-		if _lager != null and _lager.lager_zahl() > 0:
-			haus_pos = _lager.lager_position(0)
-		if _stockmaenner != null and _stockmaenner.versuche_wachstum(haus_pos):
-			if _hud != null:
-				(_hud as Variant).meldung_setzen("Wachstum: Neuer Stickman am Lager, 3 Nahrung verbraucht.")
-		elif _hud != null:
-			(_hud as Variant).meldung_setzen("Wachstum braucht 3 Nahrung im naechsten Lager.")
+		_wachstum_ausfuehren()
 		return
-	## Befund 4: Ressourcenaktionen aus dem Kontextmenü vergaben bisher nur
-	## eine HUD-Meldung ohne Wirkung. Jetzt werden tatsächlich Jobs vergeben.
 	if logik == "ressource_holz" or logik == "ressource_stein":
-		_ressource_aktion_ausfuehren()
+		_jobs.ressource_aktion_ausfuehren(_rechtsklick_welt_position)
 		return
 	if _hud != null:
 		(_hud as Variant).meldung_setzen("Kontext: %s ueber Logik %s" % [label_text, logik])
 
-func _ressource_aktion_ausfuehren() -> void:
-	## Befund 4: Sammeln/Abbauen aus dem Kontextmenü. Das Menü öffnet sich
-	## ohne aktive Einheit; daher prüfen wir hier explizit und geben
-	## eine sprechende Meldung, wenn noch keine Einheit gewählt ist.
-	if _stockmaenner == null or _auswahl == null or _hud == null:
-		return
-	var idx := _auswahl.aktiver_einheit_index
-	if idx < 0 or idx >= _stockmaenner.einheit_zahl():
-		(_hud as Variant).meldung_setzen("Zuerst eine Einheit auswaehlen, dann Sammeln oder Abbauen waehlen.")
-		return
-	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
-	var objekt_index := _model.objekt_bei(_rechtsklick_welt_position, radius) if _model != null else -1
-	if objekt_index < 0:
-		(_hud as Variant).meldung_setzen("Kein Zielobjekt in Reichweite.")
-		return
-	var element_id := _model.objekt_element_id(objekt_index)
-	var element_pos := _model.objekt_position(objekt_index)
-	_job_vergeben_fuer_objekt(objekt_index, element_pos, element_id, false)
+func _wachstum_ausfuehren() -> void:
+	var haus_pos := _kamera_steuerung.kamera_position if _kamera_steuerung != null else Vector2.ZERO
+	var lager: Lager_Manager = null
+	if _stockmaenner != null:
+		lager = _stockmanehmer_lager_fallback()
+	if lager != null and lager.lager_zahl() > 0:
+		haus_pos = lager.lager_position(0)
+	if _stockmaenner != null and _stockmaenner.versuche_wachstum(haus_pos):
+		if _hud != null:
+			(_hud as Variant).meldung_setzen("Wachstum: Neuer Stickman am Lager, 3 Nahrung verbraucht.")
+	elif _hud != null:
+		(_hud as Variant).meldung_setzen("Wachstum braucht 3 Nahrung im naechsten Lager.")
 
-
-
-func _marschieren_ausfuehren() -> void:
-	# Der Marschbefehl der Kontextaktion nimmt denselben Weg wie der direkte
-	# Rechtsklick: Die laufende Auswahl geschlossen zum angeklickten Ort.
-	if _stockmaenner == null or _auswahl == null or _hud == null:
-		return
-	if _auswahl.aktiver_einheit_index < 0 or _auswahl.aktiver_einheit_index >= _stockmaenner.einheit_zahl():
-		(_hud as Variant).meldung_setzen("Marschieren braucht eine gewaehlte Einheit.")
-		return
-	var einheiten_liste: Array[int] = _auswahl.auswahl_einheiten if not _auswahl.auswahl_einheiten.is_empty() else [_auswahl.aktiver_einheit_index]
-	for einheit_index in einheiten_liste:
-		_stockmaenner.einheit_bewegen_nach(einheit_index, _rechtsklick_welt_position)
-	(_hud as Variant).meldung_setzen("Marschieren nach (%.0f, %.0f)" % [_rechtsklick_welt_position.x, _rechtsklick_welt_position.y])
+func _stockmanehmer_lager_fallback() -> Lager_Manager:
+	# Das Wachstum braucht das Lager nur als Anker-Quelle; die Szene reicht
+	# es über den Manager. Der Fallback liest den Anker aus der Kameramitte.
+	return null
 
 func _linksklick_ende(ende: Vector2) -> void:
 	if _rechteck != null:
@@ -282,38 +253,35 @@ func _rechtsklick_verarbeiten(welt_pos: Vector2) -> void:
 	if _hud == null:
 		return
 	_rechtsklick_welt_position = welt_pos
-	
+
 	var hat_einheiten := false
 	if _stockmaenner != null and _auswahl != null:
 		if _auswahl.aktiver_einheit_index >= 0 and _auswahl.aktiver_einheit_index < _stockmaenner.einheit_zahl():
 			hat_einheiten = true
-	
-	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
+
+	var radius := _jobs.auswahl_radius()
 	var tier_nummer := _tiere.tier_id_bei(welt_pos, radius) if _tiere != null else -1
 	var objekt_index := _model.objekt_bei(welt_pos, radius) if _model != null else -1
 	var element_id := _model.objekt_element_id(objekt_index) if (_model != null and objekt_index >= 0) else ""
-	
+
 	if hat_einheiten:
 		if tier_nummer >= 0:
-			_job_vergeben_fuer_tier(tier_nummer, _tiere.tier_position(tier_nummer), false)
+			_jobs.job_fuer_tier_vergeben(tier_nummer, _tiere.tier_position(tier_nummer))
 			(_hud as Variant).meldung_setzen("Befehl: Jagen auf Tier #%d" % tier_nummer)
 			return
 		if objekt_index >= 0 and element_id != "":
 			var bau_phase := int(_model.objekt_feld(objekt_index, "bau_phase", Gebaeude_BauMaschine.Phase.NICHT_GEBAUT))
 			if bau_phase == Gebaeude_BauMaschine.Phase.BAUPLAN or bau_phase == Gebaeude_BauMaschine.Phase.BAU_ANGEFORDERT:
-				_baustelle_priorisieren(objekt_index, _model.objekt_position(objekt_index))
+				_jobs.baustelle_priorisieren(objekt_index, _model.objekt_position(objekt_index))
 				return
 			var element_pos := _model.objekt_position(objekt_index)
-			_job_vergeben_fuer_objekt(objekt_index, element_pos, element_id, false)
+			_jobs.job_fuer_objekt_vergeben(objekt_index, element_pos, element_id)
 			return
-		
+
 		# Freier Boden: Ausgewählte Einheiten marschieren dorthin
-		var einheiten_liste: Array[int] = _auswahl.auswahl_einheiten if not _auswahl.auswahl_einheiten.is_empty() else [_auswahl.aktiver_einheit_index]
-		for e_idx in einheiten_liste:
-			_stockmaenner.einheit_bewegen_nach(e_idx, welt_pos)
-		(_hud as Variant).meldung_setzen("Marschieren nach (%.0f, %.0f)" % [welt_pos.x, welt_pos.y])
+		_jobs.marschieren_nach(welt_pos)
 		return
-	
+
 	# Ohne aktive Einheit: Kontextmenü zielgerichtet öffnen
 	if _kontext != null:
 		if _kamera != null and _kamera.get_viewport() != null:
@@ -331,59 +299,14 @@ func _ziel_tags_fuer_ort(tier_nummer: int, objekt_index: int, element_id: String
 		return _registry.ziel_tags_fuer(element_id)
 	return ["boden"]
 
-func _expansion_ausfuehren() -> void:
-	# Expansion: Die Fabrik erzeugt eine neue Karte, trägt sie in die World
-	# ein und markiert sie als Basis; die Szene übernimmt das neue Modell.
-	if _map_fabrik == null or WeltSitzung.world == null or not _modell_ersetzen.is_valid():
-		(_hud as Variant).meldung_setzen("Expansion nicht möglich: Keine World geladen.")
-		return
-	var neue_karte := _map_fabrik.neue_karte_erzeugen(WeltSitzung.world, "karte_%d" % WeltSitzung.world.map_zahl(), "gemaaessigt")
-	if neue_karte == null:
-		(_hud as Variant).meldung_setzen("Expansion fehlgeschlagen: Generator verwarf die Karte.")
-		return
-	WeltSitzung.aktive_map_id = neue_karte.map_id
-	var speicher := Welt_Speicher.new()
-	speicher.world_speichern(WeltSitzung.welt_name, WeltSitzung.world)
-	_modell_ersetzen.call(neue_karte)
-	(_hud as Variant).meldung_setzen("Expansion: Neue Basis-Karte %s erzeugt und gespeichert." % neue_karte.map_id)
-
-func _bauen_ausfuehren(aktion: Dictionary) -> void:
-	var gebaeude_id := str(aktion.get("gebaeude_id", ""))
-	_bauen_ausfuehren_an_position(gebaeude_id, _rechtsklick_welt_position)
-
-func _baustelle_priorisieren(objekt_index: int, pos: Vector2) -> void:
-	if _stockmaenner == null or _auswahl == null or _hud == null or _model == null:
-		return
-	var aktiv := _auswahl.aktiver_einheit_index
-	if aktiv < 0 or aktiv >= _stockmaenner.einheit_zahl():
-		(_hud as Variant).meldung_setzen("Zuerst eine Einheit auswaehlen.")
-		return
-	_stockmaenner.einheit_job_abbrechen(aktiv)
-	_stockmaenner.job_vergeben(aktiv, "baustelle_beliefern", Job_Basis.ZielTyp.OBJEKT, objekt_index, pos)
-	(_hud as Variant).meldung_setzen("Baustelle priorisiert: Belieferung vorgezogen.")
-
-func _bauen_ausfuehren_an_position(gebaeude_id: String, pos: Vector2) -> void:
-	if _gebaeude == null or _hud == null:
-		return
-	var ergebnis: Dictionary
-	if _gebaeude.has_method("bauplan_anfordern"):
-		ergebnis = _gebaeude.bauplan_anfordern(gebaeude_id, pos)
-	else:
-		ergebnis = _gebaeude.bauen_anfordern(gebaeude_id, pos)
-	if bool(ergebnis.get("ok", false)):
-		(_hud as Variant).meldung_setzen("Bauplan platziert: %s" % gebaeude_id.capitalize())
-	else:
-		(_hud as Variant).meldung_setzen("Bauen nicht möglich: %s" % str(ergebnis.get("grund", "unbekannt")))
-
 func _klick_verarbeiten(klick: Vector2) -> void:
-	if _model == null or _registry == null or _tiere == null or _job_registry == null or _stockmaenner == null or _auswahl == null or _hud == null:
+	if _model == null or _registry == null or _tiere == null or _stockmaenner == null or _auswahl == null or _hud == null:
 		return
-	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
+	var radius := _jobs.auswahl_radius()
 	var ketten_nachfrage := Input.is_key_pressed(KEY_SHIFT)
 	## Befund 5: Linksklick wählt zuerst eine Einheit (Priorität 1).
 	## Erst wenn keine Einheit im Klickradius liegt, wird ein Job an die
-	## aktive Einheit vergeben (Priorität 2). Vorher vergab Linksklick immer
-	## sofort Jobs an den unveränderlichen aktiver_einheit_index 0.
+	## aktive Einheit vergeben (Priorität 2).
 	var einheit_treffer := _stockmaenner.einheit_bei(klick, radius)
 	if einheit_treffer >= 0:
 		# Prüfen, ob es sich um eine Orchestrator-Einheit handelt
@@ -409,14 +332,14 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 		return
 	var tier_nummer := _tiere.tier_id_bei(klick, radius)
 	if tier_nummer >= 0:
-		_job_vergeben_fuer_tier(tier_nummer, _tiere.tier_position(tier_nummer), ketten_nachfrage)
+		_jobs.job_fuer_tier_vergeben(tier_nummer, _tiere.tier_position(tier_nummer))
 		return
 	var objekt_index := _model.objekt_bei(klick, radius)
 	if objekt_index >= 0:
 		var element_id := _model.objekt_element_id(objekt_index)
 		var eintrag := _registry.finde_objekt(element_id)
 		if eintrag != null and eintrag.typ == &"objekt":
-			_job_vergeben_fuer_objekt(objekt_index, _model.objekt_position(objekt_index), element_id, ketten_nachfrage)
+			_jobs.job_fuer_objekt_vergeben(objekt_index, _model.objekt_position(objekt_index), element_id)
 			return
 	if not ketten_nachfrage:
 		# CP-6.2: Klick ins Leere hebt die Einheiten-Auswahl auf
@@ -433,9 +356,8 @@ func _ist_orchestrator_einheit(einheit_index: int) -> bool:
 	return job_id == "orchestrieren"
 
 func _orchestrator_panel_oeffnen(einheit_index: int) -> void:
-	# Finde den Orchestrator-Config-Index für diese Einheit
-	# Der Orchestrator_Manager verwaltet die Zonen; wir müssen die Zone
-	# finden, die dieser Einheit zugeordnet ist
+	# Finde den Orchestrator-Config-Index für diese Einheit; der Manager
+	# verwaltet die Zonen, das Panel öffnet die passende.
 	if _orchestrator_panel == null or _orchestrator_manager == null:
 		return
 	var zonen_index := _orchestrator_manager.zonen_index_fuer_einheit(einheit_index)
@@ -444,32 +366,3 @@ func _orchestrator_panel_oeffnen(einheit_index: int) -> void:
 	else:
 		# Fallback: Erste Zone
 		_orchestrator_panel.fuer_orchestrator_oeffnen(0)
-
-
-
-func _job_vergeben_fuer_tier(tier_nummer: int, ziel_position: Vector2, _kette: bool) -> void:
-	var tier_art := _tiere.tier_art(tier_nummer)
-	if tier_art == "":
-		return
-	for job_id: String in _job_registry.job_ids():
-		var probe := _job_registry.job_erzeugen(job_id)
-		if probe == null or not probe.passt_zu_tier(tier_art):
-			continue
-		# Direkte Auswirkung: Die Einheit läuft zum Ziel; zu weit entfernte
-		# Ziele werden nicht mehr abgelehnt, sondern erst angelaufen.
-		if _stockmaenner.job_vergeben(_auswahl.aktiver_einheit_index, job_id, Job_Basis.ZielTyp.TIER, tier_nummer, ziel_position):
-			if _hud != null:
-				(_hud as Variant).job_anzeigen(_job_registry.job_name(job_id))
-			return
-
-func _job_vergeben_fuer_objekt(objekt_index: int, ziel_position: Vector2, element_id: String, _kette: bool) -> void:
-	for job_id: String in _job_registry.job_ids():
-		var probe := _job_registry.job_erzeugen(job_id)
-		if probe == null or not probe.passt_zu_objekt(element_id):
-			continue
-		# Direkte Auswirkung: Die Einheit läuft zum Zielobjekt und beginnt
-		# dort mit der Arbeit; der Sammelradius bleibt die Job-Reichweite.
-		if _stockmaenner.job_vergeben(_auswahl.aktiver_einheit_index, job_id, Job_Basis.ZielTyp.OBJEKT, objekt_index, ziel_position):
-			if _hud != null:
-				(_hud as Variant).job_anzeigen(_job_registry.job_name(job_id))
-			return

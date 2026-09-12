@@ -56,7 +56,8 @@ def test_eingabe_steuerung_unterstuetzt_bau_und_debug_toggle():
     assert "func debug_umschalten" in code
     assert "signal debug_umgeschaltet" in code
     assert "KEY_F3" in code
-    assert "_bauen_ausfuehren_an_position" in code
+    bau_maschine = _lies("ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd")
+    assert "func auftrag_platzieren_an(" in bau_maschine, "Das Platzieren wohnt in der Bauauftrag-Maschine"
 
 
 def test_einheit_marschbefehl_vorhanden():
