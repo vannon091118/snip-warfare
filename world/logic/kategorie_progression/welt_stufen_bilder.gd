@@ -19,22 +19,20 @@ var _cache: Dictionary = {}
 ## Kategorie logik: Einrichten, Textur fuer Stadium und Element.
 
 func einrichten(registry: Welt_ProgressionsRegistry) -> void:
-	# Die Geometrie ist Konfiguration und nicht Code: Der Pool liefert sie,
-	# diese Klasse konsumiert sie nur. Fehlt der Abschnitt, bleibt der
-	# Rahmen aus dem Datenpool-Ersatzwert bestehen.
+	# Die Spaltenzahl ist Konfiguration und nicht Code; Breite und Hoehe
+	# einer Zelle leiten sich aus dem geladenen Sheet ab (Sheet-Breite
+	# geteilt durch Spalten, Hoehe als volle Bildhoehe). Fehlt der
+	# Abschnitt, bleibt der Rahmen aus dem Ersatzwert bestehen.
 	# Einrichten setzt den Cache zurueck, damit ein neuer Lauf nicht die
 	# Blätter des vorherigen Datenstands ausliefert.
 	_cache.clear()
 	if registry == null:
 		return
 	var blatt := registry.stufen_blatt()
-	_blatt_breite = maxf(float(blatt.get("blatt_breite", _blatt_breite)), 1.0)
-	_blatt_hoehe = maxf(float(blatt.get("blatt_hoehe", _blatt_hoehe)), 1.0)
 	_spalten = maxi(int(blatt.get("spalten", _spalten)), 1)
 
 func blatt_breite() -> float:
 	return _blatt_breite
-
 func blatt_hoehe() -> float:
 	return _blatt_hoehe
 
@@ -48,11 +46,13 @@ func _blatt_fuer(element_id: String, stadium_index: int) -> Texture2D:
 	if not ResourceLoader.exists(sheet_pfad):
 		return null
 	var textur: Texture2D = load(sheet_pfad)
+	# Die Zellgeometrie folgt dem echten Sheet: Spaltenzahl aus dem Pool,
+	# Zellbreite als Sheet-Breite je Spalte, Hoehe als volle Bildhoehe.
 	# Ein Blatt ausserhalb des Sheets wird nicht erfunden: Ohne gueltige
 	# Zelle bleibt es beim normalen Katalogbild des Objekts.
+	_blatt_breite = maxf(float(textur.get_width()) / float(_spalten), 1.0)
+	_blatt_hoehe = maxf(float(textur.get_height()), 1.0)
 	if float(stadium_index) * _blatt_breite + _blatt_breite > float(textur.get_width()):
-		return null
-	if _blatt_hoehe > float(textur.get_height()):
 		return null
 	var atlas := AtlasTexture.new()
 	atlas.atlas = textur
