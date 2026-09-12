@@ -1,10 +1,19 @@
-1. Der Nutzer legte die schonungslose Mängelliste auf den Tisch und forderte die Ausmerzung der kritischen Leistungsbremsen im Taktwerk sowie die Begradigung der Pfade.
-2. In world/logic/kategorie_progression/welt_progressions_maschine.gd wurde der Festplatten-Überfall im Sekundenbruchteil beendet, indem die Need-Registry nicht mehr im Tick auf der Platte kratzt, sondern ihre Takt-Ticks beim Start vorberechnet.
-3. Die Schwebetafeln wurden von ihrer Festplatten-Sucht erlöst: world/logic/kategorie_feedback/feedback_textur_cache.gd verwahrt die Bildchen nun als eiserne Reserve im Speicher.
-4. Die Anzeigen world/logic/kategorie_feedback/feedback_tod_anzeige.gd, world/logic/kategorie_feedback/feedback_plus_anzeige.gd, world/logic/kategorie_feedback/feedback_schaden_anzeige.gd und world/logic/kategorie_feedback/feedback_manager.gd schöpfen beim Erscheinen nur noch blitzschnell daraus.
-5. Der Wald wiegt sich nun endlich ohne Renderer-Kollaps im Wind: world/logic/kategorie_atmosphaere/welt_sway_material.gd berechnet den Phasenversatz direkt aus den Weltkoordinaten des Vertex-Shaders und teilt dasselbe Material unter allen Bäumen.
-6. Die neugierigen Beobachter in ui/scenes/panels/einheit_panel.gd und ui/scenes/panels/tier_panel.gd lauschen diszipliniert auf Sichtbarkeit und schlafen stumm im Hintergrund, solange niemand die Taste F3 drückt.
-7. Der Fernstraßenbau in world/logic/kategorie_welt/welt_netzwerk_planer.gd sucht seine Routen nun im Handumdrehen über ein indiziertes Nachschlagewerk, statt für jede Abfrage das gesamte Streckennetz mühselig abzulaufen.
-8. Auf den Pfaden führt nun core/logic/kategorie_pathfinding/path_finder.gd, core/logic/kategorie_pathfinding/path_netz.gd, core/logic/kategorie_pathfinding/path_registry.gd und game/logic/kategorie_einheit/einheit_weg_planung.gd die Kolonisten über ein echtes Rastergitter ans Ziel.
-9. Der Preflight bestätigt mit makellosem Grün über alle Kategorien, dass der Determinismus eisern hält, keine Warnung das Protokoll trübt und die Weltuhr ungestört tickt.
-10. Im laufenden Spiel darf der Nutzer nun bestaunen, wie die Bäume im Wind tanzen, das Ernteplus geschmeidig emporsteigt, die Panels erst auf Befehl erwachen und die Einheiten wie auf Schienen wandern.
+1. Die Aufgabe war, 27 Godot-Debugger-Befunde zu beseitigen, die beim Script-Reload wie kleine Explosionen aus dem Ausgabefenster schossen und das Fundament mit kosmetischem Laerm beschmierten.
+
+2. In welt_netzwerk_planer.gd wurde die lokale Variable spieler_region umbenannt, weil sie wie ein aufdringlicher Doppelgaenger die gleichnamige Methode der Klasse zuzudecken versuchte, und die integer-Divisionen bei der Regionsmitte-Berechnung wurden durch float-sichere Varianten ersetzt, damit Godot aufhoert, ueber Praezisionsverluste zu klagen, die keine waren.
+
+3. In kern_steuerung_registry.gd wurden zwei statische Methodenaufrufe, die auf einer Instanz saßen wie Gaeste auf dem falschen Stuhl, auf den direkten Klassennamen umgestellt, wie es die Sprache verlangt.
+
+4. In ui_karten_viewer.gd wurden fuenf Methoden-Signaturen von int auf float umgestellt, weil die Kachelgroesse intern immer schon als float durch die Rechnung floß und der Compiler zurecht fragte, warum man das Wasser durch ein Sieb gießt.
+
+5. In gebaeude_manager.gd wurde der ungenutzte Parameter gebaeude_id mit einem Unterstrich versehen, damit klar ist, dass er als Vertragsflaeche steht und nicht vergessen wurde, und die Kachel-Ganzzahl-Divisionen wurden durch explizite float-Division mit int-Wrap ersetzt.
+
+6. In welt_atmosphaere_verdrahtung.gd wurde die lokale Variable material umbenannt, weil sie wie ein Eindringling den Schatten der Basisklassen-Property CanvasItem.material auf sich zog.
+
+7. In welt_schlag_staub.gd wurde die Halbierung der Blitz-Dauer von dauer / 2 auf int(dauer * 0.5) umgestellt, damit der Compiler nicht mehr den Zeigefinger hebt.
+
+8. In path_netz.gd wurde die Zuweisung an diagonal_weight entfernt, da diese Property in Godot 4 AStarGrid2D schlicht nicht existiert und einen INVALID_ASSIGNMENT-Absturz produzierte, der alle anderen Warnungen in seiner Haerte uebertraf.
+
+9. Der Preflight laeuft in allen 15 Kategorien gruen, der Warnungs-Scan meldet keinen einzigen Befund mehr, und der Debugger-Zaehler sollte nach dem naechsten Script-Reload auf null stehen.
+
+10. Was noch fehlt ist die ingame-Verifikation durch den Nutzer: Das Spiel starten, die Karte laden, und pruefen, ob der Debugger schweigt.

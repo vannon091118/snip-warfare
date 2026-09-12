@@ -127,13 +127,13 @@ func voraussetzung_erfuellt(gebaeude_id: String) -> Dictionary:
 			return {"ok": false, "grund": "braucht zuerst: %s" % voraussetzung}
 	return {"ok": true}
 
-func _bauplatz_frei(gebaeude_id: String, welt_position: Vector2, definition: Gebaeude_Definition) -> bool:
+func _bauplatz_frei(_gebaeude_id: String, welt_position: Vector2, definition: Gebaeude_Definition) -> bool:
 	# Ein Bauplatz ist frei, solange kein anderes Gebäude dieselbe Kachel
 	# belegt. Die Kachelkante kommt aus dem Modell, nie aus einer zweiten Zahl.
 	if _model == null or definition == null or not definition.belegt_kachel:
 		return true
 	var kante := maxi(_model.kachel_groesse, 1)
-	var ziel_kachel := Vector2i(int(welt_position.x) / kante, int(welt_position.y) / kante)
+	var ziel_kachel := Vector2i(int(welt_position.x / float(kante)), int(welt_position.y / float(kante)))
 	for index in _model.objekt_anzahl():
 		var andere_id := str(_model.objekt_feld(index, "gebaeude_id", ""))
 		if andere_id == "":
@@ -142,7 +142,7 @@ func _bauplatz_frei(gebaeude_id: String, welt_position: Vector2, definition: Geb
 		if andere_definition == null or not andere_definition.belegt_kachel:
 			continue
 		var andere_position := _model.objekt_position(index)
-		if Vector2i(int(andere_position.x) / kante, int(andere_position.y) / kante) == ziel_kachel:
+		if Vector2i(int(andere_position.x / float(kante)), int(andere_position.y / float(kante))) == ziel_kachel:
 			return false
 	return true
 

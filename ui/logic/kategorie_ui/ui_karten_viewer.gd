@@ -74,7 +74,7 @@ func _kacheln_malen(kachel_px: float) -> void:
 				farbe = Color.from_string(biom.farbe, Color.WHITE).darkened(0.25)
 			draw_rect(Rect2(Vector2(x, y) * kachel_px, Vector2(kachel_px, kachel_px)), farbe, true)
 
-func _regionen_malen(kachel_px: float, _kante: int) -> void:
+func _regionen_malen(kachel_px: float, _kante: float) -> void:
 	# Region-Grenzen als dicke Linien: die Makrostruktur wird sichtbar.
 	var kacheln: Vector2i = _model.groesse()
 	var region_kante := maxi(_model.region_kante, 1)
@@ -86,7 +86,7 @@ func _regionen_malen(kachel_px: float, _kante: int) -> void:
 		var px := region_x * region_kante * kachel_px
 		draw_line(Vector2(px, 0), Vector2(px, kacheln.y * kachel_px), farbe, 2.0)
 
-func _chunks_malen(kachel_px: float, kante: int) -> void:
+func _chunks_malen(kachel_px: float, kante: float) -> void:
 	# Chunk-Grenzen als dünne Linien: die technische Partition wird sichtbar.
 	var kacheln: Vector2i = _model.groesse()
 	var farbe := Color(0, 0, 0, 0.25)
@@ -97,7 +97,7 @@ func _chunks_malen(kachel_px: float, kante: int) -> void:
 		var px := chunk_x * kante * kachel_px
 		draw_line(Vector2(px, 0), Vector2(px, kacheln.y * kachel_px), farbe, 1.0)
 
-func _objekte_malen(kachel_px: float, kante: int) -> void:
+func _objekte_malen(kachel_px: float, kante: float) -> void:
 	for index in _model.objekt_anzahl():
 		var eintrag := _registry.finde_objekt(_model.objekt_element_id(index))
 		if eintrag == null:
@@ -114,14 +114,14 @@ func _objekte_malen(kachel_px: float, kante: int) -> void:
 			farbe = Color(0.1, 0.35, 0.1)
 		draw_rect(Rect2(pos / float(kante) * kachel_px - Vector2.ONE * kachel_px * 0.5, Vector2.ONE * kachel_px), farbe, true)
 
-func _blickfeld_malen(kachel_px: float, kante: int) -> void:
+func _blickfeld_malen(kachel_px: float, kante: float) -> void:
 	if _kamera_groesse.x <= 0.0:
 		return
 	var oben := (_kamera_position - _kamera_groesse * 0.5) / float(kante) * kachel_px
 	var unten := (_kamera_position + _kamera_groesse * 0.5) / float(kante) * kachel_px
 	draw_rect(Rect2(oben, unten - oben), Color(1, 1, 1, 0.15), false, 2.0)
 
-func _spieler_malen(kachel_px: float, kante: int) -> void:
+func _spieler_malen(kachel_px: float, kante: float) -> void:
 	var pos := _spieler_position / float(kante) * kachel_px
 	draw_circle(pos, maxf(kachel_px * 0.5, 3.0), Color(0.2, 0.5, 1.0))
 	draw_circle(pos, maxf(kachel_px * 0.25, 1.5), Color.WHITE)

@@ -23,7 +23,6 @@ func aufbauen(model: Welt_Model, registry: Kern_PathRegistry, kollisions_positio
 	raster.region = Rect2i(0, 0, breite, hoehe)
 	raster.cell_size = Vector2(float(model.kachel_groesse), float(model.kachel_groesse))
 	raster.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ALWAYS
-	raster.diagonal_weight = registry.diagonal_faktor()
 	raster.default_compute_heuristic = AStarGrid2D.HEURISTIC_OCTILE
 	raster.default_estimate_heuristic = AStarGrid2D.HEURISTIC_OCTILE
 	raster.update()

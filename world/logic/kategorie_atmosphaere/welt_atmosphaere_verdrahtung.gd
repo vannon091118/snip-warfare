@@ -83,11 +83,11 @@ func sway_material_quelle() -> Callable:
 	return func() -> RefCounted: return _sway
 
 func papier_material() -> ShaderMaterial:
-	var material := ShaderMaterial.new()
-	material.shader = papier_shader_instanz()
-	material.set_shader_parameter("korn", _konfig.papier_wert("korn_staerke", 0.045))
-	material.set_shader_parameter("variation", _konfig.papier_wert("farb_variation", 0.03))
-	return material
+	var shader_mat := ShaderMaterial.new()
+	shader_mat.shader = papier_shader_instanz()
+	shader_mat.set_shader_parameter("korn", _konfig.papier_wert("korn_staerke", 0.045))
+	shader_mat.set_shader_parameter("variation", _konfig.papier_wert("farb_variation", 0.03))
+	return shader_mat
 
 ## Der Papier-Shader-Text wird einmal zu einer echten Shader-Instanz
 ## gebacken, damit alle Materialien dieselbe Instanz teilen.

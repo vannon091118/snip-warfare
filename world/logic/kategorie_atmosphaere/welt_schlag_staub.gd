@@ -48,7 +48,7 @@ func schlag_zeigen(welt_position: Vector2) -> void:
 	blitz.rotation = 0.25
 	add_child(blitz)
 	_aktive.append({"knoten": puff, "alter": 0, "dauer": dauer, "steig": steig, "skalierung": skalierung})
-	_aktive.append({"knoten": blitz, "alter": 0, "dauer": maxi(dauer / 2, 1), "steig": steig * 2.0, "skalierung": skalierung * 3.0})
+	_aktive.append({"knoten": blitz, "alter": 0, "dauer": maxi(int(dauer * 0.5), 1), "steig": steig * 2.0, "skalierung": skalierung * 3.0})
 
 func _enter_tree() -> void:
 	Weltuhr.tick.connect(_auf_tick)
