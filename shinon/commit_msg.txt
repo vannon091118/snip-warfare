@@ -1,8 +1,9 @@
-1. Der Kommandant bemerkte zerstoererische Geisterzustaende beim Kartenwechsel und forderte absolute Idempotenz im gesamten Kolonie-Getriebe.
-2. Shinon verpasste daraufhin lager_manager.gd und welt_lager_fabrik.gd ein eisernes Gatter gegen duplizierte Vorratskammern.
-3. In tier_manager.gd und welt_tier_platzierer.gd werden herumlungernde Tierrudel nun vor jeder Neubesiedlung gruendlich verscheucht.
-4. Der atomare Kartenwechsel in welt.gd reicht die neue Weltenwahrheit nahtlos an gebaeude_manager.gd und einheit_manager.gd weiter.
-5. In ui_eingabe_steuerung.gd verbeissen sich Klicks nun gezielt in ausgewaehlte Siedler und leiten Arbeitsauftraege ohne Leerlauf weiter.
-6. Sobald frischer Moertel in welt.gd aushaertet, erneuert einheit_manager.gd sofort das Wegenetz gegen planlose Wandlaeufer.
-7. Alle Simulationstakte schnurren damit wieder synchron und ohne Geisterdoppelungen ueber die gesamte Szenenarchitektur.
-8. Nun kann die Errichtung von Baustellen-Blaupausen und Lastentrannsporten in Slice 5 mit reinem Gewissen in Angriff genommen werden.
+1. Der Kommandant verlangte den Rueckbau der magischen Sofortbauten und befahl eine lebendige Baustellenlogistik mit pulsierenden Blaupausen und echten Materialtransporten.
+2. Shinon verankerte die Phase des unfertigen Traums in gebaeude_bau_maschine.gd, sodass Mauern erst nach vollstaendiger Anlieferung emporwachsen.
+3. In gebaeude_manager.gd werden Bauplaene nun ohne voreiligen Rohstoffraub auf das Reissbrett gesetzt und mit echten Bedarfslisten versehen.
+4. Die Logistikzentrale welt_baustellen_bedarf.gd wacht unerbittlich ueber fehlende Balken und Steine auf saemtlichen Bauplaetzen.
+5. Schweisstreibende Schlepparbeit koordiniert einheit_transport_maschine.gd, waehrend job_baustelle_beliefern.gd und job_config.json den Siedlern schwere Lasten aufbuerden.
+6. Auf der Bildflaeche erstrahlt welt_bau_geist.gd als pulsierendes Phantom mit Eckmarkierungen und leuchtendem Bedarfsbalken, nahtlos eingewoben in welt_renderer.gd.
+7. Bei draengender Notwendigkeit erlaubt ui_eingabe_steuerung.gd dem Spieler, Baustellen per Rechtsklick sofort an die Spitze der Arbeitsqueue zu peitschen.
+8. Im Testlabor test_baustellen_logistik.py parieren saemtliche Transportphasen, Bauzustaende und Bedarfspruefungen fehlerfrei, waehrend ROADMAP.md den Sieg ueber Slice 5 beurkundet.
+9. Nun richten sich die mueden Augen auf Slice 6, um den Siedlern goldene Auswahlsterne, praezise Klick-Semantik und echtes Eigenleben einzupflanzen.

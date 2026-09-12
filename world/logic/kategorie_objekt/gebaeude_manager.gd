@@ -94,6 +94,8 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 		return {"ok": false, "grund": "Kosten fehlen"}
 	var objekt_index := _model.objekt_hinzufuegen(definition.welt_objekt_id, welt_position)
 	_model.objekt_feld_setzen(objekt_index, "gebaeude_id", gebaeude_id)
+	_model.objekt_feld_setzen(objekt_index, "bedarf", definition.baukosten.duplicate(true))
+	_model.objekt_feld_setzen(objekt_index, "geliefert", definition.baukosten.duplicate(true))
 	var bau_zustand := _bau_maschine.starten(Gebaeude_BauMaschine.neuer_zustand())
 	_model.objekt_feld_setzen(objekt_index, "bau_phase", int(bau_zustand["phase"]))
 	_model.objekt_feld_setzen(objekt_index, "bau_fortschritt", 0)
@@ -107,6 +109,55 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	# Die neue Baustelle erscheint sofort im HUD; kein Frame muss darauf warten.
 	_melde_status_wenn_neu()
 	return {"ok": true}
+
+func bauplan_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
+	## CP-5.1: Platziert einen Bauplan im Modell mit Materialbedarf.
+	## Keine Vorab-Abbuchung von Rohstoffen aus dem Lager.
+	if _model == null or _ressourcen == null or _lager == null:
+		return {"ok": false, "grund": "nicht bereit"}
+	if _fortschritt != null:
+		var zugang := voraussetzung_erfuellt(gebaeude_id)
+		if not zugang.get("ok", false):
+			return zugang
+	if not _definitionen.hat_gebaeude(gebaeude_id):
+		return {"ok": false, "grund": "unbekanntes Gebaeude"}
+	var definition := _definitionen.definition_fuer(gebaeude_id)
+	if not _bauplatz_frei(gebaeude_id, welt_position, definition):
+		return {"ok": false, "grund": "Kachel bereits bebaut"}
+	var lager_index := _lager.naechstes_lager_fuer(welt_position)
+	if lager_index < 0:
+		return {"ok": false, "grund": "kein Lager in der Naehe"}
+
+	var bedarf: Dictionary = {}
+	var geliefert: Dictionary = {}
+	for ressource: String in definition.baukosten.keys():
+		var menge := int(definition.baukosten[ressource])
+		if menge > 0:
+			bedarf[ressource] = menge
+			geliefert[ressource] = 0
+
+	var objekt_index := _model.objekt_hinzufuegen(definition.welt_objekt_id, welt_position)
+	_model.objekt_feld_setzen(objekt_index, "gebaeude_id", gebaeude_id)
+	_model.objekt_feld_setzen(objekt_index, "bedarf", bedarf)
+	_model.objekt_feld_setzen(objekt_index, "geliefert", geliefert)
+
+	var bau_zustand: Dictionary
+	if bedarf.is_empty():
+		bau_zustand = _bau_maschine.starten(Gebaeude_BauMaschine.neuer_zustand())
+	else:
+		bau_zustand = _bau_maschine.bauplan_anlegen(Gebaeude_BauMaschine.neuer_zustand())
+
+	_model.objekt_feld_setzen(objekt_index, "bau_phase", int(bau_zustand["phase"]))
+	_model.objekt_feld_setzen(objekt_index, "bau_fortschritt", 0)
+	_model.objekt_feld_setzen(objekt_index, "bau_ziel_ticks", _bau_maschine.zeit_ticks_fuer(definition.bauzeit_ticks))
+	_model.objekt_feld_setzen(objekt_index, "prod_phase", int(Gebaeude_ProduktionsMaschine.Phase.DEAKTIVIERT))
+	_model.objekt_feld_setzen(objekt_index, "prod_fortschritt", 0)
+	_model.objekt_feld_setzen(objekt_index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
+	_startbestand_einbuchen(definition, lager_index)
+	gebaeude_meldung.emit("Bauplan platziert: %s (%d Ticks)" % [definition.angezeigter_name, definition.bauzeit_ticks])
+	gebaeude_platziert.emit(objekt_index)
+	_melde_status_wenn_neu()
+	return {"ok": true, "objekt_index": objekt_index}
 
 func _startbestand_einbuchen(definition: Gebaeude_Definition, lager_index: int) -> void:
 	# Ankunftsort: Ein Gebaeude mit Startvorrat (das Lagerfeuer) legt seinen
@@ -230,6 +281,18 @@ func _bau_fertig(index: int) -> bool:
 	}
 	return _bau_maschine.ist_fertig(zustand)
 
+func _ist_material_vollstaendig(index: int) -> bool:
+	var bedarf: Dictionary = _model.objekt_feld(index, "bedarf", {})
+	if bedarf.is_empty():
+		return true
+	var geliefert: Dictionary = _model.objekt_feld(index, "geliefert", {})
+	for ressource: String in bedarf.keys():
+		var soll := int(bedarf.get(ressource, 0))
+		var ist := int(geliefert.get(ressource, 0))
+		if ist < soll:
+			return false
+	return true
+
 func _bau_ticken(index: int, definition: Gebaeude_Definition) -> void:
 	var zustand := {
 		"phase": int(_model.objekt_feld(index, "bau_phase", 0)),
@@ -237,7 +300,8 @@ func _bau_ticken(index: int, definition: Gebaeude_Definition) -> void:
 	}
 	if _bau_maschine.ist_fertig(zustand):
 		return
-	var neu := _bau_maschine.tick(zustand, definition.bauzeit_ticks)
+	var material_voll := _ist_material_vollstaendig(index)
+	var neu := _bau_maschine.tick(zustand, definition.bauzeit_ticks, material_voll)
 	_model.objekt_feld_setzen(index, "bau_phase", int(neu["phase"]))
 	_model.objekt_feld_setzen(index, "bau_fortschritt", int(neu["fortschritt"]))
 	_model.objekt_feld_setzen(index, "bau_ziel_ticks", int(neu.get("ziel_ticks", definition.bauzeit_ticks)))

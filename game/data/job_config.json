@@ -127,5 +127,21 @@
     "sammel_auf_flaeche": false,
     "loop": true,
     "mindest_tragekraft": 0
+  },
+  "baustelle_beliefern": {
+    "script": "res://game/logic/kategorie_job/job_baustelle_beliefern.gd",
+    "name": "Baustelle beliefern",
+    "ressource": "baumaterial",
+    "animation": "gehen",
+    "icon_pfad": "res://world/assets/ui/ressource_werkzeug.svg",
+    "logik_id": "baustelle_beliefern",
+    "modifikator_id": "normal",
+    "faktor": 1.0,
+    "harvest_zeit_ticks": 60,
+    "harvest_menge": 10,
+    "reichweite": 160.0,
+    "sammel_auf_flaeche": false,
+    "loop": false,
+    "mindest_tragekraft": 0
   }
 }

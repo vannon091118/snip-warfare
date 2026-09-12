@@ -92,12 +92,12 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [x] **CP-4.4 (Barrieren):** `gebirge` und `ozean` in `world/data/biome.json` mit `barriere: true`; Gewichte-Einträge tragen `ebene` (`lokal`/`makro`), die lokale Karte zieht nur lokale Biome, der `Welt_NetzwerkPlaner` meidet Barrieren für Fraktionen, Startbereich und Wege, `welt_map.gd` zeichnet Dreiecke und Wellen. Beweis: 560 Barriere-Regionen über 12 Seeds, kein Weg kreuzt eine Barriere.
 - [x] **CP-4.3b:** Eigene `Welt_LandeplatzAnzeige` zur sichtbaren Markierung des Startplatzes auf der lokalen Karte; dezentes Atmen und Kanten-Rahmung, verblasst automatisch beim ersten Lagerfeuer. Beweis: `test_y_sort_und_landeplatz.py` und `tools/lauf_pruefung_hud.gd`.
 
-### Slice 5: Bauen und Logistik (Blueprint & Materialtransport)
-- [ ] **CP-5.1:** Bauplan-Zustand `BAUPLAN` im `Welt_Model` mit Materialbedarf; keine Vorab-Abbuchung der Baukosten.
-- [ ] **CP-5.2:** `Welt_BaustellenBedarf` (Bedarfsermittlung) und `Job_BaustelleBeliefern` mit `Einheit_TransportMaschine`.
-- [ ] **CP-5.3:** `Gebaeude_BauMaschine` startet Baufortschritt erst nach vollständiger Materiallieferung.
-- [ ] **CP-5.4:** `Welt_BauGeist` zur halbtransparenten Blueprint-Darstellung mit visualisiertem Bedarfsbalken.
-- [ ] **CP-5.5:** Rechtsklick-Priorisierung von Baustellen-Aufträgen in der Einheiten-Queue.
+### Slice 5: Bauen und Logistik (Blueprint & Materialtransport) — abgeschlossen
+- [x] **CP-5.1:** Bauplan-Zustand `BAUPLAN` im `Welt_Model` mit Materialbedarf; keine Vorab-Abbuchung der Baukosten. Beweis: `test_baustellen_logistik.py`.
+- [x] **CP-5.2:** `Welt_BaustellenBedarf` (Bedarfsermittlung) und `Job_BaustelleBeliefern` mit `Einheit_TransportMaschine`. Beweis: `test_baustellen_logistik.py`.
+- [x] **CP-5.3:** `Gebaeude_BauMaschine` startet Baufortschritt erst nach vollständiger Materiallieferung. Beweis: `test_baustellen_logistik.py`.
+- [x] **CP-5.4:** `Welt_BauGeist` zur halbtransparenten Blueprint-Darstellung mit visualisiertem Bedarfsbalken und Eckwinkeln. Beweis: `test_baustellen_logistik.py` und `tools/lauf_pruefung_hud.gd`.
+- [x] **CP-5.5:** Rechtsklick-Priorisierung von Baustellen-Aufträgen in der Einheiten-Queue. Beweis: `test_baustellen_logistik.py`.
 
 ### Slice 6: Auswahl, Direktklick und Autonomie
 - [ ] **CP-6.1:** `Ui_AuswahlMarkierung` (goldener Stern über der selektierten Einheit).

@@ -18,6 +18,8 @@ const SWAY_AKTUALISIERER_SKRIPT := preload("res://world/logic/kategorie_atmospha
 const STUFEN_BILDER_SKRIPT := preload("res://world/logic/kategorie_progression/welt_stufen_bilder.gd")
 const PROGRESSIONS_REGISTRY_SKRIPT := preload("res://world/logic/kategorie_progression/welt_progressions_registry.gd")
 const RESSOURCEN_ZUSTAND_SKRIPT := preload("res://world/logic/kategorie_progression/welt_ressourcen_zustand.gd")
+const BAUSTELLEN_BEDARF_SKRIPT := preload("res://world/logic/kategorie_welt/welt_baustellen_bedarf.gd")
+const BAU_GEIST_SKRIPT := preload("res://world/logic/kategorie_welt/welt_bau_geist.gd")
 
 var _model: Welt_Model
 var _registry: Welt_Registry
@@ -31,6 +33,7 @@ var _stufen_bilder := STUFEN_BILDER_SKRIPT.new()
 var _terrain_blatt := Welt_TerrainBlatt.new()
 var _progressions_registry := PROGRESSIONS_REGISTRY_SKRIPT.new()
 var _ressourcen_zustand := RESSOURCEN_ZUSTAND_SKRIPT.new()
+var _baustellen_bedarf := BAUSTELLEN_BEDARF_SKRIPT.new()
 ## Rueckschnitt: Die Szene reicht die Progressions-Maschine herein, damit
 ## der Renderer jeden echten Stadiumswechsel sofort am Sprite zeigt.
 var _progressions_maschine: Object = null
@@ -137,6 +140,7 @@ func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegi
 	_ressourcen_zustand.einrichten(_progressions_registry)
 	_model = model
 	_registry = registry
+	_baustellen_bedarf.einrichten(_model)
 	_biome = biome if biome != null else Welt_BiomRegistry.new()
 	# Sway-Spitze der Atmosphären-Domäne: Der Renderer kennt nur den
 	# Aktualisierer, die Wind-Details liegen in der eigenen Domäne. Jeder
@@ -181,6 +185,16 @@ func objekt_knoten_anhaengen(index: int) -> Welt_ObjektKnoten:
 	if textur == null:
 		textur = _textur_fuer(_model.objekt_element_id(index))
 	var sprite := knoten.standbild_setzen(textur)
+	var bau_phase := int(_model.objekt_feld(index, "bau_phase", Gebaeude_BauMaschine.Phase.NICHT_GEBAUT))
+	if bau_phase == Gebaeude_BauMaschine.Phase.BAUPLAN:
+		var geist: Node2D = BAU_GEIST_SKRIPT.new()
+		geist.name = "BauGeist"
+		geist.call("einrichten", textur)
+		var anteil: float = _baustellen_bedarf.bedarf_anteil(index) if _baustellen_bedarf != null else 0.0
+		geist.call("bedarf_aktualisieren", anteil)
+		knoten.add_child(geist)
+		if sprite != null:
+			sprite.visible = false
 	# Wind-Sway als Datenentscheidung des Katalogs: Nur Eintraege mit
 	# wind_sway erhalten ein Material und wedeln spaeter; Details in der
 	# Sway-Spitze der Atmosphaeren-Domaene.

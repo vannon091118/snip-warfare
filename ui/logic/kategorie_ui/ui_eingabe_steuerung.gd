@@ -289,6 +289,10 @@ func _rechtsklick_verarbeiten(welt_pos: Vector2) -> void:
 			(_hud as Variant).meldung_setzen("Befehl: Jagen auf Tier #%d" % tier_nummer)
 			return
 		if objekt_index >= 0 and element_id != "":
+			var bau_phase := int(_model.objekt_feld(objekt_index, "bau_phase", Gebaeude_BauMaschine.Phase.NICHT_GEBAUT))
+			if bau_phase == Gebaeude_BauMaschine.Phase.BAUPLAN or bau_phase == Gebaeude_BauMaschine.Phase.BAU_ANGEFORDERT:
+				_baustelle_priorisieren(objekt_index, _model.objekt_position(objekt_index))
+				return
 			var element_pos := _model.objekt_position(objekt_index)
 			_job_vergeben_fuer_objekt(objekt_index, element_pos, element_id, false)
 			return
@@ -337,12 +341,27 @@ func _bauen_ausfuehren(aktion: Dictionary) -> void:
 	var gebaeude_id := str(aktion.get("gebaeude_id", ""))
 	_bauen_ausfuehren_an_position(gebaeude_id, _rechtsklick_welt_position)
 
+func _baustelle_priorisieren(objekt_index: int, pos: Vector2) -> void:
+	if _stockmaenner == null or _auswahl == null or _hud == null or _model == null:
+		return
+	var aktiv := _auswahl.aktiver_einheit_index
+	if aktiv < 0 or aktiv >= _stockmaenner.einheit_zahl():
+		(_hud as Variant).meldung_setzen("Zuerst eine Einheit auswaehlen.")
+		return
+	_stockmaenner.einheit_job_abbrechen(aktiv)
+	_stockmaenner.job_vergeben(aktiv, "baustelle_beliefern", Job_Basis.ZielTyp.OBJEKT, objekt_index, pos)
+	(_hud as Variant).meldung_setzen("Baustelle priorisiert: Belieferung vorgezogen.")
+
 func _bauen_ausfuehren_an_position(gebaeude_id: String, pos: Vector2) -> void:
 	if _gebaeude == null or _hud == null:
 		return
-	var ergebnis := _gebaeude.bauen_anfordern(gebaeude_id, pos)
+	var ergebnis: Dictionary
+	if _gebaeude.has_method("bauplan_anfordern"):
+		ergebnis = _gebaeude.bauplan_anfordern(gebaeude_id, pos)
+	else:
+		ergebnis = _gebaeude.bauen_anfordern(gebaeude_id, pos)
 	if bool(ergebnis.get("ok", false)):
-		(_hud as Variant).meldung_setzen("Bau angefordert: %s" % gebaeude_id.capitalize())
+		(_hud as Variant).meldung_setzen("Bauplan platziert: %s" % gebaeude_id.capitalize())
 	else:
 		(_hud as Variant).meldung_setzen("Bauen nicht möglich: %s" % str(ergebnis.get("grund", "unbekannt")))
 

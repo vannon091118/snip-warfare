@@ -6,11 +6,12 @@ class_name Gebaeude_BauMaschine
 ## besitzt keinen eigenen Timer und führt keine Kosten aus — Kosten prüft
 ## und entnimmt der koordinierende Manager.
 
-enum Phase { NICHT_GEBAUT, BAU_ANGEFORDERT, BAU_LAEUFT, FERTIG }
+enum Phase { NICHT_GEBAUT, BAUPLAN, BAU_ANGEFORDERT, BAU_LAEUFT, FERTIG }
 
 ## Kategorie daten: Phasen-Namen für die Anzeige.
 const PHASEN_NAMEN := {
 	Phase.NICHT_GEBAUT: "nicht gebaut",
+	Phase.BAUPLAN: "Bauplan",
 	Phase.BAU_ANGEFORDERT: "Bau angefordert",
 	Phase.BAU_LAEUFT: "Bau läuft",
 	Phase.FERTIG: "fertig",
@@ -29,14 +30,21 @@ func _init() -> void:
 static func neuer_zustand() -> Dictionary:
 	return {"phase": Phase.NICHT_GEBAUT, "fortschritt": 0}
 
+func bauplan_anlegen(zustand: Dictionary) -> Dictionary:
+	# Bauplan platziert: Materialbedarf ist vermerkt, aber noch nicht geliefert.
+	var neu := zustand.duplicate(true)
+	neu["phase"] = Phase.BAUPLAN
+	neu["fortschritt"] = 0
+	return neu
+
 func starten(zustand: Dictionary) -> Dictionary:
-	# Bau angefordert: Kosten sind bereits geprüft und entnommen.
+	# Bau angefordert: Material ist vollständig geliefert oder bestätigt.
 	var neu := zustand.duplicate(true)
 	neu["phase"] = Phase.BAU_ANGEFORDERT
 	neu["fortschritt"] = 0
 	return neu
 
-func tick(zustand: Dictionary, bauzeit_ticks: int) -> Dictionary:
+func tick(zustand: Dictionary, bauzeit_ticks: int, material_vollstaendig: bool = true) -> Dictionary:
 	# Die effektive Bauzeit kommt aus der eigenen Modifikator-Maschine;
 	# der Zustand merkt sich die geltende Zeit für die Menü-Abstimmung.
 	var phase := int(zustand.get("phase", Phase.NICHT_GEBAUT))
@@ -45,6 +53,10 @@ func tick(zustand: Dictionary, bauzeit_ticks: int) -> Dictionary:
 	var neu := zustand.duplicate(true)
 	neu["ziel_ticks"] = effektive_zeit
 	match phase:
+		Phase.BAUPLAN:
+			if material_vollstaendig:
+				neu["phase"] = Phase.BAU_ANGEFORDERT
+				neu["fortschritt"] = 0
 		Phase.BAU_ANGEFORDERT:
 			neu["phase"] = Phase.BAU_LAEUFT
 			neu["fortschritt"] = 1
