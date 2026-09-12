@@ -5,7 +5,12 @@
     "stein": {"kategorie": "objekte", "element_id": "stein", "gewicht": 2.0, "biome": ["gemaaessigt", "tundra", "steppe"]},
     "steine_gruppe": {"kategorie": "objekte", "element_id": "steine_gruppe", "gewicht": 1.0, "biome": ["tundra", "steppe"]},
     "haus": {"kategorie": "objekte", "element_id": "haus", "gewicht": 0.0, "biome": []},
-    "busch": {"kategorie": "objekte", "element_id": "busch", "gewicht": 3.5, "biome": ["gemaaessigt", "steppe"]}
+    "busch": {"kategorie": "objekte", "element_id": "busch", "gewicht": 3.5, "biome": ["gemaaessigt", "steppe"]},
+    "berg": {"kategorie": "objekte", "element_id": "berg", "gewicht": 1.0, "biome": ["gemaaessigt", "tundra", "steppe"]},
+    "felswand": {"kategorie": "objekte", "element_id": "felswand", "gewicht": 1.5, "biome": ["gemaaessigt", "tundra", "steppe"]},
+    "erzader": {"kategorie": "objekte", "element_id": "erzader", "gewicht": 1.0, "biome": ["gemaaessigt", "tundra", "steppe"]},
+    "ruine": {"kategorie": "objekte", "element_id": "ruine", "gewicht": 0.8, "biome": ["gemaaessigt", "steppe"]},
+    "steinkreis": {"kategorie": "objekte", "element_id": "steinkreis", "gewicht": 0.4, "biome": ["gemaaessigt", "tundra"]}
   },
   "tiere": {
     "baer": {"kategorie": "tiere", "element_id": "baer", "gewicht": 1.0, "biome": ["gemaaessigt", "tundra"]},
@@ -55,6 +60,10 @@
     "_kommentar": "Spawn-Cluster: Jeder Eintrag stempelt eine dichte Gruppe als Weltzustand. anzahl ist der Kern der Gruppe, umgebung_zusatz die Streuung drum herum, radius_kacheln die Gruppengroesse, chance die Wahrscheinlichkeit je Chunk. Neue Spawn-Varianten nur hier und im Element-Katalog.",
     "wald": {"kategorie": "cluster", "element_id": "baum", "anzahl": 5, "umgebung_zusatz": 3, "radius_kacheln": 3, "chance": 0.55, "biome": ["gemaaessigt", "steppe"]},
     "steinfeld": {"kategorie": "cluster", "element_id": "stein", "anzahl": 3, "umgebung_zusatz": 2, "radius_kacheln": 2, "chance": 0.35, "biome": ["gemaaessigt", "tundra", "steppe"]},
+    "felsmassiv": {"kategorie": "cluster", "element_id": "felswand", "anzahl": 3, "umgebung_zusatz": 2, "radius_kacheln": 3, "chance": 0.35, "biome": ["gemaaessigt", "tundra", "steppe"]},
+    "erzlager": {"kategorie": "cluster", "element_id": "erzader", "anzahl": 2, "umgebung_zusatz": 1, "radius_kacheln": 2, "chance": 0.25, "biome": ["gemaaessigt", "tundra", "steppe"]},
+    "ruinenfeld": {"kategorie": "cluster", "element_id": "ruine", "anzahl": 2, "umgebung_zusatz": 1, "radius_kacheln": 2, "chance": 0.20, "biome": ["gemaaessigt", "steppe"]},
+    "steinkreis_fund": {"kategorie": "cluster", "element_id": "steinkreis", "anzahl": 1, "umgebung_zusatz": 0, "radius_kacheln": 2, "chance": 0.15, "biome": ["gemaaessigt", "tundra"]},
     "hasen_bau": {"kategorie": "cluster", "element_id": "hase", "anzahl": 2, "umgebung_zusatz": 2, "radius_kacheln": 2, "chance": 0.35, "biome": ["gemaaessigt", "steppe"]},
     "vogelschwarm": {"kategorie": "cluster", "element_id": "vogel", "anzahl": 3, "wandernd": true, "anzahl_min": 2, "anzahl_max": 4, "radius_kacheln": 2, "chance": 0.30, "biome": ["gemaaessigt", "steppe", "tundra"]}
   },

@@ -50,6 +50,16 @@ func _zentrale_klasse_fuer(element_id: String) -> Objekt_Basis:
 			return Objekt_Stein.new()
 		"steine_gruppe":
 			return Objekt_Steingruppe.new()
+		"berg":
+			return Objekt_Berg.new()
+		"felswand":
+			return Objekt_Felswand.new()
+		"erzader":
+			return Objekt_Erzader.new()
+		"ruine":
+			return Objekt_Ruine.new()
+		"steinkreis":
+			return Objekt_Steinkreis.new()
 		"haus":
 			return Objekt_Haus.new()
 		"haus_gross":

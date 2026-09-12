@@ -16,11 +16,15 @@ class_name Welt_Generator
 const CHUNK_GROESSE := 8
 const REGION_KANTE := 4
 const DEFINITION_PFAD := "res://world/data/welt_definition.json"
+const _GewaesserSkript := preload("res://world/logic/kategorie_generator/generator_gewaesser.gd")
+const _FelsmassiveSkript := preload("res://world/logic/kategorie_generator/generator_felsmassive.gd")
 
 ## Kategorie daten: die drei kombinierten Maschinen und das Protokoll.
 var registry: Welt_GeneratorRegistry = null
 var verteilung: Welt_GeneratorVerteilung = null
 var chunk_pruefer: Welt_GeneratorChunkPruefer = null
+var gewaesser: RefCounted = null
+var felsmassive: RefCounted = null
 var verworfene_chunks: int = 0
 var regionen_geplant: int = 0
 var _chunk_groesse: int = CHUNK_GROESSE
@@ -34,6 +38,8 @@ func _init() -> void:
 	verteilung = Welt_GeneratorVerteilung.new()
 	chunk_pruefer = Welt_GeneratorChunkPruefer.new()
 	chunk_pruefer.einrichten(registry)
+	gewaesser = _GewaesserSkript.new()
+	felsmassive = _FelsmassiveSkript.new()
 	_def_reg = Welt_DefinitionRegistry.new()
 	_def_reg.laden()
 
@@ -66,6 +72,11 @@ func welt_erzeugen(model: Welt_Model, seed_wert: int, biom_id: String) -> bool:
 			var region := model.region_an_kachel(chunk_x * _chunk_groesse, chunk_y * _chunk_groesse)
 			var region_biom := str(region.get("biom_id", biom_id)) if not region.is_empty() else biom_id
 			_chunk_fuellen_mit(model, Vector2i(chunk_x, chunk_y), kacheln, region_biom)
+	var landschaft_zufall := Kern_Zufall.abgeleitet_fuer(seed_wert, 0x5EED1A9D)
+	if gewaesser != null:
+		gewaesser.erzeugen(model, biom_id, landschaft_zufall)
+	if felsmassive != null:
+		felsmassive.erzeugen(model, biom_id, landschaft_zufall)
 	return true
 
 func _regionen_planen(model: Welt_Model, weltraum_biom: String) -> void:

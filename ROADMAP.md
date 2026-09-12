@@ -79,11 +79,11 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [x] **CP-2.4:** `y_sort_enabled` in `Welt`, `Welt_Renderer`, `Tier_Manager` und `Einheit_Manager` hierarchisch aktiviert; Fliesen-Container fest im Hintergrund (`z_index = -1`); Fußpunkt-Ursprünge in `Einheit_Darsteller` und `Tier_Darsteller` kalibriert. Beweis: `test_y_sort_und_landeplatz.py`.
 - [x] **CP-2.5 (nachgezogen):** Die zehn Kachelbilder unter `world/assets/terrain/kacheln/` sind importiert (64 px) und der Renderer malt fehlende Bilder als sichtbaren Platzhalter statt als Leerstelle.
 
-### Slice 3: Landschaft (Gewässer, Felsmassive, Erzadern & Ruinen)
-- [ ] **CP-3.1:** `Generator_Gewaesser` für deterministische Teiche, Flüsse und Uferzonen aus dem Seed implementieren.
-- [ ] **CP-3.2:** `Generator_Felsmassive` für zusammenhängende Klippen und Abbauzonen integrieren.
-- [ ] **CP-3.3:** Neue Weltobjekt-Klassen: `Objekt_Berg`, `Objekt_Felswand`, `Objekt_Erzader`, `Objekt_Ruine`, `Objekt_Steinkreis`.
-- [ ] **CP-3.4:** Cluster-Definitionen in `world/data/generator_gewichte.json` für Ruinen und dichte Wälder erweitern.
+### Slice 3: Landschaft (Gewässer, Felsmassive, Erzadern & Ruinen) — abgeschlossen
+- [x] **CP-3.1:** `Welt_GeneratorGewaesser` für deterministische Teiche, Flüsse und Uferzonen aus dem Seed implementieren. Beweis: `test_landschaft_generatoren.py`.
+- [x] **CP-3.2:** `Welt_GeneratorFelsmassive` für zusammenhängende Klippen und Abbauzonen integrieren. Beweis: `test_landschaft_generatoren.py`.
+- [x] **CP-3.3:** Neue Weltobjekt-Klassen: `Objekt_Berg`, `Objekt_Felswand`, `Objekt_Erzader`, `Objekt_Ruine`, `Objekt_Steinkreis` samt SVG-Assets und Katalog-Registrierung. Beweis: `test_landschaft_objekte.py`.
+- [x] **CP-3.4:** Cluster-Definitionen in `world/data/generator_gewichte.json` für Felsmassive, Erzlager, Ruinenfelder und Steinkreise erweitert. Beweis: `test_landschaft_generatoren.py`.
 
 ### Slice 4: Weltkarte und Einstieg (Makro-Domäne) — abgeschlossen
 - [x] **CP-4.1:** Eigene Makro-Domäne `world/data/weltkarte_definition.json` (16 mal 12 Regionen) und `Welt_MakroGenerator`; die Weltkarte plant nur Regionen und ruft keinen lokalen Generator mehr. Beweis: `tools/lauf_pruefung_makrokarte.gd` (0 Objekte auf der Makrokarte, 192 Regionen).
