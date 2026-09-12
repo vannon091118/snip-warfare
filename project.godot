@@ -32,6 +32,9 @@ window/stretch/aspect="expand"
 
 [rendering]
 
+# Papier-Schnitt braucht harte Kanten ohne Flimmern: Linear mit Mipmaps ist
+# die Projekt-Entscheidung für alle Sprites (weiches Nah-Zoom, ruhiges Fern-Zoom).
+textures/canvas_textures/default_texture_filter=3
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"

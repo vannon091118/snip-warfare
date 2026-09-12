@@ -1,8 +1,16 @@
-1. Der Nutzer verlangte die Zerlegung der E041-Riesen, und nach den Tieren war job_basis.gd mit 162 Zeilen der naechste Brocken, der seine Grenze von achtzig Zeilen fast doppelt riss.
-2. job_konfiguration.gd liest jetzt jeden Wert aus der zentralen Job-Konfiguration, sodass kein Job mehr die Schluesselnamen doppelt kennt und kein Wert hart im Code steht.
-3. job_zeit_rechnung.gd rechnet die Arbeitszeit aus fester Dauer, Job-Faktor und Ziel-Faktor, und job_faehigkeits_pruefung.gd prueft Verletzungen und Tragekraft gegen die Aussagen der Vital-Maschine.
-4. job_ziel_pruefung.gd entscheidet, ob ein Objekt oder ein Tier zum Job passt, und fragt nur dann den Job selbst, wenn keine Ziel-Liste in den Daten steht.
-5. job_basis.gd behaelt damit Kennung, Konfiguration, Fortschritt und Ziel-Listen, delegiert jede Rechnung und faellt von 162 auf 77 Zeilen, ohne dass eine einzige Aufrufstelle sich aendern musste.
-6. Der Nachlass locregel_nachlass.json ist um den Eintrag von job_basis.gd kuerzer, waehrend die echten Riesen weiter ihren Ist-Wert tragen.
-7. INDEX.md, INDEX_DOMAENEN.md, INDEX_DATEN.md und INDEX_LETZTE_AENDERUNG.md sind mechanisch nachgezogen und zeigen die neuen Klassen, Signale und Pool-Verbraucher, waehrend README.md und ROADMAP.md die echten Zahlen von 244 Klassen auf 269 GDScript-Dateien erzaehlen.
-8. Der volle Preflight ist gruen, alle 85 Tests laufen durch, und die zwei Tab-Funde in fremden JSON-Dateien sind mit dem Whitespace-Fix bereinigt.
+1. Der Nutzer verlangte den Sprint 0 und den Sprint 1 des verabredeten Bildplans, deshalb richtete ich zuerst die Bildschädler und danach die unsichtbaren Ketten des Modells auf sichtbarem Papier auf.
+2. In world/logic/kategorie_welt/welt_model.gd meldet jede Kachelschreibung ihr kachel_geaendert am Bus, damit der Renderer eine einzige frische Kachel nachzieht statt die ganze Karte neu zu malen.
+3. In world/logic/kategorie_welt/welt_wasser_automat.gd lebt der tote Automat wieder, trägt Schalter und Ausbreitungs-Reichweite aus dem Datenpool und formt einen Ufer-Saum statt die Karte zu fluten.
+4. In world/data/welt_definition.json steht der Schalter laeuft auf an und die Reichweite auf sechs Schritte, das Wasser wandert sichtbar und kriecht nie über den Rand.
+5. In world/logic/kategorie_welt/welt_definition_registry.gd liest der neue Wert seinen Schalter aus ebendiesem Pool, keine zweite Wahrheit im Code.
+6. In world/logic/kategorie_progression/welt_stufen_bilder.gd zeigt der Stumpf sein eigenes Katalogbild statt des Keimlings seines gefällten Baums.
+7. In world/logic/kategorie_progression/welt_ressourcen_zustand.gd wechselt der erschöpfte Baum selbst zum Rest-Objekt, und ein Fels ohne Folgeobjekt heilt nicht heimlich auf voll zurück.
+8. In world/data/ressourcen_progression.json trägt der Fels seine vierte Zelle als stein_rest und der Stumpf wächst als Folge wieder zum Baum, die Überwucher-Stufe steht.
+9. In world/data/element_katalog.json trägt der Boden sein makro_farbe, der Fels seine Rest-Kategorie und die neuen Pools ihre Bilder.
+10. world/assets/terrain/stein_rest.svg zeigt den Trümmerhaufen im Papier-Schnitt, die vierte Zelle des Fels-Blatts ist endlich erreichbar.
+11. In world/logic/kategorie_welt/welt_kachel_geste.gd landet jede neue Kachel mit einem kleinen Hauch auf dem Tisch und verblasst zur Ruhe.
+12. In world/logic/kategorie_welt/welt_sichtbereich_sammler.gd griff der Rechteck-Ruf ins Leere, jetzt fasst er seinen eigenen Bereich statt eines Callables.
+13. In core/logic/events/kern_signal_bus.gd trägt der Bus die neue Kachel-Meldung, über die Modell und Renderer sprechen.
+14. In project.godot steht der Texturfilter auf Linear mit Mipmaps, die Projekt-Entscheidung für harte Papierkanten.
+15. In test_objekt_plugin_naht.py und test_y_sort_und_landeplatz.py folgen die Erwartungen der wahren Fassade, alle 85 Prüfungen laufen grün.
+16. Der Beweis steht im Werkzeug tools/lauf_pruefung_wasser.gd: Wasser wandert kachelweise mit Aufstoß im echten Fenster, der gefällte Baum zeigt den Stumpf, der abgebaute Fels seine Trümmer.

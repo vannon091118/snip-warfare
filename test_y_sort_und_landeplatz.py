@@ -48,5 +48,6 @@ def test_welt_szene_landeplatz_integration():
     assert "_LandeplatzAnzeigeSkript := preload" in inhalt
     assert "var _landeplatz: Node2D = null" in inhalt
     assert "_landeplatz = _LandeplatzAnzeigeSkript.new()" in inhalt
-    assert "_landeplatz.einrichten(start_position" in inhalt
+    # Die Startposition heißt seit dem Aufbau-Umbau _start_position.
+    assert "_landeplatz.einrichten(_start_position" in inhalt
     assert "_landeplatz.ausblenden()" in inhalt

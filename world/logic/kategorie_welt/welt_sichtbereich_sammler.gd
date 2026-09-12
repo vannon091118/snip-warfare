@@ -23,7 +23,7 @@ func bereich_setzen(bereich: Rect2) -> bool:
 	## fällig ist: bei echtem Blickwechsel oder Modelländerung, nicht bei
 	## stillstehender Kamera.
 	_sichtbereich = bereich
-	var mitte := rechteck.get_center()
+	var mitte := _sichtbereich.get_center()
 	if _sichtgebiet_dirty or _scan_mitte.distance_to(mitte) >= SCAN_SCHRITT_PX:
 		_scan_mitte = mitte
 		_sichtgebiet_dirty = false

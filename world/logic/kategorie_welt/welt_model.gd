@@ -99,6 +99,13 @@ func fliese_setzen(x: int, y: int, element_id: String, z_ebene: int = 0) -> void
 	if not ist_in_raster(x, y, z):
 		return
 	raster["%d:%d:%d" % [x, y, z]] = element_id
+	# Die sichtbare Folgenmeldung gehört zum Schreiben: Jede Kachel-Änderung
+	# wird am Bus gemeldet, damit der Renderer genau diese eine Kachel
+	# nachziehen kann. Ohne Autoload (Prüfläufe) bleibt die Meldung stumm,
+	# und der Generator schreibt beim Aufbau, bevor Zuhörer existieren.
+	var bus := Kern_SignalBus.bus()
+	if bus != null:
+		bus._emit_kachel_geaendert(x, y, element_id, z)
 
 func fliese(x: int, y: int, z_ebene: int = 0) -> String:
 	var z := z_ebene if z_ebene != 0 else aktive_z_ebene

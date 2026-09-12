@@ -4,5 +4,11 @@
   "min_karten_groesse": {"breite": 8, "hoehe": 8},
   "kachel_groesse": 64,
   "chunk_groesse": 8,
-  "region_kante": 4
+  "region_kante": 4,
+  "wasser_welt_abschnitt": {
+    "_kommentar": "Schalter des Wasser-Automaten. laeuft=false hält die Simulation an (der Automat existiert, aber greift nicht ein). ausbreitung_schritte begrenzt, wie weit Wasser vom Ursprungskachel neu fließt (0 = Quelle bleibt stehen).",
+    "laeuft": true,
+    "tick_intervall": 12,
+    "ausbreitung_schritte": 6
+  }
 }

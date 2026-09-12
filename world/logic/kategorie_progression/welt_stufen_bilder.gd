@@ -62,19 +62,23 @@ func _blatt_fuer(element_id: String, stadium_index: int) -> Texture2D:
 
 func _sheet_pfad_fuer(element_id: String) -> String:
 	match element_id:
-		"baum", "baum_stumpf":
+		"baum":
 			return BAUM_SHEET
 		"stein", "steine_gruppe":
 			return STEIN_SHEET
 		"busch":
 			return BUSCH_SHEET
+	# Rest-Zustände wie baum_stumpf tragen ihr eigenes Katalogbild und
+	# teilen sich kein Blatt mit der Wachstums-Kette ihres Vorgängers.
 	return ""
 
 ## Der sichtbare Stadiums-Blattindex: Wachsende Objekte zeigen das kleinere
 ## von Wachstums- und Schadens-Stadium, begrenzte Objekte nur den Schaden.
 func stadien_index_fuer(kategorie: String, stadien_anzahl: int, aktueller_bestand: int, staerke: int, wachstum: int, wachstums_dauer: int) -> int:
 	if stadien_anzahl <= 1:
-		return 0
+		# Eine einzige Zelle ist die Rest-Zelle (abgebaut): Sie zeigt das Ende
+		# der Kette und nie den Anfang, auch ohne Bestandsrechnung.
+		return stadien_anzahl - 1
 	var schadens_index := 0
 	if staerke > 0:
 		var rest := clampf(float(aktueller_bestand) / float(staerke), 0.0, 1.0)

@@ -45,6 +45,12 @@ signal einheit_ausgewaehlt(einheit_id: int)
 # Wasser-Tiles direkt über dem Loch zur Dirty-Queue hinzu.
 @warning_ignore("unused_signal")
 signal decken_entfernt(position: Vector2, z_ebene: int)
+# Kachel-Zustand: Wird ausgestoßen, wenn eine Kachel im Raster ihren Inhalt
+# wechselt (Wasser fließt, Ufer wächst, Graben öffnet). Der Renderer hört
+# darauf und zeichnet genau diese eine Kachel neu; die Szene koppelt die
+# beiden Spitzen, ohne dass Modell oder Renderer einander kennen.
+@warning_ignore("unused_signal")
+signal kachel_geaendert(x: int, y: int, element_id: String, z_ebene: int)
 
 static func bus() -> Kern_SignalBus:
 	# Während des Szenen-Aufbaus erzeugen Manager ihre Maschinen als
@@ -91,3 +97,6 @@ func _emit_einheit_ausgewaehlt(einheit_id: int) -> void:
 
 func _emit_decke_entfernt(position: Vector2, z_ebene: int) -> void:
 	decken_entfernt.emit(position, z_ebene)
+
+func _emit_kachel_geaendert(x: int, y: int, element_id: String, z_ebene: int) -> void:
+	kachel_geaendert.emit(x, y, element_id, z_ebene)

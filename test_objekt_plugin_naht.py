@@ -55,7 +55,9 @@ def test_welt_registry_enthaelt_script_naht():
 def test_welt_registry_match_ist_fallback_nicht_ersatz():
     """Die zentrale Zuordnung bleibt als Fallback bestehen (Abwärtskompatibilität)."""
     quelle = (PROJEKT / "world/logic/kategorie_welt/welt_registry.gd").read_text(encoding="utf-8")
-    assert "_objekt_klasse_fuer" in quelle and "match" in quelle
+    # Der Fallback lebt nach dem Registry-Umbau als _zentrale_klasse_fuer
+    # mit seinem match weiter; das script-Feld der Basis bleibt erste Wahl.
+    assert "_zentrale_klasse_fuer" in quelle and "match" in quelle
 
 if __name__ == "__main__":
     for fn in [test_katalog_objekte_sind_ueber_script_ordenbar,

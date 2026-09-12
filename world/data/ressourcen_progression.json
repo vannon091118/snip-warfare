@@ -12,7 +12,7 @@
     },
     "stein": {
       "kategorie": "begrenzt",
-      "folge_objekt": "",
+      "folge_objekt": "stein_rest",
       "stadien": ["voll", "gerissen", "stark_gerissen"],
       "staerke": 3,
       "wachstums_ticks": 0,
@@ -21,7 +21,7 @@
     },
     "steine_gruppe": {
       "kategorie": "begrenzt",
-      "folge_objekt": "",
+      "folge_objekt": "stein_rest",
       "stadien": ["voll", "gerissen", "stark_gerissen"],
       "staerke": 5,
       "wachstums_ticks": 0,
@@ -39,12 +39,21 @@
     },
     "baum_stumpf": {
       "kategorie": "rest",
-      "folge_objekt": "",
+      "folge_objekt": "baum",
       "stadien": ["rest"],
       "staerke": 1,
       "wachstums_ticks": 0,
       "regenerations_ticks": 3600,
       "stufe_icon_pfad": "res://world/assets/progression/baum_stufe.svg"
+    },
+    "stein_rest": {
+      "kategorie": "rest",
+      "folge_objekt": "",
+      "stadien": ["rest"],
+      "staerke": 1,
+      "wachstums_ticks": 0,
+      "regenerations_ticks": 0,
+      "stufe_icon_pfad": "res://world/assets/progression/stein_stufe.svg"
     }
   },
   "stufen_blatt": {

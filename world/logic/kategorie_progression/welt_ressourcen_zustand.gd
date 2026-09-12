@@ -150,9 +150,14 @@ func regeneration_ticken(index: int, model: Welt_Model) -> String:
 		return ""
 	var folge_id := str(definition.get("folge_objekt", ""))
 	if folge_id == "":
-		# Ein Rest ohne Folgeobjekt wächst sich selbst als Keimling nach.
-		folge_id = element_id
+		# Ein Rest ohne Folgeobjekt bleibt stehen: Er ist das Ende der Kette
+		# und kein automatischer Neubeginn, sonst heilt ein erschöpfter Fels
+		# heimlich auf voll zurück und die vierte Zelle wird zur Lüge.
+		return ""
 	var dauer := maxi(int(definition.get("regenerations_ticks", 0)), 1)
+	if int(definition.get("regenerations_ticks", 0)) <= 0:
+		# Ohne Regenerationswert im Datenpool gibt es keinen Neubeginn.
+		return ""
 	var alt := int(model.objekt_feld(index, "regeneration_fortschritt", 0))
 	var neu := alt + 1
 	if neu < dauer:

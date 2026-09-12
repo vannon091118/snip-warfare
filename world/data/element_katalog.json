@@ -7,6 +7,7 @@
     "textur_pfad": "res://world/assets/terrain/kacheln/boden.svg",
     "spiegelbar": true,
     "toenungen": ["#FFFFFF", "#F4F1E6", "#EAE5D8"],
+    "makro_farbe": true,
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -150,6 +151,16 @@
     "typ": "objekt",
     "kategorie": "Natur",
     "textur_pfad": "res://world/assets/terrain/stein.svg",
+    "arbeits_ressource": "stein",
+    "script": "res://world/logic/kategorie_objekt/objekt_stein.gd"
+  },
+  {
+    "id": "stein_rest",
+    "ziel_tags": ["stein"],
+    "name": "Steinrest",
+    "typ": "objekt",
+    "kategorie": "Natur",
+    "textur_pfad": "res://world/assets/terrain/stein_rest.svg",
     "arbeits_ressource": "stein",
     "script": "res://world/logic/kategorie_objekt/objekt_stein.gd"
   },

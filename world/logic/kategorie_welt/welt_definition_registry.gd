@@ -40,6 +40,14 @@ func chunk_groesse() -> int:
 func region_kante() -> int:
 	return int(definition.get("region_kante", 4))
 
+func wasser_wert(schluessel: String, rueckfall: Variant) -> Variant:
+	# Wasser-Abschnitt als Daten: Schalter und Reichweite des Automaten
+	# kommen aus derselben Definition wie Kachel- und Chunk-Größe.
+	var abschnitt: Variant = definition.get("wasser_welt_abschnitt", {})
+	if typeof(abschnitt) != TYPE_DICTIONARY:
+		return rueckfall
+	return (abschnitt as Dictionary).get(schluessel, rueckfall)
+
 func lokalkarten_groesse_fuer(welt_seed: int) -> Vector2i:
 	# Flächenanteil als Daten: aus dem Welt-Seed deterministisch 25-100% in 8er-Schritten.
 	var max_groesse := max_karten_groesse()
