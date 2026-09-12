@@ -10,12 +10,18 @@ class_name Welt_AtmosphaereVerdrahtung
 const OVERLAYER_SKRIPT := preload("res://world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd")
 const SONNE_SKRIPT := preload("res://world/logic/kategorie_atmosphaere/welt_sonnen_effekt.gd")
 const STAUB_SKRIPT := preload("res://world/logic/kategorie_atmosphaere/welt_schlag_staub.gd")
+const LICHT_SKRIPT := preload("res://world/logic/kategorie_atmosphaere/welt_papier_licht.gd")
+const NEIGE_SKRIPT := preload("res://world/logic/kategorie_atmosphaere/welt_tiefen_neige.gd")
+const KORN_SKRIPT := preload("res://world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd")
 
 var _konfig := Welt_AtmosphaereKonfig.new()
 var _wind := Welt_WindRechner.new()
 var _overlayer: Welt_ComicOverlayer = null
 var _sonne: Welt_SonnenEffekt = null
 var _staub: Welt_SchlagStaub = null
+var _licht: Welt_PapierLicht = null
+var _neige: Welt_TiefenNeige = null
+var _korn: Welt_PapierKornEbene = null
 var _sway: Welt_SwayMaterial = null
 var _bereich_vorlauf: Dictionary = {}
 
@@ -43,6 +49,20 @@ func einrichten(zyklus: Welt_TageszyklusMaschine, center: Vector2, bereich: floa
 	_sonne.name = "SonnenEffekt"
 	add_child(_sonne)
 	_sonne.einrichten(_konfig, zyklus)
+	# Sprint 3: Licht, Tiefe und Papier-Korn. Jede Spitze eine Klasse, der
+	# Takt kommt allein von der Tageszyklus-Maschine.
+	_licht = LICHT_SKRIPT.new()
+	_licht.name = "PapierLicht"
+	add_child(_licht)
+	_licht.einrichten(_konfig, zyklus)
+	_neige = NEIGE_SKRIPT.new()
+	_neige.name = "TiefenNeige"
+	add_child(_neige)
+	_neige.einrichten(_konfig)
+	_korn = KORN_SKRIPT.new()
+	_korn.name = "PapierKornEbene"
+	add_child(_korn)
+	_korn.einrichten(_konfig, zyklus)
 
 func bereich_anpassen(center: Vector2, bereich: float) -> void:
 	if _overlayer != null:
@@ -71,6 +91,13 @@ func auf_weltuhr_tick(tick_nummer: int) -> void:
 func staub_zeigen(welt_position: Vector2) -> void:
 	if _staub != null:
 		_staub.schlag_zeigen(welt_position)
+
+## Die Kamerastelle wandert zu Tiefe und Licht: Der Schleier folgt, das
+## Licht bleibt gerichtet (DirectionalLight ist ortslos).
+func kamera_stelle(stelle: Vector2, radius: float) -> void:
+	if _neige != null:
+		_neige.kamera_stelle(stelle)
+		_neige.neige_radius(radius)
 
 func ernte_ort_melden(welt_position: Vector2) -> void:
 	# Die Ernte-Maschine meldet den Ort des letzten Schlages; der Staub

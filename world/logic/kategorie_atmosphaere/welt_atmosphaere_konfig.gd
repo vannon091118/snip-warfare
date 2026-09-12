@@ -36,6 +36,20 @@ func sonne_wert(schluessel: String, rueckfall: float) -> float:
 func papier_wert(schluessel: String, rueckfall: float) -> float:
 	return float(_abschnitt("papier").get(schluessel, rueckfall))
 
+func papier_licht_wert(schluessel: String, rueckfall: float) -> float:
+	return float(_abschnitt("papier_licht").get(schluessel, rueckfall))
+
+func papier_licht_farbe(schluessel: String, rueckfall: Color) -> Color:
+	var roh: Variant = _abschnitt("papier_licht").get(schluessel, "")
+	return Color.from_string(str(roh), rueckfall)
+
+func tiefen_wert(schluessel: String, rueckfall: float) -> float:
+	return float(_abschnitt("tiefen_neige").get(schluessel, rueckfall))
+
+func tiefen_farbe(schluessel: String, rueckfall: Color) -> Color:
+	var roh: Variant = _abschnitt("tiefen_neige").get(schluessel, "")
+	return Color.from_string(str(roh), rueckfall)
+
 func tageslicht_wert(schluessel: String, rueckfall: float) -> float:
 	return float(_abschnitt("tageslicht").get(schluessel, rueckfall))
 

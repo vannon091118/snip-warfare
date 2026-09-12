@@ -22,6 +22,8 @@
     "strequahlen_winkel_grad": 18.0,
     "streifenskala": 4.0,
     "max_alpha": 0.1,
+    "ebene": 5,
+    "himmel_schwund": 0.35,
     "tag_farbe": "#FFF3C9",
     "morgen_farbe": "#FFE0A8",
     "abend_farbe": "#E8A86B",
@@ -31,7 +33,29 @@
     "korn_staerke": 0.045,
     "farb_variation": 0.03,
     "saum_alpha": 0.25,
-    "saum_skalierung": 1.06
+    "saum_skalierung": 1.06,
+    "korn_ebene": 8,
+    "korn_alpha": 0.05,
+    "vignette_staerke": 0.12
+  },
+  "papier_licht": {
+    "richtung_grad": 135.0,
+    "energie_tag": 1.15,
+    "energie_morgen": 0.9,
+    "energie_daemmerung": 0.55,
+    "energie_nacht": 0.3,
+    "tag_farbe": "#FFF3D8",
+    "morgen_farbe": "#FFE0B8",
+    "daemmerung_farbe": "#D9A47E",
+    "nacht_farbe": "#8FA3C8",
+    "schatten_aktiv": true,
+    "schatten_farbe": "#1C1A2659"
+  },
+  "tiefen_neige": {
+    "staerke": 0.16,
+    "radius_anteil": 0.7,
+    "farbe": "#C3CDE2",
+    "ebene": 6
   },
   "tageslicht": {
     "daemmerung_anteil": 0.08

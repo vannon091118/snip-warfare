@@ -1,13 +1,11 @@
-1. Der Nutzer verlangte Slices fuer die Warteschlange, deshalb trug ich als zweiten Wagen die Moebel-Abschlussarbeit, die der Parallel-Thread zurueckgelassen hatte, und die neue Ordnung der Klassen-Zuordnung, die mein eigener Schritt aus der Fassade gezogen hatte.
+1. Der Nutzer verlangte Slices fuer die Warteschlange, deshalb rollte als dritter Wagen der Atmosphaeren-Thread, der der Karte Licht, Papierkorn und Tiefe schenken wollte, aber noch ohne Heimat im Baum stand.
 
-2. Die alten Umlaut-Dateien game/data/moebel.json und die fuenf svg unter world/assets/moebel verschwanden endgueltig aus dem Baum, der abschliessende Strich unter der doppelten Kodierung, die frueher sieben E015-Befunde erfand.
+2. In world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd, welt_papier_licht.gd und welt_tiefen_neige.gd zogen drei neue Schichten ein: Koernung wie auf altem Papier, Licht das bricht, wo Berge stehen, und Neige, die die Ferne versinken laesst.
 
-3. In world/logic/kategorie_objekt/objekt_moebel_platzierer.gd zog der neue Platzierer ein, der Moebel auf ihre Kacheln setzt, und in tools/lauf_moebel_beweis.gd liegt der Beweislauf dazu, der Platzierung sichtbar am Modell zeigt.
+3. In welt_atmosphaere_konfig.gd, welt_atmosphaere_verdrahtung.gd und welt_sonnen_effekt.gd wurden die drei Schichten verkabelt, und in world/data/atmosphaere.json steht ihre Stimmung als Daten, nicht als Zahl im Code.
 
-4. In world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd wohnt jetzt die Tabelle, die je Element-ID die konkrete Klasse nennt, und in welt_registry.gd fragt die Fassade nur noch dort nach, laedt ueber den Plugin-Naht-Pfad und warnt bildlich, wenn eine Zeile der Tabelle ohne Datei bleibt.
+4. Die Landschafts-Bilder berg.svg, erzader.svg, felswand.svg, ruine.svg, steinkreis.svg und ressource_beeren.svg bekamen ihre frischen Striche, und in world/data/element_katalog.json tragen die Eintraege ihre script-Verweise bis zu den neuen Klassen.
 
-5. In world/logic/kategorie_objekt/moebel_registry.gd behaelt die Moebel-Logik ihren eigenen Fallback und ihre eigene Sicht, in ui/logic/kategorie_ui/ui_bau_panel.gd liest das Bau-Panel direkt bei der Fach-Registry statt an der Fassade zu klopfen.
+5. world/assets/vorschau.html zeigt die neue Palette dem Auge, bevor das Spiel sie zeigt.
 
-6. In test_landschaft_objekte.py zog der Test der Fallbacks in sein neues Zuhause um, denn er prueft die Zuordnung, nicht mehr die Fassade, und alle 97 Pruefungen bestehen.
-
-7. Der Preflight laeuft gruen, der Moebel-Thread ist damit vollstaendig geborgen, und auf der Karte stehen Tisch und Stuhl wieder da, wo der Spieler sie hinstellt.
+6. Der Preflight bleibt gruen, und beim naechsten Start liegt das Papierkorn ueber der Karte, das Licht faellt schraeg, und die Ferne atmet blauer.

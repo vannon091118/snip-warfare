@@ -25,7 +25,9 @@ var _ziel_alpha: float = 0.0
 func einrichten(konfig: Welt_AtmosphaereKonfig, zyklus: Welt_TageszyklusMaschine) -> void:
 	_konfig = konfig
 	_zyklus = zyklus
-	layer = 15
+	# Die Ebene kommt aus dem Pool: Die Streifen liegen über der Welt,
+	# aber unter dem HUD (Ebene 10) — vorher strichen sie aufs Menü.
+	layer = maxi(int(_konfig.sonne_wert("ebene", 5.0)), 1) if _konfig != null else 5
 	if _zyklus != null:
 		_zyklus.phase_geaendert.connect(_auf_phase)
 		_ziel_alpha = _sichtbarkeit_fuer(_zyklus.phase())
@@ -47,6 +49,7 @@ func _ready() -> void:
 	streifen.set_shader_parameter("farbe", _farbe_fuer_phase())
 	streifen.set_shader_parameter("alpha", 0.0)
 	streifen.set_shader_parameter("skala", _konfig.sonne_wert("streifenskala", 4.0) if _konfig != null else 4.0)
+	streifen.set_shader_parameter("himmel_schwund", _konfig.sonne_wert("himmel_schwund", 0.35) if _konfig != null else 0.35)
 	_farbe.material = streifen
 	halter.add_child(_farbe)
 
@@ -103,12 +106,17 @@ uniform float winkel = 0.314;
 uniform vec4 farbe : source_color = vec4(1.0, 0.95, 0.79, 1.0);
 uniform float alpha = 0.0;
 uniform float skala = 4.0;
+uniform float himmel_schwund = 0.35;
 
 void fragment() {
+	// Die Streifen leben nur am oberen Bildrand: Nach innen blasst die
+	// Maske aus, damit das Licht von der Seite kommt statt über allem.
+	float tiefe = clamp(SCREEN_UV.y / max(himmel_schwund, 0.05), 0.0, 1.0);
+	float himmel_maske = (1.0 - tiefe) * (1.0 - tiefe);
 	// Rotierte Koordinaten erzeugen schraege Streifen mit weichem Rand.
 	float rotierte_y = UV.y * cos(winkel) + UV.x * sin(winkel);
 	float streifen = sin(rotierte_y * skala * 3.14159);
-	float maske = smoothstep(0.55, 1.0, streifen);
+	float maske = smoothstep(0.55, 1.0, streifen) * himmel_maske;
 	COLOR = vec4(farbe.rgb, alpha * maske);
 }
 "

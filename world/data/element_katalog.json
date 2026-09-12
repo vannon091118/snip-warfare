@@ -6,7 +6,11 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/boden.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#F4F1E6", "#EAE5D8"],
+    "toenungen": [
+      "#FFFFFF",
+      "#F4F1E6",
+      "#EAE5D8"
+    ],
     "makro_farbe": true,
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
@@ -17,7 +21,11 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/wiese.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#F2F7E4", "#E6EED2"],
+    "toenungen": [
+      "#FFFFFF",
+      "#F2F7E4",
+      "#E6EED2"
+    ],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -27,7 +35,11 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/waldboden.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#EDEFE0", "#E2E6D2"],
+    "toenungen": [
+      "#FFFFFF",
+      "#EDEFE0",
+      "#E2E6D2"
+    ],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -37,7 +49,11 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/acker.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#F6F0E2", "#EFE6D2"],
+    "toenungen": [
+      "#FFFFFF",
+      "#F6F0E2",
+      "#EFE6D2"
+    ],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -47,7 +63,10 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/weg.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#F5F0E4"],
+    "toenungen": [
+      "#FFFFFF",
+      "#F5F0E4"
+    ],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -57,7 +76,10 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/sand.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#F7F2E0"],
+    "toenungen": [
+      "#FFFFFF",
+      "#F7F2E0"
+    ],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -67,7 +89,10 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/ufer.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#EFF3F2"],
+    "toenungen": [
+      "#FFFFFF",
+      "#EFF3F2"
+    ],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -77,7 +102,10 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/wasser.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#EAF2F7"],
+    "toenungen": [
+      "#FFFFFF",
+      "#EAF2F7"
+    ],
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
@@ -87,7 +115,10 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/fels.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#EFEFEA"],
+    "toenungen": [
+      "#FFFFFF",
+      "#EFEFEA"
+    ],
     "leben": 100,
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
@@ -98,13 +129,19 @@
     "kategorie": "Terrain",
     "textur_pfad": "res://world/assets/terrain/kacheln/geroell.svg",
     "spiegelbar": true,
-    "toenungen": ["#FFFFFF", "#F2F2EC"],
+    "toenungen": [
+      "#FFFFFF",
+      "#F2F2EC"
+    ],
     "leben": 50,
     "script": "res://world/logic/kategorie_objekt/objekt_kachel.gd"
   },
   {
     "id": "baum",
-    "ziel_tags": ["holz", "baum"],
+    "ziel_tags": [
+      "holz",
+      "baum"
+    ],
     "name": "Baum",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -116,11 +153,15 @@
     "wind_sway": true,
     "wind_sway_wucht": 1.6,
     "wind_sway_schwingung": 0.012,
-    "script": "res://world/logic/kategorie_objekt/objekt_baum.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_baum.gd",
+    "schatten_wurf": true
   },
   {
     "id": "baum_stumpf",
-    "ziel_tags": ["holz", "baum"],
+    "ziel_tags": [
+      "holz",
+      "baum"
+    ],
     "name": "Baumstumpf",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -129,11 +170,15 @@
     "logik_id": "ressource_holz",
     "modifikator_id": "normal",
     "faktor": 1.0,
-    "script": "res://world/logic/kategorie_objekt/objekt_baumstumpf.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_baumstumpf.gd",
+    "schatten_wurf": true
   },
   {
     "id": "kadaver",
-    "ziel_tags": ["fleisch", "kadaver"],
+    "ziel_tags": [
+      "fleisch",
+      "kadaver"
+    ],
     "name": "Kadaver",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -142,41 +187,54 @@
     "logik_id": "ressource_fleisch",
     "modifikator_id": "normal",
     "faktor": 1.0,
-    "script": "res://world/logic/kategorie_objekt/objekt_kadaver.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_kadaver.gd",
+    "schatten_wurf": true
   },
   {
     "id": "stein",
-    "ziel_tags": ["stein"],
+    "ziel_tags": [
+      "stein"
+    ],
     "name": "Stein",
     "typ": "objekt",
     "kategorie": "Natur",
     "textur_pfad": "res://world/assets/terrain/stein.svg",
     "arbeits_ressource": "stein",
-    "script": "res://world/logic/kategorie_objekt/objekt_stein.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_stein.gd",
+    "schatten_wurf": true
   },
   {
     "id": "stein_rest",
-    "ziel_tags": ["stein"],
+    "ziel_tags": [
+      "stein"
+    ],
     "name": "Steinrest",
     "typ": "objekt",
     "kategorie": "Natur",
     "textur_pfad": "res://world/assets/terrain/stein_rest.svg",
     "arbeits_ressource": "stein",
-    "script": "res://world/logic/kategorie_objekt/objekt_stein.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_stein.gd",
+    "schatten_wurf": true
   },
   {
     "id": "steine_gruppe",
-    "ziel_tags": ["stein"],
+    "ziel_tags": [
+      "stein"
+    ],
     "name": "Steingruppe",
     "typ": "objekt",
     "kategorie": "Natur",
     "textur_pfad": "res://world/assets/terrain/steine_gruppe.svg",
     "arbeits_ressource": "stein",
-    "script": "res://world/logic/kategorie_objekt/objekt_steingruppe.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_steingruppe.gd",
+    "schatten_wurf": true
   },
   {
     "id": "berg",
-    "ziel_tags": ["stein", "bergbau"],
+    "ziel_tags": [
+      "stein",
+      "bergbau"
+    ],
     "name": "Berg",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -185,11 +243,15 @@
     "anzeige_hoehe": 128.0,
     "arbeits_ressource": "stein",
     "faktor": 1.5,
-    "script": "res://world/logic/kategorie_objekt/objekt_berg.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_berg.gd",
+    "schatten_wurf": true
   },
   {
     "id": "felswand",
-    "ziel_tags": ["stein", "bergbau"],
+    "ziel_tags": [
+      "stein",
+      "bergbau"
+    ],
     "name": "Felswand",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -198,11 +260,16 @@
     "anzeige_hoehe": 96.0,
     "arbeits_ressource": "stein",
     "faktor": 1.2,
-    "script": "res://world/logic/kategorie_objekt/objekt_felswand.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_felswand.gd",
+    "schatten_wurf": true
   },
   {
     "id": "erzader",
-    "ziel_tags": ["stein", "erz", "bergbau"],
+    "ziel_tags": [
+      "stein",
+      "erz",
+      "bergbau"
+    ],
     "name": "Erzader",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -211,11 +278,15 @@
     "anzeige_hoehe": 88.0,
     "arbeits_ressource": "stein",
     "faktor": 1.0,
-    "script": "res://world/logic/kategorie_objekt/objekt_erzader.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_erzader.gd",
+    "schatten_wurf": true
   },
   {
     "id": "ruine",
-    "ziel_tags": ["stein", "ruine"],
+    "ziel_tags": [
+      "stein",
+      "ruine"
+    ],
     "name": "Ruine",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -224,11 +295,14 @@
     "anzeige_hoehe": 96.0,
     "arbeits_ressource": "stein",
     "faktor": 0.9,
-    "script": "res://world/logic/kategorie_objekt/objekt_ruine.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_ruine.gd",
+    "schatten_wurf": true
   },
   {
     "id": "steinkreis",
-    "ziel_tags": ["stein"],
+    "ziel_tags": [
+      "stein"
+    ],
     "name": "Steinkreis",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -237,7 +311,8 @@
     "anzeige_hoehe": 96.0,
     "arbeits_ressource": "stein",
     "faktor": 1.0,
-    "script": "res://world/logic/kategorie_objekt/objekt_steinkreis.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_steinkreis.gd",
+    "schatten_wurf": true
   },
   {
     "id": "haus",
@@ -245,7 +320,8 @@
     "typ": "objekt",
     "kategorie": "Gebäude",
     "textur_pfad": "res://world/assets/terrain/haus.svg",
-    "script": "res://world/logic/kategorie_objekt/objekt_haus.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_haus.gd",
+    "schatten_wurf": true
   },
   {
     "id": "haus_gross",
@@ -253,7 +329,8 @@
     "typ": "objekt",
     "kategorie": "Gebäude",
     "textur_pfad": "res://world/assets/terrain/haus_gross.svg",
-    "script": "res://world/logic/kategorie_objekt/objekt_hausgross.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_hausgross.gd",
+    "schatten_wurf": true
   },
   {
     "id": "lagerfeuer",
@@ -268,11 +345,15 @@
     "faktor": 1.0,
     "funktions_animation": "flackern",
     "funktions_takt_faktor": 0.4,
-    "script": "res://world/logic/kategorie_objekt/objekt_lagerfeuer.gd"
+    "script": "res://world/logic/kategorie_objekt/objekt_lagerfeuer.gd",
+    "schatten_wurf": true
   },
   {
     "id": "baer",
-    "ziel_tags": ["tier", "jagd"],
+    "ziel_tags": [
+      "tier",
+      "jagd"
+    ],
     "name": "Bär",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -282,7 +363,10 @@
   },
   {
     "id": "hase",
-    "ziel_tags": ["tier", "jagd"],
+    "ziel_tags": [
+      "tier",
+      "jagd"
+    ],
     "name": "Hase",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -292,7 +376,10 @@
   },
   {
     "id": "vogel",
-    "ziel_tags": ["tier", "jagd"],
+    "ziel_tags": [
+      "tier",
+      "jagd"
+    ],
     "name": "Vogel",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -302,7 +389,10 @@
   },
   {
     "id": "vogelgruppe",
-    "ziel_tags": ["tier", "jagd"],
+    "ziel_tags": [
+      "tier",
+      "jagd"
+    ],
     "name": "Vogelgruppe",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -312,7 +402,10 @@
   },
   {
     "id": "eisbaer",
-    "ziel_tags": ["tier", "jagd"],
+    "ziel_tags": [
+      "tier",
+      "jagd"
+    ],
     "name": "Eisbär",
     "typ": "bewegt",
     "kategorie": "Tiere",
@@ -325,7 +418,10 @@
   },
   {
     "id": "busch",
-    "ziel_tags": ["beeren", "busch"],
+    "ziel_tags": [
+      "beeren",
+      "busch"
+    ],
     "name": "Busch",
     "typ": "objekt",
     "kategorie": "Natur",
@@ -339,7 +435,8 @@
     "funktions_takt_faktor": 1.0,
     "wind_sway": true,
     "wind_sway_wucht": 2.2,
-    "wind_sway_schwingung": 0.02
+    "wind_sway_schwingung": 0.02,
+    "schatten_wurf": true
   },
   {
     "id": "werkstatt",
@@ -348,7 +445,8 @@
     "kategorie": "Gebäude",
     "textur_pfad": "res://world/assets/terrain/werkstatt.svg",
     "funktions_animation": "grind",
-    "funktions_takt_faktor": 0.3
+    "funktions_takt_faktor": 0.3,
+    "schatten_wurf": true
   },
   {
     "id": "raeucherei",
@@ -357,6 +455,92 @@
     "kategorie": "Gebäude",
     "textur_pfad": "res://world/assets/terrain/raeucherei.svg",
     "funktions_animation": "raeuchern",
-    "funktions_takt_faktor": 0.25
+    "funktions_takt_faktor": 0.25,
+    "schatten_wurf": true
+  },
+  {
+    "id": "tisch",
+    "name": "Tisch",
+    "typ": "objekt",
+    "kategorie": "Möbel",
+    "textur_pfad": "res://world/assets/moebel/tisch.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_tisch.gd",
+    "kachel_breite": 1,
+    "kachel_hoehe": 1,
+    "anzeige_breite": 64,
+    "anzeige_hoehe": 64,
+    "ziel_tags": [
+      "tisch",
+      "holz"
+    ],
+    "schatten_wurf": true
+  },
+  {
+    "id": "stuhl",
+    "name": "Stuhl",
+    "typ": "objekt",
+    "kategorie": "Möbel",
+    "textur_pfad": "res://world/assets/moebel/stuhl.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_stuhl.gd",
+    "kachel_breite": 1,
+    "kachel_hoehe": 1,
+    "anzeige_breite": 64,
+    "anzeige_hoehe": 64,
+    "ziel_tags": [
+      "stuhl",
+      "holz"
+    ],
+    "schatten_wurf": true
+  },
+  {
+    "id": "betten",
+    "name": "Bett",
+    "typ": "objekt",
+    "kategorie": "Möbel",
+    "textur_pfad": "res://world/assets/moebel/bett.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_bett.gd",
+    "kachel_breite": 2,
+    "kachel_hoehe": 2,
+    "anzeige_breite": 128,
+    "anzeige_hoehe": 128,
+    "ziel_tags": [
+      "bett",
+      "holz"
+    ],
+    "schatten_wurf": true
+  },
+  {
+    "id": "schrank",
+    "name": "Schrank",
+    "typ": "objekt",
+    "kategorie": "Möbel",
+    "textur_pfad": "res://world/assets/moebel/schrank.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_schrank.gd",
+    "kachel_breite": 2,
+    "kachel_hoehe": 4,
+    "anzeige_breite": 128,
+    "anzeige_hoehe": 256,
+    "ziel_tags": [
+      "schrank",
+      "holz"
+    ],
+    "schatten_wurf": true
+  },
+  {
+    "id": "tisch_stahl",
+    "name": "Stahltisch",
+    "typ": "objekt",
+    "kategorie": "Möbel",
+    "textur_pfad": "res://world/assets/moebel/tisch_stahl.svg",
+    "script": "res://world/logic/kategorie_objekt/objekt_tisch_stahl.gd",
+    "kachel_breite": 2,
+    "kachel_hoehe": 3,
+    "anzeige_breite": 128,
+    "anzeige_hoehe": 192,
+    "ziel_tags": [
+      "tisch",
+      "stahl"
+    ],
+    "schatten_wurf": true
   }
 ]
