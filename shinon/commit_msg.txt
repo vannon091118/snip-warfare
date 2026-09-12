@@ -1,10 +1,8 @@
-1. Der Nutzer verlangte, die verbliebenen E041-Riesen zu zerlegen und danach den Nachlass zu leeren, deshalb nahm ich mir zuerst die Tiere und den Tageszyklus vor, weil dort jede Verantwortung noch in einer einzigen Datei sass.
-2. tier_status.gd trug vier Zustaendigkeiten auf einmal, naemlich Zustandsgedaechtnis, Verhaltensregeln, Feldwissen und Vitalrechnung, weshalb ich das Verhalten in die neue tier_verhalten_maschine.gd schob und den Status auf neunzig Zeilen zurueckfuehrte.
-3. Die Namen der Zustaende liegen jetzt in tier_zustands_namen.gd als einzige Quelle, sodass der Status sein Enum behaelt, die Verhaltens-Maschine aber nur noch Namen spricht und keine der beiden Seiten die Schreibweise der anderen kennen muss.
-4. tier_sichtung.gd beantwortet, was ein Tier wahrnimmt: Sichtweite, Verfolgen oder Fliehen, der Halteabstand und das Steigen der Voegel, waehrend tier_tempo_berechnung.gd aus Zustand, Tierdaten und Modifikatorfaktor das Tempo rechnet.
-5. tier_vital_status.gd nimmt den Schaden von den Trefferpunkten, meldet den Treffer am Signalbus und sagt, ob der Schlag toedlich war, damit die Todesentscheidung beim Status bleibt und die Rechnung nicht.
-6. tier_registry.gd verlor ihre Fabrik an tier_klassen_fabrik.gd und ihr Feldwissen an tier_feld_abfrage.gd, sodass die Registry nur noch laedt, ordnet und Getter verteilt.
-7. Der Tageszyklus gab seine Darstellung an welt_tageszyklus_faerbung.gd ab, die Schablonendeckkraft, Grundtönung und die weiche Farbkurve je Phase kennt, und seine Speicherform an welt_tageszyklus_speicher.gd, die nur das Format und die Klemmung verantwortet.
-8. tageszyklus_maschine.gd behaelt damit Takt, Phase und Helligkeit als einzigen Zustand und ist von 123 auf 106 Zeilen gefallen, waehrend tier_status.gd von 149 auf 110 und tier_registry.gd von 109 auf 74 kamen.
-9. Die Nachlass-Datei locregel_nachlass.json ist um zwoelf Eintraege kuerzer, weil tageszyklus_maschine, tier_status, tier_registry und neun weitere Dateien ihre Zeilen-Grenze nun aus eigener Kraft halten; es bleiben genau die zwoelf echten Riesen, die noch zerlegt werden muessen.
-10. Der volle Preflight ist gruen, die Warnung ueber den verschattenden Parameternamen ist behoben und alle 85 Tests laufen durch.
+1. Der Nutzer verlangte die Zerlegung der E041-Riesen, und nach den Tieren war job_basis.gd mit 162 Zeilen der naechste Brocken, der seine Grenze von achtzig Zeilen fast doppelt riss.
+2. job_konfiguration.gd liest jetzt jeden Wert aus der zentralen Job-Konfiguration, sodass kein Job mehr die Schluesselnamen doppelt kennt und kein Wert hart im Code steht.
+3. job_zeit_rechnung.gd rechnet die Arbeitszeit aus fester Dauer, Job-Faktor und Ziel-Faktor, und job_faehigkeits_pruefung.gd prueft Verletzungen und Tragekraft gegen die Aussagen der Vital-Maschine.
+4. job_ziel_pruefung.gd entscheidet, ob ein Objekt oder ein Tier zum Job passt, und fragt nur dann den Job selbst, wenn keine Ziel-Liste in den Daten steht.
+5. job_basis.gd behaelt damit Kennung, Konfiguration, Fortschritt und Ziel-Listen, delegiert jede Rechnung und faellt von 162 auf 77 Zeilen, ohne dass eine einzige Aufrufstelle sich aendern musste.
+6. Der Nachlass locregel_nachlass.json ist um den Eintrag von job_basis.gd kuerzer, waehrend die echten Riesen weiter ihren Ist-Wert tragen.
+7. INDEX.md, INDEX_DOMAENEN.md, INDEX_DATEN.md und INDEX_LETZTE_AENDERUNG.md sind mechanisch nachgezogen und zeigen die neuen Klassen, Signale und Pool-Verbraucher, waehrend README.md und ROADMAP.md die echten Zahlen von 244 Klassen auf 269 GDScript-Dateien erzaehlen.
+8. Der volle Preflight ist gruen, alle 85 Tests laufen durch, und die zwei Tab-Funde in fremden JSON-Dateien sind mit dem Whitespace-Fix bereinigt.

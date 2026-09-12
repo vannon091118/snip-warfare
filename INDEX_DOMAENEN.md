@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 240 Klassen, 264 Dateien, 63 Signale, 31 Array-Elementtypen; 30 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 244 Klassen, 269 Dateien, 63 Signale, 31 Array-Elementtypen; 30 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -15,13 +15,13 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 240 Klassen, 264 Dateien, 63 Sign
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 17 | 17 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 7 | 7 |
 | `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 22 | 22 |
-| `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 14 | 14 |
+| `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 18 | 18 |
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
 | `population` | `pop` | `Pop_` | `population/` | 15 | 16 |
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
 | `ui` | `ui` | `Ui_` | `ui/` | 19 | 31 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 6 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 7 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 30 | 35 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -78,7 +78,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 240 Klassen, 264 Dateien, 63 Sign
 | `Welt_ProgressionsMaschine.folge_objekt_entstanden` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DS |
 | `Welt_ProgressionsMaschine.objekt_erschoepft` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
 | `Welt_ProgressionsMaschine.saemling_gespawnt` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DS |
-| `Welt_ProgressionsMaschine.stadium_geaendert` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DS |
+| `Welt_ProgressionsMaschine.stadium_geaendert` | - | - | - | - | - | - | - | - | - | - | - | - | - | V | DS |
 | `Welt_TageszyklusMaschine.phase_geaendert` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
 | `Tier_Status.zustand_geaendert` | - | - | - | - | DSV | SV | SV | - | - | - | - | - | - | - | - |
 | `Ui_BauPanelSzene.bau_gewaehlt` | - | - | V | - | - | - | - | - | - | - | - | DS | - | - | - |
@@ -92,9 +92,10 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 240 Klassen, 264 Dateien, 63 Sign
 | `Welt_KarawanenManager.karawane_gestartet` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Welt_PauseMenue.menue_gewuenscht` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | V |
 
-_Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt: 11._
+_Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt: 12._
 * `_progressions_maschine` wird in welt gerufen, aber im Projekt nicht deklariert.
 * `about_to_popup` wird in ui gerufen, aber im Projekt nicht deklariert.
+* `chritt_erledigt` wird in job gerufen, aber im Projekt nicht deklariert.
 * `close_requested` wird in pop gerufen, aber im Projekt nicht deklariert.
 * `confirmed` wird in rest, ui gerufen, aber im Projekt nicht deklariert.
 * `draw` wird in orch, rest gerufen, aber im Projekt nicht deklariert.
@@ -109,7 +110,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 50 | 4 | 4 | 12 | 10 | - | - | 3 | 2 | - | 2 | 2 | 7 | - | 1 | 3 |
+| `String` | 52 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 2 | 2 | 7 | - | 1 | 3 |
 | `Dictionary` | 29 | 3 | 1 | 6 | 1 | 1 | 2 | 5 | - | - | 1 | 1 | 4 | - | - | 4 |
 | `int` | 14 | - | - | 5 | - | 1 | 1 | 2 | - | - | - | - | 3 | - | 1 | 1 |
 | `Vector2i` | 8 | 1 | 4 | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - |
@@ -520,13 +521,14 @@ Prefix `Einheit_`, 22 Klassen.
 
 ### game/job — Kuerzel `job` — `game/logic/kategorie_job/`
 
-Prefix `Job_`, 14 Klassen.
+Prefix `Job_`, 18 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
-| `Job_Basis` | `game/logic/kategorie_job/job_basis.gd` | 162 |
+| `Job_Basis` | `game/logic/kategorie_job/job_basis.gd` | 78 |
 | `Job_BaustelleBeliefern` | `game/logic/kategorie_job/job_baustelle_beliefern.gd` | 16 |
 | `Job_BeerenSammler` | `game/logic/kategorie_job/job_beeren_sammler.gd` | 11 |
+| `Job_FaehigkeitsPruefung` | `game/logic/kategorie_job/job_faehigkeits_pruefung.gd` | 17 |
 | `Job_Graben` | `game/logic/kategorie_job/job_graben.gd` | 46 |
 | `Job_Heiler` | `game/logic/kategorie_job/job_heiler.gd` | 14 |
 | `Job_Holzfaeller` | `game/logic/kategorie_job/job_holzfaeller.gd` | 11 |
@@ -534,10 +536,13 @@ Prefix `Job_`, 14 Klassen.
 | `Job_Jaeger` | `game/logic/kategorie_job/job_jaeger.gd` | 15 |
 | `Job_JaegerKadaver` | `game/logic/kategorie_job/job_jaeger_kadaver.gd` | 11 |
 | `Job_Kannibale` | `game/logic/kategorie_job/job_kannibale.gd` | 8 |
+| `Job_Konfiguration` | `game/logic/kategorie_job/job_konfiguration.gd` | 52 |
 | `Job_Orchestrieren` | `game/logic/kategorie_job/job_orchestrieren.gd` | 39 |
 | `Job_Registry` | `game/logic/kategorie_job/job_registry.gd` | 84 |
 | `Job_Steinmetz` | `game/logic/kategorie_job/job_steinmetz.gd` | 11 |
 | `Job_Transport` | `game/logic/kategorie_job/job_transport.gd` | 73 |
+| `Job_ZeitRechnung` | `game/logic/kategorie_job/job_zeit_rechnung.gd` | 25 |
+| `Job_ZielPruefung` | `game/logic/kategorie_job/job_ziel_pruefung.gd` | 18 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -551,7 +556,7 @@ Prefix `Job_`, 14 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 2 |
+| `String` | 4 |
 
 ### game/ressourcen — Kuerzel `res` — `game/logic/kategorie_ressourcen/`
 
@@ -719,6 +724,7 @@ Prefix `-`, 0 Klassen.
 | `Gebaeude_Manager.gebaeude_fertiggestellt` | V | obj, tools |
 | `Job_Basis.job_beendet` | S | ein, job, tools |
 | `Kern_SignalBus.kachel_geaendert` | V | kern, tools, welt |
+| `Welt_ProgressionsMaschine.stadium_geaendert` | V | rest, tools |
 
 #### Arrays (`Array[Typ]`)
 
@@ -748,7 +754,7 @@ Prefix `-`, 30 Klassen.
 | `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 109 |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` | 49 |
 | `Welt_PlusAnzeige` | `world/logic/kategorie_feedback/feedback_plus_anzeige.gd` | 70 |
-| `Welt_ProgressionsMaschine` | `world/logic/kategorie_progression/welt_progressions_maschine.gd` | 102 |
+| `Welt_ProgressionsMaschine` | `world/logic/kategorie_progression/welt_progressions_maschine.gd` | 109 |
 | `Welt_ProgressionsRegistry` | `world/logic/kategorie_progression/welt_progressions_registry.gd` | 80 |
 | `Welt_RessourcenZustand` | `world/logic/kategorie_progression/welt_ressourcen_zustand.gd` | 176 |
 | `Welt_SchadenAnzeige` | `world/logic/kategorie_feedback/feedback_schaden_anzeige.gd` | 68 |
@@ -790,7 +796,7 @@ Prefix `-`, 30 Klassen.
 | `Welt_ProgressionsMaschine.folge_objekt_entstanden` | DS | rest |
 | `Welt_ProgressionsMaschine.objekt_erschoepft` | DSV | rest |
 | `Welt_ProgressionsMaschine.saemling_gespawnt` | DS | rest |
-| `Welt_ProgressionsMaschine.stadium_geaendert` | DS | rest |
+| `Welt_ProgressionsMaschine.stadium_geaendert` | DS | rest, tools |
 | `Welt_TageszyklusMaschine.phase_geaendert` | DSV | rest |
 | `kontext_menue.aktion_gewaehlt` | V | rest, ui |
 

@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 240 Klassen mit `class_name` im Projekt, davon 210 in den 14 Domaenen-Ordnern und 30 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
+_Stand: V0.01 — 244 Klassen mit `class_name` im Projekt, davon 214 in den 14 Domaenen-Ordnern und 30 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -261,13 +261,14 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Einheit_WegPlanung` | `game/logic/kategorie_einheit/einheit_weg_planung.gd` |
 | `Einheit_ZielSuche` | `game/logic/kategorie_einheit/einheit_ziel_suche.gd` |
 
-### game/job — Prefix `Job_` — `game/logic/kategorie_job/` (14)
+### game/job — Prefix `Job_` — `game/logic/kategorie_job/` (18)
 
 | Klasse | Datei |
 | --- | --- |
 | `Job_Basis` | `game/logic/kategorie_job/job_basis.gd` |
 | `Job_BaustelleBeliefern` | `game/logic/kategorie_job/job_baustelle_beliefern.gd` |
 | `Job_BeerenSammler` | `game/logic/kategorie_job/job_beeren_sammler.gd` |
+| `Job_FaehigkeitsPruefung` | `game/logic/kategorie_job/job_faehigkeits_pruefung.gd` |
 | `Job_Graben` | `game/logic/kategorie_job/job_graben.gd` |
 | `Job_Heiler` | `game/logic/kategorie_job/job_heiler.gd` |
 | `Job_Holzfaeller` | `game/logic/kategorie_job/job_holzfaeller.gd` |
@@ -275,10 +276,13 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Job_Jaeger` | `game/logic/kategorie_job/job_jaeger.gd` |
 | `Job_JaegerKadaver` | `game/logic/kategorie_job/job_jaeger_kadaver.gd` |
 | `Job_Kannibale` | `game/logic/kategorie_job/job_kannibale.gd` |
+| `Job_Konfiguration` | `game/logic/kategorie_job/job_konfiguration.gd` |
 | `Job_Orchestrieren` | `game/logic/kategorie_job/job_orchestrieren.gd` |
 | `Job_Registry` | `game/logic/kategorie_job/job_registry.gd` |
 | `Job_Steinmetz` | `game/logic/kategorie_job/job_steinmetz.gd` |
 | `Job_Transport` | `game/logic/kategorie_job/job_transport.gd` |
+| `Job_ZeitRechnung` | `game/logic/kategorie_job/job_zeit_rechnung.gd` |
+| `Job_ZielPruefung` | `game/logic/kategorie_job/job_ziel_pruefung.gd` |
 
 ### game/ressourcen — Prefix `Resource_` — `game/logic/kategorie_ressourcen/` (7)
 

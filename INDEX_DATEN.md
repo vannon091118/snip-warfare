@@ -13,7 +13,7 @@ Stand: V0.01 — 30 JSON-Pools, davon 30 lesbar und 2 ohne namentlichen Verbrauc
 | [`modifikator_settings.json`](core/data/modifikator_settings.json) | `core` | 3 | `_kommentar`, `global`, `bereiche` | `core/logic/kern_modifikator_maschine.gd` |
 | [`lager.json`](economy/data/lager.json) | `economy` | 2 | `kleines_lager`, `grosses_lager` | `economy/logic/storage/lager_registry.gd` |
 | [`animationen.json`](game/data/animationen.json) | `game/data` | 8 | `laufen`, `idle`, `hacken`, `grind`, `raeuchern`, `flackern` und 2 weitere | `game/logic/kategorie_einheit/einheit_darsteller.gd`, `world/logic/kategorie_objekt/objekt_basis.gd`, `world/logic/kategorie_welt/welt_objekt_darsteller.gd` |
-| [`job_config.json`](game/data/job_config.json) | `game/data` | 12 | `holzfaeller`, `steinmetz`, `jaeger`, `holzfaeller_stumpf`, `jaeger_kadaver`, `heiler` und 6 weitere | `game/logic/kategorie_job/job_basis.gd`, `game/logic/kategorie_job/job_beeren_sammler.gd`, `game/logic/kategorie_job/job_graben.gd` und 8 weitere |
+| [`job_config.json`](game/data/job_config.json) | `game/data` | 12 | `holzfaeller`, `steinmetz`, `jaeger`, `holzfaeller_stumpf`, `jaeger_kadaver`, `heiler` und 6 weitere | `game/logic/kategorie_job/job_beeren_sammler.gd`, `game/logic/kategorie_job/job_graben.gd`, `game/logic/kategorie_job/job_heiler.gd` und 7 weitere |
 | [`mutationen_inventar.json`](game/data/mutationen_inventar.json) | `game/data` | 3 | `schema_name`, `start_zustaende`, `mutationen` | `game/logic/kategorie_einheit/einheit_inventar.gd`, `game/logic/kategorie_einheit/einheit_inventar_schema.gd` |
 | [`mutationen_ressourcen.json`](game/data/mutationen_ressourcen.json) | `game/data` | 3 | `schema_name`, `start_zustaende`, `mutationen` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` |
 | [`möbel.json`](game/data/möbel.json) | `game/data` | 5 | `[Liste]` | `ui/logic/kategorie_ui/ui_bau_panel.gd`, `world/logic/kategorie_welt/welt_raum_analyser.gd` |
@@ -90,7 +90,6 @@ Pfad `game/data/animationen.json`, Domaene `game/data`, 8 Eintraege.
 
 Pfad `game/data/job_config.json`, Domaene `game/data`, 12 Eintraege.
 
-* `game/logic/kategorie_job/job_basis.gd`
 * `game/logic/kategorie_job/job_beeren_sammler.gd`
 * `game/logic/kategorie_job/job_graben.gd`
 * `game/logic/kategorie_job/job_heiler.gd`

@@ -12,9 +12,6 @@
   "game/logic/kategorie_einheit/einheit_status.gd": {
     "ist_zeilen": 306
   },
-  "game/logic/kategorie_job/job_basis.gd": {
-    "ist_zeilen": 162
-  },
   "population/logic/mood/pop_mood_maschine.gd": {
     "ist_zeilen": 285
   },

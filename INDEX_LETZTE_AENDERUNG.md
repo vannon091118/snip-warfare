@@ -6,10 +6,11 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 ## 1. Letzte Aenderung
 
-1. Klassen: 236 -> 240.
-2. Dateien: 260 -> 264.
-3. Domaene world/welt: 37 -> 41 Klassen.
-4. Domaene world/welt: 37 -> 41 GDScript-Dateien.
+1. Klassen: 240 -> 244.
+2. Dateien: 264 -> 269.
+3. Domaene game/job: 14 -> 18 Klassen.
+4. Domaene game/job: 14 -> 18 GDScript-Dateien.
+5. Domaene tools: 6 -> 7 GDScript-Dateien.
 
 ## 2. Stand (maschinell, Grundlage des naechsten Vergleichs)
 
@@ -17,8 +18,8 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 240 |
-| dateien | 264 |
+| klassen | 244 |
+| dateien | 269 |
 | signale | 63 |
 | array_typen | 31 |
 | pools | 30 |
@@ -28,12 +29,12 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | core | 19 | 19 | c5542462b542 |
 | economy | 6 | 6 | 2062e990adc2 |
 | game/einheit | 22 | 22 | 5f8d1878fb46 |
-| game/job | 14 | 14 | 8ea0fb077fac |
+| game/job | 18 | 18 | 3f316a555feb |
 | game/ressourcen | 7 | 7 | 2b115f627e10 |
 | population | 15 | 16 | 4c877f980d9c |
 | rest | 30 | 35 | 2117b72c9a4d |
 | shinon | 0 | 0 | da39a3ee5e6b |
-| tools | 0 | 6 | da39a3ee5e6b |
+| tools | 0 | 7 | da39a3ee5e6b |
 | ui | 19 | 31 | f243e66269b6 |
 | world/generator | 12 | 12 | 190186145ff4 |
 | world/objekt | 31 | 31 | f69bca15814a |
