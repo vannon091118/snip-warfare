@@ -23,7 +23,7 @@
   "world/logic/kategorie_tier/tier_status.gd": {"ist_zeilen": 149},
   "world/logic/kategorie_welt/fraktions_ki_maschine.gd": {"ist_zeilen": 165},
   "world/logic/kategorie_welt/welt_karawanen_manager.gd": {"ist_zeilen": 238},
-  "world/logic/kategorie_welt/welt_model.gd": {"ist_zeilen": 572, "slice": "D"},
+  "world/logic/kategorie_welt/welt_model.gd": {"ist_zeilen": 505},
   "world/logic/kategorie_welt/welt_objekt_darsteller.gd": {"ist_zeilen": 107},
   "world/logic/kategorie_welt/welt_registry.gd": {"ist_zeilen": 116},
   "world/logic/kategorie_welt/welt_renderer.gd": {"ist_zeilen": 456, "slice": "G"}

@@ -57,7 +57,6 @@ var _biom_analyser: Welt_BiomAnalyser = null
 ## der Tile-Leben. Alles andere delegiert an die eigenen Funktionen.
 func _init() -> void:
 	ueberziehe_fliesen("boden")
-	_lade_erschopfung_config()
 
 func _raster_anlegen(element_id: String) -> void:
 	raster.clear()
@@ -458,33 +457,9 @@ func _eskalation_anwenden(geladene_version: int) -> void:
 				else:
 					raster[schluessel] = str(alt_raster[schluessel])
 
-## Erschöpfungssystem: Pro Chunk und Ressourcentyp.
-## Erschöpfung wird einmalig bei Generierung gesetzt und kann nur durch
-## neue Chunkgenerierung via Expansion erhöht (bzw. zurückgesetzt) werden.
-## Wenn lager_bestand / erschoepfungs_maximum > 0.8 blockiert Spawn.
-var _erschoepfung_maximum: int = 100
-var _erschoepfung_spawn_schwelle: float = 0.8
-var _erschoepfung_pro_chunk: Dictionary = {}
-var _erschopfung_config_geladen := false
-
-## Standard-Ressourcentypen für Erschöpfungstracking.
-const RESSOURCE_TYPEN: Array[String] = ["holz", "stein", "erz", "beeren", "wasser", "fisch", "wild", "kraut", "eis", "pilz"]
-
-func _lade_erschopfung_config() -> void:
-	if _erschopfung_config_geladen:
-		return
-	var config_pfad := "res://world/data/fraktions_ki_config.json"
-	var datei := FileAccess.open(config_pfad, FileAccess.READ)
-	if datei != null:
-		var text := datei.get_as_text()
-		datei.close()
-		var config: Variant = JSON.parse_string(text)
-		if typeof(config) == TYPE_DICTIONARY:
-			if config.has("erschoepfung_spawn_schwelle"):
-				_erschoepfung_spawn_schwelle = float(config["erschoepfung_spawn_schwelle"])
-			if config.has("erschoepfung_maximum"):
-				_erschoepfung_maximum = int(config["erschoepfung_maximum"])
-	_erschopfung_config_geladen = true
+## Erschöpfungssystem: Die Rechnung wohnt in der Welt_ErschoepfungMaschine;
+## das Modell hält nur den Datenkasten und delegiert jede Anfrage.
+var _erschoepfung := Welt_ErschoepfungMaschine.new()
 
 func _chunk_key_aus_position(x: int, y: int) -> String:
 	var cx := int(float(x) / float(chunk_groesse))
@@ -496,76 +471,35 @@ func _chunk_key_aus_kachel(kachel_x: int, kachel_y: int) -> String:
 	var cy := int(float(kachel_y) / float(chunk_groesse))
 	return "%d_%d" % [cx, cy]
 
+## Erschöpfung: Reine Delegation an die Maschine; die öffentlichen Namen
+## bleiben stabil, damit Generator, Ressourcen und Speicher unverändert
+## weiterlesen können.
 func erschoepfung_initialisieren() -> void:
-	# Setzt Erschöpfung für alle Chunks auf 0 bei Weltgenerierung.
-	_erschoepfung_pro_chunk.clear()
-	var chunk_x_max := maxi(1, raster_breite / chunk_groesse)
-	var chunk_y_max := maxi(1, raster_hoehe / chunk_groesse)
-	for cx in range(chunk_x_max):
-		for cy in range(chunk_y_max):
-			var chunk_key := "%d_%d" % [cx, cy]
-			var chunk_daten: Dictionary = {}
-			for typ in RESSOURCE_TYPEN:
-				chunk_daten[typ] = 0
-			_erschoepfung_pro_chunk[chunk_key] = chunk_daten
+	_erschoepfung.initialisieren(chunk_groesse, raster_breite, raster_hoehe)
 
 func erschoepfung_holen(chunk_key: String, ressource_typ: String) -> int:
-	# Liefert aktuellen Erschöpfungswert für Ressource in Chunk (0-100).
-	if not _erschoepfung_pro_chunk.has(chunk_key):
-		return 0
-	var chunk_daten: Dictionary = _erschoepfung_pro_chunk[chunk_key]
-	return int(chunk_daten.get(ressource_typ, 0))
+	return _erschoepfung.holen(chunk_key, ressource_typ)
 
 func erschoepfung_setzen(chunk_key: String, ressource_typ: String, wert: int) -> void:
-	# Setzt Erschöpfungswert (geklemmt 0-100). Nur Generator/Expansion darf schreiben.
-	if not _erschoepfung_pro_chunk.has(chunk_key):
-		var chunk_daten: Dictionary = {}
-		for typ in RESSOURCE_TYPEN:
-			chunk_daten[typ] = 0
-		_erschoepfung_pro_chunk[chunk_key] = chunk_daten
-	_erschoepfung_pro_chunk[chunk_key][ressource_typ] = clampi(wert, 0, _erschoepfung_maximum)
+	_erschoepfung.setzen(chunk_key, ressource_typ, wert)
 
 func erschoepfung_erhoehen(chunk_key: String, ressource_typ: String, delta: int) -> void:
-	# Erhöht Erschöpfung beim Abbau/Ernte. Kann nicht über Maximum hinaus.
-	var aktuell := erschoepfung_holen(chunk_key, ressource_typ)
-	erschoepfung_setzen(chunk_key, ressource_typ, aktuell + delta)
+	_erschoepfung.erhoehen(chunk_key, ressource_typ, delta)
 
 func erschoepfung_prozent(chunk_key: String, ressource_typ: String) -> float:
-	# Liefert Erschöpfung als 0.0-1.0 Wert.
-	return float(erschoepfung_holen(chunk_key, ressource_typ)) / float(_erschoepfung_maximum)
+	return _erschoepfung.prozent(chunk_key, ressource_typ)
 
 func kann_ressource_spawnen(chunk_key: String, ressource_typ: String, lager_bestand: int) -> bool:
-	# Prüft ob Ressource in Chunk spawnen darf.
-	# Blockiert wenn lager_bestand / erschoepfungs_maximum > erschoepfung_spawn_schwelle
-	# (d.h. Erschöpfung > erschoepfung_spawn_schwelle bei vollem Lagerbestand relativ zum Maximum).
-	var erschoepfung := erschoepfung_holen(chunk_key, ressource_typ)
-	if float(erschoepfung) / float(_erschoepfung_maximum) > _erschoepfung_spawn_schwelle:
-		return false
-	# Zusatzprüfung: Wenn Lagerbestand hoch aber Erschöpfung auch hoch -> kein Spawn
-	# Dies erzwingt Expansion als einzige Wachstumsstrategie.
-	if lager_bestand > 0 and float(erschoepfung) / float(_erschoepfung_maximum) > 0.5:
-		var verh := float(lager_bestand) / float(_erschoepfung_maximum)
-		if verh > _erschoepfung_spawn_schwelle:
-			return false
-	return true
+	return _erschoepfung.kann_ressource_spawnen(chunk_key, ressource_typ, lager_bestand)
 
 func erschoepfung_zuruecksetzen_fuer_chunk(chunk_key: String) -> void:
-	# Setzt Erschöpfung für alle Ressourcentypen eines Chunks auf 0.
-	# Wird bei Expansion (neue Karte) aufgerufen.
-	if _erschoepfung_pro_chunk.has(chunk_key):
-		var chunk_daten: Dictionary = _erschoepfung_pro_chunk[chunk_key]
-		for typ in RESSOURCE_TYPEN:
-			chunk_daten[typ] = 0
+	_erschoepfung.zuruecksetzen_fuer_chunk(chunk_key)
 
 func erschoepfung_alle_chunks_zuruecksetzen() -> void:
-	# Setzt alle Chunks auf 0 (für neue Karten bei Expansion).
-	for chunk_key in _erschoepfung_pro_chunk:
-		erschoepfung_zuruecksetzen_fuer_chunk(chunk_key)
+	_erschoepfung.alle_chunks_zuruecksetzen()
 
 func erschoepfung_zustand_holen() -> Dictionary:
-	# Für Speicherung und Debugging.
-	return _erschoepfung_pro_chunk.duplicate(true)
+	return _erschoepfung.zustand_holen()
 
 func erschoepfung_zustand_setzen(daten: Dictionary) -> void:
-	# Für Laden aus Savegame.
-	_erschoepfung_pro_chunk = daten.duplicate(true)
+	_erschoepfung.zustand_setzen(daten)

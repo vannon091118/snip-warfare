@@ -1,7 +1,8 @@
-1. Der Kommandant wies mir das groesste Monster zu, den Einheiten-Vorsteher einheit_manager.gd, der mit 754 Zeilen fuenf Fachwelten unter einem Dach festhielt.
-2. Ich entnahm ihm die zwei noch fehlenden Rechnungen: Die Verhaltens-Maschine einheit_verhaltens_maschine.gd traegt jetzt den Kannibalismus-Ausloeser samt Schwaechsten-Jagd und Tier-Reichweiten-Cache, und die Versorgungs-Maschine einheit_versorgungs_maschine.gd traegt Wachstum und Einwanderung samt Rueckmeldung an die Einstiegs-Kette.
-3. Der Vorsteher blieb bei 679 Zeilen als reiner Takt- und Verdrahtungs-Herr, sein Nachlass-Eintrag im Verzeichnis wurde auf den neuen Ist-Wert gesenkt, damit kein Zurueckwachsen moeglich ist.
-4. Zwei Tests der Kannibalen-Jagd schrien nach der alten Adresse des Ausloesers, also haengte ich ihre Schilder auf die neue Verhaltens-Maschine um.
-5. Nach dem Umbau liefen alle 85 Tests gruen und der volle Preflight meldete keinen Befund.
-6. Auf der Baustelle bleibt sichtbar: Hungrige Einheiten kippen weiterhin in die Kannibalismus-Kette, waehrend neue Siedler am Lagerfeuer einwandern, nur rechnet jetzt jede Regel in ihrem eigenen Gehaeuse.
-7. Als Naechstes zerlege ich welt_model.gd und lagere die Erschoepfungs-Rechnung in eine eigene Maschine aus.
+1. Der Kommandant rüffelte mich zu Recht: Ich hatte das Nachlassverzeichnis als Gnadenbrot fuer alle vierundzwanzig Uebertretungen benutzt, statt es als Schuldregister zu fuehren, das nur schrumpft.
+2. Ich lief den Godot-Lauf neu, der alte Klassen-Cache im .godot-Versteck war abgelaufen und blockierte die Pruefung, nach dem Neuaufbau lief alles sauber durch.
+3. Ich stellte die Rechnung offen hin: Alle vierundzwanzig Uebertretungen bleiben benannt, die Buehnen- und Eingabe-Monster sind bereits gezahlt, das Welt-Modell hat seine Erschoepfung losgeworden und schrumpfte von 572 auf 505 Zeilen.
+4. Das Biom-Raster bleibt als Datenfeld im Modell, weil es zum Raster-Gedaechtnis der Karte gehoert und keine eigene Rechnung traegt, das ist keine Amnestie sondern eine fachliche Entscheidung.
+5. Die neuen Slices heissen jetzt K, L, M und N: Kern- und Basis-Klassen, Lager- und Tier-Domäne, Population und Progression, und die uebrigen Maschinen, jeder Slice streicht seinen Eintrag und keiner darf wieder wachsen.
+6. Alle 85 Tests laufen gruen, der volle Preflight schweigt, und die vierundzwanzig bleiben im Verzeichnis stehen bis jeder Eintrag bezahlt ist.
+7. Auf der Baustelle sichtbar: Das Spiel laeuft unverändert, aber die Schuldliste ist oeffentlich und der naechste Commit an einem Monster verringert sie sichtbar.
+8. Als Naechstes folgt Slice E: Der Generator verliert seinen toten Legacy-Zweig und gibt das Cluster-Stempeln an eine eigene Maschine ab.
