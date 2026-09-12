@@ -1,8 +1,8 @@
-1. Der Kommandant rüffelte mich zu Recht: Ich hatte das Nachlassverzeichnis als Gnadenbrot fuer alle vierundzwanzig Uebertretungen benutzt, statt es als Schuldregister zu fuehren, das nur schrumpft.
-2. Ich lief den Godot-Lauf neu, der alte Klassen-Cache im .godot-Versteck war abgelaufen und blockierte die Pruefung, nach dem Neuaufbau lief alles sauber durch.
-3. Ich stellte die Rechnung offen hin: Alle vierundzwanzig Uebertretungen bleiben benannt, die Buehnen- und Eingabe-Monster sind bereits gezahlt, das Welt-Modell hat seine Erschoepfung losgeworden und schrumpfte von 572 auf 505 Zeilen.
-4. Das Biom-Raster bleibt als Datenfeld im Modell, weil es zum Raster-Gedaechtnis der Karte gehoert und keine eigene Rechnung traegt, das ist keine Amnestie sondern eine fachliche Entscheidung.
-5. Die neuen Slices heissen jetzt K, L, M und N: Kern- und Basis-Klassen, Lager- und Tier-Domäne, Population und Progression, und die uebrigen Maschinen, jeder Slice streicht seinen Eintrag und keiner darf wieder wachsen.
-6. Alle 85 Tests laufen gruen, der volle Preflight schweigt, und die vierundzwanzig bleiben im Verzeichnis stehen bis jeder Eintrag bezahlt ist.
-7. Auf der Baustelle sichtbar: Das Spiel laeuft unverändert, aber die Schuldliste ist oeffentlich und der naechste Commit an einem Monster verringert sie sichtbar.
-8. Als Naechstes folgt Slice E: Der Generator verliert seinen toten Legacy-Zweig und gibt das Cluster-Stempeln an eine eigene Maschine ab.
+1. Der Kommandant schickte mich in die Generatorwerkstatt, wo welt_generator.gd mit 510 Zeilen Rechnung und Stempel-Regeln in einem Kessel kochte.
+2. Zuerst warf ich den toten Legacy-Zweig _biom_fliese_fuer_legacy hinaus, der nur ein leerer Umschlag zum eigenen Doppelsprung war und von niemandem mehr gelesen wurde.
+3. Dann zog das Cluster-Stempeln in sein eigenes Haus generator_objekt_stempel.gd, das jetzt Chance, Mittelpunkt und Platz-Ziehung ortsfest aus dem Chunk-Zustand wuerfelt.
+4. Die Biom-Fliesen-Verteilung zog in generator_fliesen_wahl.gd und trägt dort den Tiefen-Modifikator, der je Ebene tiefer mehr Fels und weniger organisches tischt.
+5. Der Generator blieb bei 383 Zeilen als reiner Ablauf-Herr, sein Nachlass-Eintrag sank auf den neuen Ist-Wert, und die zwei neuen Maschinen halten ihre Grenzen von Anfang an.
+6. Der Preflight-Voll-Lauf meldet keinen Befund, alle 85 Tests laufen gruen, und die Weltkarte stempelt dieselben Cluster wie zuvor, weil jede Wurfzahl ortsfest bleibt.
+7. Auf der Baustelle sichtbar: Neue Karten zeigen Wälder, Steinfields und Tier-Bauten in denselben Mustern, nur kocht jetzt jede Rechnung in ihrem eigenen Kessel.
+8. Als Naechstes zerlege ich gebaeude_manager.gd und lagere den Produktions-Loop in eine eigene Maschine aus.

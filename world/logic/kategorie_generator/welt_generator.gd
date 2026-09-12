@@ -36,6 +36,10 @@ var rassen_generator: Pop_RassenGenerator = null
 var netzwerk_planer: Welt_NetzwerkPlaner = null
 var verworfene_chunks: int = 0
 var regionen_geplant: int = 0
+## Cluster-Stempel und Fliesen-Wahl als eigene Maschinen; der Generator
+## reicht nur den Chunk-Zustand durch.
+var stempel := Welt_GeneratorObjektStempel.new()
+var fliesen_wahl := Welt_GeneratorFliesenWahl.new()
 var _chunk_groesse: int = CHUNK_GROESSE
 var _region_kante: int = REGION_KANTE
 var _def_reg: Welt_DefinitionRegistry = null
@@ -155,6 +159,7 @@ func _definitionen_uebernehmen(model: Welt_Model) -> void:
 		_def_reg = Welt_DefinitionRegistry.new()
 		_def_reg.laden()
 	_chunk_groesse = maxi(_def_reg.chunk_groesse(), 1)
+	stempel.einrichten(registry, _chunk_groesse)
 	_region_kante = maxi(_def_reg.region_kante(), 1)
 	if model != null:
 		model.kachel_groesse_setzen(_def_reg.kachel_groesse())
@@ -296,7 +301,7 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 	var start_index := model.objekt_anzahl()
 	# Cluster zuerst: Sie stempeln dichte Gruppen (Wälder, Steinfields,
 	# Tier-Bauten) als Weltzustand; die Streuung danach nutzt den Rest.
-	var gestempelt := _cluster_stempeln(model, chunk, biom_id, chunk_zufall)
+	var gestempelt := stempel.stempeln(model, chunk, biom_id, chunk_zufall)
 	var objekt_zahl := int(gestempelt["objekt_zahl"])
 	var tier_zahl := int(gestempelt["tier_zahl"])
 	var versuche := 0
@@ -309,7 +314,7 @@ func _chunk_fuellen_mit(model: Welt_Model, chunk: Vector2i, kacheln: int, biom_i
 				var y := start_y + dy
 				if x < model.raster_breite and y < model.raster_hoehe:
 					plaetze.append(Vector2i(x, y))
-					model.fliese_setzen(x, y, _biom_fliese_fuer(biom_id, chunk_zufall, z_ebene), z_ebene)
+					model.fliese_setzen(x, y, fliesen_wahl.ziehe_fliese(biom_id, chunk_zufall, z_ebene), z_ebene)
 	# Nach Fliesen-Setzen: Tile-Leben für Fels/Geröll initialisieren
 	_tile_leben_initialisieren_chunk(model, chunk, z_ebene)
 	while versuche < kacheln * 3:
@@ -375,136 +380,3 @@ func _chunk_verwerfen(model: Welt_Model, start_index: int) -> void:
 	while letzte >= start_index:
 		model.objekt_entfernen(letzte)
 		letzte -= 1
-
-
-## Kategorie logik: Cluster-Stempel für dichte Spawn-Gruppen.
-
-func _cluster_stempeln(model: Welt_Model, chunk: Vector2i, biom_id: String, chunk_zufall: Kern_Zufall) -> Dictionary:
-	# Stempelt die Cluster-Definitionen der Registry in den Chunk. Jede
-	# Entscheidung (Chance, Mittelpunkt, je Platz) kommt ortsfest aus dem
-	# Chunk-Zustand: dieselbe Welt plus derselbe Chunk stempelt dieselben
-	# Gruppen, egal welche Reihenfolge. Tiere aus Clustern zählen als
-	# Weltobjekte und zugleich zur Tier-Zahl des Chunks.
-	var ergebnis := {"objekt_zahl": 0, "tier_zahl": 0}
-	var tier_ids := registry.ids_mit_gewicht("tiere")
-	for cluster_id: String in registry.ids_der_kategorie("cluster"):
-		var wort := registry.eintrag_wort_fuer(cluster_id)
-		if not (wort.get("biome", []) as Array).has(biom_id):
-			continue
-		var chance := float(wort.get("chance", 0.0))
-		if chance <= 0.0:
-			continue
-		var wurf := float(chunk_zufall.naechste_zahl() % 1000000) / 1000000.0
-		if wurf >= chance:
-			continue
-		var element_id := str(wort.get("element_id", cluster_id))
-		var radius := int(wort.get("radius_kacheln", 2))
-		var anzahl := 0
-		if bool(wort.get("wandernd", false)):
-			# Wandernde Gruppen (Schwärme) ziehen ihre Größe separat:
-			# zwischen anzahl_min und anzahl_max, wieder ortsfest.
-			var minimum := int(wort.get("anzahl_min", 2))
-			var maximum := maxi(int(wort.get("anzahl_max", minimum)), minimum)
-			anzahl = minimum + int(chunk_zufall.naechste_zahl() % int(maximum - minimum + 1))
-		else:
-			anzahl = int(wort.get("anzahl", 0)) + int(wort.get("umgebung_zusatz", 0))
-		if anzahl <= 0:
-			continue
-		var start_x := chunk.x * _chunk_groesse
-		var start_y := chunk.y * _chunk_groesse
-		var mitte := Vector2i(
-			start_x + int(chunk_zufall.naechste_zahl() % _chunk_groesse),
-			start_y + int(chunk_zufall.naechste_zahl() % _chunk_groesse))
-		var objekt_ist_tier := tier_ids.any(func(t_id: String) -> bool:
-			return registry.element_pfad_fuer(t_id) == element_id)
-		for platz in _cluster_plaetze(model, mitte, radius, anzahl, chunk_zufall):
-			model.objekt_hinzufuegen(element_id, _kachel_mitte(model, platz))
-			ergebnis["objekt_zahl"] = int(ergebnis["objekt_zahl"]) + 1
-			if objekt_ist_tier:
-				ergebnis["tier_zahl"] = int(ergebnis["tier_zahl"]) + 1
-	return ergebnis
-
-func _cluster_plaetze(model: Welt_Model, mitte: Vector2i, radius: int, anzahl: int, chunk_zufall: Kern_Zufall) -> Array[Vector2i]:
-	# Liefert bis zu anzahl freie Felder im Ring um die Mitte: Der nächste
-	# freie Ring gewinnt, die Reihenfolge innerhalb entscheidet der
-	# Chunk-Zustand, damit Cluster nicht als perfektes Quadrat stehen.
-	var plaetze: Array[Vector2i] = []
-	if anzahl <= 0:
-		return plaetze
-	var kandidaten: Array[Vector2i] = []
-	for dy in range(-radius, radius + 1):
-		for dx in range(-radius, radius + 1):
-			var feld := mitte + Vector2i(dx, dy)
-			if feld.x < 0 or feld.y < 0 or feld.x >= model.raster_breite or feld.y >= model.raster_hoehe:
-				continue
-			kandidaten.append(feld)
-	while not kandidaten.is_empty() and plaetze.size() < anzahl:
-		var index := int(chunk_zufall.naechste_zahl() % kandidaten.size())
-		plaetze.append(kandidaten[index])
-		kandidaten.remove_at(index)
-	return plaetze
-
-func _biom_fliese_fuer(biom_id: String, zufall: Kern_Zufall, z_ebene: int = 0) -> String:
-	# Prozentuale Fliesen-Verteilung passend zum Biom: bricht die monotone
-	# Standardkachel und erzeugt sofort optische Differenzierung.
-	# z_ebene: 0 = Oberfläche, negativ = Untergrund. Tiefer = mehr Fels/Geröll,
-	# höhere Erz-Affinität, weniger Wasser/Oberflächen-Biome.
-	var wurf := int(zufall.naechste_zahl() % 100)
-	
-	# Tiefen-Modifikator: Je tiefer (negativer), desto mehr Fels/Erz, weniger organisches
-	var tiefe := absi(z_ebene)  # 0, 1, 2, 3, 4
-	var fels_bonus := tiefe * 8      # +8% Fels pro Ebene tiefer
-	var geroell_bonus := tiefe * 5   # +5% Geröll pro Ebene tiefer
-	var erde_malus := tiefe * 6      # -6% organische Böden pro Ebene tiefer
-	
-	match biom_id:
-		"gemaaessigt":
-			# Oberfläche: wiese 55, waldboden 25, boden 20
-			# Z-1: wiese 49, waldboden 22, boden 14, geroell +5, fels +8
-			# Z-2: wiese 43, waldboden 19, boden 8, geroell +10, fels +16
-			if wurf < 55 - erde_malus:
-				return "wiese"
-			elif wurf < 80 - erde_malus:
-				return "waldboden"
-			elif wurf < 85 - erde_malus + geroell_bonus:
-				return "geroell"
-			elif wurf < 95 - erde_malus + geroell_bonus + fels_bonus:
-				return "fels"
-			else:
-				return "boden"
-		"steppe":
-			# Oberfläche: boden 45, acker 30, sand 25
-			# Tiefer: mehr fels/geroell, weniger sand/acker
-			if wurf < 45 - erde_malus:
-				return "boden"
-			elif wurf < 75 - erde_malus:
-				return "acker"
-			elif wurf < 85 - erde_malus + geroell_bonus:
-				return "geroell"
-			elif wurf < 95 - erde_malus + geroell_bonus + fels_bonus:
-				return "fels"
-			else:
-				return "sand"
-		"tundra":
-			# Oberfläche: boden 45, geroell 30, fels 25
-			# Tiefer: noch mehr fels/geroell
-			if wurf < 45 - erde_malus:
-				return "boden"
-			elif wurf < 75 - erde_malus + geroell_bonus:
-				return "geroell"
-			elif wurf < 95 - erde_malus + geroell_bonus + fels_bonus:
-				return "fels"
-			else:
-				return "geroell"
-		_:
-			# Fallback: tiefeabhängig
-			if wurf < 50 - erde_malus:
-				return "boden"
-			elif wurf < 70 - erde_malus + geroell_bonus:
-				return "geroell"
-			else:
-				return "fels"
-
-func _biom_fliese_fuer_legacy(biom_id: String, zufall: Kern_Zufall) -> String:
-	# Legacy-Kompatibilität: ruft neue Funktion mit z_ebene=0 auf
-	return _biom_fliese_fuer(biom_id, zufall, 0)

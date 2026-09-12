@@ -12,7 +12,7 @@
   "population/logic/needs/pop_need_registry.gd": {"ist_zeilen": 106},
   "population/logic/needs/pop_rassen_schema_registry.gd": {"ist_zeilen": 105},
   "world/logic/kategorie_generator/generator_registry.gd": {"ist_zeilen": 109},
-  "world/logic/kategorie_generator/welt_generator.gd": {"ist_zeilen": 511, "slice": "E"},
+  "world/logic/kategorie_generator/welt_generator.gd": {"ist_zeilen": 383, "slice": "E"},
   "world/logic/kategorie_objekt/gebaeude_manager.gd": {"ist_zeilen": 418, "slice": "F"},
   "world/logic/kategorie_objekt/objekt_registry_basis.gd": {"ist_zeilen": 140},
   "world/logic/kategorie_orchestrator/orchestrator_manager.gd": {"ist_zeilen": 228},
