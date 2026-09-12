@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 244 Klassen mit `class_name` im Projekt, davon 214 in den 14 Domaenen-Ordnern und 30 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
+_Stand: V0.01 — 247 Klassen mit `class_name` im Projekt, davon 217 in den 14 Domaenen-Ordnern und 30 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -234,11 +234,12 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Orchestrator_Status` | `world/logic/kategorie_orchestrator/orchestrator_status.gd` |
 | `Orchestrator_Verdrahtung` | `world/logic/kategorie_orchestrator/orchestrator_verdrahtung.gd` |
 
-### game/einheit — Prefix `Einheit_` — `game/logic/kategorie_einheit/` (22)
+### game/einheit — Prefix `Einheit_` — `game/logic/kategorie_einheit/` (25)
 
 | Klasse | Datei |
 | --- | --- |
 | `Einheit_Darsteller` | `game/logic/kategorie_einheit/einheit_darsteller.gd` |
+| `Einheit_EinwanderungsMaschine` | `game/logic/kategorie_einheit/einheit_einwanderungs_maschine.gd` |
 | `Einheit_ErnteMaschine` | `game/logic/kategorie_einheit/einheit_ernte_maschine.gd` |
 | `Einheit_Inventar` | `game/logic/kategorie_einheit/einheit_inventar.gd` |
 | `Einheit_InventarMutationAbgabe` | `game/logic/kategorie_einheit/einheit_inventar_mutation_abgabe.gd` |
@@ -246,12 +247,14 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Einheit_InventarMutationStart` | `game/logic/kategorie_einheit/einheit_inventar_mutation_start.gd` |
 | `Einheit_InventarSchema` | `game/logic/kategorie_einheit/einheit_inventar_schema.gd` |
 | `Einheit_JobFlussMaschine` | `game/logic/kategorie_einheit/einheit_job_fluss_maschine.gd` |
+| `Einheit_LeseSchnittstelle` | `game/logic/kategorie_einheit/einheit_lese_schnittstelle.gd` |
 | `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` |
 | `Einheit_MutationErnte` | `game/logic/kategorie_einheit/einheit_mutation_ernte.gd` |
 | `Einheit_MutationStartBestaende` | `game/logic/kategorie_einheit/einheit_mutation_ressourcen.gd` |
 | `Einheit_Ressourcen` | `game/logic/kategorie_einheit/einheit_ressourcen.gd` |
 | `Einheit_RessourcenSchema` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` |
 | `Einheit_Status` | `game/logic/kategorie_einheit/einheit_status.gd` |
+| `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` |
 | `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` |
 | `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` |

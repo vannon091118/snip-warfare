@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- Schwerer Riss: breiter Spalt, viele Bruchlinien, abgeplatzte Chips -->
+  <g fill="none" stroke="#5F5147" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M24 104 L44 78 L36 58 L58 40 L54 24"/>
+    <path d="M44 78 L68 70 L76 88"/>
+    <path d="M100 26 L92 46 L102 64 L94 86"/>
+  </g>
+  <g fill="none" stroke="#4A3E35" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9">
+    <path d="M58 40 L74 34 L82 44"/>
+    <path d="M36 58 L24 52"/>
+    <path d="M76 88 L88 96"/>
+  </g>
+  <g fill="none" stroke="#EFE6D0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8">
+    <path d="M26 102 L46 77 L38 57 L60 39 L56 25"/>
+    <path d="M98 27 L90 46 L100 64 L92 86"/>
+  </g>
+  <g fill="#5F5147" opacity="0.9">
+    <path d="M54 24 L62 18 L64 28 Z"/>
+    <path d="M94 86 L102 90 L96 98 Z"/>
+    <path d="M76 88 L84 92 L78 98 Z"/>
+  </g>
+  <g fill="#EFE6D0" opacity="0.9">
+    <path d="M64 52 L72 48 L70 58 Z"/>
+    <path d="M40 88 L48 84 L46 94 Z"/>
+  </g>
+</svg>

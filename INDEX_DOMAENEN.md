@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 244 Klassen, 269 Dateien, 63 Signale, 31 Array-Elementtypen; 30 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 247 Klassen, 272 Dateien, 63 Signale, 31 Array-Elementtypen; 30 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -14,7 +14,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 244 Klassen, 269 Dateien, 63 Sign
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 31 | 31 |
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 17 | 17 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 7 | 7 |
-| `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 22 | 22 |
+| `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 25 | 25 |
 | `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 18 | 18 |
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
 | `population` | `pop` | `Pop_` | `population/` | 15 | 16 |
@@ -75,7 +75,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 244 Klassen, 269 Dateien, 63 Sign
 | `Welt_FortschrittsMaschine.orchestrator_gespawnt` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DS |
 | `Welt_FortschrittsMaschine.stufe_erreicht` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
 | `Welt_FortschrittsMaschine.ziel_erreicht` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
-| `Welt_ProgressionsMaschine.folge_objekt_entstanden` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DS |
+| `Welt_ProgressionsMaschine.folge_objekt_entstanden` | - | - | - | - | - | - | - | - | - | - | - | - | - | V | DS |
 | `Welt_ProgressionsMaschine.objekt_erschoepft` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
 | `Welt_ProgressionsMaschine.saemling_gespawnt` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DS |
 | `Welt_ProgressionsMaschine.stadium_geaendert` | - | - | - | - | - | - | - | - | - | - | - | - | - | V | DS |
@@ -111,8 +111,8 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `String` | 52 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 2 | 2 | 7 | - | 1 | 3 |
-| `Dictionary` | 29 | 3 | 1 | 6 | 1 | 1 | 2 | 5 | - | - | 1 | 1 | 4 | - | - | 4 |
-| `int` | 14 | - | - | 5 | - | 1 | 1 | 2 | - | - | - | - | 3 | - | 1 | 1 |
+| `Dictionary` | 32 | 3 | 1 | 6 | 1 | 1 | 2 | 8 | - | - | 1 | 1 | 4 | - | - | 4 |
+| `int` | 15 | - | - | 5 | - | 1 | 1 | 3 | - | - | - | - | 3 | - | 1 | 1 |
 | `Vector2i` | 8 | 1 | 4 | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `Vector2` | 5 | 1 | - | 1 | - | - | - | 2 | - | - | - | - | - | - | - | 1 |
 | `Kern_ModifikatorBasis` | 4 | 2 | - | - | - | - | - | 1 | - | - | - | - | - | - | 1 | - |
@@ -271,7 +271,7 @@ Prefix `Welt_`, 41 Klassen.
 | `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` | 127 |
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` | 92 |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
-| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 521 |
+| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 524 |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` | 44 |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` | 50 |
 | `Welt_Speicher` | `world/logic/kategorie_welt/welt_speicher.gd` | 74 |
@@ -450,11 +450,12 @@ Prefix `Orchestrator_`, 7 Klassen.
 
 ### game/einheit — Kuerzel `ein` — `game/logic/kategorie_einheit/`
 
-Prefix `Einheit_`, 22 Klassen.
+Prefix `Einheit_`, 25 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
 | `Einheit_Darsteller` | `game/logic/kategorie_einheit/einheit_darsteller.gd` | 83 |
+| `Einheit_EinwanderungsMaschine` | `game/logic/kategorie_einheit/einheit_einwanderungs_maschine.gd` | 86 |
 | `Einheit_ErnteMaschine` | `game/logic/kategorie_einheit/einheit_ernte_maschine.gd` | 114 |
 | `Einheit_Inventar` | `game/logic/kategorie_einheit/einheit_inventar.gd` | 197 |
 | `Einheit_InventarMutationAbgabe` | `game/logic/kategorie_einheit/einheit_inventar_mutation_abgabe.gd` | 26 |
@@ -462,12 +463,14 @@ Prefix `Einheit_`, 22 Klassen.
 | `Einheit_InventarMutationStart` | `game/logic/kategorie_einheit/einheit_inventar_mutation_start.gd` | 20 |
 | `Einheit_InventarSchema` | `game/logic/kategorie_einheit/einheit_inventar_schema.gd` | 45 |
 | `Einheit_JobFlussMaschine` | `game/logic/kategorie_einheit/einheit_job_fluss_maschine.gd` | 117 |
-| `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` | 534 |
+| `Einheit_LeseSchnittstelle` | `game/logic/kategorie_einheit/einheit_lese_schnittstelle.gd` | 82 |
+| `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` | 424 |
 | `Einheit_MutationErnte` | `game/logic/kategorie_einheit/einheit_mutation_ernte.gd` | 42 |
 | `Einheit_MutationStartBestaende` | `game/logic/kategorie_einheit/einheit_mutation_ressourcen.gd` | 22 |
 | `Einheit_Ressourcen` | `game/logic/kategorie_einheit/einheit_ressourcen.gd` | 264 |
 | `Einheit_RessourcenSchema` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` | 51 |
 | `Einheit_Status` | `game/logic/kategorie_einheit/einheit_status.gd` | 306 |
+| `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` | 114 |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` | 40 |
 | `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` | 103 |
 | `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` | 100 |
@@ -512,11 +515,11 @@ Prefix `Einheit_`, 22 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `Dictionary` | 5 |
+| `Dictionary` | 8 |
 | `String` | 3 |
+| `int` | 3 |
 | `Ressource_Basis` | 2 |
 | `Vector2` | 2 |
-| `int` | 2 |
 | `Kern_ModifikatorBasis` | 1 |
 
 ### game/job — Kuerzel `job` — `game/logic/kategorie_job/`
@@ -724,6 +727,7 @@ Prefix `-`, 0 Klassen.
 | `Gebaeude_Manager.gebaeude_fertiggestellt` | V | obj, tools |
 | `Job_Basis.job_beendet` | S | ein, job, tools |
 | `Kern_SignalBus.kachel_geaendert` | V | kern, tools, welt |
+| `Welt_ProgressionsMaschine.folge_objekt_entstanden` | V | rest, tools |
 | `Welt_ProgressionsMaschine.stadium_geaendert` | V | rest, tools |
 
 #### Arrays (`Array[Typ]`)
@@ -754,7 +758,7 @@ Prefix `-`, 30 Klassen.
 | `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 109 |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` | 49 |
 | `Welt_PlusAnzeige` | `world/logic/kategorie_feedback/feedback_plus_anzeige.gd` | 70 |
-| `Welt_ProgressionsMaschine` | `world/logic/kategorie_progression/welt_progressions_maschine.gd` | 109 |
+| `Welt_ProgressionsMaschine` | `world/logic/kategorie_progression/welt_progressions_maschine.gd` | 99 |
 | `Welt_ProgressionsRegistry` | `world/logic/kategorie_progression/welt_progressions_registry.gd` | 80 |
 | `Welt_RessourcenZustand` | `world/logic/kategorie_progression/welt_ressourcen_zustand.gd` | 176 |
 | `Welt_SchadenAnzeige` | `world/logic/kategorie_feedback/feedback_schaden_anzeige.gd` | 68 |
@@ -793,7 +797,7 @@ Prefix `-`, 30 Klassen.
 | `Welt_FortschrittsMaschine.stufe_erreicht` | DSV | rest |
 | `Welt_FortschrittsMaschine.ziel_erreicht` | DSV | rest |
 | `Welt_PauseMenue.menue_gewuenscht` | V | rest, welt |
-| `Welt_ProgressionsMaschine.folge_objekt_entstanden` | DS | rest |
+| `Welt_ProgressionsMaschine.folge_objekt_entstanden` | DS | rest, tools |
 | `Welt_ProgressionsMaschine.objekt_erschoepft` | DSV | rest |
 | `Welt_ProgressionsMaschine.saemling_gespawnt` | DS | rest |
 | `Welt_ProgressionsMaschine.stadium_geaendert` | DS | rest, tools |

@@ -6,11 +6,7 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 ## 1. Letzte Aenderung
 
-1. Klassen: 240 -> 244.
-2. Dateien: 264 -> 269.
-3. Domaene game/job: 14 -> 18 Klassen.
-4. Domaene game/job: 14 -> 18 GDScript-Dateien.
-5. Domaene tools: 6 -> 7 GDScript-Dateien.
+1. Keine Aenderung seit dem letzten Lauf.
 
 ## 2. Stand (maschinell, Grundlage des naechsten Vergleichs)
 
@@ -18,8 +14,8 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 244 |
-| dateien | 269 |
+| klassen | 247 |
+| dateien | 272 |
 | signale | 63 |
 | array_typen | 31 |
 | pools | 30 |
@@ -28,7 +24,7 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | --- | --- | --- | --- |
 | core | 19 | 19 | c5542462b542 |
 | economy | 6 | 6 | 2062e990adc2 |
-| game/einheit | 22 | 22 | 5f8d1878fb46 |
+| game/einheit | 25 | 25 | e4431524eef7 |
 | game/job | 18 | 18 | 3f316a555feb |
 | game/ressourcen | 7 | 7 | 2b115f627e10 |
 | population | 15 | 16 | 4c877f980d9c |

@@ -1,16 +1,12 @@
-1. Der Nutzer verlangte den Sprint 0 und den Sprint 1 des verabredeten Bildplans, deshalb richtete ich zuerst die Bildschädler und danach die unsichtbaren Ketten des Modells auf sichtbarem Papier auf.
-2. In world/logic/kategorie_welt/welt_model.gd meldet jede Kachelschreibung ihr kachel_geaendert am Bus, damit der Renderer eine einzige frische Kachel nachzieht statt die ganze Karte neu zu malen.
-3. In world/logic/kategorie_welt/welt_wasser_automat.gd lebt der tote Automat wieder, trägt Schalter und Ausbreitungs-Reichweite aus dem Datenpool und formt einen Ufer-Saum statt die Karte zu fluten.
-4. In world/data/welt_definition.json steht der Schalter laeuft auf an und die Reichweite auf sechs Schritte, das Wasser wandert sichtbar und kriecht nie über den Rand.
-5. In world/logic/kategorie_welt/welt_definition_registry.gd liest der neue Wert seinen Schalter aus ebendiesem Pool, keine zweite Wahrheit im Code.
-6. In world/logic/kategorie_progression/welt_stufen_bilder.gd zeigt der Stumpf sein eigenes Katalogbild statt des Keimlings seines gefällten Baums.
-7. In world/logic/kategorie_progression/welt_ressourcen_zustand.gd wechselt der erschöpfte Baum selbst zum Rest-Objekt, und ein Fels ohne Folgeobjekt heilt nicht heimlich auf voll zurück.
-8. In world/data/ressourcen_progression.json trägt der Fels seine vierte Zelle als stein_rest und der Stumpf wächst als Folge wieder zum Baum, die Überwucher-Stufe steht.
-9. In world/data/element_katalog.json trägt der Boden sein makro_farbe, der Fels seine Rest-Kategorie und die neuen Pools ihre Bilder.
-10. world/assets/terrain/stein_rest.svg zeigt den Trümmerhaufen im Papier-Schnitt, die vierte Zelle des Fels-Blatts ist endlich erreichbar.
-11. In world/logic/kategorie_welt/welt_kachel_geste.gd landet jede neue Kachel mit einem kleinen Hauch auf dem Tisch und verblasst zur Ruhe.
-12. In world/logic/kategorie_welt/welt_sichtbereich_sammler.gd griff der Rechteck-Ruf ins Leere, jetzt fasst er seinen eigenen Bereich statt eines Callables.
-13. In core/logic/events/kern_signal_bus.gd trägt der Bus die neue Kachel-Meldung, über die Modell und Renderer sprechen.
-14. In project.godot steht der Texturfilter auf Linear mit Mipmaps, die Projekt-Entscheidung für harte Papierkanten.
-15. In test_objekt_plugin_naht.py und test_y_sort_und_landeplatz.py folgen die Erwartungen der wahren Fassade, alle 85 Prüfungen laufen grün.
-16. Der Beweis steht im Werkzeug tools/lauf_pruefung_wasser.gd: Wasser wandert kachelweise mit Aufstoß im echten Fenster, der gefällte Baum zeigt den Stumpf, der abgebaute Fels seine Trümmer.
+1. Der Nutzer verlangte den Sprint 2 des Bildplans, das Papier-Gesten-Vokabular, deshalb bekam jede Zustandsveränderung der Welt ihre eigene sichtbare Geste mit genau einer Verantwortung.
+2. In world/logic/kategorie_welt/welt_stadium_geste.gd stoesst das Standbild bei jedem Stufenwechsel kurz auf und kehrt exakt in seine Ruheposition zurück, damit die Tiefensortierung am Fuß nicht driftet.
+3. In world/logic/kategorie_welt/welt_umsturz_geste.gd wirft der gefällte Baum seine Krone als gekipptes Papierstück, das aufstoesst, zur Seite fällt und schwindet, während der Stumpf schon steht.
+4. In world/logic/kategorie_welt/welt_riss_geste.gd legt der Schaden ein Riss-Decal über das Objekt, je zwei Schlägen eine Stufe, nach dem Beeren-Overlay-Muster desselben Fußes.
+5. In world/logic/kategorie_welt/welt_wuchs_geste.gd atmet der Sämling zwischen den Blättern weiter, sein Maßstab folgt der echten Wachstums-Fraktion des Modells statt vier Sprüngen.
+6. In world/assets/progression/riss_leicht.svg und world/assets/progression/riss_schwer.svg stehen die beiden Decal-Bilder im Papier-Schnitt mit hellem Papierrand und abgeplatzten Chips.
+7. In world/logic/kategorie_welt/welt_renderer.gd hängen die vier Gesten an den echten Ereignissen: Der Schlag pulst Blatt und Riss, der Fall spielt die Krone und räumt die alten Spuren, der Neuaufbau trägt Riss und Wuchs aus dem Modell nach.
+8. In world/logic/kategorie_progression/welt_progressions_maschine.gd meldet jeder echte Treffer seine Darstellung sofort und die doppelte Identitäts-Schaltung ist entfernt, der Rest-Wechsel wohnt allein in der Zustands-Maschine.
+9. In tools/lauf_pruefung_gesten.gd steht der Beweis: Echter Renderer, vier Schläge, Riss ab der zweiten Stufe, Krone und Stumpf beim Fall, Wuchs-Maßstab beim Sämling, alle Prüfungen grün.
+10. INDEX.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md tragen die vier neuen Klassen nach, damit der Index nie eine andere Wahrheit erzählt als der Baum.
+11. Der Warnungs-Scan läuft grün, die Progressions- und Wasser-Beweisläufe stehen, alle 85 Prüfungen bestehen.
+12. Sichtbar im laufenden Spiel: Jeder Hieb zittert im Blatt, Risse brechen die Rinde, der Baum kippt und der Stumpf bleibt, junge Pflanzen atmen sichtbar.

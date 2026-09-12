@@ -24,6 +24,11 @@ const PROGRESSIONS_REGISTRY_SKRIPT := preload("res://world/logic/kategorie_progr
 const RESSOURCEN_ZUSTAND_SKRIPT := preload("res://world/logic/kategorie_progression/welt_ressourcen_zustand.gd")
 const BAUSTELLEN_BEDARF_SKRIPT := preload("res://world/logic/kategorie_welt/welt_baustellen_bedarf.gd")
 const BAU_GEIST_SKRIPT := preload("res://world/logic/kategorie_welt/welt_bau_geist.gd")
+const KACHEL_GESTE_SKRIPT := preload("res://world/logic/kategorie_welt/welt_kachel_geste.gd")
+const STADIUM_GESTE_SKRIPT := preload("res://world/logic/kategorie_welt/welt_stadium_geste.gd")
+const WUCHS_GESTE_SKRIPT := preload("res://world/logic/kategorie_welt/welt_wuchs_geste.gd")
+const RISS_GESTE_SKRIPT := preload("res://world/logic/kategorie_welt/welt_riss_geste.gd")
+const UMSTURZ_GESTE_SKRIPT := preload("res://world/logic/kategorie_welt/welt_umsturz_geste.gd")
 
 var _model: Welt_Model
 var _registry: Welt_Registry
@@ -34,6 +39,11 @@ var _objekte_knoten: Node2D
 var _objekt_darsteller: Welt_ObjektDarsteller
 var _sway_aktualisierer := SWAY_AKTUALISIERER_SKRIPT.new()
 var _sway_material_quelle: Callable = func() -> RefCounted: return null
+var _kachel_geste := KACHEL_GESTE_SKRIPT.new()
+var _stadium_geste := STADIUM_GESTE_SKRIPT.new()
+var _wuchs_geste := WUCHS_GESTE_SKRIPT.new()
+var _riss_geste := RISS_GESTE_SKRIPT.new()
+var _umsturz_geste := UMSTURZ_GESTE_SKRIPT.new()
 var _stufen_bilder := STUFEN_BILDER_SKRIPT.new()
 var _terrain_blatt := Welt_TerrainBlatt.new()
 var _progressions_registry := PROGRESSIONS_REGISTRY_SKRIPT.new()
@@ -110,19 +120,38 @@ func sway_aktualisierer() -> RefCounted:
 
 func _auf_stadium_geaendert(index: int, _element_id: String, _stadium: String) -> void:
 	_zeige_stadium(index)
+	var knoten := _knoten_fuer(index)
+	if knoten == null or knoten.standbild() == null:
+		return
+	# Jede sichtbare Stufe landet mit dem Platzier-Gestus auf dem Tisch;
+	# Riss und Wuchs folgen demselben echten Zustand aus dem Modell.
+	_stadium_geste.platzieren(knoten.standbild())
+	_risse_und_wuchs_aktualisieren(index, knoten)
 
 func _auf_folge_objekt(index: int, element_id: String) -> void:
 	_sicht_sammler.dirty_setzen()
+	# Das alte Blatt kommt vor dem Tausch in den Umsturz-Hauch: Die Krone
+	# kippt und schwindet, während der Knoten schon den Rest-Zustand zeigt.
+	var knoten := _knoten_fuer(index)
+	var alte_textur: Texture2D = null
+	if knoten != null and knoten.standbild() != null:
+		alte_textur = knoten.standbild().texture
 	# Der Rest ist wiedergeboren: Das Standbild braucht seine neue Textur und
 	# der Knoten an dieser Stelle ein frisches Bewegtbild.
 	_zeige_stadium(index)
-	var knoten := _knoten_fuer(index)
 	if knoten == null or _objekt_darsteller == null or _registry == null or _model == null:
 		return
 	# Die neue Kennung kommt aus dem Ereignis; fehlt sie, gilt der Modellwert.
 	var neue_kennung := element_id if element_id != "" else _model.objekt_element_id(index)
 	var eintrag := _registry.finde_objekt(neue_kennung)
 	knoten.bewegtbild_setzen(_objekt_darsteller.objekt_darstellen(eintrag, knoten.fusspunkt()))
+	# Der Identitätswechsel räumt die alten Spuren und setzt den neuen
+	# Wuchs: Der Stumpf trägt keinen Riss und keinen Baum-Maßstab weiter.
+	_risse_und_wuchs_aktualisieren(index, knoten)
+	if knoten.standbild() != null:
+		_stadium_geste.platzieren(knoten.standbild())
+	if alte_textur != null:
+		_umsturz_geste.umsturz_spielen(knoten, alte_textur)
 
 func _auf_saemling(_element_id: String, _position: Vector2) -> void:
 	_sicht_sammler.dirty_setzen()
@@ -148,6 +177,29 @@ func _knoten_fuer(index: int) -> Welt_ObjektKnoten:
 		return knoten
 	return null
 
+func _risse_und_wuchs_aktualisieren(index: int, knoten: Welt_ObjektKnoten) -> void:
+	# Schaden und Wuchs stehen als Felder im Modell; die Gesten übersetzen
+	# sie nur ins Bild. Ohne Registry-Definition bleibt beides still.
+	if _model == null or not _progressions_registry.hat_definition(_model.objekt_element_id(index)):
+		return
+	var sprite := knoten.standbild()
+	if sprite == null or sprite.texture == null:
+		return
+	_ressourcen_zustand.zustand_erneuern(index, _model)
+	var staerke := int(_model.objekt_feld(index, Welt_RessourcenZustand.FELD_STAERKE, 1))
+	var bestand := int(_model.objekt_feld(index, Welt_RessourcenZustand.FELD_BESTAND, staerke))
+	var schaden := clampf(1.0 - float(bestand) / float(maxi(staerke, 1)), 0.0, 1.0)
+	_riss_geste.risse_anwenden(knoten, sprite, schaden)
+	var definition := _progressions_registry.definition_fuer(_model.objekt_element_id(index))
+	if str(definition.get("kategorie", "")) == "wachsend":
+		var wachstum := int(_model.objekt_feld(index, Welt_RessourcenZustand.FELD_WACHSTUM, 0))
+		var dauer := maxi(int(definition.get("wachstums_ticks", 0)), 1)
+		_wuchs_geste.wuchs_anwenden(sprite, float(wachstum) / float(dauer))
+	else:
+		# Ein Rest-Zustand steht wieder in vollem Maß: Der Stumpf erbt
+		# keinen Stufen-Maßstab seiner gefällten Kette.
+		sprite.scale = Vector2.ONE
+
 func _zeige_stadium(index: int) -> void:
 	# Tauscht nur das Blatt des Objekt-Knotens am gegebenen Index: keine
 	# Neuanlage, kein Neuaufbau, der Zustand wohnt weiter im Modell.
@@ -166,6 +218,12 @@ func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegi
 	# die Stufen selbst: keine zweite Zellgröße im Renderer.
 	_stufen_bilder.einrichten(_progressions_registry)
 	_ressourcen_zustand.einrichten(_progressions_registry)
+	# Koppelung der beiden Spitzen über die Szene: Das Modell meldet am Bus,
+	# der Renderer lauscht und zieht genau die eine Kachel nach. Die Geste
+	# kennt weder Modell noch Domäne, nur den Sichtbefehl des Renderers.
+	_kachel_geste.einrichten(func(x: int, y: int, _element_id: String, z_ebene: int) -> void:
+		kachel_ersetzen(x, y, z_ebene))
+	_kachel_geste.verbinden()
 	_model = model
 	_registry = registry
 	_baustellen_bedarf.einrichten(_model)
@@ -198,7 +256,11 @@ func kachel_ersetzen(x: int, y: int, z_ebene: int = 0) -> void:
 	if sprite == null:
 		return
 	sprite.position = Vector2(x, y) * float(_model.kachel_groesse)
+	var vorherige_textur := sprite.texture
 	_fliese_anwenden(sprite, x, y, z, float(_model.kachel_groesse))
+	# Die Geste folgt nur einem echten Bildwechsel: Sie überlagert kurz die
+	# frische Kachel und löst sich dann auf, sonst bleibt der Ruhigstand still.
+	_kachel_geste.platzieren_falls_neu(sprite, vorherige_textur)
 
 func _fliesen_alle_ebenen_erneuern() -> void:
 	# Baut Fliesen für ALLE Z-Ebenen auf (einmalig bei darstellen())
@@ -243,7 +305,18 @@ func _fliese_anwenden(sprite: Sprite2D, x: int, y: int, z_ebene: int, kante: flo
 	var entscheidung := _terrain_blatt.entscheidung_fuer(kachel, x, y, _model.welt_seed)
 	sprite.flip_h = bool(entscheidung.get("spiegel_x", false))
 	sprite.flip_v = bool(entscheidung.get("spiegel_y", false))
-	sprite.self_modulate = biom_farbe * (entscheidung.get("toenumg", Color.WHITE) as Color)
+	# Biomfarbe nur für ausdrücklich markierte Makro-Kacheln: Der Filter in
+	# element_katalog.json entscheidet, keine Ebene. Mikrokacheln behalten
+	# ihr Papierlicht, die Tönung kommt allein aus der Kachel-Palette.
+	var toenumg := (entscheidung.get("toenumg", Color.WHITE) as Color)
+	if kachel != null and bool(kachel.schluessel_daten.get("makro_farbe", false)):
+		toenumg = toenumg * biom_farbe
+	if element_id == "wasser" or element_id == "ufer":
+		# Stilles Wasser atmet minimal gegen den Himmel: dieselbe Idee wie der
+		# Geste-Hauch, aber als Standfarbe, ohne Knoten und ohne Zeit.
+		var hauch := 0.03 + 0.02 * sin(float((x * 31 + y * 17) % 16) * TAU / 16.0)
+		toenumg = toenumg.lerp(Color(0.85, 0.94, 1.0), hauch)
+	sprite.self_modulate = toenumg
 
 func _biom_farbe_fuer_kachel(x: int, y: int, z_ebene: int) -> Color:
 	# Biom-Tönung aus der Biom-Registry: Jede Kachel trägt die Farbe ihres
@@ -310,6 +383,9 @@ func objekt_knoten_anhaengen(index: int) -> Welt_ObjektKnoten:
 	# sortiert; das Standbild bleibt immer der erste Frame desselben Sheets.
 	if eintrag != null and _objekt_darsteller != null:
 		knoten.bewegtbild_setzen(_objekt_darsteller.objekt_darstellen(eintrag, fusspunkt))
+	# Auch der Neuaufbau trägt die Gesten: Riss, Wuchs und Stadium stehen
+	# aus dem Modell, nicht nur aus den Ereignissen.
+	_risse_und_wuchs_aktualisieren(index, knoten)
 	return knoten
 
 func objekt_knoten_verschieben(index: int, neue_position: Vector2) -> void:
@@ -347,6 +423,10 @@ func _stufen_textur_fuer(index: int) -> Texture2D:
 	var definition := _progressions_registry.definition_fuer(element_id)
 	var stadien: Array = definition.get("stadien", [])
 	var kategorie := str(definition.get("kategorie", ""))
+	if kategorie == "rest":
+		# Ein Rest-Zustand zeigt sein eigenes Katalogbild und kein Blatt einer
+		# fremden Kette: Der Stumpf ist der Stumpf und nicht der Keimling.
+		return null
 	var staerke := int(_model.objekt_feld(index, Welt_RessourcenZustand.FELD_STAERKE, 1))
 	var bestand := int(_model.objekt_feld(index, Welt_RessourcenZustand.FELD_BESTAND, staerke))
 	var wachstum := int(_model.objekt_feld(index, Welt_RessourcenZustand.FELD_WACHSTUM, 0))

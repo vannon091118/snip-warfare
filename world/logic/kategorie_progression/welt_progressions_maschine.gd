@@ -50,21 +50,18 @@ func schlag(index: int) -> Dictionary:
 	var ereignis := _zustand.schlag(index, _model)
 	if ereignis.is_empty():
 		return {}
+	# Erschoepfung: Die Zustands-Maschine hat die Identität bereits gewechselt
+	# (Rest-Objekt an derselben Stelle); hier melden nur noch die Ereignisse.
 	if bool(ereignis.get("erschoepft", false)):
 		objekt_erschoepft.emit(index, str(ereignis.get("element_id", "")), ereignis.get("position", Vector2.ZERO) as Vector2)
-		# Erschoepfte wachsende Objekte werden zu ihrem Rest-Objekt: Die
-		# Identitaet wechselt an derselben Stelle, die Position bleibt.
-		var element_id := str(ereignis.get("element_id", ""))
-		var folge_id := _registry.folge_objekt_fuer(element_id)
-		if folge_id != "" and _model != null and index >= 0 and index < _model.objekt_anzahl():
-			_model.objekt_feld_setzen(index, "element_id", folge_id)
-			_model.objekt_feld_setzen(index, "ressource_stadium", "")
-			_model.objekt_feld_setzen(index, "ressource_bestand", -1)
-			_model.objekt_feld_setzen(index, "ressource_staerke", -1)
-			_model.objekt_feld_setzen(index, "ressource_wachstum", 0)
-			_model.objekt_feld_setzen(index, "regeneration_fortschritt", 0)
-			_zustand.zustand_erneuern(index, _model)
+		var folge_id := str(ereignis.get("folge_objekt", ""))
+		if folge_id != "":
 			folge_objekt_entstanden.emit(index, folge_id)
+		return ereignis
+	# Jeder echte Treffer pulst die Darstellung: Auch ein wachsender Baum
+	# ändert seinen Stadiumsnamen bei Schlägen nicht (der Name folgt dem
+	# Wuchs), aber Blatt, Riss und Aufstoss folgen dem Bestand.
+	stadium_geaendert.emit(index, str(ereignis.get("element_id", "")), _zustand.stadium(index, _model))
 	return ereignis
 
 func _enter_tree() -> void:
