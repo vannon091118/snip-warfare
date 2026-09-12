@@ -156,14 +156,14 @@ func _wege_berechnen(model: Welt_Model) -> void:
 	_spieler_nachbarn.clear()
 	for f: Welt_Fraktion in _fraktionen:
 		f.nachbarn.clear()
-	var sp_region := _spieler_region
-	var spieler_pos_kachel := sp_region * model.region_kante + Vector2i(int(model.region_kante * 0.5), int(model.region_kante * 0.5))
+	var spieler_region := _spieler_region
+	var spieler_pos_kachel := spieler_region * model.region_kante + Vector2i(int(model.region_kante * 0.5), int(model.region_kante * 0.5))
 
 	# Distanzen aller Fraktionen zum Spieler ermitteln; Barrieren sortieren
 	# Kandidaten aus, statt einen Weg quer durch den Fels zu ziehen.
 	var distanzen: Array[Dictionary] = []
 	for f in _fraktionen:
-		if not _linie_frei(model, sp_region, _region_von_fraktion(model, f)):
+		if not _linie_frei(model, spieler_region, _region_von_fraktion(model, f)):
 			continue
 		var dist_spieler := Vector2(f.position_kachel).distance_to(Vector2(spieler_pos_kachel))
 		distanzen.append({"fraktion": f, "distanz": dist_spieler})

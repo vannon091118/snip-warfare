@@ -1,19 +1,7 @@
-1. Der Nutzer verlangte zornig und zu Recht, dass das platzierte Lagerfeuer und das gebaute Haus endlich sichtbar auf dem Schirm erscheinen, der Stickman nicht mehr blind und ziellos in den Kannibalismus abdriftet und die Weltgenerierung eine spürbar balancierte, prozentuale Landschaft mit echten Variationen entfaltet statt jedes Mal denselben monotonen Einheitsbrei auszuwerfen.
+1. Der Nutzer verlangte, dass der aktuelle Repository-Code forensisch geprüft, der belegte fehlende Handshake der Weltkarte repariert und jeder Schritt vor dem Lock nachvollziehbar verifiziert wird.
 
-2. In gebaeude_manager.gd wurde das Signal gebaeude_platziert ins Leben gerufen und direkt nach der Modellbuchung abgefeuert, damit die Welt sofort erfährt, wenn ein Gebäude das Licht der Erde erblickt.
+2. In welt_netzwerk_planer.gd benennt Shinon die lokale Spielerregion nun unverhüllt als spieler_region, damit die Barrierenprüfung für jeden direkten Spielerweg lesbar genau diesen fachlichen Ausgangspunkt bewacht, was der bislang stolpernde Test endlich auch erkennen darf.
 
-3. In welt.gd fängt die Szene dieses Signal nun beherzt auf, hängt den frischen Knoten unverzüglich in den Renderer ein, weckt die Lagerfabrik auf und facht die Wärmequellen für die frierende Bevölkerung neu an, bevor die Verzweiflung überhandnimmt.
+3. In welt_map.gd entsteht der deterministische Planungswert nun als lokaler seed_wert, wird danach als Sitzungsvorrat gehalten und unverändert an die Makroplanung übergeben, sodass die Weltkarte keinen zweiten Seedpfad erfindet und die vorhandene Makroverantwortung würdig bei sich bleibt.
 
-4. In welt_renderer.gd erlaubt die neue Methode sichtgebiet_aktualisieren dem Zeichenapparat, neu entstandene Bauwerke ohne Umwege und ohne erzwungene Kamerareise sofort sichtbar auf die Bildfläche zu zaubern.
-
-5. In welt_generator.gd verteilt die neue Logik in biom_fliese_fuer nun prozentual abgestimmte Fliesen wie Wiesen, Waldböden, Acker, Sand und Geröll über die Chunks, wodurch die zuvor flache und sterile Ödnis endlich ein lebendiges und abwechslungsreiches Gesicht erhält.
-
-6. In generator_gewichte.json wurden die erdrückenden Cluster-Wahrscheinlichkeiten für Wälder und Steinfelder von wahnwitzigen Spitzenwerten auf ein harmonisches Maß zurückgestutzt, sodass nun echte Lichtungen und begehbare Freiräume zum Siedeln entstehen.
-
-7. In welt_map.gd wird der deterministisch geplante Seed der gewählten Region nun lückenlos an die Sitzung übergeben, damit die lokale Karte exakt der gewählten Landschaft entspricht und nicht mehr im ewigen Trott desselben Standard-Wertes verharrt.
-
-8. In welt_ladevorgang.gd wurde die Saatgut-Ableitung so justiert, dass unbenannte Neuanfänge aus dem bestehenden Weltarchiv deterministisch frische Saaten ziehen.
-
-9. In welt_netzwerk_planer.gd wurden die letzten Integer-Divisionen bei der Mittelpunkt- und Regionsberechnung endgültig durch gleitkommasichere Divisionen getilgt, damit der Godot-Debugger endlich seine Ruhe findet.
-
-10. Nun steht der sichtbaren Ingame-Prüfung nichts mehr im Wege, wenn Lagerfeuer und Hütten aus dem Boden wachsen und die Siedler wohlbehalten ihr Werk verrichten.
+4. Die Prüfsuite bestätigt alle 67 Fälle und der vollständige Preflight ohne nicht installierte Godot-Engine bleibt grün; als Nächstes muss dieselbe Weltkarte mit einer verfügbaren Godot-Engine sichtbar geöffnet werden, weil Shinon selbst bei sauberer Logik keine eingebildete Laufzeitwahrheit lobt.

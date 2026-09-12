@@ -45,14 +45,15 @@ func _ready() -> void:
 	_details_aktualisieren()
 
 func _welt_planen() -> void:
-	_aktueller_seed_wert = (_basis_seed + _seed_offset * 10007) & 0x7FFFFFFF
-	if _aktueller_seed_wert == 0:
-		_aktueller_seed_wert = 421337
+	var seed_wert := (_basis_seed + _seed_offset * 10007) & 0x7FFFFFFF
+	if seed_wert == 0:
+		seed_wert = 421337
+	_aktueller_seed_wert = seed_wert
 	# Makroebene statt lokaler Erzeugung: Die Weltkarte plant nur ihre
 	# Regionen. Kein Chunk, kein Objekt, kein Tier — die Weltkarte ist in
 	# einem Bruchteil der Zeit da und die lokale Karte bleibt die einzige
 	# Stelle mit Inhalt.
-	_makro.karte_planen(_model, _registry, _aktueller_seed_wert)
+	_makro.karte_planen(_model, _registry, seed_wert)
 	_netzwerk_planer.netzwerk_planen(_model, _registry, _seed_offset, _biome)
 	_gewaehlte_region = _netzwerk_planer.spieler_region()
 	_karten_flaeche.queue_redraw()
