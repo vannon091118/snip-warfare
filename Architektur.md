@@ -1,6 +1,6 @@
 # Architektur.md – Pflichtdokumentation
 
-Diese Datei ist die verbindliche Pflichtdokumentation der Projektarchitektur. Sie wird aktiv gepflegt: Jede Änderung an Klassennamen, Kategorien, Datenfeldern oder Domänengrenzen wird hier sofort mitgepflegt. Vor jedem Commit wird `python tools/preflight.py` ausgeführt; nur ein fehlerfreier Preflight (Exit-Code 0) gilt als abnahmefähig.
+Diese Datei ist die verbindliche Pflichtdokumentation der Projektarchitektur. Sie wird aktiv gepflegt: Jede Änderung an Klassennamen, Kategorien, Datenfeldern oder Domänengrenzen wird hier sofort mitgepflegt. Vor jedem Commit wird `python tools/preflight.py` ausgeführt; nur ein fehlerfreier Preflight (Exit-Code 0) gilt als abnahmefähig. Maschinenlesbarer Router ist [`INDEX.md`](INDEX.md) (Domänen-Tabelle, Zuständigkeiten, Graph, Inventar via `python tools/index_generieren.py`).
 
 ## 1. Domänen und Kategorien
 
@@ -299,10 +299,11 @@ Die Ausgabe listet zuerst alle Datenobjekt-Erzeugungen mit Datei, Klasse und Zei
 | E037 | Shinon Footer Verbot verletzt | Agent-Footer oder Werkzeug-Signatur aus shinon/commit_msg.txt entfernen, die Nachricht gehört Shinon allein |
 | E038 | Shinon Nennungspflicht verletzt | Jede geänderte Datei in shinon/commit_msg.txt namentlich mit Dateinamen nennen |
 | E039 | Shinon Stilpflicht verletzt | Sätze auf höchstens 400 Zeichen kürzen, Endlos-Aufzählungen mit mehrfachem und dann auflösen, die Nachricht auf höchstens 2600 Zeichen insgesamt schlank halten |
+| E042 | Whitespace Disziplin verletzt | `python tools/preflight.py --kategorie whitespace --fix` laufen lassen: CRLF→LF, trailing Spaces entfernen, finales Newline ergänzen, Tabs in py/md/json beheben |
 
 ## 9. Pflichten bei Änderungen
 
-1. Neue Klasse: Präfix vergeben, in den Kategorie-Ordner legen, ggf. Datenklassen-Erzeugung registrieren, Architektur.md in Abschnitt 1 und 3 ergänzen.
+1. Neue Klasse: Präfix vergeben, in den Kategorie-Ordner legen, ggf. Datenklassen-Erzeugung registrieren, Architektur.md in Abschnitt 1 und 3 ergänzen, danach `python tools/index_generieren.py` für `INDEX.md` laufen lassen.
 2. Neues Datenobjekt: eigene Klasse in `kategorie_*` anlegen, Registry-Erzeugung ergänzen, Tabelle Abschnitt 3 pflegen.
 3. Neue zentrale Config: Datei in Abschnitt 4 eintragen.
 4. Umbenennung: alle Referenzen (`.gd`, `.tscn`, Autoloads in `project.godot`) anpassen, Preflight und `godot --headless` laufen lassen, Architektur.md mitpflegen.

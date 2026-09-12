@@ -1,8 +1,6 @@
-1. Der Nutzer verlangte Vorzeige-Hygiene ohne Banner-Muell in den Gassen, also zog Shinon mit Besen und Kreide los.
-2. Ich loeschte die vier Geist-Bilder banner_tmp.jpg und banner_tmp.png samt .import-Schatten sowie gameplay_tmp.jpg und gameplay_tmp.png aus dem Stamm.
-3. Die Datei .editorconfig bekam feste Regeln fuer Zeilenenden und Leerzeichen mit Tabs fuer .gd und Spaces fuer .py und .md und .json.
-4. Die Datei .gitignore schluckt nun banner_tmp und gameplay_tmp und plan_katzen_bindung_eskalaion.md, damit der Branch-Zettel nie auf main landet.
-5. Ich legte tools/preflight/pruef_whitespace.py als Waecher E042 an, der BOM und CRLF und trailing Leerzeichen und fehlendes finales Newline und Tabs in py und md und json meldet.
-6. Der Preflight in tools/preflight.py bekam die Kategorie whitespace und das Flag --fix, das nur mit --kategorie whitespace heilt und vorsichtig buegelt.
-7. Der Selbsttest in tools/preflight/selbsttest.py lernte, wie CRLF und trailing und finales Newline und Tabs riechen, und bleibt gruen wie frischer Lack.
-8. Noch zu tun bleibt der neue Router INDEX.md und die grosse Politur ueber alle Dateien als naechste Slices.
+1. Der Nutzer verlangte einen maschinenlesbaren Router statt doppelter Erzaehlungen, also baute Shinon einen neuen Wegweiser im Stamm.
+2. Ich legte INDEX.md als LLM-Uebersicht an mit Domaenen-Tabelle und Zustaendigkeiten und Abhaengigkeits-Graph und einem auto-generierten Klasseninventar fuer 198 Klassen.
+3. Das Werkzeug tools/index_generieren.py scannt class_name je Domaene und frischt den Inventar-Abschnitt in INDEX.md idempotent auf ohne AGENTS.md zu beruehren.
+4. Die Datei AGENTEN_INDEX.md schrumpfte zum Redirect auf INDEX.md, damit kein Inhalt doppelt erzaehlt wird und die Pflege nur noch an einer Stelle haengt.
+5. Die Dateien README.md und Architektur.md und ROADMAP.md bekamen Querverweise auf INDEX.md und frische Badges fuer 85 Tests und die neue Kategorie whitespace E042.
+6. Noch zu tun bleibt die grosse Whitespace-Politur ueber alle Dateien und danach der Monolith lauf_pruefung_welt.gd als naechste Baustelle.

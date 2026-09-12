@@ -7,11 +7,11 @@ Dieses Dokument ist die **einzige verbindliche Planungs- und Roadmap-Quelle** f�
 ## 1. Systemstatus & Geprüfter Bestand
 
 * **Engine:** Godot 4.7.2 (GL Compatibility)
-* **Klassenbestand:** 165 Klassen auf 186 GDScript-Dateien
+* **Klassenbestand:** 198 Klassen auf 249 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
 * **JSON-Datenpools:** 14 Pools (Wirtschaft, Bevölkerung, Welt, Jobs, Gebäude, Progression, Steuerung, Modifikatoren, Animationen)
 * **Szenen:** 8 aktive `.tscn`-Szenen
 * **Autoloads:** `Weltuhr` (`Kern_Weltuhr`, 24 Hz), `WeltSitzung` (`Ui_WeltSitzung`), `KernSignalBusAutoload` (`Kern_SignalBus`)
-* **Testabdeckung:** 67/67 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–16) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
+* **Testabdeckung:** 85/85 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–17 inkl. Whitespace E042) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
 
 ---
 
@@ -184,9 +184,10 @@ Alle Qualitäts-, Status- und Testprüfungen des Projekts lassen sich mit einem 
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 16 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate) aus.
+* **Vollprüfung:** Führt alle 17 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042) aus.
 * **Scope-Gezielt:**
   * `python tools/preflight.py --kategorie warnungen` (GDScript-Warnungs-Scan nach Regel 6)
   * `python tools/preflight.py --kategorie shinon` (Shinon Gate Prüfung E030–E039)
   * `python tools/preflight.py --kategorie godot` (Headless Engine-Kompilierung)
-* **Unittests:** `python -m pytest` führt alle 17 Unittests aus.
+* **Unittests:** `python -m pytest` führt alle 85 Unittests aus.
+* **Index:** `python tools/index_generieren.py` frischt das Klasseninventar in `INDEX.md` auf.
