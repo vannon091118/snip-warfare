@@ -70,6 +70,21 @@ def _statuszahlen_nachziehen():
     return zahlen, geaendert
 
 
+def _index_nachziehen():
+    """Zieht die Index-Familie nach, damit die Doku nicht hinter dem Code bleibt.
+
+    Ein Bump aendert die Version, ein Umbau aendert Klassen, Signale oder Pools.
+    Beides muss in Root-, Domaenen- und Datenindex ankommen, ohne dass ein Agent
+    daran erinnert werden muss; deshalb ruft der Bump die Index-Erzeugung mit.
+    """
+    try:
+        from index.erzeugen import neu_erzeugen
+    except ImportError:
+        return []
+    _stand, geaendert, _delta = neu_erzeugen(bericht=False)
+    return geaendert
+
+
 def _versionszeile_ersetzen(text, alt, neu):
     """Ersetzt ausschliesslich die Versionszeile, nie Fliesstext-Vorkommen."""
     ausgabe = []
@@ -117,10 +132,11 @@ def hauptprogramm():
         # Reiner Nachzug: Die Version bleibt, jedes Dokument wird angeglichen.
         geaendert = _setze_version(aktuell, aktuell)
         zahlen, zahlen_geaendert = _statuszahlen_nachziehen()
-        for relativ in sorted(set(geaendert) | set(zahlen_geaendert)):
+        index_geaendert = _index_nachziehen()
+        for relativ in sorted(set(geaendert) | set(zahlen_geaendert) | set(index_geaendert)):
             print("  nachgezogen: %s" % relativ)
         print("Nachzug fertig: %d Dokumente angepasst (%d Klassen, %d Dateien, %d Szenen)." %
-              (len(set(geaendert) | set(zahlen_geaendert)),
+              (len(set(geaendert) | set(zahlen_geaendert) | set(index_geaendert)),
                zahlen["klassen"], zahlen["dateien"], zahlen["szenen"]))
         return 0
 
@@ -132,16 +148,20 @@ def hauptprogramm():
         print("Version bleibt %s; nur der Nachzug prueft die Dokumente." % aktuell)
         geaendert = _setze_version(aktuell, aktuell)
         _, zahlen_geaendert = _statuszahlen_nachziehen()
-        print("Fertig: %d Dokumente angepasst." % len(set(geaendert) | set(zahlen_geaendert)))
+        index_geaendert = _index_nachziehen()
+        print("Fertig: %d Dokumente angepasst."
+              % len(set(geaendert) | set(zahlen_geaendert) | set(index_geaendert)))
         return 0
 
     (PROJEKT_STAMM / VERSIONSDATEI).write_text(neu + "\n", encoding="utf-8", newline="\n")
     print("Version: %s -> %s" % (aktuell, neu))
     geaendert = _setze_version(aktuell, neu)
     _, zahlen_geaendert = _statuszahlen_nachziehen()
-    for relativ in sorted(set(geaendert) | set(zahlen_geaendert)):
+    index_geaendert = _index_nachziehen()
+    for relativ in sorted(set(geaendert) | set(zahlen_geaendert) | set(index_geaendert)):
         print("  nachgezogen: %s" % relativ)
-    print("Fertig: %d Dokumente angepasst." % len(set(geaendert) | set(zahlen_geaendert)))
+    print("Fertig: %d Dokumente angepasst."
+          % len(set(geaendert) | set(zahlen_geaendert) | set(index_geaendert)))
     return 0
 
 

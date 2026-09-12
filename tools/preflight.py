@@ -18,6 +18,7 @@ Fehlercodes (Übersicht, Details in den Prüf-Modulen):
   E041            LOC-Regel: differenzierte Zeilen-Grenze je Datei-Suffix
   E042            Whitespace-Disziplin (CRLF, BOM, trailing, Tabs, finales Newline)
   E043            Globale Version: VERSION ist die Quelle, jedes Dokument folgt
+  E044            Index-Familie: Root-, Domaenen- und Datenindex plus Last-Datei
 
 Prüfkategorien (Flags):
   klassen        E001 E002 E003 E004 E008 E009 E021
@@ -38,6 +39,7 @@ Prüfkategorien (Flags):
   locregel       E041
   whitespace     E042
   version        E043
+  index          E044
 
 Ausführung aus dem Projektstamm:
     python tools/preflight.py                            volle Abdeckung
@@ -72,6 +74,7 @@ from preflight.pruef_warnungen import pruefe_warnungen
 from preflight.pruef_locregel import pruefe_locregel
 from preflight.pruef_whitespace import pruefe_whitespace
 from preflight.pruef_version import pruefe_version
+from preflight.pruef_index import pruefe_index
 from preflight.selbsttest import selbsttest
 
 PRUEFKATEGORIEN = {
@@ -93,6 +96,7 @@ PRUEFKATEGORIEN = {
     "locregel": ("E041",),
     "whitespace": ("E042",),
     "version": ("E043",),
+    "index": ("E044",),
 }
 
 ALLE_KLASSEN = set()
@@ -113,6 +117,11 @@ def hauptprogramm():
     parser.add_argument("--hilfe-fehler", action="store_true",
                         help="Zeigt die Zuordnung Godot Zeile zu E016/E017/E018")
     argumente = parser.parse_args()
+    # Kategorien duerfen auch kommagetrennt kommen: Der Git-Hook und andere
+    # Aufrufer uebergeben eine Liste in einem Argument. Ohne diese Zeile hielte
+    # der Preflight "shinon,version,whitespace" fuer eine unbekannte Kategorie.
+    argumente.kategorie = [name.strip() for eintrag in argumente.kategorie
+                           for name in eintrag.split(",") if name.strip()]
     if argumente.fix and "whitespace" not in {k.lower() for k in argumente.kategorie}:
         print("E000: --fix ist nur mit --kategorie whitespace erlaubt")
         return 2
@@ -175,6 +184,9 @@ def hauptprogramm():
     # Die Versionierung ist Vertrag: VERSION fuehrt, jedes Dokument folgt.
     if "version" in gewaehlt:
         pruefe_version(dateien)
+    # Die Index-Familie ist Vertrag: Der Code fuehrt, die Indizes folgen.
+    if "index" in gewaehlt:
+        pruefe_index(dateien)
     if godot_aktiv:
         godot_lauf(argumente.godot_befehl)
 

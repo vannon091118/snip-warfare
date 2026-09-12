@@ -63,6 +63,16 @@ def selbsttest():
             probleme.append("Versionswaechter meldet eine korrekte Statuszahl als Fehler")
     except ImportError:
         probleme.append("Versionswaechter ist nicht importierbar")
+    # Index-Waechter Selbsttest: Abweichung muss gefunden, Gleichheit nicht gemeldet.
+    try:
+        from .pruef_index import pruefe_index  # noqa: F401
+        from index.kern import erste_abweichung
+        if erste_abweichung("a\nb\n", "a\nc\n") != (2, "b", "c"):
+            probleme.append("Index-Waechter findet die abweichende Zeile nicht")
+        if erste_abweichung("gleich\n", "gleich\n") is not None:
+            probleme.append("Index-Waechter meldet bei gleichem Text faelschlich einen Befund")
+    except ImportError:
+        probleme.append("Index-Waechter ist nicht importierbar")
     # Shinon Gate Selbsttest: Banner, Bullet, Nummerierung und Bildsprache muessen sicher greifen.
     try:
         gate = _lade_shinon_klasse("shinon/shinon_gate.py", "_shinon_gate_selbsttest", "ShinonGate")()
