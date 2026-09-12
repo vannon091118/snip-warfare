@@ -249,6 +249,11 @@ func _process(delta: float) -> void:
 	# sich ausschließlich über Jobs (Einheit_Status + Rathaus/Orchestrator),
 	# niemals durch unmittelbares Setzen ihrer Position pro Frame.
 	_karten_beobachter.beobachten(_karten_viewer, _karten_info, _karten_ebene, _kamera_steuerung.kamera_position, _kamera)
+	# Sichtbarkeits-Scheibe: Nur sichtbare Weltobjekte tragen Knoten; das
+	# Modell bleibt die volle Wahrheit. Ohne Kamera bleibt der Bestand voll.
+	if _kamera != null:
+		var blick := _kamera.get_viewport_rect().size / _kamera.zoom.x
+		_karte.sichtbereich_setzen(Rect2(_kamera.position - blick * 0.5 - Vector2.ONE * _karte.SICHT_RAND_PX, blick + Vector2.ONE * (_karte.SICHT_RAND_PX * 2.0)))
 
 func _debug_panel_bauen() -> void:
 	# Debug-Fenster als eigener Knoten unter der UI-Ebene. Es ist standardmäßig

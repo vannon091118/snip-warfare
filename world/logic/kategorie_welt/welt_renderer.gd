@@ -35,6 +35,17 @@ var _ressourcen_zustand := RESSOURCEN_ZUSTAND_SKRIPT.new()
 ## der Renderer jeden echten Stadiumswechsel sofort am Sprite zeigt.
 var _progressions_maschine: Object = null
 
+## Sichtbarkeits-Scheibe: Nur Objekte im Kamera-Bereich haengen als Knoten.
+## Das Modell bleibt die volle Wahrheit; der Knotenbestand folgt dem Blick.
+## Ohne gesetzten Bereich (Editor) haengt der Renderer alles, wie bisher.
+const SICHT_RAND_PX := 384.0
+const SCAN_SCHRITT_PX := 64.0
+const MAX_ANHAENGE_PRO_RUF := 256
+var _sichtbereich := Rect2()
+var _scan_mitte := Vector2.INF
+var _sichtgebiet_dirty := true
+var _knoten_nach_id: Dictionary = {}
+
 func _ready() -> void:
 	_fliesen_knoten = Node2D.new()
 	_fliesen_knoten.name = "Fliesen"
@@ -69,6 +80,7 @@ func _auf_stadium_geaendert(index: int, _element_id: String, _stadium: String) -
 	_zeige_stadium(index)
 
 func _auf_folge_objekt(index: int, element_id: String) -> void:
+	_sichtgebiet_dirty = true
 	# Der Rest ist wiedergeboren: Das Standbild braucht seine neue Textur und
 	# der Knoten an dieser Stelle ein frisches Bewegtbild.
 	_zeige_stadium(index)
@@ -81,6 +93,7 @@ func _auf_folge_objekt(index: int, element_id: String) -> void:
 	knoten.bewegtbild_setzen(_objekt_darsteller.objekt_darstellen(eintrag, knoten.fusspunkt()))
 
 func _auf_saemling(_element_id: String, _position: Vector2) -> void:
+	_sichtgebiet_dirty = true
 	# Ein neuer Saemling steht irgendwo: Der naechste volle Neuaufbau waere
 	# teuer, deshalb haengt der Renderer nur das eine neue Objekt an. Der
 	# Behälter des Modells entscheidet, ob es diesen Knoten schon gibt.
@@ -93,15 +106,14 @@ func _auf_saemling(_element_id: String, _position: Vector2) -> void:
 
 func _knoten_fuer(index: int) -> Welt_ObjektKnoten:
 	# Der Datenbehälter des Modells ist der Schlüssel: Er bleibt derselbe, auch
-	# wenn sich die Reihenfolge der Objektliste verschiebt. Damit braucht der
-	# Renderer keine eigene Index-Buchhaltung neben dem Modell.
+	# wenn sich die Reihenfolge der Objektliste verschiebt. Die Id des Objekts
+	# ist der direkte Weg zum Knoten, ohne Kinderlauf je Anfrage.
 	if _model == null or index < 0 or index >= _model.objekt_anzahl():
 		return null
-	var daten := _model.objekt_daten(index)
-	for kind: Node in _objekte_knoten.get_children():
-		var knoten := kind as Welt_ObjektKnoten
-		if knoten != null and is_same(knoten.objekt_daten(), daten):
-			return knoten
+	var id := str(_model.objekt_feld(index, "id", index))
+	var knoten := _knoten_nach_id.get(id) as Welt_ObjektKnoten
+	if knoten != null and is_instance_valid(knoten):
+		return knoten
 	return null
 
 func _zeige_stadium(index: int) -> void:
@@ -163,6 +175,7 @@ func objekt_knoten_anhaengen(index: int) -> Welt_ObjektKnoten:
 	knoten.daten_setzen(_model.objekt_daten(index))
 	knoten.fusspunkt_setzen(fusspunkt)
 	_objekte_knoten.add_child(knoten)
+	_knoten_nach_id[str(_model.objekt_feld(index, "id", index))] = knoten
 	var textur := _stufen_textur_fuer(index)
 	if textur == null:
 		textur = _textur_fuer(_model.objekt_element_id(index))
@@ -189,11 +202,12 @@ func objekt_knoten_verschieben(index: int, neue_position: Vector2) -> void:
 	knoten.fusspunkt_setzen(neue_position)
 
 func objekt_knoten_entfernen(index: int) -> void:
-	# Der Knoten wird über den Datenbehälter gesucht: Der muss zum Zeitpunkt
+	# Der Knoten wird über die Objekt-Id gesucht: Der muss zum Zeitpunkt
 	# des Entfernens noch im Modell stehen, sonst gibt es keine Zuordnung mehr.
 	var knoten := _knoten_fuer(index)
 	if knoten == null:
 		return
+	_knoten_nach_id.erase(str(_model.objekt_feld(index, "id", index)))
 	knoten.queue_free()
 
 func objekt_knoten_anzahl() -> int:
@@ -315,7 +329,53 @@ func _objekte_erneuern() -> void:
 	# alten werden vor dem Neuaufbau freigegeben.
 	for kind: Node in _objekte_knoten.get_children():
 		kind.queue_free()
+	_knoten_nach_id.clear()
 	if _model == null:
+		return
+	if _sichtbereich.size != Vector2.ZERO:
+		# Spielbetrieb: Der Knotenbestand entsteht aus dem Sichtbereich;
+		# der nächste sichtbereich_setzen-Ruf hängt die sichtbaren an.
+		_sichtgebiet_dirty = true
 		return
 	for index in _model.objekt_anzahl():
 		objekt_knoten_anhaengen(index)
+
+## Kategorie logik: Sichtbarkeits-Scheibe des Knotenbestands.
+
+func sichtbereich_setzen(rechteck: Rect2) -> void:
+	# Die Szene reicht je Rahmen den Kamera-Bereich samt Rand hinein. Ein
+	# neuer Abgleich läuft nur bei echtem Blickwechsel oder Modelländerung,
+	# nicht bei stillstehender Kamera.
+	_sichtbereich = rechteck
+	var mitte := rechteck.get_center()
+	if _sichtgebiet_dirty or _scan_mitte.distance_to(mitte) >= SCAN_SCHRITT_PX:
+		_scan_mitte = mitte
+		_sichtgebiet_dirty = false
+		_sichtbar_anwenden()
+
+func sichtbereich_deaktivieren() -> void:
+	# Der Editor und Prüfläufe ohne Kamera hängen alles an, wie bisher.
+	_sichtbereich = Rect2()
+
+func _sichtbar_anwenden() -> void:
+	if _model == null or _sichtbereich.size == Vector2.ZERO:
+		return
+	var anhaenge := 0
+	for index in _model.objekt_anzahl():
+		if anhaenge >= MAX_ANHAENGE_PRO_RUF:
+			break
+		if not _sichtbereich.has_point(_model.objekt_position(index)):
+			continue
+		var id := str(_model.objekt_feld(index, "id", index))
+		if _knoten_nach_id.has(id):
+			continue
+		objekt_knoten_anhaengen(index)
+		anhaenge += 1
+	for id: String in _knoten_nach_id.keys():
+		var knoten := _knoten_nach_id[id] as Welt_ObjektKnoten
+		if knoten == null or not is_instance_valid(knoten):
+			_knoten_nach_id.erase(id)
+			continue
+		if not _sichtbereich.has_point(knoten.fusspunkt()):
+			_knoten_nach_id.erase(id)
+			knoten.queue_free()
