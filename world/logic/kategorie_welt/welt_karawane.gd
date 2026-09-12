@@ -51,10 +51,10 @@ func tick() -> bool:
 	## angekommen ist und entladen werden kann.
 	if _zustand != "unterwegs":
 		return false
-	
+
 	_verbleibende_ticks -= 1
 	_aktueller_fortschritt = 1.0 - (float(_verbleibende_ticks) / float(reise_ticks))
-	
+
 	if _verbleibende_ticks <= 0:
 		_zustand = "angekommen"
 		_verbleibende_ticks = 0
@@ -107,10 +107,10 @@ func entladen(ziel_lager_manager: Object) -> bool:
 	## entladen wurde. Erwartet einen Lager_Manager mit einlagern()-Methode.
 	if _zustand != "angekommen" and _zustand != "entladen":
 		return false
-	
+
 	_zustand = "entladen"
 	var alles_erfolgreich := true
-	
+
 	for ressource: String in _fraescht.keys():
 		var menge := int(_fraescht[ressource])
 		if menge <= 0:
@@ -123,18 +123,18 @@ func entladen(ziel_lager_manager: Object) -> bool:
 			lager_index = ziel_lager_manager.naechstes_lager_fuer(nach_position)
 		if lager_index < 0:
 			lager_index = 0
-		
+
 		if ziel_lager_manager != null and ziel_lager_manager.has_method("einlagern"):
 			var ok: bool = ziel_lager_manager.einlagern(ressource, menge, lager_index)
 			if not ok:
 				alles_erfolgreich = false
 		else:
 			alles_erfolgreich = false
-	
+
 	if alles_erfolgreich:
 		_fraescht.clear()
 		_zustand = "fertig"
-	
+
 	return alles_erfolgreich
 
 func reise_dauer_text() -> String:

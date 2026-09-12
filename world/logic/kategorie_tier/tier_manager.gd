@@ -182,7 +182,7 @@ func _auf_tick(_nummer: int, delta: float) -> void:
 		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
 			if Engine.get_process_frames() % 6 != 0:
 				return
-	
+
 	var entfernte: Array[int] = []
 	for index in _tiere.size():
 		var tier: Dictionary = _tiere[index]

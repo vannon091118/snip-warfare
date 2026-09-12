@@ -54,12 +54,12 @@ func _draw() -> void:
 	var halbe_breite := _balken_breite / 2.0
 	var hintergrund_rect := Rect2(-halbe_breite, y_offset, _balken_breite, _balken_hoehe)
 	var rahmen_rect := Rect2(-halbe_breite - 1.5, y_offset - 1.5, _balken_breite + 3.0, _balken_hoehe + 3.0)
-	
+
 	# Rahmen
 	draw_rect(rahmen_rect, Color(0.05, 0.1, 0.15, 0.9), false, 1.5)
 	# Dunkler Hintergrund
 	draw_rect(hintergrund_rect, Color(0.15, 0.2, 0.25, 0.8), true)
-	
+
 	# Fuellung (Leuchtendes Cyan/Tuerkis)
 	if _bedarf_anteil > 0.0:
 		var fuell_breite := _balken_breite * _bedarf_anteil
