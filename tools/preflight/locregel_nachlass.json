@@ -27,6 +27,5 @@
   "world/logic/kategorie_welt/welt_model.gd": {"ist_zeilen": 572, "slice": "D"},
   "world/logic/kategorie_welt/welt_objekt_darsteller.gd": {"ist_zeilen": 107},
   "world/logic/kategorie_welt/welt_registry.gd": {"ist_zeilen": 116},
-  "world/logic/kategorie_welt/welt_renderer.gd": {"ist_zeilen": 456, "slice": "G"},
-  "world/scenes/welt.gd": {"ist_zeilen": 538, "slice": "A"}
+  "world/logic/kategorie_welt/welt_renderer.gd": {"ist_zeilen": 456, "slice": "G"}
 }

@@ -70,7 +70,9 @@ def test_einheit_marschbefehl_vorhanden():
 def test_welt_szene_verdrahtet_bau_panel_und_panels():
     """welt.gd bindet das BauPanel ein und schaltet Panels dynamisch/per F3."""
     welt_code = _lies("world/scenes/welt.gd")
-    assert "_bau_panel_bauen" in welt_code
+    spitze = _lies("world/logic/kategorie_welt/welt_ui_aufbau.gd")
+    assert "bau_panel_bauen" in spitze, "Der Bau-Aufbau wohnt in der UI-Spitze"
+    assert "debug_panel_sichtbar_setzen" in spitze, "Der Debug-Schalter läuft über die Spitze"
+    assert "_ui_aufbau.bau_panel_bauen" in welt_code, "Die Szene haengt die Spitze an"
     assert "_auf_bau_gewaehlt" in welt_code
     assert "_auf_debug_umgeschaltet" in welt_code
-    assert "visible = false" in welt_code

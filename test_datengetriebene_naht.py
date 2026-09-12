@@ -90,10 +90,13 @@ def test_debug_fenster_ist_eigenes_unsichtbares_panel():
     assert "class_name Ui_DebugPanelSzene" in code
     assert "func sichtbar_setzen(" in code
     welt = _lies("world/scenes/welt.gd")
-    assert "_debug_panel_bauen" in welt
-    assert "visible = false" in welt
-    assert "produktion_anzeigen(_gebaeude.status_zeilen())" not in welt, \
+    spitze = _lies("world/logic/kategorie_welt/welt_ui_aufbau.gd")
+    assert "debug_panel_bauen" in spitze, "Der Debug-Aufbau wohnt in der UI-Spitze"
+    assert "debug_panel.visible = false" in spitze
+    assert "_auf_produktion_status(_gebaeude.status_zeilen())" not in welt, \
         "Kein Frame-Polling der Produktionszeile"
+    assert "_rueckmeldung.produktion_anzeigen" in welt, \
+        "Die Produktionszeile laeuft ueber die Rueckmelde-Spitze"
     assert "status_geaendert" in welt, "Die Zeile kommt als Ereignis"
 
 
