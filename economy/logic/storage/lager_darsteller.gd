@@ -5,8 +5,8 @@ class_name Lager_Darsteller
 ## Maximal 5 Icons pro Ressourcentyp, dann Zahl daneben.
 
 @export var lager_index: int = -1
-@export var lager_manager: Lager_Manager = null
-@export var ressourcen: Einheit_Ressourcen = null
+var lager_manager: Lager_Manager = null
+var ressourcen: Einheit_Ressourcen = null
 
 var _bus: Kern_SignalBus = null
 var _sprite_container: Node2D = null
@@ -57,21 +57,21 @@ func _anzeige_aktualisieren() -> void:
 		_alle_sprites_entfernen()
 		return
 	
-	var bestaende := lager_manager.bestand_im_lager(lager_index)
+	var bestaende: Dictionary = lager_manager.bestaende_im_lager(lager_index)
 	if bestaende.is_empty():
 		_alle_sprites_entfernen()
 		return
 	
 	# Für jede Ressource Sprites rendern
 	for ressource_id: String in bestaende:
-		var menge := bestaende[ressource_id]
+		var menge: int = int(bestaende[ressource_id])
 		if menge <= 0:
 			_ressource_entfernen(ressource_id)
 			continue
 		_ressource_rendern(ressource_id, menge)
 	
 	# Ressourcen entfernen, die nicht mehr im Bestand sind
-	var aktuelle_ids := bestaende.keys()
+	var aktuelle_ids: Array = bestaende.keys()
 	var zu_entfernen: Array[String] = []
 	for rid: String in _ressource_sprites.keys():
 		if not aktuelle_ids.has(rid):
@@ -91,11 +91,11 @@ func _ressource_rendern(ressource_id: String, menge: int) -> void:
 		return
 	
 	# Bestehende Sprites für diese Ressource holen oder erstellen
-	var sprites: Array[Sprite2D] = _ressource_sprites.get(ressource_id, [])
-	var label: Label = _anzahl_labels.get(ressource_id, null)
+	var sprites: Array[Sprite2D] = _ressource_sprites.get(ressource_id, []) as Array[Sprite2D]
+	var label: Label = _anzahl_labels.get(ressource_id, null) as Label
 	
 	# Gewünschte Anzahl Icons (max 5)
-	var anzahl_icons := min(menge, _max_icons)
+	var anzahl_icons: int = mini(menge, _max_icons)
 	
 	# Sprites anpassen: hinzufügen oder entfernen
 	while sprites.size() < anzahl_icons:
@@ -110,7 +110,7 @@ func _ressource_rendern(ressource_id: String, menge: int) -> void:
 		entfernte_flaeche.queue_free()
 	
 	# Positionen der Sprites setzen (gestapelt)
-	var start_x := -((anzahl_icons - 1) * _icon_abstand) * 0.5
+	var start_x: float = -((anzahl_icons - 1) * _icon_abstand) * 0.5
 	for i in range(anzahl_icons):
 		var stappel_flaeche: Sprite2D = sprites[i]
 		stappel_flaeche.position = Vector2(start_x + i * _icon_abstand, _stapel_versatz.y)
@@ -139,25 +139,25 @@ func _ressource_rendern(ressource_id: String, menge: int) -> void:
 	_ressource_sprites[ressource_id] = sprites
 
 func _ressource_entfernen(ressource_id: String) -> void:
-	var sprites: Array[Sprite2D] = _ressource_sprites.get(ressource_id, [])
+	var sprites: Array[Sprite2D] = _ressource_sprites.get(ressource_id, []) as Array[Sprite2D]
 	for sprite: Sprite2D in sprites:
 		if sprite.is_inside_tree():
 			sprite.queue_free()
 	_ressource_sprites.erase(ressource_id)
 	
-	var label: Label = _anzahl_labels.get(ressource_id, null)
+	var label: Label = _anzahl_labels.get(ressource_id, null) as Label
 	if label != null and label.is_inside_tree():
 		label.queue_free()
 	_anzahl_labels.erase(ressource_id)
 
 func _alle_sprites_entfernen() -> void:
-	for sprites: Array[Sprite2D] in _ressource_sprites.values():
+	for sprites: Array[Sprite2D] in _ressource_sprites.values() as Array[Array]:
 		for sprite: Sprite2D in sprites:
 			if sprite.is_inside_tree():
 				sprite.queue_free()
 	_ressource_sprites.clear()
 	
-	for label: Label in _anzahl_labels.values():
+	for label: Label in _anzahl_labels.values() as Array[Label]:
 		if label.is_inside_tree():
 			label.queue_free()
 	_anzahl_labels.clear()

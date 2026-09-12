@@ -348,7 +348,7 @@ func _tile_leben_initialisieren_chunk(model: Welt_Model, chunk: Vector2i, z_eben
 	# Initialisiert Tile-Leben für alle Fels/Geröll Tiles im Chunk
 	var start_x := chunk.x * _chunk_groesse
 	var start_y := chunk.y * _chunk_groesse
-	var registry := Welt_Registry.new()
+	var lokale_registry := Welt_Registry.new()
 	for dy in _chunk_groesse:
 		for dx in _chunk_groesse:
 			var x := start_x + dx
@@ -356,7 +356,7 @@ func _tile_leben_initialisieren_chunk(model: Welt_Model, chunk: Vector2i, z_eben
 			if x < model.raster_breite and y < model.raster_hoehe:
 				var tile_id := model.fliese(x, y, z_ebene)
 				if tile_id == "fels" or tile_id == "geroell":
-					var kachel_eintrag := registry.finde_objekt(tile_id)
+					var kachel_eintrag := lokale_registry.finde_objekt(tile_id)
 					var max_leben := 100
 					if kachel_eintrag != null and kachel_eintrag.schluessel_daten.has("leben"):
 						max_leben = int(kachel_eintrag.schluessel_daten["leben"])

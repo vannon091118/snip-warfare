@@ -334,7 +334,7 @@ func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager, welt_wo
 		_ziel_suche.einrichten(_model, _tiere)
 		_ziel_suche.einheiten_quelle_setzen(self)
 	if _ernte != null:
-		_ernte.einrichten(_ressourcen, _model, _tiere)
+		_ernte.einrichten(null, _ressourcen, _model, _tiere)
 
 
 
@@ -522,7 +522,7 @@ func _auf_tick(nummer: int, delta: float) -> void:
 							# Inventar in Lager einlagern
 							var inventar_vorher := transport_job.inventar_vorher()
 							for ressource: String in inventar_vorher:
-								var menge := inventar_vorher[ressource]
+								var menge: int = int(inventar_vorher[ressource])
 								if menge > 0 and _lager != null:
 									_lager.einlagern(ressource, menge, transport_job.lager_index())
 							transport_job.phase_wechseln(Job_Transport.PHASE_FERTIG)

@@ -67,7 +67,7 @@ def test_netzwerk_planer_meidet_barrieren():
     assert "func _start_region_waehlen(" in code
     assert "biome: Welt_BiomRegistry = null" in code, "Das Biom kommt von aussen, keine zweite Ladung"
     assert "or ist_barriere_region(model, reg_pos)" in code, "Keine Fraktion auf einer Barriere"
-    assert "if not _linie_frei(model, spieler_region" in code, "Kein Weg quer durch die Barriere"
+    assert "if not _linie_frei(model, aktive_spieler_region" in code, "Kein Weg quer durch die Barriere"
 
 
 def test_weltkarte_nutzt_die_makroebene():

@@ -86,7 +86,8 @@ func z_ebene_setzen(z_ebene: int) -> void:
 	# Schaltet die sichtbare Z-Ebene um: Blendet alle Fliesen-Knoten aus,
 	# zeigt nur den der angeforderten Ebene.
 	_aktive_z_ebene = clampi(z_ebene, -Welt_Model.MAX_Z_EBENEN + 1, 0)
-	for ebene, knoten in _fliesen_knoten_pro_ebene:
+	for ebene in _fliesen_knoten_pro_ebene:
+		var knoten: Node2D = _fliesen_knoten_pro_ebene[ebene] as Node2D
 		knoten.visible = (ebene == _aktive_z_ebene)
 	# Modell auch auf die Ebene setzen für kachel_ersetzen etc.
 	if _model != null:

@@ -181,13 +181,15 @@ func hotkey_verarbeiten(ereignis: InputEventKey) -> void:
 			_schnellwahl.resize(slot + 1)
 		_schnellwahl[slot] = _auswahl.aktiver_einheit_index
 		(_hud as Variant).meldung_setzen("Schnellwahl %d gesetzt auf Einheit %d" % [slot + 1, _auswahl.aktiver_einheit_index])
-elif slot < _schnellwahl.size() and _schnellwahl[slot] < _stockmaenner.einheit_zahl():
- 		_auswahl.aktiver_einheit_index = _schnellwahl[slot]
- 		_auswahl.auswahl_einheiten = [_schnellwahl[slot]]
- 		_stockmaenner.auswahl_markierung_erneuern(_schnellwahl[slot], [_schnellwahl[slot]])
- 		(_hud as Variant).meldung_setzen("Einheit %d gewählt" % (_auswahl.aktiver_einheit_index + 1))
- 		if _signal_bus != null:
- 			_signal_bus._emit_einheit_ausgewaehlt(_schnellwahl[slot])
+	else:
+		if slot < _schnellwahl.size() and _schnellwahl[slot] < _stockmaenner.einheit_zahl():
+			_auswahl.aktiver_einheit_index = _schnellwahl[slot]
+			_auswahl.auswahl_einheiten = [_schnellwahl[slot]]
+			_stockmaenner.auswahl_markierung_erneuern(_schnellwahl[slot], [_schnellwahl[slot]])
+			(_hud as Variant).meldung_setzen("Einheit %d gewählt" % (_auswahl.aktiver_einheit_index + 1))
+			var _bus := Kern_SignalBus.bus()
+			if _bus != null:
+				_bus._emit_einheit_ausgewaehlt(_schnellwahl[slot])
 
 func auf_verteilung(nahrung_je_takt: float) -> void:
 	if _stockmaenner != null:
@@ -392,8 +394,9 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 		_auswahl.auswahl_einheiten = [einheit_treffer]
 		_stockmaenner.auswahl_markierung_erneuern(einheit_treffer, [einheit_treffer])
 		(_hud as Variant).meldung_setzen("Einheit %d gewaehlt." % (einheit_treffer + 1))
-		if _signal_bus != null:
-			_signal_bus._emit_einheit_ausgewaehlt(einheit_treffer)
+		var _klick_bus := Kern_SignalBus.bus()
+		if _klick_bus != null:
+			_klick_bus._emit_einheit_ausgewaehlt(einheit_treffer)
 		return
 	# Kein Einheitentreffer: Job an aktive Einheit vergeben, sofern eine gewählt ist
 	var aktiv := _auswahl.aktiver_einheit_index

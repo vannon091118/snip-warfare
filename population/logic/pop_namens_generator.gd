@@ -129,7 +129,7 @@ static func generiere_fraktions_name(archetyp: String, keimpunkt_id: String, wel
 static func hash(input: String) -> int:
 	## FNV-1a 64-bit Hash für deterministische Seed-Ableitung
 	var h: int = int(0x84222325) | (int(0xcbf29ce4) << 32)
-	for char in input:
-		h ^= ord(char)
+	for zeichen in input:
+		h ^= ord(zeichen)
 		h = int((h * 0x100000001b3) & 0x7FFFFFFFFFFFFFFF)
 	return h

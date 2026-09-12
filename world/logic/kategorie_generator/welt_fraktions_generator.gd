@@ -94,7 +94,6 @@ func _keimpunkt_zu_fraktion(keimpunkt: Dictionary, welt_seed: int, welt_model: W
 	return fraktion
 
 func _generiere_beschreibung(archetyp: String, keimpunkt: Dictionary) -> String:
-	var score: Dictionary = keimpunkt.get("score", {})
 	var gesamt := float(keimpunkt.get("gesamt_score", 0.0))
 	var dom := str(keimpunkt.get("dominante_archetyp", "wald"))
 
@@ -111,8 +110,8 @@ func _generiere_beschreibung(archetyp: String, keimpunkt: Dictionary) -> String:
 	return "%s %s" % [basis, score_text]
 
 func _welt_pos_zu_kachel(pos: Vector2, welt_model: Welt_Model) -> Vector2i:
-	var kachel_x := int(pos.x / welt_model.kachel_groesse)
-	var kachel_y := int(pos.y / welt_model.kachel_groesse)
+	var kachel_x := int(pos.x / float(welt_model.kachel_groesse))
+	var kachel_y := int(pos.y / float(welt_model.kachel_groesse))
 	return Vector2i(clampi(kachel_x, 0, welt_model.raster_breite - 1), clampi(kachel_y, 0, welt_model.raster_hoehe - 1))
 
 func _netzwerk_mit_generierten_fuellen(welt_model: Welt_Model, fraktionen: Array[Welt_Fraktion]) -> void:

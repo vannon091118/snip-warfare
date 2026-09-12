@@ -82,13 +82,13 @@ func analyse_ausfuehren(welt_model: Welt_Model, fraktions_ki_config: Dictionary)
 			zell_objekt_dichte[zell_id] = 0
 
 	## Verteile Kacheln auf Makrozellen
-	var kacheln_pro_zelle_x := maxi(welt_breite / cellen_x, 1)
-	var kacheln_pro_zelle_y := maxi(welt_hoehe / cellen_y, 1)
+	var kacheln_pro_zelle_x := maxi(int(welt_breite / float(cellen_x)), 1)
+	var kacheln_pro_zelle_y := maxi(int(welt_hoehe / float(cellen_y)), 1)
 
 	for kachel_y in range(welt_hoehe):
 		for kachel_x in range(welt_breite):
-			var cx := int(kachel_x / kacheln_pro_zelle_x)
-			var cy := int(kachel_y / kacheln_pro_zelle_y)
+			var cx := int(float(kachel_x) / float(kacheln_pro_zelle_x))
+			var cy := int(float(kachel_y) / float(kacheln_pro_zelle_y))
 			cx = clampi(cx, 0, cellen_x - 1)
 			cy = clampi(cy, 0, cellen_y - 1)
 			var cell_id := "%d_%d" % [cx, cy]
@@ -165,10 +165,10 @@ func _objekt_ressourcen_zaehlen(welt_model: Welt_Model, cellen_x: int, cellen_y:
 			continue
 		var element_id := str(obj_daten["element_id"])
 		var pos := Vector2(obj_daten["position"][0], obj_daten["position"][1])
-		var kachel_x := int(pos.x / welt_model.kachel_groesse)
-		var kachel_y := int(pos.y / welt_model.kachel_groesse)
-		var cx := int(kachel_x / kacheln_pro_zelle_x)
-		var cy := int(kachel_y / kacheln_pro_zelle_y)
+		var kachel_x := int(pos.x / float(welt_model.kachel_groesse))
+		var kachel_y := int(pos.y / float(welt_model.kachel_groesse))
+		var cx := int(float(kachel_x) / float(kacheln_pro_zelle_x))
+		var cy := int(float(kachel_y) / float(kacheln_pro_zelle_y))
 		cx = clampi(cx, 0, cellen_x - 1)
 		cy = clampi(cy, 0, cellen_y - 1)
 		var cell_id := "%d_%d" % [cx, cy]
@@ -194,7 +194,7 @@ func _element_zu_ressource(element_id: String) -> String:
 		"see": return "wasser_quelle"
 		_: return ""
 
-func _prüfe_und_erzeuge_keimpunkte(analyse_ergebnis: Dictionary, fraktions_ki_config: Dictionary, cellen_x: int, cellen_y: int, kacheln_pro_zelle_x: int, kacheln_pro_zelle_y: int) -> void:
+func _prüfe_und_erzeuge_keimpunkte(analyse_ergebnis: Dictionary, fraktions_ki_config: Dictionary, _cellen_x: int, _cellen_y: int, kacheln_pro_zelle_x: int, kacheln_pro_zelle_y: int) -> void:
 	## Lade Schwellenwert aus Konfiguration
 	var schwellenwert := 0.35  # RUECKFALL, wenn Konfiguration fehlt
 	if fraktions_ki_config.has("keimling_schwellenwert"):

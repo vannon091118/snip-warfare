@@ -291,8 +291,8 @@ func biom_raster_schreiben(hoehe_raster: Array[float], feuchtigkeit_raster: Arra
 			var height := hoehe_raster[index]
 			var moisture := feuchtigkeit_raster[index]
 			var temperature := temperatur_raster[index]
-			var biom_id: String = _biom_analyser.analysiere_biom(height, moisture, temperature)
-			biom_raster["%d:%d:%d" % [x, y, z]] = biom_id
+			var ermitteltes_biom_id: String = _biom_analyser.analysiere_biom(height, moisture, temperature)
+			biom_raster["%d:%d:%d" % [x, y, z]] = ermitteltes_biom_id
 
 func objekte_leeren() -> void:
 	objekte.clear()
@@ -487,13 +487,13 @@ func _lade_erschopfung_config() -> void:
 	_erschopfung_config_geladen = true
 
 func _chunk_key_aus_position(x: int, y: int) -> String:
-	var cx := int(x / chunk_groesse)
-	var cy := int(y / chunk_groesse)
+	var cx := int(float(x) / float(chunk_groesse))
+	var cy := int(float(y) / float(chunk_groesse))
 	return "%d_%d" % [cx, cy]
 
 func _chunk_key_aus_kachel(kachel_x: int, kachel_y: int) -> String:
-	var cx := int(kachel_x / chunk_groesse)
-	var cy := int(kachel_y / chunk_groesse)
+	var cx := int(float(kachel_x) / float(chunk_groesse))
+	var cy := int(float(kachel_y) / float(chunk_groesse))
 	return "%d_%d" % [cx, cy]
 
 func erschoepfung_initialisieren() -> void:

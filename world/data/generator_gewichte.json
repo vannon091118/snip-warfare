@@ -28,6 +28,11 @@
     "biom_ozean": {"kategorie": "biome", "element_id": "ozean", "gewicht": 1.0, "ebene": "makro"}
   },
   "gebaeude": {},
+  "fraktionen": {
+    "waldlaeufer": {"kategorie": "fraktionen", "element_id": "waldlaeufer", "name": "Waldläufer", "gewicht": 2.0, "biome": ["gemaaessigt"], "farbe": "#2E7D32", "beschreibung": "Naturverbundenes Volk mit Vorliebe für dichte Wälder und reiche Beerensträucher."},
+    "eiswaechter": {"kategorie": "fraktionen", "element_id": "eiswaechter", "name": "Eiswächter", "gewicht": 1.5, "biome": ["tundra"], "farbe": "#0288D1", "beschreibung": "Widerstandsfähiges Volk des Nordens mit Schutz gegen raue Kälte."},
+    "steppenreiter": {"kategorie": "fraktionen", "element_id": "steppenreiter", "name": "Steppenreiter", "gewicht": 1.5, "biome": ["steppe"], "farbe": "#F57C00", "beschreibung": "Schnelle Jäger der weiten Ebenen mit reicher Jagderfahrung."}
+  },
   "cluster": {
     "_kommentar": "Spawn-Cluster: Jeder Eintrag stempelt eine dichte Gruppe als Weltzustand. anzahl ist der Kern der Gruppe, umgebung_zusatz die Streuung drum herum, radius_kacheln die Gruppengroesse, chance die Wahrscheinlichkeit je Chunk. Neue Spawn-Varianten nur hier und im Element-Katalog.",
     "wald": {"kategorie": "cluster", "element_id": "baum", "anzahl": 5, "umgebung_zusatz": 3, "radius_kacheln": 3, "chance": 0.55, "biome": ["gemaaessigt", "steppe"]},

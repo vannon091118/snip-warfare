@@ -84,4 +84,3 @@ Headless-Läufe, Preflight und Gate-Prüfungen sind nur Frühwarnsysteme, keine 
 Der Arbeitsrhythmus folgt strikt dieser Reihenfolge: Asset einbauen, Logik nutzen oder ergänzen, Asset und Logik in der Registry verbinden, Verhalten anschließen, wenn es nicht statisch ist, Spawn-Regeln festlegen, und erst zuletzt die sichtbare Ingame-Verifikation. Ein Asset, das nur in der Registry steht und nie auf der Karte erscheint, ist verboten; ein Platzhalter ist erlaubt, solange er im Spiel sichtbar ist.
 
 Die Agenten bauen so, dass jede Arbeit im Spiel beobachtbar endet, und weisen den Nutzer am Abschluss darauf hin, was im laufenden Spiel zu sehen ist.
-

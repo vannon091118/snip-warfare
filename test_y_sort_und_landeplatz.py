@@ -13,7 +13,7 @@ def test_welt_szene_y_sort_konfiguration():
 def test_welt_renderer_y_sort_und_fliesen_hintergrund():
     inhalt = (ROOT / "world" / "logic" / "kategorie_welt" / "welt_renderer.gd").read_text(encoding="utf-8")
     assert "y_sort_enabled = true" in inhalt
-    assert "_fliesen_knoten.z_index = -1" in inhalt
+    assert "knoten.z_index = -1" in inhalt
     assert "_objekte_knoten.y_sort_enabled = true" in inhalt
 
 def test_tier_darstellung_und_y_sort():

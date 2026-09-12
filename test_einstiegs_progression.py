@@ -104,10 +104,11 @@ def test_eingabe_steuerung_blockt_gesperrte_aktionen():
     assert "stufe_frei" in eingabe, "Gesperrte Bau-Aktionen werden abgelehnt"
 
 
-def test_bau_panel_liest_die_sperre_aus_der_definition():
-    """Das Panel erfindet keine Stufen mehr, es liest gesperrt_ab_stufe."""
+def test_bau_panel_liest_moebel_ohne_eigene_stufen_tabelle():
+    """Das Panel liest sein Angebot aus moebel.json und erfindet keine Stufen."""
     panel = _lies("ui/logic/kategorie_ui/ui_bau_panel.gd")
-    assert "def.gesperrt_ab_stufe" in panel, "Stufe kommt aus der Definition"
+    assert "moe\u00e6bel.json" not in panel
+    assert "m\u00f6bel.json" in panel, "Angebot kommt aus dem Moebel-Datenpool"
     assert 'def.id == "haus"' not in panel, "keine erfundene Stufen-Tabelle im UI"
     definition = _lies("world/logic/kategorie_objekt/gebaeude_definition.gd")
     assert "var gesperrt_ab_stufe: int = 0" in definition

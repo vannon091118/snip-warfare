@@ -59,6 +59,11 @@ func bestand_im_lager(lager_index: int, ressource: String) -> int:
 	var bestaende: Dictionary = _lager[lager_index].get("bestaende", {})
 	return int(bestaende.get(ressource, 0))
 
+func bestaende_im_lager(lager_index: int) -> Dictionary:
+	if lager_index < 0 or lager_index >= _lager.size():
+		return {}
+	return (_lager[lager_index].get("bestaende", {}) as Dictionary).duplicate()
+
 func gesamt_bestand(ressource: String) -> int:
 	var summe := 0
 	for lager: Dictionary in _lager:
