@@ -26,11 +26,13 @@ echo "$STAGED_FILES"
 
 # Whitespace zuerst heilen: E042-Fix arbeitet auf der Arbeitskopie; die
 # bereinigten Dateien werden sofort neu gestagt, damit die Pruefung den
-# echten Stand sieht.
+# echten Stand sieht. Nur Dateien im Zug gehoeren auch neu in den Zug:
+# Die Staging-Liste wird gefiltert, damit keine Parallel-Arbeit eines
+# anderen Threads hereingezogen wird.
 echo "Schritt 1: Whitespace automatisch heilen (E042)..."
 python tools/preflight.py --kategorie whitespace --fix
 
-GEFIXT=$(git diff --name-only)
+GEFIXT=$(git diff --name-only | grep -Fx -f <(git diff --cached --name-only --diff-filter=ACM) || true)
 if [ -n "$GEFIXT" ]; then
     echo "Bereinigte Dateien werden neu gestagt:"
     echo "$GEFIXT"
@@ -42,7 +44,7 @@ fi
 echo "Schritt 2: Dokumenten-Nachzug automatisch ausfuehren..."
 python tools/version_bump.py --nachziehen
 
-NACHGEZOGEN=$(git diff --name-only)
+NACHGEZOGEN=$(git diff --name-only | grep -Fx -f <(git diff --cached --name-only --diff-filter=ACM) || true)
 if [ -n "$NACHGEZOGEN" ]; then
     echo "Nachgezogene Dokumente werden neu gestagt:"
     echo "$NACHGEZOGEN"
