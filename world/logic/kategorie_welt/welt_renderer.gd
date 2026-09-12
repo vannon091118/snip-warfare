@@ -47,14 +47,9 @@ var _progressions_maschine: Object = null
 var _aktive_z_ebene: int = 0
 
 ## Sichtbarkeits-Scheibe: Nur Objekte im Kamera-Bereich haengen als Knoten.
-## Das Modell bleibt die volle Wahrheit; der Knotenbestand folgt dem Blick.
-## Ohne gesetzten Bereich (Editor) haengt der Renderer alles, wie bisher.
-const SICHT_RAND_PX := 384.0
-const SCAN_SCHRITT_PX := 64.0
-const MAX_ANHAENGE_PRO_RUF := 256
-var _sichtbereich := Rect2()
-var _scan_mitte := Vector2.INF
-var _sichtgebiet_dirty := true
+## Die Rechnung darüber trägt der Welt_SichtbereichSammler; der Renderer
+## führt nur die Knoten und fragt den Sammler, was zu tun ist.
+var _sicht_sammler := Welt_SichtbereichSammler.new()
 var _knoten_nach_id: Dictionary = {}
 ## Slice B: Räumlicher Vorfilter – ersetzt linearen Vollscan in _sichtbar_anwenden().
 var _objekt_gitter := Welt_ObjektGitter.new()
@@ -117,7 +112,7 @@ func _auf_stadium_geaendert(index: int, _element_id: String, _stadium: String) -
 	_zeige_stadium(index)
 
 func _auf_folge_objekt(index: int, element_id: String) -> void:
-	_sichtgebiet_dirty = true
+	_sicht_sammler.dirty_setzen()
 	# Der Rest ist wiedergeboren: Das Standbild braucht seine neue Textur und
 	# der Knoten an dieser Stelle ein frisches Bewegtbild.
 	_zeige_stadium(index)
@@ -130,7 +125,7 @@ func _auf_folge_objekt(index: int, element_id: String) -> void:
 	knoten.bewegtbild_setzen(_objekt_darsteller.objekt_darstellen(eintrag, knoten.fusspunkt()))
 
 func _auf_saemling(_element_id: String, _position: Vector2) -> void:
-	_sichtgebiet_dirty = true
+	_sicht_sammler.dirty_setzen()
 	# Ein neuer Saemling steht irgendwo: Der naechste volle Neuaufbau waere
 	# teuer, deshalb haengt der Renderer nur das eine neue Objekt an. Der
 	# Behälter des Modells entscheidet, ob es diesen Knoten schon gibt.
@@ -393,10 +388,10 @@ func _objekte_erneuern() -> void:
 	_knoten_nach_id.clear()
 	if _model == null:
 		return
-	if _sichtbereich.size != Vector2.ZERO:
+	if _sicht_sammler.ist_aktiv():
 		# Spielbetrieb: Der Knotenbestand entsteht aus dem Sichtbereich;
 		# der nächste sichtbereich_setzen-Ruf hängt die sichtbaren an.
-		_sichtgebiet_dirty = true
+		_sicht_sammler.dirty_setzen()
 		return
 	for index in _model.objekt_anzahl():
 		objekt_knoten_anhaengen(index)
@@ -404,42 +399,34 @@ func _objekte_erneuern() -> void:
 ## Kategorie logik: Sichtbarkeits-Scheibe des Knotenbestands.
 
 func sichtbereich_setzen(rechteck: Rect2) -> void:
-	# Die Szene reicht je Rahmen den Kamera-Bereich samt Rand hinein. Ein
-	# neuer Abgleich läuft nur bei echtem Blickwechsel oder Modelländerung,
-	# nicht bei stillstehender Kamera.
-	_sichtbereich = rechteck
-	var mitte := rechteck.get_center()
-	if _sichtgebiet_dirty or _scan_mitte.distance_to(mitte) >= SCAN_SCHRITT_PX:
-		_scan_mitte = mitte
-		_sichtgebiet_dirty = false
+	# Die Szene reicht je Rahmen den Kamera-Bereich hinein; der Sammler
+	# entscheidet, ob ein Abgleich fällig ist.
+	if _sicht_sammler.bereich_setzen(rechteck):
 		_sichtbar_anwenden()
 
 func sichtbereich_deaktivieren() -> void:
 	# Der Editor und Prüfläufe ohne Kamera hängen alles an, wie bisher.
-	_sichtbereich = Rect2()
+	_sicht_sammler.deaktivieren()
 
 func sichtgebiet_aktualisieren() -> void:
 	# Erzwingt den Neuabgleich der sichtbaren Objekte bei Gebäudeplatzierung
 	# oder Spawn-Ereignissen, ohne auf Kamerabewegung warten zu müssen.
-	## Slice B: Gitter nach Gebäudeplatzierung neu aufbauen, damit das neue
-	## Objekt in den richtigen Zellen auftaucht.
-	_objekt_gitter.aufbauen(_model)
-	_sichtgebiet_dirty = true
-	if _sichtbereich.size != Vector2.ZERO:
+	_sicht_sammler.dirty_setzen()
+	if _sicht_sammler.ist_aktiv():
 		_sichtbar_anwenden()
 
 
 func _sichtbar_anwenden() -> void:
-	if _model == null or _sichtbereich.size == Vector2.ZERO:
+	if _model == null or not _sicht_sammler.ist_aktiv():
 		return
 	if _objekt_gitter.ist_leer():
 		_objekt_gitter.aufbauen(_model)
 	var anhaenge := 0
-	var kandidaten := _objekt_gitter.kandidaten_in(_sichtbereich)
+	var kandidaten := _objekt_gitter.kandidaten_in(_sicht_sammler.rechteck())
 	for index in kandidaten:
-		if anhaenge >= MAX_ANHAENGE_PRO_RUF:
+		if anhaenge >= Welt_SichtbereichSammler.MAX_ANHAENGE_PRO_RUF:
 			break
-		if not _sichtbereich.has_point(_model.objekt_position(index)):
+		if not _sicht_sammler.enthaelt(_model.objekt_position(index)):
 			continue
 		var id := str(_model.objekt_feld(index, "id", index))
 		if _knoten_nach_id.has(id):
@@ -451,6 +438,6 @@ func _sichtbar_anwenden() -> void:
 		if knoten == null or not is_instance_valid(knoten):
 			_knoten_nach_id.erase(id)
 			continue
-		if not _sichtbereich.has_point(knoten.fusspunkt()):
+		if not _sicht_sammler.enthaelt(knoten.fusspunkt()):
 			_knoten_nach_id.erase(id)
 			knoten.queue_free()

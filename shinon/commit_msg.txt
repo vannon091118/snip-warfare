@@ -1,15 +1,13 @@
-1. Der Nutzer hat befohlen, die Monster-Dateien des Projekts zu zerlegen, und der Gebäude-Manager mit 417 Zeilen war das nächste Opfer auf der Liste.
+1. Der Nutzer hat befohlen, die Monster-Dateien zu zerlegen, und nach dem Gebäude-Manager war der Welt-Renderer der nächste Kandidat, weil er Darstellung und Sichtbarkeits-Rechnung in einer Klasse vereinte.
 
-2. Der Manager trug zwei Leben: Er verwaltete den Bau und führte zugleich jeden Tick der Bau- und Produktionsmaschinen samt aller Lager-Buchungen selbst aus, weil frühere Slices immer nur den Manager verlängert haben statt eine eigene Spitze zu bauen.
+2. In world/logic/kategorie_welt/welt_renderer.gd habe ich die Sichtbereichs-Rechnung herausgetrennt: Die Entscheidung, wann der sichtbare Knotenbestand neu abgeglichen wird und ob ein Punkt im Blick liegt, wohnt nun in der neuen Klasse Welt_SichtbereichSammler in world/logic/kategorie_welt/welt_sichtbereich_sammler.gd.
 
-3. In world/logic/kategorie_objekt/gebaeude_manager.gd habe ich den gesamten Tick-Ausführungsblock herausgetrennt: Bau-Ausführung, Produktions-Ausführung mit Ein- und Ausgangs-Buchung und die Menü-Abstimmung wohnen nun in der neuen Klasse Gebaeude_Laufzeit in world/logic/kategorie_objekt/gebaeude_laufzeit.gd, die nur noch die Beschlüsse der zwei Zustandsmaschinen bucht.
+3. Der Renderer ist auf 443 Zeilen geschrumpft und zeichnet nur noch: Er hält die Fliesen- und Objekt-Knoten und fragt den Sammler, was sichtbar ist, während die Rand-, Schritt- und Deckel-Konstanten mit dem Sammler in dessen eigene Datei gewandert sind.
 
-4. Der Manager selbst ist auf 308 Zeilen geschrumpft und behält nur, was ihm gebührt: Bauaufträge, Baupläne, die Platz- und Voraussetzungs-Prüfung, die Statuszeilen für das HUD und die Weiterleitung der Weltuhr-Ticks an die Laufzeit über zwei Rückruf-Verbindungen.
+4. Die äußere Verbindung bleibt unangetastet: Die Szene ruft weiterhin sichtbereich_setzen, sichtgebiet_aktualisieren und den Rand-Wert am Renderer, sie merkt von der neuen Ordnung nichts.
 
-5. Der Test in test_baustellen_logistik.py hat die Material-Prüfung noch im Manager gesucht; ich habe die Assertion auf die neue Wohnort-Ordnung gerichtet und verlange nun zusätzlich, dass der Manager den Tick wirklich an die Laufzeit weiterleitet.
+5. In tools/preflight/locregel_nachlass.json habe ich den Ist-Wert des Renderers von 456 auf 443 Zeilen gesenkt, damit die Datei nicht heimlich nachwachsen kann.
 
-6. In tools/preflight/locregel_nachlass.json habe ich den Ist-Wert des Managers von 418 auf 308 Zeilen gesenkt, damit die Datei nicht heimlich wieder in ihre alte Monster-Gestalt zurückwachsen kann.
+6. Der volle Preflight läuft ohne Befunde, alle 85 Tests sind grün, und der verschattete Parameter im Sammler wurde umbenannt, damit die Warnungs-Prüfung still bleibt.
 
-7. Der volle Preflight läuft ohne Befunde, alle 85 Tests sind grün, und die Warnungs-Prüfung ist still, nachdem der verschattete Parameter im Meldungs-Rückruf umbenannt wurde.
-
-8. Noch offen sind der Renderer mit seinem Sichtbereich-Sammler, die Basis-Klassen, die Lager- und Tier-Domäne, die Population, die übrigen Maschinen und am Ende das leere Nachlass-Verzeichnis, denn jede Zeile, die heute überlebt, ist eine Zeile, die morgen wiederkommt.
+7. Noch offen sind die Basis-Klassen, die Lager- und Tier-Domäne, die Population und die übrigen Maschinen, denn ein Renderer, der rechnet und zeichnet, ist nur halb entkleidet.
