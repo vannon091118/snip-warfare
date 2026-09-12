@@ -1,7 +1,8 @@
-1. Der Kommandant schickte mich los, die zwölf ungesicherten Bergungs-Flicken aus dem Kilo-Versteck zu prüfen und ans Tor zu bringen.
-2. Ich probefuhr den ganzen Zug: Der Preflight lief leer aus, kein einziger Befund in den gewählten Kategorien, die Siedlung atmetet ruhig.
-3. Der Finanzprüfer stiess auf drei Schranktüren, die nach altem Inventar schrien: Der Renderer trägt seine Fliesen-Knoten jetzt im Mehrzimmerset statt als Einzelkammer, der Netzwerk-Planer nennt seine Spielerregion im Alias, und das Bau-Panel liest sein Angebot aus dem Möbellager statt aus der Gebäudekate.
-4. Ich hängte die drei Türschilder neu auf: test_y_sort_und_landeplatz.py, test_makrokarte_und_barrieren.py und test_einstiegs_progression.py fragen nun den jetzigen Zustand ab, statt die alte Möblierung zu verlangen.
-5. Danach lief die ganze Prüfung noch einmal durch: 85 Tests grün, das Tor schwieg zufrieden.
-6. Der AGENTS-Zettel verlor ein leeres Restzeichen am Ende, sonst blieb unberührt, was unberührt bleiben durfte.
-7. Als Nächstes wandert der ganze Zug über das Tor auf die Hauptstrasse main, und dort beginnt die grosse Zerlegung der Monster-Dateien.
+1. Der Kommandant beorderte mich, den überfüllten Wachturm tools/preflight.py zu spalten, bevor die große Zerlegung der Monster beginnt.
+2. Ich zog den Turm auseinander: Je Prüf-Klasse zog jetzt in ihr eigenes Fachhaus unter tools/preflight, vom Kern bis zur Shinon-Wache, und der alte Turm blieb als schlanker Torwächter stehen.
+3. Im neuen Fachhaus locregel zog die Regel E041 ein: Jede Basis-Datei trägt höchstens 80 Zeilen, jede Registry 100, jede Mutation 60, jede Maschine 120, jeder Manager 150, jeder Status 120, jeder Darsteller 100, und wer das reißt, fällt am Tor durch.
+4. Damit die bestehende Stadt nicht im ersten Nachtgeschrei zusammenbricht, legte ich das Nachlassverzeichnis locregel_nachlass.json an: 29 Dateien tragen ihren Ist-Wert, keiner darf mehr wachsen, und jeder Zerlegungs-Slice streicht seinen eigenen Eintrag, bis das Verzeichnis leer endet.
+5. Ich probefuhr das neue Tor zweimal: Der volle Preflight meldet keine Befunde, die Locregel-Wache kennt ihre 29 geschonten Häuser, und alle 85 Prüfungen der pytest-Schar laufen grün.
+6. Berührt wurden die Papiere tools/preflight.py, das neue Fachhausverzeichnis tools/preflight mit seinen zehn Prüf-Dateien und das Nachlassverzeichnis.
+7. Auf der Baustelle bleibt sichtbar: Nichts hat sich am Spiel geändert, aber der Wachturm zählt jetzt Zeilen, und das nächste God-File scheitert künftig am roten Commit statt an der Disziplin.
+8. Als Nächstes beginne ich mit Slice A und zerlege die Bühne welt.gd, um ihren Eintrag aus dem Nachlassverzeichnis zu streichen.
