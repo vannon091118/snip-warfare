@@ -25,6 +25,10 @@ var _tick_counter: int = 0
 
 ## Kategorie daten: Referenz auf die Orchestrator-Konfiguration.
 var orchestrator_config: Dictionary = {}
+var _rassen_registry: Pop_RassenSchemaRegistry = null
+
+func rassen_registry_setzen(registry: Pop_RassenSchemaRegistry) -> void:
+	_rassen_registry = registry
 
 func _ready() -> void:
 	Weltuhr.tick.connect(_auf_tick)
@@ -171,20 +175,24 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 			# (werden vom nächsten Durchlauf wieder erfasst)
 
 func _max_einheiten_fuer_rasse() -> int:
-	# Liefert das max_einheiten aus dem aktuellen Rassen-Schema.
-	# Wird von der Welt_FortschrittsMaschine vor jedem Spawn geprüft.
-	var rasse_id := "mensch"  # Default Fallback
-	# Lade direkt aus der JSON-Datei
-	var config_pfad := "res://population/data/rassen_schemata.json"
-	if FileAccess.file_exists(config_pfad):
+	# Liefert das max_einheiten für die Standardrasse (mensch) aus dem Rassen-Registry.
+	if _rassen_registry == null:
+		# Fallback: load JSON directly
+		var config_pfad := "res://population/data/rassen_schemata.json"
+		if not FileAccess.file_exists(config_pfad):
+			return 20
 		var datei := FileAccess.open(config_pfad, FileAccess.READ)
 		var gelesen: Variant = JSON.parse_string(datei.get_as_text())
-		if typeof(gelesen) == TYPE_DICTIONARY:
-			var rassen := gelesen as Dictionary
-			if rassen.has(rasse_id):
-				return int(rassen[rasse_id].get("max_einheiten", 20))
-	# Fallback auf Standard-Wert
-	return 20
+		if typeof(gelesen) != TYPE_DICTIONARY:
+			return 20
+		var rassen := gelesen as Dictionary
+		if not rassen.has("mensch"):
+			return 20
+		return int(rassen["mensch"].get("max_einheiten", 20))
+	var schema := _rassen_registry.schema_fuer("mensch")
+	if schema == null:
+		return 20
+	return schema.max_einheiten
 
 func _naechstes_objekt_fuer_ressource(ressource: String, zentrum: Vector2, radius: float) -> int:
 	# Nächstes Objekt mit passender Arbeitsressource innerhalb des Radius.

@@ -13,5 +13,7 @@
     "tundra": 1.1,
     "gebirge": 1.3,
     "ozean": 0.5
-  }
+  },
+  "erschoepfung_spawn_schwelle": 0.8,
+  "erschoepfung_maximum": 100
 }

@@ -20,6 +20,7 @@ const _OrchestratorPriorityPanelSkript := preload("res://ui/scenes/panels/orches
 var _model := Welt_Model.new()
 var _registry := Welt_Registry.new()
 var _steuerung := Kern_SteuerungRegistry.new()
+var _rassen_registry := Pop_RassenSchemaRegistry.new()
 var _lager := Lager_Manager.new()
 var _ressourcen := Einheit_Ressourcen.new()
 var _job_registry := Job_Registry.new()
@@ -31,6 +32,7 @@ var _auswahl := _AuswahlManagerSkript.new()
 var _schnellwahl: Array[int] = []
 var _orchestrator_registry := Orchestrator_Registry.new()
 var _orchestrator_manager := Orchestrator_Manager.new()
+_orchestrator_manager.rassen_registry_setzen(_rassen_registry)
 var _pop_einheit_uebersetzer: Pop_EinheitUebersetzer = null
 var _pop_einheit_panel: Control = null
 var _biome := Welt_BiomRegistry.new()
@@ -49,6 +51,7 @@ var _tier_platzierer := Welt_TierPlatzierer.new()
 var _waerme_sammler := Welt_WaermeSammler.new()
 var _need_baum := Pop_NeedBaum.new()
 var _fortschritt := Welt_FortschrittsMaschine.new()
+_fortschritt.rassen_registry_setzen(_rassen_registry)
 var _karten_beobachter := Welt_KartenBeobachter.new()
 var _timeline := Kern_Timeline.new()
 var _feedback := Welt_FeedbackManager.new()

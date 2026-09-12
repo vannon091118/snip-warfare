@@ -47,6 +47,7 @@ func aus_eintrag(eintrag_id: String, eintrag: Dictionary) -> void:
 	grab_bonus = float(eintrag.get("grab_bonus", 1.0))
 
 	icon_pfad = str(eintrag.get("icon_pfad", ""))
+	max_einheiten = int(eintrag.get("max_einheiten", 1))
 
 	## Finalisieren: Ab jetzt immutabel
 	_finalisieren()
@@ -58,6 +59,7 @@ func _initialisiere_generiert(p_rasse_id: String, p_name: String, p_beschreibung
 	rasse_id = p_rasse_id
 	angezeigter_name = p_name
 	beschreibung = p_beschreibung
+	max_einheiten = 20
 
 ## Kategorie logik: Protected Setter für Generierung (nur vor Finalisierung erlaubt).
 

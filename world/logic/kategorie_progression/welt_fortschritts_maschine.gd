@@ -96,19 +96,24 @@ func _auf_produktionsraum_entstanden(raum_id: String, profil: String) -> void:
 func _spawn_cap_erreicht(rasse_id: String) -> bool:
 	if _einheit_manager == null:
 		return false
-	# Lade rassen_schemata.json direkt für max_einheiten
-	var config_pfad := "res://population/data/rassen_schemata.json"
-	if not FileAccess.file_exists(config_pfad):
+	if _rassen_registry == null:
+		# Fallback: load JSON directly (should not happen if registry set)
+		var config_pfad := "res://population/data/rassen_schemata.json"
+		if not FileAccess.file_exists(config_pfad):
+			return false
+		var datei := FileAccess.open(config_pfad, FileAccess.READ)
+		var gelesen: Variant = JSON.parse_string(datei.get_as_text())
+		if typeof(gelesen) != TYPE_DICTIONARY:
+			return false
+		var rassen := gelesen as Dictionary
+		if not rassen.has(rasse_id):
+			return false
+		var max_einheiten := int(rassen[rasse_id].get("max_einheiten", 20))
+		return _einheit_manager.einheiten_zahl() >= max_einheiten
+	var schema := _rassen_registry.schema_fuer(rasse_id)
+	if schema == null:
 		return false
-	var datei := FileAccess.open(config_pfad, FileAccess.READ)
-	var gelesen: Variant = JSON.parse_string(datei.get_as_text())
-	if typeof(gelesen) != TYPE_DICTIONARY:
-		return false
-	var rassen := gelesen as Dictionary
-	if not rassen.has(rasse_id):
-		return false
-	var max_einheiten := int(rassen[rasse_id].get("max_einheiten", 20))
-	return _einheit_manager.einheiten_zahl() >= max_einheiten
+	return _einheit_manager.einheiten_zahl() >= schema.max_einheiten
 
 func _fortschalten() -> void:
 	var stufe := aktive_stufe()
