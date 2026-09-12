@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 227 Klassen mit `class_name` im Projekt, davon 199 in den 14 Domaenen-Ordnern und 28 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
+_Stand: V0.01 — 240 Klassen mit `class_name` im Projekt, davon 210 in den 14 Domaenen-Ordnern und 30 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -118,7 +118,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (37)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (41)
 
 | Klasse | Datei |
 | --- | --- |
@@ -151,14 +151,18 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` |
 | `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` |
+| `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` |
 | `Welt_Speicher` | `world/logic/kategorie_welt/welt_speicher.gd` |
+| `Welt_StadiumGeste` | `world/logic/kategorie_welt/welt_stadium_geste.gd` |
 | `Welt_TerrainBlatt` | `world/logic/kategorie_welt/welt_terrain_blatt.gd` |
 | `Welt_TierPlatzierer` | `world/logic/kategorie_welt/welt_tier_platzierer.gd` |
 | `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` |
+| `Welt_UmsturzGeste` | `world/logic/kategorie_welt/welt_umsturz_geste.gd` |
 | `Welt_WaermeSammler` | `world/logic/kategorie_welt/welt_waerme_sammler.gd` |
 | `Welt_WasserAutomat` | `world/logic/kategorie_welt/welt_wasser_automat.gd` |
 | `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` |
+| `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` |
 
 ### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (31)
 
@@ -196,7 +200,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Tisch` | `world/logic/kategorie_objekt/objekt_tisch.gd` |
 | `Objekt_TischStahl` | `world/logic/kategorie_objekt/objekt_tisch_stahl.gd` |
 
-### world/tier — Prefix `Tier_` — `world/logic/kategorie_tier/` (10)
+### world/tier — Prefix `Tier_` — `world/logic/kategorie_tier/` (17)
 
 | Klasse | Datei |
 | --- | --- |
@@ -204,12 +208,19 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Tier_Basis` | `world/logic/kategorie_tier/tier_basis.gd` |
 | `Tier_Darsteller` | `world/logic/kategorie_tier/tier_darsteller.gd` |
 | `Tier_Eisbaer` | `world/logic/kategorie_tier/tier_eisbaer.gd` |
+| `Tier_FeldAbfrage` | `world/logic/kategorie_tier/tier_feld_abfrage.gd` |
 | `Tier_Hase` | `world/logic/kategorie_tier/tier_hase.gd` |
+| `Tier_KlassenFabrik` | `world/logic/kategorie_tier/tier_klassen_fabrik.gd` |
 | `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` |
 | `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` |
+| `Tier_Sichtung` | `world/logic/kategorie_tier/tier_sichtung.gd` |
 | `Tier_Status` | `world/logic/kategorie_tier/tier_status.gd` |
+| `Tier_TempoBerechnung` | `world/logic/kategorie_tier/tier_tempo_berechnung.gd` |
+| `Tier_VerhaltenMaschine` | `world/logic/kategorie_tier/tier_verhalten_maschine.gd` |
+| `Tier_VitalStatus` | `world/logic/kategorie_tier/tier_vital_status.gd` |
 | `Tier_Vogel` | `world/logic/kategorie_tier/tier_vogel.gd` |
 | `Tier_Vogelgruppe` | `world/logic/kategorie_tier/tier_vogelgruppe.gd` |
+| `Tier_ZustandsNamen` | `world/logic/kategorie_tier/tier_zustands_namen.gd` |
 
 ### world/orchestrator — Prefix `Orchestrator_` — `world/logic/kategorie_orchestrator/` (7)
 
@@ -344,7 +355,7 @@ _keine `class_name`-Klassen_
 
 _keine `class_name`-Klassen_
 
-### rest — Prefix `-` — `(kein Domaenen-Ordner)` (28)
+### rest — Prefix `-` — `(kein Domaenen-Ordner)` (30)
 
 | Klasse | Datei |
 | --- | --- |
@@ -370,6 +381,8 @@ _keine `class_name`-Klassen_
 | `Welt_StufenBilder` | `world/logic/kategorie_progression/welt_stufen_bilder.gd` |
 | `Welt_SwayAktualisierer` | `world/logic/kategorie_atmosphaere/welt_sway_aktualisierer.gd` |
 | `Welt_SwayMaterial` | `world/logic/kategorie_atmosphaere/welt_sway_material.gd` |
+| `Welt_TagesZyklusFaerbung` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_faerbung.gd` |
+| `Welt_TagesZyklusSpeicher` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_speicher.gd` |
 | `Welt_TageszyklusMaschine` | `world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd` |
 | `Welt_TodAnzeige` | `world/logic/kategorie_feedback/feedback_tod_anzeige.gd` |
 | `Welt_WaermeFaktor` | `world/logic/kategorie_progression/welt_waerme_faktor.gd` |

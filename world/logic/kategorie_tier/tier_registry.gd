@@ -36,18 +36,8 @@ func _eintraege_uebernehmen(gelesen: Variant) -> bool:
 	return true
 
 func _tier_klasse_fuer(tier_id: String) -> Tier_Basis:
-	match tier_id:
-		"baer":
-			return Tier_Baer.new()
-		"eisbaer":
-			return Tier_Eisbaer.new()
-		"hase":
-			return Tier_Hase.new()
-		"vogel":
-			return Tier_Vogel.new()
-		"vogelgruppe":
-			return Tier_Vogelgruppe.new()
-	return Tier_Basis.new()
+	## Die Zuordnung selbst kennt die eigene Fabrik, nicht die Registry.
+	return Tier_KlassenFabrik.klasse_fuer(tier_id)
 
 func tier_daten(tier_id: String) -> Tier_Basis:
 	if _arten_nach_id.has(tier_id):
@@ -63,36 +53,12 @@ func hp(tier_id: String) -> int:
 	return 1 if tier == null else tier.hp
 
 func wert(tier_id: String, schluessel: String, standard: float) -> float:
-	var tier := tier_daten(tier_id)
-	if tier == null:
-		return standard
-	match schluessel:
-		"trigger_radius":
-			return tier.trigger_radius
-		"flucht_geschwindigkeit":
-			return tier.flucht_geschwindigkeit
-		"flug_geschwindigkeit":
-			return tier.flug_geschwindigkeit
-		"gehe_geschwindigkeit":
-			return tier.gehe_geschwindigkeit
-		"aufhalte_abstand":
-			return tier.aufhalte_abstand
-		"steig_anteil_ticks":
-			return float(tier.steig_anteil_ticks)
-		"fade_dauer_ticks":
-			return float(tier.fade_dauer_ticks)
-	return standard
+	## Das Feldwissen traegt die eigene Abfrage-Klasse.
+	return Tier_FeldAbfrage.wert(tier_daten(tier_id), schluessel, standard)
 
 func hat_schluessel(tier_id: String, schluessel: String) -> bool:
-	var tier := tier_daten(tier_id)
-	if tier == null:
-		return false
-	match schluessel:
-		"flug_geschwindigkeit":
-			return tier.flug_geschwindigkeit > 0.0
-		"steig_anteil_ticks":
-			return tier.steig_anteil_ticks > 0
-	return tier.ausloeser != ""
+	## Die Abfrage-Klasse weiss, wann ein Feld wirklich gesetzt ist.
+	return Tier_FeldAbfrage.hat_schluessel(tier_daten(tier_id), schluessel)
 
 func textur_pfad(tier_id: String) -> String:
 	var tier := tier_daten(tier_id)

@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 227 Klassen, 251 Dateien, 63 Signale, 31 Array-Elementtypen; 28 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 240 Klassen, 264 Dateien, 63 Signale, 31 Array-Elementtypen; 30 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -10,9 +10,9 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 227 Klassen, 251 Dateien, 63 Sign
 | --- | --- | --- | --- | --- | --- |
 | `core` | `kern` | `Kern_` | `core/` | 19 | 19 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
-| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 37 | 37 |
+| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 41 | 41 |
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 31 | 31 |
-| `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 10 | 10 |
+| `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 17 | 17 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 7 | 7 |
 | `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 22 | 22 |
 | `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 14 | 14 |
@@ -22,7 +22,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 227 Klassen, 251 Dateien, 63 Sign
 | `ui` | `ui` | `Ui_` | `ui/` | 19 | 31 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
 | `tools` | `tools` | `-` | `tools/` | 0 | 6 |
-| `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 28 | 33 |
+| `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 30 | 35 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
 
@@ -109,7 +109,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 49 | 4 | 4 | 11 | 10 | - | - | 3 | 2 | - | 2 | 2 | 7 | - | 1 | 3 |
+| `String` | 50 | 4 | 4 | 12 | 10 | - | - | 3 | 2 | - | 2 | 2 | 7 | - | 1 | 3 |
 | `Dictionary` | 29 | 3 | 1 | 6 | 1 | 1 | 2 | 5 | - | - | 1 | 1 | 4 | - | - | 4 |
 | `int` | 14 | - | - | 5 | - | 1 | 1 | 2 | - | - | - | - | 3 | - | 1 | 1 |
 | `Vector2i` | 8 | 1 | 4 | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - |
@@ -238,7 +238,7 @@ _keine Signal-Deklaration in dieser Domaene_
 
 ### world/welt — Kuerzel `welt` — `world/logic/kategorie_welt/`
 
-Prefix `Welt_`, 37 Klassen.
+Prefix `Welt_`, 41 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -270,15 +270,19 @@ Prefix `Welt_`, 37 Klassen.
 | `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` | 127 |
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` | 92 |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
-| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 471 |
+| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 521 |
+| `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` | 44 |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` | 50 |
 | `Welt_Speicher` | `world/logic/kategorie_welt/welt_speicher.gd` | 74 |
+| `Welt_StadiumGeste` | `world/logic/kategorie_welt/welt_stadium_geste.gd` | 25 |
 | `Welt_TerrainBlatt` | `world/logic/kategorie_welt/welt_terrain_blatt.gd` | 39 |
 | `Welt_TierPlatzierer` | `world/logic/kategorie_welt/welt_tier_platzierer.gd` | 20 |
 | `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 106 |
+| `Welt_UmsturzGeste` | `world/logic/kategorie_welt/welt_umsturz_geste.gd` | 39 |
 | `Welt_WaermeSammler` | `world/logic/kategorie_welt/welt_waerme_sammler.gd` | 32 |
 | `Welt_WasserAutomat` | `world/logic/kategorie_welt/welt_wasser_automat.gd` | 206 |
 | `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` | 301 |
+| `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` | 23 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -298,7 +302,7 @@ Prefix `Welt_`, 37 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 11 |
+| `String` | 12 |
 | `Dictionary` | 6 |
 | `int` | 5 |
 | `Vector2i` | 2 |
@@ -370,7 +374,7 @@ Prefix `Objekt_/Gebaeude_`, 31 Klassen.
 
 ### world/tier — Kuerzel `tier` — `world/logic/kategorie_tier/`
 
-Prefix `Tier_`, 10 Klassen.
+Prefix `Tier_`, 17 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -378,12 +382,19 @@ Prefix `Tier_`, 10 Klassen.
 | `Tier_Basis` | `world/logic/kategorie_tier/tier_basis.gd` | 63 |
 | `Tier_Darsteller` | `world/logic/kategorie_tier/tier_darsteller.gd` | 92 |
 | `Tier_Eisbaer` | `world/logic/kategorie_tier/tier_eisbaer.gd` | 26 |
+| `Tier_FeldAbfrage` | `world/logic/kategorie_tier/tier_feld_abfrage.gd` | 40 |
 | `Tier_Hase` | `world/logic/kategorie_tier/tier_hase.gd` | 38 |
+| `Tier_KlassenFabrik` | `world/logic/kategorie_tier/tier_klassen_fabrik.gd` | 22 |
 | `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` | 234 |
-| `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` | 109 |
-| `Tier_Status` | `world/logic/kategorie_tier/tier_status.gd` | 149 |
+| `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` | 75 |
+| `Tier_Sichtung` | `world/logic/kategorie_tier/tier_sichtung.gd` | 68 |
+| `Tier_Status` | `world/logic/kategorie_tier/tier_status.gd` | 111 |
+| `Tier_TempoBerechnung` | `world/logic/kategorie_tier/tier_tempo_berechnung.gd` | 32 |
+| `Tier_VerhaltenMaschine` | `world/logic/kategorie_tier/tier_verhalten_maschine.gd` | 115 |
+| `Tier_VitalStatus` | `world/logic/kategorie_tier/tier_vital_status.gd` | 18 |
 | `Tier_Vogel` | `world/logic/kategorie_tier/tier_vogel.gd` | 40 |
 | `Tier_Vogelgruppe` | `world/logic/kategorie_tier/tier_vogelgruppe.gd` | 40 |
+| `Tier_ZustandsNamen` | `world/logic/kategorie_tier/tier_zustands_namen.gd` | 27 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -721,7 +732,7 @@ Prefix `-`, 0 Klassen.
 
 ### rest — Kuerzel `rest` — `(kein Domaenen-Ordner)`
 
-Prefix `-`, 28 Klassen.
+Prefix `-`, 30 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -747,7 +758,9 @@ Prefix `-`, 28 Klassen.
 | `Welt_StufenBilder` | `world/logic/kategorie_progression/welt_stufen_bilder.gd` | 91 |
 | `Welt_SwayAktualisierer` | `world/logic/kategorie_atmosphaere/welt_sway_aktualisierer.gd` | 29 |
 | `Welt_SwayMaterial` | `world/logic/kategorie_atmosphaere/welt_sway_material.gd` | 75 |
-| `Welt_TageszyklusMaschine` | `world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd` | 123 |
+| `Welt_TagesZyklusFaerbung` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_faerbung.gd` | 53 |
+| `Welt_TagesZyklusSpeicher` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_speicher.gd` | 20 |
+| `Welt_TageszyklusMaschine` | `world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd` | 107 |
 | `Welt_TodAnzeige` | `world/logic/kategorie_feedback/feedback_tod_anzeige.gd` | 66 |
 | `Welt_WaermeFaktor` | `world/logic/kategorie_progression/welt_waerme_faktor.gd` | 22 |
 | `Welt_WaermeFeld` | `world/logic/kategorie_waerme/waerme_feld.gd` | 50 |

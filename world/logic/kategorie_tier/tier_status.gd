@@ -26,7 +26,8 @@ var _modifikator_id: String = "normal"
 var _logik_id: String = ""
 ## Kategorie daten: lebender Zustand der Instanz.
 var _welt_position: Vector2 = Vector2.ZERO
-## Kategorie logik: Zustand und Tick.
+## Kategorie logik: Zustand, Uebergaenge und Tick liegen bei der Verhaltens-Maschine.
+var verhaltens_maschine := Tier_VerhaltenMaschine.new()
 
 func _init(tier: String, verhaltens_daten: Tier_Registry) -> void:
 	tier_id = tier
@@ -38,15 +39,15 @@ func _init(tier: String, verhaltens_daten: Tier_Registry) -> void:
 		_faktor = daten.faktor
 		_modifikator_id = daten.modifikator_id
 		_logik_id = daten.logik_id
+	verhaltens_maschine.einrichten(self)
 
 func ist_vogel() -> bool:
-	var daten := verhalten.tier_daten(tier_id)
-	if daten == null:
-		return false
-	return daten.ausloeser == "wegfliegen" or daten.logik_id.begins_with("vogel")
+	## Die Sichtung weiss, woran man einen Vogel erkennt.
+	return Tier_Sichtung.ist_vogel(verhalten, tier_id)
 
 func trigger_radius() -> float:
-	return verhalten.wert(tier_id, "trigger_radius", 400.0)
+	## Die Sichtweite kommt aus den Tierdaten, der Standard aus der Sichtung.
+	return verhalten.wert(tier_id, "trigger_radius", Tier_Sichtung.STANDARD_TRIGGER)
 
 func effektiver_faktor() -> float:
 	return clampf(_faktor, 0.1, 10.0)
@@ -58,24 +59,20 @@ func modifikator_id() -> String:
 	return _modifikator_id
 
 func speed_aktuell() -> float:
-	var basis := 0.0
-	match zustand:
-		Zustand.AUFGESCHRECKT:
-			basis = verhalten.wert(tier_id, "flucht_geschwindigkeit", 400.0)
-		Zustand.WEGFLIEGEN:
-			basis = verhalten.wert(tier_id, "flug_geschwindigkeit", 280.0)
-		Zustand.VERFOLGEN:
-			basis = verhalten.wert(tier_id, "gehe_geschwindigkeit", 150.0)
-	if basis == 0.0:
-		return 0.0
-	return basis * effektiver_faktor()
+	## Das Tempo haengt am Zustand und gehoert deshalb zur Verhaltens-Maschine.
+	return verhaltens_maschine.tempo()
 
 func schrecken(richtung: Vector2, ziel: Vector2) -> void:
-	if zustand == Zustand.WEGFLIEGEN or zustand == Zustand.VERFOLGEN:
-		return
-	flucht_richtung = richtung.normalized()
-	ziel_position = ziel
-	_zu_zustand_wechseln(Zustand.AUFGESCHRECKT)
+	## Ein Schreck ist ein Verhaltensfall, kein Datenfall.
+	verhaltens_maschine.schrecken(richtung, ziel)
+
+func zustand_name() -> String:
+	## Der Zustand als Name, damit die Verhaltens-Maschine das Enum nicht kennt.
+	return Tier_ZustandsNamen.name_fuer(int(zustand))
+
+func wechsle_zu(zustands_name: String) -> void:
+	## Der Gegenweg: Ein Name wird wieder ein Zustand.
+	zustand_wechseln(Tier_ZustandsNamen.wert_fuer(zustands_name) as Zustand)
 
 func ist_tot() -> bool:
 	return zustand == Zustand.TOT
@@ -84,18 +81,15 @@ func welt_position_setzen(pos: Vector2) -> void:
 	_welt_position = pos
 
 func schaden_nehmen(schaden: int) -> int:
-	if zustand == Zustand.TOT:
-		return 0
-	var verbraucht := mini(schaden, hp)
-	hp -= verbraucht
-	var b := Kern_SignalBus.bus()
-	if b != null:
-		b._emit_schaden(_welt_position, verbraucht, "physisch")
-	if hp <= 0:
-		_zu_zustand_wechseln(Zustand.TOT)
-	return verbraucht
+	## Die Rechnung fuehrt die Vitalklasse; den Todesfall entscheidet der Status.
+	var ergebnis := Tier_VitalStatus.schaden_nehmen(hp, schaden, _welt_position)
+	hp = ergebnis["hp"]
+	if ergebnis["gestorben"]:
+		zustand_wechseln(Zustand.TOT)
+	return ergebnis["verbraucht"]
 
-func _zu_zustand_wechseln(neuer_zustand: Zustand) -> void:
+func zustand_wechseln(neuer_zustand: Zustand) -> void:
+	## Der einzige Weg in einen neuen Zustand: Er setzt Zaehler und Signal.
 	if zustand == neuer_zustand:
 		return
 	var alter_zustand := zustand
@@ -112,37 +106,5 @@ func ticks_fuer_faktor() -> int:
 	return Kern_Weltuhr.ticks_aus_faktor(effektiver_faktor())
 
 func tick(delta: float, eigene_position: Vector2, spieler_position: Vector2) -> Vector2:
-	_welt_position = eigene_position
-	tick_in_zustand += 1
-	var bewegung := Vector2.ZERO
-	match zustand:
-		Zustand.RUHE:
-			if spieler_position.distance_to(eigene_position) <= trigger_radius():
-				var daten := verhalten.tier_daten(tier_id)
-				var ausloeser := "" if daten == null else daten.ausloeser
-				match ausloeser:
-					"verfolgen":
-						ziel_position = spieler_position
-						_zu_zustand_wechseln(Zustand.VERFOLGEN)
-					_:
-						flucht_richtung = (eigene_position - spieler_position).normalized()
-						ziel_position = spieler_position
-						_zu_zustand_wechseln(Zustand.WEGFLIEGEN)
-		Zustand.TOT:
-			bewegung = Vector2.ZERO
-		Zustand.AUFGESCHRECKT:
-			bewegung = flucht_richtung * speed_aktuell() * delta
-			if tick_in_zustand > 8:
-				_zu_zustand_wechseln(Zustand.WEGFLIEGEN)
-		Zustand.WEGFLIEGEN:
-			if ist_vogel():
-				var steig_anteil := int(verhalten.wert(tier_id, "steig_anteil_ticks", 40))
-				steigt = tick_in_zustand <= steig_anteil
-			bewegung = flucht_richtung * speed_aktuell() * delta
-		Zustand.VERFOLGEN:
-			ziel_position = spieler_position
-			var abstand := verhalten.wert(tier_id, "aufhalte_abstand", 120.0)
-			var differenz := spieler_position - eigene_position
-			if differenz.length() > abstand:
-				bewegung = differenz.normalized() * speed_aktuell() * delta
-	return bewegung
+	## Der Status reicht den Takt an seine Verhaltens-Maschine weiter.
+	return verhaltens_maschine.tick(delta, eigene_position, spieler_position)

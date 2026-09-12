@@ -42,59 +42,43 @@ func phase() -> Phase:
 func is_nacht() -> bool:
 	return _phase == Phase.NACHT
 
-func schablonen_alpha() -> float:
+func phase_name() -> String:
+	## Der Phasenname in der Sprache der Faerbung.
 	match _phase:
-		Phase.TAG:
-			return 0.0
 		Phase.DAEMMERUNG:
-			return 0.35
+			return Welt_TagesZyklusFaerbung.DAEMMERUNG
 		Phase.NACHT:
-			return 0.65
+			return Welt_TagesZyklusFaerbung.NACHT
 		Phase.MORGEN:
-			return 0.25
-	return 0.0
+			return Welt_TagesZyklusFaerbung.MORGEN
+	return Welt_TagesZyklusFaerbung.TAG
+
+func schablonen_alpha() -> float:
+	## Die Deckkraft der Nachtschablone ist Darstellung und liegt bei der Faerbung.
+	return Welt_TagesZyklusFaerbung.schablonen_alpha(phase_name())
 
 func faerbung() -> Color:
-	if _phase == Phase.NACHT:
-		return Color(0.72, 0.78, 1.0, 1.0)
-	if _phase == Phase.DAEMMERUNG:
-		return Color(0.95, 0.82, 0.78, 1.0)
-	if _phase == Phase.MORGEN:
-		return Color(1.0, 0.96, 0.88, 1.0)
-	return Color(1, 1, 1, 1)
+	## Die Grundtönung je Phase kommt ebenfalls aus der Faerbung.
+	return Welt_TagesZyklusFaerbung.faerbung(phase_name())
 
 func tages_farbe_fuer_tick(_aktueller_tick: int) -> void:
+	## Der weiche Farbverlauf: Anteil im Tag bestimmen, Farbe malen lassen.
 	if canvas_modulate == null:
 		return
-	var tages_phasen_anteil := _tick_in_takt % maxi(Kern_Weltuhr.ticks_aus_minuten(tag_minuten), 1)
-	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(takt_minuten)
-	var t := float(tages_phasen_anteil) / float(maxi(takt_ticks, 1))
-
-	var morgen_farbe := Color(1.0, 0.96, 0.88, 1.0)
-	var mittag_farbe := Color(1.0, 1.0, 0.9, 1.0)
-	var abend_farbe := Color(1.0, 0.65, 0.42, 1.0)
-	var nacht_farbe := Color(0.52, 0.58, 0.78, 1.0)
-	var phase := _phase
-	var color: Color
-	match phase:
-		Phase.MORGEN:
-			color = morgen_farbe.lerp(mittag_farbe, t)
-		Phase.TAG:
-			color = mittag_farbe.lerp(abend_farbe, t)
-		Phase.NACHT:
-			color = abend_farbe.lerp(nacht_farbe, t)
-		Phase.DAEMMERUNG:
-			color = nacht_farbe.lerp(morgen_farbe, t)
-
-	canvas_modulate.color = color
+	var tag_ticks := maxi(Kern_Weltuhr.ticks_aus_minuten(tag_minuten), 1)
+	var takt_ticks := maxi(Kern_Weltuhr.ticks_aus_minuten(takt_minuten), 1)
+	var fortschritt := float(_tick_in_takt % tag_ticks) / float(takt_ticks)
+	canvas_modulate.color = Welt_TagesZyklusFaerbung.tages_farbe(phase_name(), fortschritt)
 
 func daten_fuer_speichern() -> Dictionary:
-	return {"tick_in_takt": _tick_in_takt, "helligkeit": _helligkeit, "phase": int(_phase)}
+	## Das Format kennt die eigene Speicher-Klasse, nicht diese Maschine.
+	return Welt_TagesZyklusSpeicher.sichern(_tick_in_takt, _helligkeit, int(_phase))
 
 func aus_daten_laden(daten: Dictionary) -> void:
-	_tick_in_takt = int(daten.get("tick_in_takt", 0))
-	_helligkeit = clampf(float(daten.get("helligkeit", 1.0)), 0.0, 1.0)
-	_phase = clampi(int(daten.get("phase", 0)), 0, 3) as Phase
+	var gelesen := Welt_TagesZyklusSpeicher.laden(daten)
+	_tick_in_takt = gelesen["tick_in_takt"]
+	_helligkeit = gelesen["helligkeit"]
+	_phase = gelesen["phase"] as Phase
 
 func _phase_fuer(tick_im_takt: int, tag_ticks: int, takt_ticks: int) -> Phase:
 	var daemmer := int(takt_ticks * 0.08)
