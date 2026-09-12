@@ -10,6 +10,7 @@ const ORCHESTRATOR_PFAD := "res://game/data/orchestrator_config.json"
 const _AuswahlManagerSkript := preload("res://ui/scenes/selection/auswahl_manager.gd")
 const _BauPanelSzene := preload("res://ui/scenes/panels/bau_panel.tscn")
 const _DebugPanelSkript := preload("res://ui/scenes/hud/hud_debug_panel.gd")
+const _LandeplatzAnzeigeSkript := preload("res://world/logic/kategorie_welt/welt_landeplatz_anzeige.gd")
 
 ## Kategorie daten: Modell und Registries als Quellen der Visualisierung.
 ## Kategorie logik: Verdrahtung der Observer- und Visualisierungs-Spitzen.
@@ -56,6 +57,7 @@ var _orchestrator_darsteller: Array[Orchestrator_Darsteller] = []
 ## unsichtbar. Die Spielszene kennt nur diesen einen Sichtbarkeits-Schalter.
 var _debug_panel: Control = null
 var _bau_panel: Ui_BauPanelSzene = null
+var _landeplatz: Node2D = null
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
@@ -134,7 +136,12 @@ func _ready() -> void:
 	_stockmaenner.lager_setzen(_lager)
 	_stockmaenner.tageszyklus_setzen(_tageszyklus)
 	_waerme_sammler.sammeln(_model, _stockmaenner)
+	_stockmaenner.y_sort_enabled = true
 	add_child(_stockmaenner)
+	_landeplatz = _LandeplatzAnzeigeSkript.new()
+	_landeplatz.name = "LandeplatzAnzeige"
+	_landeplatz.einrichten(start_position, float(_model.kachel_groesse))
+	add_child(_landeplatz)
 	_gebaeude.einrichten(_model, _registry, _ressourcen, _lager, _fortschritt)
 	add_child(_gebaeude)
 	_gebaeude.gebaeude_meldung.connect(_auf_gebaeude_meldung)
@@ -334,6 +341,9 @@ func _auf_gebaeude_platziert(objekt_index: int) -> void:
 	_karte.sichtgebiet_aktualisieren()
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
 	_waerme_sammler.sammeln(_model, _stockmaenner)
+	if _landeplatz != null:
+		_landeplatz.ausblenden()
+		_landeplatz = null
 
 func _auf_ziel_erreicht(stufe: Dictionary) -> void:
 	_hud.meldung_setzen("Ziel erreicht: %s" % str(stufe.get("id", "")))
@@ -344,6 +354,9 @@ func _auf_erste_einheit(_stufe: Dictionary) -> void:
 	# Karte allein von ihrem Ziel, und die Einwanderung startet nicht doppelt.
 	if _stockmaenner.einheit_zahl() > 0:
 		return
+	if _landeplatz != null:
+		_landeplatz.ausblenden()
+		_landeplatz = null
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
 	_waerme_sammler.sammeln(_model, _stockmaenner)
 	_stockmaenner.einheit_hinzufuegen(_stockmaenner.lager_anker_position() + Vector2(0, 48))

@@ -46,6 +46,13 @@ func _baue_frames() -> void:
 			frames.add_frame(animations_name, atlas)
 	sprite_frames = frames
 	_frames_fertig = true
+	centered = true
+	var standard_hoehe := 64.0
+	for daten: Dictionary in _animationen.values():
+		if daten.has("frame_hoehe"):
+			standard_hoehe = float(daten["frame_hoehe"])
+			break
+	offset = Vector2(0.0, -standard_hoehe * 0.5)
 
 func animation_setzen(animations_name: String) -> void:
 	if not _frames_fertig:

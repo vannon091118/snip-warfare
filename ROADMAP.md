@@ -72,11 +72,11 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [x] **CP-1.5:** 59 Pytest-Prüfungen grün, voller Preflight ohne Befund.
 - [x] **CP-1.0 (nachgezogen):** HUD-Rahmen als `PanelContainer` mit Knopfzeile im selben Container; Statuszeilen und Knöpfe können sich strukturell nicht mehr überlagern. Beweis: `tools/lauf_pruefung_hud.gd` misst die Rechtecke (Rahmen 440x227, Knopfzeile bei y=200).
 
-### Slice 2: Maßstab und Terrain (Micro-Tiles & Tiefenschärfe) — begonnen
+### Slice 2: Maßstab und Terrain (Micro-Tiles & Tiefenschärfe) — abgeschlossen
 - [x] **CP-2.1:** Kachelgröße datengetrieben auf 64 px kalibriert (`world/data/welt_definition.json` ist die einzige Quelle); der Renderer liest `_model.kachel_groesse` für Position und Skalierung, `Welt_Model.KACHEL_GROESSE` steht dort nur noch als Rückfall für Testläufe ohne Definitions-Registry.
 - [~] **CP-2.2:** Der Terrain-Pool liegt nicht in einer zweiten Datei, sondern im bestehenden `world/data/element_katalog.json`: die zehn Einträge mit `typ: kachel` tragen Textur, `varianten`, `spiegelbar` und `toenungen`. Eine eigene `terrain.json` wäre eine zweite Wahrheit derselben Bilder.
 - [x] **CP-2.3:** `Welt_TerrainBlatt` (`world/logic/kategorie_welt/welt_terrain_blatt.gd`) wählt Spiegelung und Tönung je Kachelkoordinate deterministisch über `Kern_Zufall.abgeleitet_fuer`.
-- [ ] **CP-2.4:** `y_sort_enabled` im `Welt_Renderer` aktivieren; Sprite-Ursprünge auf Fußpunkte setzen (korrekte Überdeckung von Bäumen und Felsen).
+- [x] **CP-2.4:** `y_sort_enabled` in `Welt`, `Welt_Renderer`, `Tier_Manager` und `Einheit_Manager` hierarchisch aktiviert; Fliesen-Container fest im Hintergrund (`z_index = -1`); Fußpunkt-Ursprünge in `Einheit_Darsteller` und `Tier_Darsteller` kalibriert. Beweis: `test_y_sort_und_landeplatz.py`.
 - [x] **CP-2.5 (nachgezogen):** Die zehn Kachelbilder unter `world/assets/terrain/kacheln/` sind importiert (64 px) und der Renderer malt fehlende Bilder als sichtbaren Platzhalter statt als Leerstelle.
 
 ### Slice 3: Landschaft (Gewässer, Felsmassive, Erzadern & Ruinen)
@@ -90,7 +90,7 @@ Alle nachfolgenden Checkpoints sind im aktuellen Code implementiert, getestet un
 - [x] **CP-4.2:** Startbereich ist eine Region unter vielen, wird deterministisch nahe der Mitte gewählt und meidet Barrieren; die Nachbarliste wächst bei erneuter Planung nicht. Beweis: derselbe Lauf über 12 Seeds.
 - [x] **CP-4.3a:** Startvorrat: Das Lagerfeuer trägt `startbestand` in `world/data/gebaeude.json`, `Gebaeude_Manager._startbestand_einbuchen` bucht ihn über die vorhandene Ressourcen-Schnittstelle ins nächste Lager. Beweis: `test_makrokarte_und_barrieren.py`.
 - [x] **CP-4.4 (Barrieren):** `gebirge` und `ozean` in `world/data/biome.json` mit `barriere: true`; Gewichte-Einträge tragen `ebene` (`lokal`/`makro`), die lokale Karte zieht nur lokale Biome, der `Welt_NetzwerkPlaner` meidet Barrieren für Fraktionen, Startbereich und Wege, `welt_map.gd` zeichnet Dreiecke und Wellen. Beweis: 560 Barriere-Regionen über 12 Seeds, kein Weg kreuzt eine Barriere.
-- [ ] **CP-4.3b:** Eigene `Welt_LandeplatzAnzeige` zur sichtbaren Markierung des Startplatzes auf der lokalen Karte.
+- [x] **CP-4.3b:** Eigene `Welt_LandeplatzAnzeige` zur sichtbaren Markierung des Startplatzes auf der lokalen Karte; dezentes Atmen und Kanten-Rahmung, verblasst automatisch beim ersten Lagerfeuer. Beweis: `test_y_sort_und_landeplatz.py` und `tools/lauf_pruefung_hud.gd`.
 
 ### Slice 5: Bauen und Logistik (Blueprint & Materialtransport)
 - [ ] **CP-5.1:** Bauplan-Zustand `BAUPLAN` im `Welt_Model` mit Materialbedarf; keine Vorab-Abbuchung der Baukosten.

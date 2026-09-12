@@ -18,6 +18,7 @@ var _darsteller_ebene: Node2D
 ## Kategorie logik: Platzierung, Tick-Abwicklung, Angriff und Ernte.
 
 func _ready() -> void:
+	y_sort_enabled = true
 	_darsteller_ebene_anlegen()
 
 func _darsteller_ebene_anlegen() -> void:
@@ -27,6 +28,7 @@ func _darsteller_ebene_anlegen() -> void:
 		return
 	_darsteller_ebene = Node2D.new()
 	_darsteller_ebene.name = "TierDarstellerEbene"
+	_darsteller_ebene.y_sort_enabled = true
 	add_child(_darsteller_ebene)
 
 func _enter_tree() -> void:

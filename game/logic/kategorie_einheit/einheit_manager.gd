@@ -29,6 +29,9 @@ var _einwanderer_takt: int = 0
 var _schlag_ort_empfaenger: Callable = Callable()
 var _schlag_empfaenger: Callable = Callable()
 
+func _ready() -> void:
+	y_sort_enabled = true
+
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
 	# damit der Manager auch in Headless-Testläufen ohne Autoloads ladbar

@@ -47,13 +47,14 @@ var _sichtgebiet_dirty := true
 var _knoten_nach_id: Dictionary = {}
 
 func _ready() -> void:
+	y_sort_enabled = true
 	_fliesen_knoten = Node2D.new()
 	_fliesen_knoten.name = "Fliesen"
+	_fliesen_knoten.z_index = -1
 	_objekte_knoten = Node2D.new()
 	_objekte_knoten.name = "Objekte"
-	# Der Objekt-Container ist die einzige Stelle, an der Zeichenreihenfolge
-	# entsteht: Er sortiert nach der Fußposition, nicht nach der Reihenfolge
-	# der Objekte im Modell.
+	# Der Objekt-Container sortiert nach der Fußposition und reicht die
+	# Sortierung über den gemeinsamen Y-Sort-Knoten an die Szene weiter.
 	_objekte_knoten.y_sort_enabled = true
 	_objekt_darsteller = OBJEKT_DARSTELLER_SKRIPT.new()
 	add_child(_fliesen_knoten)

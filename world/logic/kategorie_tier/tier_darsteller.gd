@@ -27,6 +27,8 @@ func einrichten(tier_id: String, verhalten: Tier_Registry, neue_status: Tier_Sta
 			frames.add_frame("laufen", atlas)
 	sprite_frames = frames
 	animation = "laufen"
+	centered = true
+	offset = Vector2(0.0, -groesse.y * 0.5)
 	_basis_modulate = Color(1, 1, 1, 1)
 	status.zustand_geaendert.connect(_auf_zustand)
 

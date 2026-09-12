@@ -28,14 +28,17 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [node name="Welt" type="Node2D"]
+y_sort_enabled = true
 script = ExtResource("1_karte")
 
 [node name="Karte" type="Node2D" parent="."]
 unique_name_in_owner = true
+y_sort_enabled = true
 script = ExtResource("2_renderer")
 
 [node name="Tiere" type="Node2D" parent="."]
 unique_name_in_owner = true
+y_sort_enabled = true
 script = ExtResource("3_tiere")
 
 [node name="Kamera" type="Camera2D" parent="."]
