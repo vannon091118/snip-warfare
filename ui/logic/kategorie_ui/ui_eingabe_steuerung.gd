@@ -63,7 +63,7 @@ func einrichten(p: Dictionary) -> void:
 		_schnellwahl = p["schnellwahl"]
 	# Die drei Ablauf-Maschinen tragen Bau, Expansion und Job-Vergabe.
 	_bau = Ui_BauAuftragMaschine.new()
-	_bau.einrichten(p.get("gebaeude"), _hud)
+	_bau.einrichten(p.get("gebaeude"), _hud, p.get("moebel_platzierer"))
 	_expansion = Ui_ExpansionMaschine.new()
 	_expansion.einrichten(p.get("map_fabrik"), _hud, p.get("modell_ersetzen", Callable()))
 	_jobs = Ui_JobVergabeMaschine.new()

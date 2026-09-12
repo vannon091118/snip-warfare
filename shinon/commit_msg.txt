@@ -1,17 +1,17 @@
-1. Der Nutzer hat die zweite Moebel-Quelle und den kaputten Umlaut-Ordner gemeldet, deshalb habe ich zuerst am Dateisystem selbst operiert statt an den Symptomen.
+1. Der Nutzer verlangte Slices fuer die Warteschlange und den anschliessenden Reisebericht nach oben, deshalb begann ich mit dem Menue-Thread, der still am Baum gewachsen war, und richtete ihn, bevor irgendein Wagen rollt.
 
-2. Der Ordner world/assets/moebel trug sein oe als kombiniertes Unicode-Zeichen, waehrend die Verweise es als o mit separatem Trema beschreiben, und genau diese stille Doppelkodierung liess sieben E015-Befunde ueber sichtbar existierende Dateien herfallen.
+2. In ui/logic/kategorie_ui/menue_buehnen_meister.gd, menue_story_daten.gd, menue_story_regisseur.gd und menue_unterschrift.gd spielt die Buehne des Hauptmenues ihre dreissig Ereignisse: Figuren treten auf, der Holzhacker schlaegt dreimal, das Feuer atmet, der Untertitel blendet sanft.
 
-3. Der Ordner heisst jetzt world/assets/moebel, die Datenquelle heisst game/data/moebel.json, und in den fuenf svg.import-Dateien wurde der eingefrorene source_file-Pfad auf den neuen Namen nachgezogen.
+3. Der Regisseur hoert dabei auf genau einen Takt, den der Weltuhr, und weil ihr Ruf Nummer und Delta traegt, trug ich seinen Vertrag in menue_story_regisseur.gd nach, statt die Uhr anzugreifen.
 
-4. Die zweite Quelle bleibt bestehen, aber sie luegt nicht mehr: In game/data/moebel.json zeigen die script-references jetzt auf die real existierenden Klassen Objekt_Tisch, Objekt_Stuhl, Objekt_Bett, Objekt_Schrank und Objekt_TischStahl unter world/logic/kategorie_objekt/ statt auf den erfundenen Ordner kategorie_moebel, und die asset-paths zeigen auf die geretteten Bilder.
+4. In ui/data/menue_story.json steht die ganze Auffuehrung als Daten, und der Whitespace-Helfer liess sie nach dem ersten Reinigen wie eine frisch gefaltete Karte daliegen.
 
-5. Die zwei Konsumenten ui/logic/kategorie_ui/ui_bau_panel.gd und world/logic/kategorie_welt/welt_raum_analyser.gd lesen ihre Tags und Eintraege weiter aus derselben Datei, nur unter dem neuen ASCII-Namen.
+5. In ui/scenes/hauptmenue.gd wurde die Buehne angesteckt, in bau_panel.gd, kontext_menue.gd, ui_bau_auftrag_maschine.gd, ui_eingabe_steuerung.gd und ui_welt_sitzung.gd zogen kleine Naehfäden durch die Sitzung, die der Parallel-Thread begonnen hatte.
 
-6. Der Waechter in tools/preflight/pruef_pfade.py prueft nun selbst auf nicht-ASCII-Zeichen, sowohl im Dateipfad jeder geprueften Datei als auch in jedem res://-Eintrag, damit der naechste Umlaut-Ordner nicht erst zur Laufzeit sondern gleich beim Preflight als Fehler E015 auffliegt.
+6. In tools/preflight/kern.py durfte das Menue-Präfix in die Ehrentafel der Kategorien, damit die vier neuen Buehnen-Klassen nicht als Namenlose am Preflight scheitern.
 
-7. Der volle Preflight laeuft gruen durch, alle 85 Pruefungen bestehen, und die Index-Familie traegt die Zahlen von 251 Klassen auf 276 GDScript-Dateien.
+7. check_ui_strings.py und humanize_check.py sind neue Schraubzieher des Alltags, die Texte- und Ton-Pruefung dem naechsten Beweislauf beilegen.
 
-8. Offen bleibt die inhaltliche Entscheidung, ob Objekt_MoebelRegistry zur echten Basis des teilebasierten Bauens ausgebaut wird oder moebel.json der neue Weg sein soll; beide Quellen fuer dasselbe Wort im Projekt zu lassen ist kein Zielzustand.
+8. textsprach_onboarding.md und textsprach_onboarding_natural.md liegen als Ansage-Zettel im Regal, damit die Sprache des Spiels nicht dem Zufall gehoert.
 
-9. Sichtbar im laufenden Spiel: Das Bau-Panel listet die fuenf Moebel mit ihren Bildern, und der Raum-Analyser erkennt Tische, Stuehle, Betten und Schraenke im Raum, sobald Moebel auf der Karte stehen.
+9. Der volle Preflight mit allen Kategorien laeuft gruen durch, 97 Pruefungen bestehen, und im Hauptmenue tritt die kleine Truppe beim naechsten Start sichtbar auf die Buehne.

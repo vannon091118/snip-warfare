@@ -11,13 +11,15 @@ var _panel_logik := Ui_BauPanel.new()
 var _definitionen: Gebaeude_DefinitionRegistry = null
 var _fortschritt: Welt_FortschrittsMaschine = null
 var _steuerung: Kern_SteuerungRegistry = null
+var _registry: Welt_Registry = null
 
 @onready var _button_container: HBoxContainer = %ButtonContainer
 
-func einrichten(definitionen: Gebaeude_DefinitionRegistry, fortschritt: Welt_FortschrittsMaschine, steuerung: Kern_SteuerungRegistry) -> void:
+func einrichten(definitionen: Gebaeude_DefinitionRegistry, fortschritt: Welt_FortschrittsMaschine, steuerung: Kern_SteuerungRegistry, registry: Welt_Registry = null) -> void:
 	_definitionen = definitionen
 	_fortschritt = fortschritt
 	_steuerung = steuerung
+	_registry = registry
 	aktualisieren()
 
 func _ready() -> void:
@@ -32,7 +34,7 @@ func aktualisieren() -> void:
 	for kind in _button_container.get_children():
 		kind.queue_free()
 
-	var eintraege := _panel_logik.eintraege_ermitteln(_definitionen, _fortschritt, _steuerung)
+	var eintraege := _panel_logik.eintraege_ermitteln(_definitionen, _fortschritt, _steuerung, _registry)
 	for eintrag: Dictionary in eintraege:
 		var btn := Button.new()
 		var geb_id := str(eintrag.get("id", ""))

@@ -13,6 +13,7 @@ const GRENZE_LINKS := -140.0
 var _zustaende := Ui_MenueZustaende.new()
 var _zustand: Ui_MenueZustaende.Zustand = Ui_MenueZustaende.Zustand.HAUPTMENUE
 var _laeufer: Array[AnimatedSprite2D] = []
+var _story_regisseur: Menue_StoryRegisseur = null
 
 ## Kategorie logik: Menüführung, Dialoge und Läufer-Darstellung.
 
@@ -30,7 +31,41 @@ func _ready() -> void:
 	_dialog_laden.welt_gewaehlt.connect(_auf_welt_geladen)
 	_dialog_editor.welt_gewaehlt.connect(_auf_editor_welt_gewaehlt)
 	_erzeuge_laeufer()
+	_story_einrichten()
 	_menue_gegenpruefung()
+
+func _story_einrichten() -> void:
+	# Die Story lebt hinter den Knöpfen: Die Bühne liegt unter der Knopfleiste,
+	# der Erzähler sitzt unten ins Papier. Genau ein Takt: die Weltuhr.
+	var buehne := Menue_BuehnenMeister.new()
+	var ebene := Node2D.new()
+	ebene.name = "StoryEbene"
+	ebene.y_sort_enabled = true
+	add_child(ebene)
+	# Die Buehne liegt hinter den Knoepfen: direkt hinter dem Hintergrund.
+	move_child(ebene, 1)
+	ebene.add_child(buehne)
+	var unterschrift := Menue_Unterschrift.new()
+	unterschrift.name = "StoryUnterschrift"
+	unterschrift.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	unterschrift.offset_top = -110.0
+	unterschrift.offset_bottom = -60.0
+	unterschrift.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(unterschrift)
+	buehne.unterschrift = unterschrift
+	var regisseur := Menue_StoryRegisseur.new()
+	regisseur.name = "StoryRegisseur"
+	add_child(regisseur)
+	regisseur.anstupsen(buehne)
+	_story_regisseur = regisseur
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Spieler-Eingabe atmet gegen die Story: Sie bleibt als Bühne stehen,
+	# aber ihre Uhr beginnt wieder bei null, sobald der Spieler etwas tut.
+	if _story_regisseur == null:
+		return
+	if event is InputEventMouseButton or event is InputEventKey or event is InputEventScreenTouch:
+		_story_regisseur.von_vorn()
 
 func _menue_gegenpruefung() -> void:
 	# Menü-Gegenprüfung: Das Öffnen meldet sich über den Signalbus, damit
