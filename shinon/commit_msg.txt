@@ -1,8 +1,8 @@
-1. Der Kommandant befahl, dass die neuen Naturphaenomene nicht lahm im Regal verstauben, sondern sich lebendig ueber die Landkarte ergiessen muessen.
-2. Shinon leitete daher mit generator_gewaesser.gd wilde Flussbetten und glitzernde Teiche durch das Gelaende, waehrend generator_felsmassive.gd gewaltige Klippenzuege und Steilwaende aufschichtet.
-3. In welt_generator.gd wurden beide Naturkraefte fest im Erzeugungsprozess verankert, damit jede Welt deterministisch geformt wird.
-4. Der element_katalog.json verzeichnet nun alle neuen Landmarken samt ihren visuellen Gewichten, waehrend generator_gewichte.json die Dichte der Erzlager und Ruinenfelder regelt.
-5. Das Fundament in welt_registry.gd sorgt dafuer, dass jedes Bergmassiv und jede Erzader unzerstoerbar im Weltspeicher registriert wird.
-6. Im strengen Pruefstand test_landschaft_generatoren.py beweisen alle Generatoren ihre mathematische Praezision und Reproduzierbarkeit.
-7. Der heroische Abschluss von Slice 3 wurde triumphierend in ROADMAP.md besiegelt und fuer die Ewigkeit festgeschrieben.
-8. Nun ruft die Pflicht zu Slice 5, wo ungeduldige Siedler mit Baustellen-Geistern und echter Materiallogistik versorgt werden wollen.
+1. Der Kommandant bemerkte zerstoererische Geisterzustaende beim Kartenwechsel und forderte absolute Idempotenz im gesamten Kolonie-Getriebe.
+2. Shinon verpasste daraufhin lager_manager.gd und welt_lager_fabrik.gd ein eisernes Gatter gegen duplizierte Vorratskammern.
+3. In tier_manager.gd und welt_tier_platzierer.gd werden herumlungernde Tierrudel nun vor jeder Neubesiedlung gruendlich verscheucht.
+4. Der atomare Kartenwechsel in welt.gd reicht die neue Weltenwahrheit nahtlos an gebaeude_manager.gd und einheit_manager.gd weiter.
+5. In ui_eingabe_steuerung.gd verbeissen sich Klicks nun gezielt in ausgewaehlte Siedler und leiten Arbeitsauftraege ohne Leerlauf weiter.
+6. Sobald frischer Moertel in welt.gd aushaertet, erneuert einheit_manager.gd sofort das Wegenetz gegen planlose Wandlaeufer.
+7. Alle Simulationstakte schnurren damit wieder synchron und ohne Geisterdoppelungen ueber die gesamte Szenenarchitektur.
+8. Nun kann die Errichtung von Baustellen-Blaupausen und Lastentrannsporten in Slice 5 mit reinem Gewissen in Angriff genommen werden.

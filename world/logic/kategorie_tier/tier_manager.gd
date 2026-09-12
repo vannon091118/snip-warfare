@@ -65,6 +65,19 @@ func tier_platzieren(tier_id: String, welt_position: Vector2) -> int:
 	})
 	return tier_nummer
 
+func alle_entfernen() -> void:
+	## Idempotenz-Gate: Entfernt alle Tier-Darsteller aus dem Szenenbaum
+	## und leert die interne Liste. Damit ist welt_tier_platzierer.platzieren()
+	## bei jedem Aufruf frei von Duplikaten. Stabile IDs beginnen danach neu.
+	for tier: Dictionary in _tiere:
+		var knoten: Variant = tier.get("darsteller")
+		if knoten != null and is_instance_valid(knoten):
+			(knoten as Node).queue_free()
+	_tiere.clear()
+	_naechste_tier_nummer = 1
+
+
+
 func spieler_position_setzen(neue_position: Vector2) -> void:
 	_spieler_position = neue_position
 

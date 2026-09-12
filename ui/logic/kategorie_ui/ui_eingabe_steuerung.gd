@@ -66,6 +66,14 @@ func einrichten(p: Dictionary) -> void:
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
 
+func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager) -> void:
+	## Kartenwechsel-Handshake: Tauscht Modell und Tier-Manager atomar aus,
+	## damit Klick-Auswahl und Job-Vergabe auf der neuen Karte arbeiten.
+	_model = neues_modell
+	_tiere = neue_tiere
+
+
+
 func bau_auftrag_setzen(gebaeude_id: String) -> void:
 	_aktiver_bau_auftrag = gebaeude_id
 	if _hud != null:
@@ -207,8 +215,34 @@ func auf_kontext_aktion(aktion: Dictionary) -> void:
 		elif _hud != null:
 			(_hud as Variant).meldung_setzen("Wachstum braucht 3 Nahrung im naechsten Lager.")
 		return
+	## Befund 4: Ressourcenaktionen aus dem Kontextmenü vergaben bisher nur
+	## eine HUD-Meldung ohne Wirkung. Jetzt werden tatsächlich Jobs vergeben.
+	if logik == "ressource_holz" or logik == "ressource_stein":
+		_ressource_aktion_ausfuehren()
+		return
 	if _hud != null:
 		(_hud as Variant).meldung_setzen("Kontext: %s ueber Logik %s" % [label_text, logik])
+
+func _ressource_aktion_ausfuehren() -> void:
+	## Befund 4: Sammeln/Abbauen aus dem Kontextmenü. Das Menü öffnet sich
+	## ohne aktive Einheit; daher prüfen wir hier explizit und geben
+	## eine sprechende Meldung, wenn noch keine Einheit gewählt ist.
+	if _stockmaenner == null or _auswahl == null or _hud == null:
+		return
+	var idx := _auswahl.aktiver_einheit_index
+	if idx < 0 or idx >= _stockmaenner.einheit_zahl():
+		(_hud as Variant).meldung_setzen("Zuerst eine Einheit auswaehlen, dann Sammeln oder Abbauen waehlen.")
+		return
+	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
+	var objekt_index := _model.objekt_bei(_rechtsklick_welt_position, radius) if _model != null else -1
+	if objekt_index < 0:
+		(_hud as Variant).meldung_setzen("Kein Zielobjekt in Reichweite.")
+		return
+	var element_id := _model.objekt_element_id(objekt_index)
+	var element_pos := _model.objekt_position(objekt_index)
+	_job_vergeben_fuer_objekt(objekt_index, element_pos, element_id, false)
+
+
 
 func _marschieren_ausfuehren() -> void:
 	# Der Marschbefehl der Kontextaktion nimmt denselben Weg wie der direkte
@@ -317,6 +351,21 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 		return
 	var radius := _steuerung.steuerung.auswahl_radius if _steuerung != null and _steuerung.steuerung != null else 60.0
 	var ketten_nachfrage := Input.is_key_pressed(KEY_SHIFT)
+	## Befund 5: Linksklick wählt zuerst eine Einheit (Priorität 1).
+	## Erst wenn keine Einheit im Klickradius liegt, wird ein Job an die
+	## aktive Einheit vergeben (Priorität 2). Vorher vergab Linksklick immer
+	## sofort Jobs an den unveränderlichen aktiver_einheit_index 0.
+	var einheit_treffer := _stockmaenner.einheit_bei(klick, radius)
+	if einheit_treffer >= 0:
+		_auswahl.aktiver_einheit_index = einheit_treffer
+		(_hud as Variant).meldung_setzen("Einheit %d gewaehlt." % (einheit_treffer + 1))
+		return
+	# Kein Einheitentreffer: Job an aktive Einheit vergeben, sofern eine gewählt ist
+	var aktiv := _auswahl.aktiver_einheit_index
+	if aktiv < 0 or aktiv >= _stockmaenner.einheit_zahl():
+		if not ketten_nachfrage:
+			(_hud as Variant).meldung_setzen("Zuerst eine Einheit auswaehlen.")
+		return
 	var tier_nummer := _tiere.tier_id_bei(klick, radius)
 	if tier_nummer >= 0:
 		_job_vergeben_fuer_tier(tier_nummer, _tiere.tier_position(tier_nummer), ketten_nachfrage)
@@ -330,6 +379,8 @@ func _klick_verarbeiten(klick: Vector2) -> void:
 			return
 	if not ketten_nachfrage:
 		(_hud as Variant).meldung_setzen("Hier gibt es nichts zu tun")
+
+
 
 func _job_vergeben_fuer_tier(tier_nummer: int, ziel_position: Vector2, _kette: bool) -> void:
 	var tier_art := _tiere.tier_art(tier_nummer)

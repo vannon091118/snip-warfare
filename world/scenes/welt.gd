@@ -233,22 +233,54 @@ func _karten_ebene_bauen() -> void:
 	_karten_info = info
 
 func _modell_ersetzen(neues_modell: Welt_Model) -> void:
-	# Expansion: Die neue Basis-Karte ersetzt das Szenen-Modell; alle
-	# Beobachter und Manager werden auf die neue Karte umgestellt. Die
-	# alte Karte bleibt in der World gespeichert.
+	## Atomarer Kartenwechsel-Handshake: Alle modellhaltenden Domänen werden
+	## auf das neue Modell umgestellt, bevor die Darstellung folgt. Vorher
+	## blieben Einheitenmanager, Eingabe, Gebäude und Progression auf der
+	## alten Karte und arbeiteten gegen eine neue Darstellung.
 	if neues_modell == null:
 		return
 	_model = neues_modell
+	# Darstellung zuerst: Die neue Karte ist die Wahrheit.
 	_karte.darstellen(_model, _registry, _biome)
 	_kamera.position = Vector2(_model.groesse()) * float(_model.kachel_groesse) / 2.0
+	# Lager + Tiere: Lagerfabrik und Tier-Platzierer setzen intern zurück (Befund 3).
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera.position)
 	_tier_platzierer.platzieren(_model, _registry, _tiere)
+	# Wärme neu berechnen
 	_waerme_sammler.sammeln(_model, _stockmaenner)
+	# Einheitenmanager: Modell, Tiere, Wegnetz, Zielsuche und Ernte neu (Befund 2).
+	_stockmaenner.modell_wechseln(_model, _tiere)
+	# Eingabe-Domain: Modell und Tiere neu (Befund 2).
+	_eingabe_steuerung.modell_wechseln(_model, _tiere)
+	# Gebäudemanager: Modell neu (Befund 2).
+	_gebaeude.modell_wechseln(_model)
+	# Progression: Biom-Checks auf neuer Karte (Befund 2).
+	_progression.einrichten(_model, _biome, _tageszyklus)
+	# Karten-Minimap und Beobachter
+	if _karten_viewer != null:
+		_karten_viewer.einrichten(_model, _registry, _biome)
 	_karten_beobachter.einrichten(_model, _generator, _tiere)
 	_auswahl.auswahl_leeren()
 
 func _input(ereignis: InputEvent) -> void:
 	_eingabe_steuerung.eingabe(ereignis, self, _auf_verteilung)
+
+func _auf_gebaeude_platziert(objekt_index: int) -> void:
+
+	# Das neue Gebäude sofort visuell einhängen und die Domänen nachziehen.
+	_karte.objekt_knoten_anhaengen(objekt_index)
+	_karte.sichtgebiet_aktualisieren()
+	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
+	_waerme_sammler.sammeln(_model, _stockmaenner)
+	## Befund 6: Das Wegenetz kennt neue Gebäude erst nach diesem Aufruf.
+	## Vorher liefen Einheiten planerisch durch jedes nach dem ersten Haus
+	## errichtete Gebäude, weil das Netz beim initialen einrichten() eingefroren blieb.
+	_stockmaenner.weg_planung_aktualisieren()
+	if _landeplatz != null:
+		_landeplatz.ausblenden()
+		_landeplatz = null
+
+
 
 func _process(delta: float) -> void:
 	_kamera_steuerung.kamera_bewegen(delta, _kamera)
@@ -335,15 +367,8 @@ func _auf_zurueck() -> void:
 func _auf_gebaeude_meldung(meldung_text: String) -> void:
 	_hud.meldung_setzen(meldung_text)
 
-func _auf_gebaeude_platziert(objekt_index: int) -> void:
-	# Das neue Gebäude sofort visuell einhängen und die Domänen nachziehen.
-	_karte.objekt_knoten_anhaengen(objekt_index)
-	_karte.sichtgebiet_aktualisieren()
-	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
-	_waerme_sammler.sammeln(_model, _stockmaenner)
-	if _landeplatz != null:
-		_landeplatz.ausblenden()
-		_landeplatz = null
+
+
 
 func _auf_ziel_erreicht(stufe: Dictionary) -> void:
 	_hud.meldung_setzen("Ziel erreicht: %s" % str(stufe.get("id", "")))

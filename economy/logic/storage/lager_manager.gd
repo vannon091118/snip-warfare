@@ -30,8 +30,15 @@ func lager_anlegen(typ_id: String, welt_position: Vector2) -> int:
 	_lager.append(eintrag)
 	return _lager.size() - 1
 
+func zuruecksetzen() -> void:
+	## Idempotenz-Gate: Leert den gesamten Lagerbestand, damit wiederholte
+	## Aufrufe von anlegen_aus_welt() keine Duplikate erzeugen. Wird vor
+	## jedem Neuaufbau aus dem Modell aufgerufen.
+	_lager.clear()
+
 func lager_zahl() -> int:
 	return _lager.size()
+
 
 func lager_position(index: int) -> Vector2:
 	if index < 0 or index >= _lager.size():

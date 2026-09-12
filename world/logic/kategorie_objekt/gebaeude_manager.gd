@@ -57,6 +57,15 @@ func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_
 	_lager = lager
 	_fortschritt = fortschritt
 
+func modell_wechseln(neues_modell: Welt_Model) -> void:
+	## Kartenwechsel-Handshake: Tauscht die Modell-Referenz atomar aus.
+	## Der Tick-Empfang läuft ohne Unterbrechung weiter; neue Gebäude
+	## werden auf der neuen Karte gesucht und getickt.
+	_model = neues_modell
+	_letzte_statuszeilen = ""
+
+
+
 func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	# Spieler löst den Bau aus: Freigabe, Kosten und Lager werden vorher
 	# vollständig geprüft und dann entnommen; das Gebäude erscheint im

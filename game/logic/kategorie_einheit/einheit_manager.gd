@@ -25,7 +25,7 @@ var _ziel_suche: Einheit_ZielSuche = null
 var _ernte: Einheit_ErnteMaschine = null
 var _versorgung: Einheit_Versorgung = null
 var _fortschritt: Welt_FortschrittsMaschine = null
-var _einwanderer_takt: int = 0
+
 var _schlag_ort_empfaenger: Callable = Callable()
 var _schlag_empfaenger: Callable = Callable()
 
@@ -254,6 +254,42 @@ func einheit_hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> void:
 func einheit_zahl() -> int:
 	return _einheiten.size()
 
+func einheit_bei(welt_position: Vector2, radius: float) -> int:
+	## Linksklick-Einheitenwahl: Liefert den Index der nächsten Einheit
+	## innerhalb von radius Pixeln um welt_position, sonst -1.
+	var bester := -1
+	var beste_distanz := radius + 1.0
+	for idx in _einheiten.size():
+		var status: Einheit_Status = _einheiten[idx]["status"]
+		if status == null:
+			continue
+		var distanz := status.welt_position.distance_to(welt_position)
+		if distanz <= radius and distanz < beste_distanz:
+			beste_distanz = distanz
+			bester = idx
+	return bester
+
+func weg_planung_aktualisieren() -> void:
+	## Öffentlicher Aufruf nach Gebäudeplatzierung: Das Netz kennt das
+	## neue Hindernis erst nach diesem Aufruf. Bisher war _weg_planung_erneuern
+	## privat und wurde nur bei einrichten() aufgerufen.
+	_weg_planung_erneuern()
+
+func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager) -> void:
+	## Kartenwechsel-Handshake: Alle internen Modellreferenzen werden atomar
+	## auf das neue Modell umgestellt. Wegnetz, Zielsuche und Ernte werden
+	## neu aufgebaut, damit kein Job auf der alten Karte weiterläuft.
+	_model = neues_modell
+	_tiere = neue_tiere
+	_weg_planung_erneuern()
+	if _ziel_suche != null:
+		_ziel_suche.einrichten(_model, _tiere)
+		_ziel_suche.einheiten_quelle_setzen(self)
+	if _ernte != null:
+		_ernte.einrichten(_ressourcen, _model, _tiere)
+
+
+
 ## Geschlossener Schnittpunkt: Nur diese Leseschnittstellen duerfen Einheiten
 ## lesen. Direkter Zugriff auf _einheiten bleibt der Manager-Interna.
 func einheit_status(index: int) -> Einheit_Status:
@@ -451,20 +487,21 @@ func versuche_wachstum(haus_welt_position: Vector2) -> bool:
 ## Kette. Die Rate steht menschenlesbar in progression.json je Stufe; ohne
 ## aktive einwanderung-Stufe kommt niemand. Der Ankömmling meldet sich an
 ## die Maschine zurück, damit die Stufe weiterzählt.
-func _einwanderung_ticken(takt_ticks: int) -> void:
-	if _fortschritt == null or takt_ticks <= 0:
+func _einwanderung_ticken(_takt_ticks: int) -> void:
+	## Einwanderung: Pro Verbrauchstakt erscheint je_tag Einwanderer direkt,
+	## sofern die aktive Progressions-Stufe den Typ einwanderung trägt.
+	## Der frühere _einwanderer_takt-Zähler verdoppelte die Wartezeit auf
+	## takt_ticks² und ist entfernt worden.
+	if _fortschritt == null:
 		return
 	var stufe := _fortschritt.aktive_stufe()
 	if str(stufe.get("ziel_typ", "")) != "einwanderung":
 		return
-	_einwanderer_takt += 1
-	if _einwanderer_takt < takt_ticks:
-		return
-	_einwanderer_takt = 0
 	var je_tag := int(stufe.get("einwanderer_je_tag", 0))
 	for _i: int in je_tag:
 		einheit_hinzufuegen(lager_anker_position() + Vector2(24, 20))
 		_fortschritt.einwanderer_angekommen()
+
 
 func lager_anker_position() -> Vector2:
 	# Der erste Lagerpunkt ist der Anker der Einwanderung (Lagerfeuer oder

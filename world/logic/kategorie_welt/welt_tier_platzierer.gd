@@ -7,9 +7,14 @@ class_name Welt_TierPlatzierer
 func platzieren(model: Welt_Model, registry: Welt_Registry, tiere: Tier_Manager) -> void:
 	if model == null or registry == null or tiere == null:
 		return
+	## Idempotenz-Gate: Vorhandene Tiere werden vollständig entfernt, bevor
+	## die Modell-Objekte neu platziert werden. Ohne diesen Schritt erzeugt
+	## jeder Aufruf (Init, Kartenwechsel) doppelte Tier-Instanzen.
+	tiere.alle_entfernen()
 	for index in model.objekt_anzahl():
 		var element_id := model.objekt_element_id(index)
 		var eintrag := registry.finde_objekt(element_id)
 		if eintrag == null or eintrag.typ != &"bewegt":
 			continue
 		tiere.tier_platzieren(element_id, model.objekt_position(index))
+
