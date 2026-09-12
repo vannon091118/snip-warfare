@@ -19,8 +19,12 @@ def pruefe_pfade(dateien):
         if not str(rel_pfad).isascii():
             fehler("E015", rel_pfad, 1,
                    "Dateipfad enthaelt nicht-ASCII-Zeichen; Namen ohne Umlaute fuehren (res-Regel)")
-        for treffer in re.finditer(r'"(res://[^"]+)"', code):
-            _pruefe_res_pfad(treffer.group(1), rel_pfad, code, treffer.start())
+    for treffer in re.finditer(r'"(res://[^"]+)"', code):
+        # Format-Platzhalter wie %s sind Schablonen, keine wirklichen Pfade;
+        # sie werden als Anker geprueft, nicht als Datei auf der Festplatte.
+        if "%s" in treffer.group(1) or "%d" in treffer.group(1):
+            continue
+        _pruefe_res_pfad(treffer.group(1), rel_pfad, code, treffer.start())
     for tscn_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.tscn") if not _verzeichnis_ignoriert(p)):
         rel_pfad = tscn_pfad.relative_to(PROJEKT_STAMM)
         try:

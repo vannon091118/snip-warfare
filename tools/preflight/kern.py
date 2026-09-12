@@ -16,6 +16,7 @@ KATEGORIE_PRAEFIXE = {
     "Tier_": "world/logic/kategorie_tier",
     "Einheit_": "game/logic/kategorie_einheit",
     "Job_": "game/logic/kategorie_job",
+    "Menue_": "ui",
     "Ui_": "ui",
     "Lager_": "economy/logic/storage",
     "Orchestrator_": "world/logic/kategorie_orchestrator",

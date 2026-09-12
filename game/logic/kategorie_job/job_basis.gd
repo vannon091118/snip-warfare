@@ -72,6 +72,3 @@ func arbeitsschritt(ziel_ressource: String) -> void:
 	arbeitsschritt_erledigt.emit(ziel_ressource, Job_Konfiguration.harvest_menge(konfiguration))
 func kann_ausgefuehrt_werden_von(vital: Einheit_VitalStatus) -> bool:
 	return Job_FaehigkeitsPruefung.kann(konfiguration, job_id, vital)
-chritt_erledigt.emit(ziel_ressource, Job_Konfiguration.harvest_menge(konfiguration))
-func kann_ausgefuehrt_werden_von(vital: Einheit_VitalStatus) -> bool:
-	return Job_FaehigkeitsPruefung.kann(konfiguration, job_id, vital)

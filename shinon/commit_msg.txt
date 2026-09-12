@@ -1,11 +1,11 @@
-1. Der Nutzer verlangte Slices fuer die Warteschlange, deshalb rollte als dritter Wagen der Atmosphaeren-Thread, der der Karte Licht, Papierkorn und Tiefe schenken wollte, aber noch ohne Heimat im Baum stand.
+1. Der Nutzer verlangte Slices fuer die Warteschlange, deshalb rollte der vierte Wagen als Instandhaltung: kleine Risse, die der parallel laufende Betrieb in den Werkzeugen hinterliess, dazu der Plan der kommenden Sozial-Domaene.
 
-2. In world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd, welt_papier_licht.gd und welt_tiefen_neige.gd zogen drei neue Schichten ein: Koernung wie auf altem Papier, Licht das bricht, wo Berge stehen, und Neige, die die Ferne versinken laesst.
+2. In game/logic/kategorie_job/job_basis.gd fielen drei Geisterzeilen ans Bodenpersonal, ein halb geloeschter Rest am Dateiende, der nichts mehr tat ausser Verwirrung saeen.
 
-3. In welt_atmosphaere_konfig.gd, welt_atmosphaere_verdrahtung.gd und welt_sonnen_effekt.gd wurden die drei Schichten verkabelt, und in world/data/atmosphaere.json steht ihre Stimmung als Daten, nicht als Zahl im Code.
+3. In tools/preflight/kern.py trug ich das Menue-Praefix in die Ehrentafel der Kategorien, damit die Buehnen-Klassen des Menue-Threads nicht als Namenlose am E001 scheitern.
 
-4. Die Landschafts-Bilder berg.svg, erzader.svg, felswand.svg, ruine.svg, steinkreis.svg und ressource_beeren.svg bekamen ihre frischen Striche, und in world/data/element_katalog.json tragen die Eintraege ihre script-Verweise bis zu den neuen Klassen.
+4. In tools/preflight/pruef_pfade.py lernte der Pfad-Waechter der Unterscheidung, die der Moebel-Umlaut-Fehler uns lehrte: Format-Platzhalter wie das Prozent-s sind Schablonen, keine Pfade auf der Festplatte, und duerfen nicht als fehlende Dateien gelten.
 
-5. world/assets/vorschau.html zeigt die neue Palette dem Auge, bevor das Spiel sie zeigt.
+5. task_plan.md, findings.md und progress.md kommen als neue Plan-Tische des Sozial-Slices in den Baum: Ethik und Image je Bewohner, Zeugen-Erinnerung und Gerede, datengetrieben, unter der Konstitution geprueft.
 
-6. Der Preflight bleibt gruen, und beim naechsten Start liegt das Papierkorn ueber der Karte, das Licht faellt schraeg, und die Ferne atmet blauer.
+6. Alle 97 Pruefungen bestehen, der Preflight ist gruen, und der Plan-Tisch wartet darauf, dass der naechste Zug der Sozial-Domaene am Holz arbeitet.
