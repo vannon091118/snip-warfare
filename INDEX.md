@@ -71,17 +71,18 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 247 Klassen mit `class_name` im Projekt, davon 217 in den 14 Domaenen-Ordnern und 30 ohne Domaenen-Ordner, 63 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
+_Stand: V0.01 — 252 Klassen mit `class_name` im Projekt, davon 219 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 64 Signale, 31 Array-Elementtypen und 29 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
 _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 
-### core — Prefix `Kern_` — `core/` (19)
+### core — Prefix `Kern_` — `core/` (20)
 
 | Klasse | Datei |
 | --- | --- |
 | `Kern_AssetPruefer` | `core/logic/kern_asset_pruefer.gd` |
+| `Kern_Hash` | `core/logic/kern_hash.gd` |
 | `Kern_LogikBasis` | `core/logic/kern_logik_basis.gd` |
 | `Kern_LogikRegistry` | `core/logic/kern_logik_registry.gd` |
 | `Kern_ModifikatorBasis` | `core/logic/kern_modifikator_basis.gd` |
@@ -164,7 +165,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` |
 | `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` |
 
-### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (31)
+### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (32)
 
 | Klasse | Datei |
 | --- | --- |
@@ -188,6 +189,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Kachel` | `world/logic/kategorie_objekt/objekt_kachel.gd` |
 | `Objekt_Kadaver` | `world/logic/kategorie_objekt/objekt_kadaver.gd` |
 | `Objekt_Lagerfeuer` | `world/logic/kategorie_objekt/objekt_lagerfeuer.gd` |
+| `Objekt_MoebelPlatzierer` | `world/logic/kategorie_objekt/objekt_moebel_platzierer.gd` |
 | `Objekt_MoebelRegistry` | `world/logic/kategorie_objekt/moebel_registry.gd` |
 | `Objekt_Registry` | `world/logic/kategorie_objekt/objekt_registry.gd` |
 | `Objekt_RegistryBasis` | `world/logic/kategorie_objekt/objekt_registry_basis.gd` |
@@ -362,7 +364,7 @@ _keine `class_name`-Klassen_
 
 _keine `class_name`-Klassen_
 
-### rest — Prefix `-` — `(kein Domaenen-Ordner)` (30)
+### rest — Prefix `-` — `(kein Domaenen-Ordner)` (33)
 
 | Klasse | Datei |
 | --- | --- |
@@ -377,6 +379,8 @@ _keine `class_name`-Klassen_
 | `Welt_FeedbackTexturCache` | `world/logic/kategorie_feedback/feedback_textur_cache.gd` |
 | `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` |
+| `Welt_PapierKornEbene` | `world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd` |
+| `Welt_PapierLicht` | `world/logic/kategorie_atmosphaere/welt_papier_licht.gd` |
 | `Welt_PlusAnzeige` | `world/logic/kategorie_feedback/feedback_plus_anzeige.gd` |
 | `Welt_ProgressionsMaschine` | `world/logic/kategorie_progression/welt_progressions_maschine.gd` |
 | `Welt_ProgressionsRegistry` | `world/logic/kategorie_progression/welt_progressions_registry.gd` |
@@ -391,6 +395,7 @@ _keine `class_name`-Klassen_
 | `Welt_TagesZyklusFaerbung` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_faerbung.gd` |
 | `Welt_TagesZyklusSpeicher` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_speicher.gd` |
 | `Welt_TageszyklusMaschine` | `world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd` |
+| `Welt_TiefenNeige` | `world/logic/kategorie_atmosphaere/welt_tiefen_neige.gd` |
 | `Welt_TodAnzeige` | `world/logic/kategorie_feedback/feedback_tod_anzeige.gd` |
 | `Welt_WaermeFaktor` | `world/logic/kategorie_progression/welt_waerme_faktor.gd` |
 | `Welt_WaermeFeld` | `world/logic/kategorie_waerme/waerme_feld.gd` |
