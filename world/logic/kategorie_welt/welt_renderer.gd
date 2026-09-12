@@ -494,6 +494,9 @@ func sichtbereich_deaktivieren() -> void:
 	# Der Editor und Prüfläufe ohne Kamera hängen alles an, wie bisher.
 	_sicht_sammler.deaktivieren()
 
+func sicht_rand_px() -> float:
+	return Welt_SichtbereichSammler.SICHT_RAND_PX
+
 func sichtgebiet_aktualisieren() -> void:
 	# Erzwingt den Neuabgleich der sichtbaren Objekte bei Gebäudeplatzierung
 	# oder Spawn-Ereignissen, ohne auf Kamerabewegung warten zu müssen.

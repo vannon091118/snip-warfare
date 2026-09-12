@@ -1,6 +1,10 @@
-1. Der Nutzer verlangte, dass alle Systeme von Shinon scharf bleiben, waehrend der Preflight vor jedem Commit automatisch heilt, deshalb bekam das Tor zuerst seine getrackte Kopie und die Dokumente ihren Statuszahlen-Nachzug.
-2. In tools/hooks/pre-commit liegt die Version des Pre-Commit-Hakens im Baum, der vor dem Urteil Whitespace-Fix und Dokumenten-Nachzug ausfuehrt und danach die Preflight-Kategorien samt Shinon ungeschmaeiert laufen laesst.
-3. In README.md und ROADMAP.md zaehlen die Standzeilen wieder die wahre Zahl von 257 Klassen, weil der mechanische Nachzug sie angeglichen hat.
-4. INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md tragen denselben Stand, damit kein Index eine andere Wahrheit erzaehlt als der Code.
-5. Der Hook unter .git bleibt eine lokale Kopie; die getrackte Datei ist die verbindliche Vorlage, aus der jede Maschine ihn wiederherstellen kann.
-6. Sichtbar im Betrieb: Jeder kuenftige Commit heilt zuerst sich selbst, und das Gate schlaegt nur noch bei echtem Unrecht zu.
+1. Der Nutzer verlangte Slices, die die Warteschlange leeren und die Parallel-Arbeit der anderen Threads zur Ruhe tragen, deshalb rollte als naechster Wagen die Welt-Verkabelung mit ihrer Instandhaltung.
+2. In world/logic/kategorie_welt/welt_objekt_knoten.gd erhaelt jedes Objekt seine Schatten-Lage, ein Okkluder über der unteren Bildhaelfte, den der Renderer nur fuer Katalog-Eintraege mit schatten_wurf anschaltet.
+3. In world/logic/kategorie_welt/welt_renderer.gd folgt der Schattenwurf der Katalog-Entscheidung, so werfen nur Objekte Schatten ins Papierlicht, die es der Wahrheit nach duerfen.
+4. In world/logic/kategorie_welt/welt_raum_analyser.gd stammen die Moebel-Tags jetzt allein aus der zentralen Registry, die zweite JSON-Ladung ist aus dem Raum gewischt.
+5. In world/logic/kategorie_welt/welt_ui_aufbau.gd reicht die Kette die Registry an das Bau-Panel durch, damit das Panel sein Angebot aus dem Element-Katalog liest statt aus einer eigenen Tabelle.
+6. In world/scenes/welt.gd haengt der neue Moebel-Platzierer an denselben Renderer-Nachzug wie die Gebaeude, und die Kamerastelle fuehrt die Tiefen-Neige mit.
+7. In world/logic/kategorie_orchestrator/orchestrator_manager.gd loest sich die Weltuhr zur Laufzeit auf, damit der Manager auch in Headless-Laeufen ohne Autoloads ladbar bleibt, und seine tote Kommentarlast ist gestrichen, damit der Nachlass-Eintrag wieder haelt.
+8. In world/logic/kategorie_generator/welt_fraktions_generator.gd und world/logic/kategorie_welt/welt_fraktion.gd faehrt die Fraktion ihren Keimpunkt und Archetyp mit, und das Biome-Array wird mit assign gefuellt statt neu gebunden.
+9. In core/logic/clock/weltuhr.gd findet die Bus-Suche den echten Autoload-Namen, und test_einstiegs_progression.py prueft jetzt den Katalog statt der alten zweiten Moebel-Quelle.
+10. Sichtbar im laufenden Spiel: Objekte werfen ihren weichen Bodenschatten, Moebel landen über denselben Nachzug auf der Karte, und der Orchestrator tickt auch ohne Autoload ruhig weiter.
