@@ -1,43 +1,47 @@
 extends Node2D
 class_name Gebaeude_Manager
-## Manager der Gebäude: Er tickt Bau- und Produktionsmaschinen über die
-## zentrale Weltuhr, prüft und entnimmt Kosten über Einheit_Ressourcen und
-## Lager_Manager und lagert Ausgänge ein. Er greift nie direkt in fremde
-## Daten ein: Das Weltmodell schreibt er nur über eigene Funktionen, die
-## Bestände nur über die Ressourcen-Schnittstelle.
+## Manager der Gebäude: Er hält den Takt-Empfang, die Signale und die
+## Verbindungen zu fremden Domänen. Die Prüfung des Bauplatzes wohnt im
+## Gebaeude_BauplatzPruefer, die Buchung im Gebaeude_BauAuftrag, das
+## Tick-Werk und die Zustandsübergänge in der Gebaeude_Laufzeit, die
+## HUD-Zeilen im Gebaeude_StatusLeser und das Karten-Gate im
+## Gebaeude_KartenGate. Der Manager entscheidet selbst nichts; er reicht
+## nur durch und hält die Signale am Leben. Fremde Bestände berührt er nie
+## direkt, das Modell beschreibt allein die Bauauftrags-Stelle.
 
 signal gebaeude_meldung(text: String)
 signal gebaeude_fertiggestellt(gebaeude_id: String)
-## Renderer-Signal: Der Renderer muss jeden neu platzierten Gebäude-Knoten sofort
-## anhängen, ohne auf den nächsten Sichtbereichs-Scan zu warten.
+## Renderer-Signal: Jeder neu platzierte Gebäude-Knoten wird sofort angehängt.
 signal gebaeude_platziert(objekt_index: int)
-## Statuszeilen für das HUD: Der Manager meldet sie nur, wenn sie sich
-## wirklich ändern. Das HUD muss nicht mehr in jedem Frame nachfragen.
+## Statuszeilen für das HUD: gemeldet wird nur ein echter Wechsel, das HUD
+## muss nicht mehr in jedem Frame nachfragen.
 signal status_geaendert(zeilen: Array[String])
 
 ## Kategorie daten: Definitionen und die zwei Zustandsmaschinen.
 var _definitionen := Gebaeude_DefinitionRegistry.new()
 var _bau_maschine := Gebaeude_BauMaschine.new()
 var _produktions_maschine := Gebaeude_ProduktionsMaschine.new()
-## Die Laufzeit trägt den Tick-Ausführungsblock: Sie bucht die Beschlüsse
-## der zwei Zustandsmaschinen und besitzt selbst keine Übergangsrechnung.
+## Die Helfer tragen je eine Verantwortung; der Manager nur die Komposition.
 var _laufzeit := Gebaeude_Laufzeit.new()
-var _fortschritt: Welt_FortschrittsMaschine = null
+var _bauplatz := Gebaeude_BauplatzPruefer.new()
+var _bau_auftrag := Gebaeude_BauAuftrag.new()
+var _status_leser := Gebaeude_StatusLeser.new()
+var _karten_gate := Gebaeude_KartenGate.new()
 
 ## Kategorie logik: Verbindungen zu anderen Domänen und Tick.
 var _model: Welt_Model = null
 var _registry: Welt_Registry = null
 var _ressourcen: Einheit_Ressourcen = null
 var _lager: Lager_Manager = null
-## Parallel-Map: Referenz auf die Welt für 1/6 Tick-Gate.
+var _fortschritt: Welt_FortschrittsMaschine = null
+## Parallel-Map: Referenz auf die Welt für das Karten-Gate.
 var _welt_world: Welt_World = null
 ## Zuletzt gemeldete Statuszeilen: Vergleichsgrundlage gegen Doppelmeldungen.
 var _letzte_statuszeilen: String = ""
 
 func _ready() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Globalnamen,
-	# damit der Manager auch in Headless-Testläufen ohne Autoloads kompilierbar
-	# bleibt. Im Spiel ist es dieselbe zentrale Uhr aus project.godot.
+	# damit der Manager auch in Headless-Läufen ohne Autoloads kompilierbar bleibt.
 	var weltuhr := get_node_or_null("/root/Weltuhr")
 	if weltuhr != null and weltuhr.has_signal("tick") and not weltuhr.tick.is_connected(_auf_tick):
 		weltuhr.tick.connect(_auf_tick)
@@ -62,6 +66,9 @@ func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_
 	_lager = lager
 	_fortschritt = fortschritt
 	_welt_world = welt_world
+	_bauplatz.einrichten(model, _definitionen)
+	_status_leser.einrichten(model, _definitionen, _bau_maschine, _produktions_maschine)
+	_bau_auftrag.einrichten(model, ressourcen, lager, _definitionen, _bau_maschine, _produktions_maschine, fortschritt, _bauplatz, _meldung_text, _status_zeilen_melden)
 	_laufzeit.einrichten(model, ressourcen, lager, _definitionen, _bau_maschine, _produktions_maschine, fortschritt, _meldung_text, _gebaeude_fertig_call)
 
 func modell_wechseln(neues_modell: Welt_Model, welt_world: Welt_World = null) -> void:
@@ -71,191 +78,31 @@ func modell_wechseln(neues_modell: Welt_Model, welt_world: Welt_World = null) ->
 	_model = neues_modell
 	_welt_world = welt_world
 	_laufzeit.model_setzen(neues_modell)
+	_bauplatz.model_setzen(neues_modell)
+	_bau_auftrag.model_setzen(neues_modell)
+	_status_leser.model_setzen(neues_modell)
 	_letzte_statuszeilen = ""
 
 func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
-	# Spieler löst den Bau aus: Freigabe, Kosten und Lager werden vorher
-	# vollständig geprüft und dann entnommen; das Gebäude erscheint im
-	# Modell mit Bauzustand.
-	if _model == null or _ressourcen == null or _lager == null:
-		return {"ok": false, "grund": "nicht bereit"}
-	if _fortschritt != null:
-		var zugang := voraussetzung_erfuellt(gebaeude_id)
-		if not zugang.get("ok", false):
-			return zugang
-	if not _definitionen.hat_gebaeude(gebaeude_id):
-		return {"ok": false, "grund": "unbekanntes Gebaeude"}
-	var definition := _definitionen.definition_fuer(gebaeude_id)
-	# Belegungsregel: Ein Gebäude steht genau einmal auf seiner Kachel. Ohne
-	# diese Prüfung konnte ein zweiter Bauauftrag an derselben Stelle ein
-	# zweites Lagerfeuer erzeugen, das im HUD doppelt auftauchte.
-	if not _bauplatz_frei(gebaeude_id, welt_position, definition):
-		return {"ok": false, "grund": "Kachel bereits bebaut"}
-	var lager_index := _lager.naechstes_lager_fuer(welt_position)
-	if lager_index < 0:
-		return {"ok": false, "grund": "kein Lager in der Naehe"}
-	# Atomare Buchung: Die kumulative Pruefung deckt alle Kosten zusammen
-	# ab, erst dann wird entnommen; eine Teil-Entnahme ohne Rollback ist
-	# damit ausgeschlossen (ein Schritt statt Pruefen und dann Entnehmen).
-	if not _ressourcen.mehrfach_entnehmen(definition.baukosten_paare(), lager_index):
-		return {"ok": false, "grund": "Kosten fehlen"}
-	var objekt_index := _model.objekt_hinzufuegen(definition.welt_objekt_id, welt_position)
-	_model.objekt_feld_setzen(objekt_index, "gebaeude_id", gebaeude_id)
-	_model.objekt_feld_setzen(objekt_index, "bedarf", definition.baukosten.duplicate(true))
-	_model.objekt_feld_setzen(objekt_index, "geliefert", definition.baukosten.duplicate(true))
-	var bau_zustand := _bau_maschine.starten(Gebaeude_BauMaschine.neuer_zustand())
-	_model.objekt_feld_setzen(objekt_index, "bau_phase", int(bau_zustand["phase"]))
-	_model.objekt_feld_setzen(objekt_index, "bau_fortschritt", 0)
-	_model.objekt_feld_setzen(objekt_index, "bau_ziel_ticks", _bau_maschine.zeit_ticks_fuer(definition.bauzeit_ticks))
-	_model.objekt_feld_setzen(objekt_index, "prod_phase", int(Gebaeude_ProduktionsMaschine.Phase.DEAKTIVIERT))
-	_model.objekt_feld_setzen(objekt_index, "prod_fortschritt", 0)
-	_model.objekt_feld_setzen(objekt_index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
-	_startbestand_einbuchen(definition, lager_index)
-	gebaeude_meldung.emit("Bau angefordert: %s (%d Ticks)" % [definition.angezeigter_name, definition.bauzeit_ticks])
-	gebaeude_platziert.emit(objekt_index)
-	# Die neue Baustelle erscheint sofort im HUD; kein Frame muss darauf warten.
-	_melde_status_wenn_neu()
-	return {"ok": true}
+	var ergebnis := _bau_auftrag.bauen_anfordern(gebaeude_id, welt_position)
+	_melde_platzierung(ergebnis)
+	return ergebnis
 
 func bauplan_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
-	## CP-5.1: Platziert einen Bauplan im Modell mit Materialbedarf.
-	## Keine Vorab-Abbuchung von Rohstoffen aus dem Lager.
-	if _model == null or _ressourcen == null or _lager == null:
-		return {"ok": false, "grund": "nicht bereit"}
-	if _fortschritt != null:
-		var zugang := voraussetzung_erfuellt(gebaeude_id)
-		if not zugang.get("ok", false):
-			return zugang
-	if not _definitionen.hat_gebaeude(gebaeude_id):
-		return {"ok": false, "grund": "unbekanntes Gebaeude"}
-	var definition := _definitionen.definition_fuer(gebaeude_id)
-	if not _bauplatz_frei(gebaeude_id, welt_position, definition):
-		return {"ok": false, "grund": "Kachel bereits bebaut"}
-	var lager_index := _lager.naechstes_lager_fuer(welt_position)
-	if lager_index < 0:
-		return {"ok": false, "grund": "kein Lager in der Naehe"}
+	var ergebnis := _bau_auftrag.bauplan_anfordern(gebaeude_id, welt_position)
+	_melde_platzierung(ergebnis)
+	return ergebnis
 
-	var bedarf: Dictionary = {}
-	var geliefert: Dictionary = {}
-	for ressource: String in definition.baukosten.keys():
-		var menge := int(definition.baukosten[ressource])
-		if menge > 0:
-			bedarf[ressource] = menge
-			geliefert[ressource] = 0
-
-	var objekt_index := _model.objekt_hinzufuegen(definition.welt_objekt_id, welt_position)
-	_model.objekt_feld_setzen(objekt_index, "gebaeude_id", gebaeude_id)
-	_model.objekt_feld_setzen(objekt_index, "bedarf", bedarf)
-	_model.objekt_feld_setzen(objekt_index, "geliefert", geliefert)
-
-	var bau_zustand: Dictionary
-	if bedarf.is_empty():
-		bau_zustand = _bau_maschine.starten(Gebaeude_BauMaschine.neuer_zustand())
-	else:
-		bau_zustand = _bau_maschine.bauplan_anlegen(Gebaeude_BauMaschine.neuer_zustand())
-
-	_model.objekt_feld_setzen(objekt_index, "bau_phase", int(bau_zustand["phase"]))
-	_model.objekt_feld_setzen(objekt_index, "bau_fortschritt", 0)
-	_model.objekt_feld_setzen(objekt_index, "bau_ziel_ticks", _bau_maschine.zeit_ticks_fuer(definition.bauzeit_ticks))
-	_model.objekt_feld_setzen(objekt_index, "prod_phase", int(Gebaeude_ProduktionsMaschine.Phase.DEAKTIVIERT))
-	_model.objekt_feld_setzen(objekt_index, "prod_fortschritt", 0)
-	_model.objekt_feld_setzen(objekt_index, "prod_ziel_ticks", _produktions_maschine.zeit_ticks_fuer(definition.dauer_ticks))
-	_startbestand_einbuchen(definition, lager_index)
-	gebaeude_meldung.emit("Bauplan platziert: %s (%d Ticks)" % [definition.angezeigter_name, definition.bauzeit_ticks])
-	gebaeude_platziert.emit(objekt_index)
-	_melde_status_wenn_neu()
-	return {"ok": true, "objekt_index": objekt_index}
-
-func _startbestand_einbuchen(definition: Gebaeude_Definition, lager_index: int) -> void:
-	# Ankunftsort: Ein Gebaeude mit Startvorrat (das Lagerfeuer) legt seinen
-	# Bestand einmalig ins naechste Lager. Dieselbe Buchungsstelle wie jede
-	# andere Einlagerung; kein zweiter Weg in die Bestaende.
-	if definition == null or definition.startbestand.is_empty() or _ressourcen == null:
-		return
-	if lager_index < 0:
-		return
-	var teile: Array[String] = []
-	for ressource: String in definition.startbestand.keys():
-		var menge := int(definition.startbestand[ressource])
-		if menge <= 0:
-			continue
-		_ressourcen.ernte_position_setzen(_lager.lager_position(lager_index))
-		_ressourcen.hinzufuegen(ressource, menge)
-		teile.append("%d %s" % [menge, ressource])
-	if not teile.is_empty():
-		teile.sort()
-		gebaeude_meldung.emit("Startvorrat im Lager: %s" % ", ".join(teile))
-
-## Freigabe-Voraussetzungen aus der Definition: Jedes Gebäude kann andere
-## Gebäude verlangen (z. B. das Haus verlangt das Lagerfeuer); unbekannte
-## Voraussetzungen zählen nur, wenn sie als gebaute Objekte fehlen.
 func voraussetzung_erfuellt(gebaeude_id: String) -> Dictionary:
-	var definition := _definitionen.definition_fuer(gebaeude_id)
-	if definition == null:
-		return {"ok": false, "grund": "unbekanntes Gebaeude"}
-	for voraussetzung: String in definition.voraussetzungen:
-		if not _gebaeude_existiert_im_modell(voraussetzung):
-			return {"ok": false, "grund": "braucht zuerst: %s" % voraussetzung}
-	return {"ok": true}
-
-func _bauplatz_frei(_gebaeude_id: String, welt_position: Vector2, definition: Gebaeude_Definition) -> bool:
-	# Ein Bauplatz ist frei, solange kein anderes Gebäude dieselbe Kachel
-	# belegt. Die Kachelkante kommt aus dem Modell, nie aus einer zweiten Zahl.
-	if _model == null or definition == null or not definition.belegt_kachel:
-		return true
-	var kante := maxi(_model.kachel_groesse, 1)
-	var ziel_kachel := Vector2i(int(welt_position.x / float(kante)), int(welt_position.y / float(kante)))
-	for index in _model.objekt_anzahl():
-		var andere_id := str(_model.objekt_feld(index, "gebaeude_id", ""))
-		if andere_id == "":
-			continue
-		var andere_definition := _definitionen.definition_fuer(andere_id)
-		if andere_definition == null or not andere_definition.belegt_kachel:
-			continue
-		var andere_position := _model.objekt_position(index)
-		if Vector2i(int(andere_position.x / float(kante)), int(andere_position.y / float(kante))) == ziel_kachel:
-			return false
-	return true
-
-func _gebaeude_existiert_im_modell(gebaeude_id: String) -> bool:
-	if _model == null:
-		return false
-	for index in _model.objekt_anzahl():
-		if str(_model.objekt_feld(index, "gebaeude_id", "")) == gebaeude_id:
-			return true
-	return false
+	return _bauplatz.voraussetzung_erfuellt(gebaeude_id)
 
 func status_zeilen() -> Array[String]:
-	# Reine Beobachtung für das HUD: pro Gebäude eine kompakte Zeile.
-	var zeilen: Array[String] = []
-	if _model == null:
-		return zeilen
-	for index in _model.objekt_anzahl():
-		var gebaeude_id := str(_model.objekt_feld(index, "gebaeude_id", ""))
-		if gebaeude_id == "":
-			continue
-		var definition := _definitionen.definition_fuer(gebaeude_id)
-		if definition == null:
-			continue
-		var bau_zustand := {
-			"phase": int(_model.objekt_feld(index, "bau_phase", 0)),
-			"fortschritt": int(_model.objekt_feld(index, "bau_fortschritt", 0)),
-		}
-		if not _bau_maschine.ist_fertig(bau_zustand):
-			var anteil := int(_bau_maschine.fortschritt_anteil(bau_zustand, definition.bauzeit_ticks) * 100.0)
-			zeilen.append("%s: %s %d%%" % [definition.angezeigter_name, _bau_maschine.phase_name(bau_zustand), anteil])
-			continue
-		var prod_zustand := {
-			"phase": int(_model.objekt_feld(index, "prod_phase", 0)),
-			"fortschritt": int(_model.objekt_feld(index, "prod_fortschritt", 0)),
-		}
-		var phase_text := _produktions_maschine.phase_name(prod_zustand)
-		if int(prod_zustand["phase"]) == Gebaeude_ProduktionsMaschine.Phase.LAEUFT:
-			var prod_anteil := int(_produktions_maschine.fortschritt_anteil(prod_zustand, definition.dauer_ticks) * 100.0)
-			zeilen.append("%s: %s %d%%" % [definition.angezeigter_name, phase_text, prod_anteil])
-		else:
-			zeilen.append("%s: %s" % [definition.angezeigter_name, phase_text])
-	return zeilen
+	return _status_leser.zeilen()
+
+func _melde_platzierung(ergebnis: Dictionary) -> void:
+	## Der Renderer erfährt jede neue Baustelle sofort, ohne Sichtbereichs-Scan.
+	if bool(ergebnis.get("ok", false)) and ergebnis.has("objekt_index"):
+		gebaeude_platziert.emit(int(ergebnis["objekt_index"]))
 
 func _meldung_text(meldung: String) -> void:
 	gebaeude_meldung.emit(meldung)
@@ -263,18 +110,21 @@ func _meldung_text(meldung: String) -> void:
 func _gebaeude_fertig_call(gebaeude_id: String) -> void:
 	gebaeude_fertiggestellt.emit(gebaeude_id)
 
-func _auf_tick(_tick_nummer: int, _delta: float) -> void:
-	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
-	if _welt_world != null and _model != null:
-		var aktive_map_id := _welt_world.aktive_map_id()
-		var eigene_map_id := _model.map_id
-		if aktive_map_id != "" and aktive_map_id != eigene_map_id:
-			if Engine.get_process_frames() % 6 != 0:
-				return
-
-	if not _laufzeit.bereit():
+func _status_zeilen_melden() -> void:
+	# Doppelmeldungsschutz: Nur ein echter Wechsel der Zeilen wird gemeldet.
+	var zeilen := _status_leser.zeilen()
+	var zusammengefasst := " | ".join(zeilen)
+	if zusammengefasst == _letzte_statuszeilen:
 		return
-	_melde_status_wenn_neu()
+	_letzte_statuszeilen = zusammengefasst
+	status_geaendert.emit(zeilen)
+
+func _auf_tick(_tick_nummer: int, _delta: float) -> void:
+	if not _karten_gate.darf_ticken(_welt_world, _model):
+		return
+	if _model == null or not _laufzeit.bereit():
+		return
+	_status_zeilen_melden()
 	for index in _model.objekt_anzahl():
 		var gebaeude_id := str(_model.objekt_feld(index, "gebaeude_id", ""))
 		if gebaeude_id == "":
@@ -283,15 +133,6 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 		if definition == null:
 			continue
 		_laufzeit.gebaeude_ticken(index, definition)
-
-func _melde_status_wenn_neu() -> void:
-	# Doppelmeldungsschutz: Nur ein echter Wechsel der Zeilen wird gemeldet.
-	var zeilen := status_zeilen()
-	var zusammengefasst := " | ".join(zeilen)
-	if zusammengefasst == _letzte_statuszeilen:
-		return
-	_letzte_statuszeilen = zusammengefasst
-	status_geaendert.emit(zeilen)
 
 func _auf_menue_geoeffnet() -> void:
 	# Menü-Gegenprüfung: Die Skalierung rechnet die Laufzeit; der Manager

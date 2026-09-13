@@ -85,9 +85,9 @@ def test_lagerfeuer_traegt_startvorrat():
     assert "startbestand" not in gebaeude["haus"], "Nur der Ankunftsort bringt Vorrat mit"
     definition = _lies("world/logic/kategorie_objekt/gebaeude_definition.gd")
     assert "var startbestand: Dictionary = {}" in definition
-    manager = _lies("world/logic/kategorie_objekt/gebaeude_manager.gd")
-    assert "func _startbestand_einbuchen(" in manager
-    assert "_startbestand_einbuchen(definition, lager_index)" in manager
+    auftrag = _lies("world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd")
+    assert "func _startbestand_einbuchen(" in auftrag
+    assert "_startbestand_einbuchen(definition, lager_index)" in auftrag
 
 
 def test_phase_eins_bleibt_geschlossen():

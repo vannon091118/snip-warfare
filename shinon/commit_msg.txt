@@ -1,7 +1,8 @@
-1. Der vierte Schnitt sammelte Beweise, Proben und Register ein, damit der neue Stand nicht nur auf der Platte, sondern auch im Gedächtnis des Projekts steht.
-2. In lauf_pruefung_welt.gd zeigen die Proben auf die neuen Häuser der Einheiten- und Welt-Domänen, und der Hausbau steht jetzt auf einer freien Kachel statt mitten auf dem Lagerfeuer.
-3. lauf_sonde_loop.gd und lauf_sonde_persistenz.gd bleiben als Wächter im Werkzeugkasten, damit ein verhungerter Arbeitsloop und eine verlorene Objekt-Nummer künftig in einem einzigen Lauf auffallen.
-4. test_datengetriebene_naht.py, test_objekt_faktor_verdrahtung.py, test_objekt_plugin_naht.py und test_y_sort_und_landeplatz.py folgen der neuen Heimat der Maschinen, ohne in der Prüfschärfe nachzugeben.
-5. README.md und ROADMAP.md erzählen den neuen Stand von 287 Klassen und 328 Dateien, und INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md sowie INDEX_LETZTE_AENDERUNG.md tragen denselben Stand in ihren Tabellen.
-6. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
-7. Zu zahlen bleiben vier Monster, nämlich gebaeude_manager.gd, pop_mood_maschine.gd, welt_karawanen_manager.gd und orchestrator_manager.gd, und erst wenn sie fallen, darf die Nachlass-Liste leer sein und die Zeilen-Grenze ohne Ausnahme gelten.
+1. Der Kommandant befahl, den Nachlass völlig abzuarbeiten und danach die Zeilen-Grenze verpflichtend zu machen, und der Gebäude-Manager war das erste der vier letzten Monster.
+2. gebaeude_manager.gd fiel von 309 auf 149 Zeilen, weil Prüfung, Buchung, Lesesaal und Kartengatter eigene Klassen bekamen.
+3. In gebaeude_bauplatz_pruefer.gd wohnt die Frage nach dem freien Bauplatz und der erfüllten Voraussetzung, die vorher zwischen den Aufträgen hing.
+4. In gebaeude_bau_auftrag.gd wohnt die Buchung: Kosten prüfen, atomar entnehmen, Baustelle schreiben und Startvorrat einbuchen.
+5. In gebaeude_status_leser.gd liest das HUD seine Zeilen, und in gebaeude_karten_gate.gd steht das Sechstel-Gate für die inaktiven Karten.
+6. Der Manager behält nur noch Signale, Takt und Durchreichen, und in test_datengetriebene_naht.py sowie test_makrokarte_und_barrieren.py zeigen die Proben auf die neuen Häuser statt auf die entkernte Fassade.
+7. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
+8. Sichtbar im laufenden Spiel: Bauaufträge erscheinen weiter als Baustelle mit Zeile im HUD, die Freigabe verlangt weiter das Lagerfeuer, und inaktive Karten ticken wie gehabt nur jedes sechste Frame.

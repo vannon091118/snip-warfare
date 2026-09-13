@@ -104,8 +104,10 @@ def test_debug_fenster_ist_eigenes_unsichtbares_panel():
 def test_produktionszeile_wird_nur_bei_aenderung_gemeldet():
     code = _lies("world/logic/kategorie_objekt/gebaeude_manager.gd")
     assert "signal status_geaendert" in code
-    assert "func _melde_status_wenn_neu(" in code
+    assert "func _status_zeilen_melden(" in code
     assert "_letzte_statuszeilen" in code
+    leser = _lies("world/logic/kategorie_objekt/gebaeude_status_leser.gd")
+    assert "func zeilen(" in leser, "Die HUD-Zeilen liest der Gebaeude_StatusLeser"
 
 
 def test_bauplatz_regel_steht_in_den_daten():
@@ -114,9 +116,10 @@ def test_bauplatz_regel_steht_in_den_daten():
     definition = _lies("world/logic/kategorie_objekt/gebaeude_definition.gd")
     assert "var belegt_kachel: bool = true" in definition
     assert 'eintrag.get("belegt_kachel", true)' in definition
-    manager = _lies("world/logic/kategorie_objekt/gebaeude_manager.gd")
-    assert "func _bauplatz_frei(" in manager
-    assert "_bauplatz_frei(gebaeude_id, welt_position, definition)" in manager
+    pruefer = _lies("world/logic/kategorie_objekt/gebaeude_bauplatz_pruefer.gd")
+    assert "func bauplatz_frei(" in pruefer, "Die Bauplatz-Regel wohnt im Pruefer"
+    auftrag = _lies("world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd")
+    assert "_bauplatz.bauplatz_frei(welt_position, definition)" in auftrag
 
 
 def test_tier_manager_prueft_freigegebene_darsteller():
