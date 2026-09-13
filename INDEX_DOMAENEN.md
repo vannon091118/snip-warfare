@@ -2,13 +2,13 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 302 Klassen, 345 Dateien, 65 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 306 Klassen, 349 Dateien, 65 Signale, 33 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
 | Domaene | Kuerzel | Prefix | Ordner | Klassen | Dateien |
 | --- | --- | --- | --- | --- | --- |
-| `core` | `kern` | `Kern_` | `core/` | 21 | 21 |
+| `core` | `kern` | `Kern_` | `core/` | 22 | 22 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
 | `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 49 | 49 |
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 38 | 38 |
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 302 Klassen, 345 Dateien, 65 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
 | `ui` | `ui` | `Ui_` | `ui/` | 24 | 36 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 25 |
+| `tools` | `tools` | `-` | `tools/` | 3 | 28 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -128,6 +128,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | `AnimatedSprite2D` | 1 | - | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - |
 | `Array` | 1 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | - |
 | `Gebaeude_Definition` | 1 | - | - | - | 1 | - | - | - | - | - | - | - | - | - | - | - |
+| `Image` | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `Kern_LogikBasis` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_Mutation` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_TimelineEintrag` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
@@ -149,7 +150,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 ### core — Kuerzel `kern` — `core/`
 
-Prefix `Kern_`, 21 Klassen.
+Prefix `Kern_`, 22 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -169,10 +170,11 @@ Prefix `Kern_`, 21 Klassen.
 | `Kern_SignalBus` | `core/logic/events/kern_signal_bus.gd` | 103 |
 | `Kern_SteuerungBasis` | `core/logic/kern_steuerung_basis.gd` | 74 |
 | `Kern_SteuerungRegistry` | `core/logic/kern_steuerung_registry.gd` | 53 |
+| `Kern_TaktGlaetter` | `core/logic/clock/kern_takt_glaetter.gd` | 68 |
 | `Kern_TastenTabelle` | `core/logic/kern_tasten_tabelle.gd` | 88 |
 | `Kern_Timeline` | `core/logic/events/kern_timeline.gd` | 78 |
 | `Kern_TimelineEintrag` | `core/logic/events/kern_timeline_eintrag.gd` | 37 |
-| `Kern_Weltuhr` | `core/logic/clock/weltuhr.gd` | 92 |
+| `Kern_Weltuhr` | `core/logic/clock/weltuhr.gd` | 94 |
 | `Kern_Zufall` | `core/logic/kern_zufall.gd` | 65 |
 
 #### Signale (Rolle in dieser Domaene)
@@ -779,7 +781,13 @@ _keine typisierten Arrays in dieser Domaene_
 
 ### tools — Kuerzel `tools` — `tools/`
 
-Prefix `-`, 0 Klassen.
+Prefix `-`, 3 Klassen.
+
+| Klasse | Datei | Zeilen |
+| --- | --- | --- |
+| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` | 125 |
+| `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` | 102 |
+| `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` | 53 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -799,6 +807,7 @@ Prefix `-`, 0 Klassen.
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
 | `String` | 3 |
+| `Image` | 1 |
 | `Kern_ModifikatorBasis` | 1 |
 | `Pop_MoodMaschine` | 1 |
 | `Vector2i` | 1 |

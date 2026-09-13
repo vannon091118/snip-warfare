@@ -614,23 +614,39 @@ func _init() -> void:
 		fehler += 1
 	else:
 		print("OK: Tageszyklus tickt nur durch eigenen Aufruf, Einheiten-Manager stoesst nichts an")
-	# Weltuhr-Spiralen-Schutz: Ein Riesen-Rahmen hinterlaesst keinen
-	# Zeitraffer-Reststand; der normale Rahmen danach tickt genau einmal.
+	# Weltuhr-Takt-Glätzung: Ein Riesen-Rahmen erzeugt keinen Aufhol-
+	# Zeitsprung, den der Spieler spürt; die Ticks laufen im Rahmen-Budget,
+	# und ein frame danach wächst die Zahl wieder normal weiter.
 	var uhr := Kern_Weltuhr.new()
 	var budget := Kern_Weltuhr.rahmen_budget()
 	uhr._process(2.0)
 	var uhr_ticks_nach_stall := uhr._tick_nummer
-	var uhr_rest_nach_stall := uhr._akkumulator
-	uhr._process(Kern_Weltuhr.rahmen_budget() + 0.01)
+	var uhr_rest_nach_stall := uhr._glaetter.akkumulator()
+	uhr._process(1.0 / 60.0)
 	var uhr_ticks_nach_erstem := uhr._tick_nummer
-	uhr._process(Kern_Weltuhr.rahmen_budget() + 0.01)
+	uhr._process(1.0 / 60.0)
 	var uhr_ticks_nach_zweitem := uhr._tick_nummer
 	uhr.free()
-	if uhr_ticks_nach_stall != Kern_Weltuhr.MAX_TICKS_PRO_FRAME or uhr_rest_nach_stall > budget + 0.0001 or uhr_ticks_nach_zweitem < uhr_ticks_nach_erstem + Kern_Weltuhr.MAX_TICKS_PRO_FRAME:
-		print("FEHLER: Weltuhr-Spiralenschutz falsch (ticks %d, rest %.4f, dann %d/%d)" % [uhr_ticks_nach_stall, uhr_rest_nach_stall, uhr_ticks_nach_erstem, uhr_ticks_nach_zweitem])
+	if uhr_ticks_nach_stall > Kern_Weltuhr.MAX_TICKS_PRO_FRAME or uhr_rest_nach_stall > budget + 0.0001 or uhr_ticks_nach_zweitem <= uhr_ticks_nach_erstem:
+		print("FEHLER: Weltuhr-Taktglättung falsch (ticks %d, rest %.4f, dann %d/%d)" % [uhr_ticks_nach_stall, uhr_rest_nach_stall, uhr_ticks_nach_erstem, uhr_ticks_nach_zweitem])
 		fehler += 1
 	else:
-		print("OK: Weltuhr wirft Ruckler-Rueckstand weg, Folge-Rahmen ticken im Rahmen-Budget und wachsen linear")
+		print("OK: Weltuhr glättet Ruckler, kein Aufhol-Zeitsprung, Folge-Rahmen ticken im Rahmen-Budget")
+	# Selbststabilisierung: Dauerhafte Überlastung kippt in den Slow-Takt,
+	# Erholung kehrt von allein in den Normaltakt zurück.
+	var stab_uhr := Kern_Weltuhr.new()
+	for _last_schritt in 900:
+		stab_uhr._process(1.0 / 10.0)
+	var stab_langsam := stab_uhr.im_slow_mode()
+	for _erhol_schritt in 900:
+		stab_uhr._process(1.0 / 60.0)
+	var stab_ergeholt := not stab_uhr.im_slow_mode()
+	stab_uhr.free()
+	if not stab_langsam or not stab_ergeholt:
+		print("FEHLER: Weltuhr-Selbststabilisierung falsch (slow %s, erholt %s)" % [str(stab_langsam), str(stab_ergeholt)])
+		fehler += 1
+	else:
+		print("OK: Weltuhr stabilisiert sich selbst: Überlast kippt in den Slow-Takt, Erholung kehrt zurück")
 	# Wegplanung: Die Planung liefert Wegpunkte um gesperrte Kacheln, der
 	# Cache beantwortet dieselbe Anfrage aus dem Speicher, der Status folgt
 	# den Punkten und endet trotzdem am Ziel in der Arbeit.

@@ -5,6 +5,10 @@ class_name Kern_Weltuhr
 ## State Maschinen. Jede zeitabhängige Berechnung läuft nur hierüber.
 ## Tickstandard: klassisches RTS-Prinzip mit 24 Ticks pro Sekunde.
 ## Faktor 1.0 bedeutet 10 Sekunden auf dieser Uhr.
+## Die Rahmen-Deltas glättet der Kern_TaktGlaetter: Einzelne Ruckler
+## erzeugen keinen spürbaren Aufhol-Zeitsprung, und dauerhafte Überlastung
+## stabilisiert die Simulation selbst in einen etwas ruhigeren Takt, statt
+## zu spiralen oder Zeit zu verwerfen.
 
 signal tick(tick_nummer: int, delta: float)
 
@@ -21,25 +25,17 @@ const MINUTEN_MIN := 0.1
 const MINUTEN_MAX := 120.0
 
 var _tick_nummer: int = 0
-var _akkumulator: float = 0.0
+## Der Glätter trägt Akkumulator und geglättetes Delta; die Uhr hält ihn
+## als einzigen Zustand neben der Tick-Nummer.
+var _glaetter := Kern_TaktGlaetter.new()
 
 func _process(delta: float) -> void:
-	_akkumulator += delta
-	var ticks_dieses_frames := 0
-	while _akkumulator >= 1.0 / TICK_RATE_HZ and ticks_dieses_frames < MAX_TICKS_PRO_FRAME:
-		_akkumulator -= 1.0 / TICK_RATE_HZ
+	var ticks_dieses_frames := _glaetter.rahmen(delta)
+	if ticks_dieses_frames <= 0:
+		return
+	for _i in range(ticks_dieses_frames):
 		_tick_nummer += 1
-		tick.emit(_tick_nummer, 1.0 / TICK_RATE_HZ)
-		ticks_dieses_frames += 1
-	# Spiralen-Schutz: Bricht die Schleife am Rahmen-Maximum ab, darf der
-	# Rest im Akkumulator nicht stehen bleiben, sonst jagt die Uhr nach
-	# jedem Ruckler dauerhaft mit vollem Rahmen-Budget und holt nie wieder
-	# auf. Alles ueber einem vollen Rahmen-Budget faellt bewusst weg, der
-	# Rueckstand wird verworfen statt nachgeholt, und der Verlust wird
-	# gemeldet, damit kein Zeitraffer unbemerkt bleibt.
-	if _akkumulator > rahmen_budget():
-		_akkumulator = rahmen_budget()
-		push_warning("Weltuhr: Rueckstand nach Ruckler verworfen, naechste Rahmen laufen mit vollem Budget.")
+		tick.emit(_tick_nummer, tickdauer())
 
 ## Einzige zentrale Übersetzung faktor -> ticks im ganzen Projekt.
 ## Kein anderes System rechnet dies selbst, alle delegieren hierhin.
@@ -67,11 +63,17 @@ static func faktor_aus_ticks(ticks: int) -> float:
 static func sekunden_aus_ticks(ticks: int) -> float:
 	return float(ticks) / TICK_RATE_HZ
 
-## Das Rahmen-Budget in Sekunden: Der hoechste Reststand, den der
+## Das Rahmen-Budget in Sekunden: Der höchste Reststand, den der
 ## Akkumulator nach einem Rahmen tragen darf. Nur die Uhr selbst kennt
 ## diese Übersetzung, alle anderen lesen sie hier ab.
 static func rahmen_budget() -> float:
 	return float(MAX_TICKS_PRO_FRAME) / TICK_RATE_HZ
+
+## True, während die Uhr dauerhaft überlastet ist und im entlasteten
+## Slow-Takt läuft. Instrumente dürfen das anzeigen; das Spiel selbst
+## merkt nur ein leicht ruhigeres Spiel, keinen Sprung.
+func im_slow_mode() -> bool:
+	return _glaetter.im_slow_mode()
 
 ## Zugriff auf den Autoload wie beim SignalBus
 static func bus() -> Kern_Weltuhr:
@@ -88,4 +90,4 @@ func tick_nummer() -> int:
 	return _tick_nummer
 
 func tickdauer() -> float:
-	return 1.0 / TICK_RATE_HZ
+	return _glaetter.tickdauer()

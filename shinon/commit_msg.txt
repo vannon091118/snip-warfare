@@ -1,8 +1,8 @@
-1. Damit war die Zeilen-Grenze reif für ihr Ende ohne Ausnahme, und der Rassen-Log bekam seine letzte Dämpfung.
-2. In pruef_locregel.py trägt kein Eintrag mehr eine Sonder-Grenze, denn die Nachlass-Liste ist abgearbeitet und gelöscht; jede Klassendatei fällt ab sofort ungeschont unter ihre Suffix-Grenze.
-3. Der Sinn der Grenze bleibt ungeteilt: Sie ist kein Platz-Sparen und keine Abkürzung, sondern die Weisung, jede Verantwortung in eine eigene Maschine zu bauen; braucht ein großes System als Manager seine fünfzehn Zeilen mehr, bekommt es eine eigene Maschine, nie den Kommentar „da ist noch Platz".
-4. In pop_rassen_generator.gd spricht am Ende des Generierungslaufs genau eine Zusammenfassungszeile über die Zahl der finalisierten Schemata, statt hundertzweiundneunzig einzelner Immutabel-Meldungen den Log zuzumüllen.
-5. Der Laufbeweis zeigt die Wirkung: null Immutabel-Zeilen im Log, fünfzig Stationen grün, und jede Generierung meldet sich einmal mit ihrer Bilanz.
-6. README.md, ROADMAP.md und die Index-Familie tragen den neuen Stand von dreihundert zwei Klassen und dreihundertfünfundvierzig Dateien.
-7. Geprüft ist alles mit dem vollen Preflight in allen eigenen Kategorien ohne Befund und 132 grünen Proben.
-8. Sichtbar im laufenden Spiel: Der Start läuft weiter wie gehabt, der Log bleibt lesbar, und wer künftig eine Grenze reißt, fällt rot statt still zu wachsen.
+1. Der Kommandant befahl, die Tick-Timings mechanisch anzugleichen, damit die Leistung geschont wird, ohne dass ein Spieler etwas merkt, und die Simulation sich immer selbst stabilisiert.
+2. Die alte Weltuhr warf Ruckler-Rückstand weg und jagte danach mit vollem Rahmen-Budget, was der Spieler als Zeitsprung spürte; in kern_takt_glaetter.gd wohnt jetzt das Glätten.
+3. Der Glätter trägt den Akkumulator und ein rollendes Mittel über zweiunddreißig Rahmen, damit ein einzelner Ausreißer nie in einen Aufhol-Sprung kippt.
+4. Bleibt das geglättete Delta dauerhaft über dem Soll, kippt die Uhr selbsttätig in einen entlasteten Slow-Takt, und nach der Erholung kehrt sie von allein in den Normaltakt zurück; die Stabilisierung ist selbsttragend ohne Schalter von außen.
+5. In weltuhr.gd blieb die Uhr die einzige Tick-Quelle, sie reicht nur an den Glätter durch und meldet den Slow-Mode für Werkzeuge.
+6. In lauf_pruefung_welt.gd beweisen zwei Stationen das neue Verhalten: Kein Aufhol-Zeitsprung nach dem Riesen-Rahmen, und Überlast kippt in den Slow-Takt, Erholung kehrt zurück.
+7. Geprüft ist alles mit dem vollen Preflight ohne Befund und 132 grünen Proben, und der Laufbeweis steht mit einundfünfzig Stationen.
+8. Sichtbar im laufenden Spiel: Ruckler laufen als ruhigerer Takt weiter statt als Zeitsprung, und die Weltuhr fängt sich nach jeder Überlast von selbst wieder ein.

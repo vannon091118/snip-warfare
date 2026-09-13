@@ -71,13 +71,13 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 302 Klassen mit `class_name` im Projekt, davon 269 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 306 Klassen mit `class_name` im Projekt, davon 273 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 33 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
 _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 
-### core — Prefix `Kern_` — `core/` (21)
+### core — Prefix `Kern_` — `core/` (22)
 
 | Klasse | Datei |
 | --- | --- |
@@ -97,6 +97,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Kern_SignalBus` | `core/logic/events/kern_signal_bus.gd` |
 | `Kern_SteuerungBasis` | `core/logic/kern_steuerung_basis.gd` |
 | `Kern_SteuerungRegistry` | `core/logic/kern_steuerung_registry.gd` |
+| `Kern_TaktGlaetter` | `core/logic/clock/kern_takt_glaetter.gd` |
 | `Kern_TastenTabelle` | `core/logic/kern_tasten_tabelle.gd` |
 | `Kern_Timeline` | `core/logic/events/kern_timeline.gd` |
 | `Kern_TimelineEintrag` | `core/logic/events/kern_timeline_eintrag.gd` |
@@ -410,9 +411,13 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 
 _keine `class_name`-Klassen_
 
-### tools — Prefix `-` — `tools/` (0)
+### tools — Prefix `-` — `tools/` (3)
 
-_keine `class_name`-Klassen_
+| Klasse | Datei |
+| --- | --- |
+| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` |
+| `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` |
+| `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` |
 
 ### rest — Prefix `-` — `(kein Domaenen-Ordner)` (33)
 
