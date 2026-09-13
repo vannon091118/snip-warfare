@@ -274,9 +274,9 @@ func _init() -> void:
 	else:
 		queue_status.job_vergeben(heiler_job, Job_Basis.ZielTyp.OBJEKT, 0, "")
 		var war_beschaeftigt := queue_status.ist_beschaeftigt()
-		queue_status.job_vormerken(stein_job.job_id, Job_Basis.ZielTyp.OBJEKT, 3, "stein")
-		var queue_zahl := queue_status.queue_laenge()
-		var naechster := queue_status.queue_naechster()
+		queue_status.queue.vormerken(stein_job.job_id, Job_Basis.ZielTyp.OBJEKT, 3, "stein")
+		var queue_zahl := queue_status.queue.laenge()
+		var naechster := queue_status.queue.naechster()
 		var gestartet := false
 		var empfaenger := Einheit_QueueZeuge.new()
 		queue_status.naechster_job_aus_queue.connect(empfaenger.auf_naechster)
@@ -409,8 +409,8 @@ func _init() -> void:
 	#     Geh-Geschwindigkeit über die eigene Modifikator-Maschine, nicht
 	#     aus einer Konstante im Code.
 	var bewegungs_status := Einheit_Status.new()
-	if absf(bewegungs_status._geh_geschwindigkeit - 70.0) > 0.001 or absf(bewegungs_status._geh_reichweite - 24.0) > 0.001:
-		print("FEHLER: Bewegungswerte nicht aus Settings (geschwindigkeit %f, reichweite %f)" % [bewegungs_status._geh_geschwindigkeit, bewegungs_status._geh_reichweite])
+	if absf(bewegungs_status.bewegung.tempo() - 70.0) > 0.001 or absf(bewegungs_status.bewegung.reichweite() - 24.0) > 0.001:
+		print("FEHLER: Bewegungswerte nicht aus Settings (geschwindigkeit %f, reichweite %f)" % [bewegungs_status.bewegung.tempo(), bewegungs_status.bewegung.reichweite()])
 		fehler += 1
 	else:
 		print("OK: Geh-Geschwindigkeit 70.0 und Reichweite 24.0 kommen aus den Modifikator-Settings")
@@ -474,8 +474,8 @@ func _init() -> void:
 	rassen_manager.need_baum_setzen(need_baum)
 	rassen_manager.einheit_hinzufuegen(Vector2.ZERO, "elf")
 	var elf_status: Einheit_Status = rassen_manager.einheit_status(0)
-	if rassen_manager.einheit_rasse(0) != "elf" or absf(elf_status._rasse_bewegungs_faktor - 1.15) > 0.001:
-		print("FEHLER: Manager vergibt Rasse oder Bewegungsfaktor nicht (rasse %s, faktor %f)" % [rassen_manager.einheit_rasse(0), elf_status._rasse_bewegungs_faktor])
+	if rassen_manager.einheit_rasse(0) != "elf" or absf(elf_status.bewegung.rasse_faktor() - 1.15) > 0.001:
+		print("FEHLER: Manager vergibt Rasse oder Bewegungsfaktor nicht (rasse %s, faktor %f)" % [rassen_manager.einheit_rasse(0), elf_status.bewegung.rasse_faktor()])
 		fehler += 1
 	else:
 		print("OK: Elf beim Spawn gesetzt, Bewegungsfaktor 1.15 in der Zustandsmaschine (70 Basis -> 80.5)")
@@ -500,15 +500,12 @@ func _init() -> void:
 	loop_manager.einrichten(loop_modell, null, Einheit_Ressourcen.new())
 	loop_manager.einheit_hinzufuegen(Vector2(200, 200))
 	loop_manager.job_vergeben(0, "holzfaeller", Job_Basis.ZielTyp.OBJEKT, 0, Vector2(200, 200))
-	# Die Loop-Brücke wie im Spiel: Der Einwanderungs-Aufbau verdrahtet das
-	# Loop-Signal auf den Manager-Handler; ohne sie startet kein Folge-Ziel.
+	# Die Loop-Brücke schließt der Einwanderungs-Aufbau beim Einrichten selbst:
+	# Das Loop-Signal hängt an der Job-Fluss-Maschine; ohne sie läuft kein
+	# Folge-Ziel an.
 	var loop_status: Einheit_Status = loop_manager.einheit_status(0)
-	loop_status.job_loop_gefragt.connect(loop_manager._auf_job_loop_gefragt.bind(loop_status))
 	for _schritt in 240:
 		loop_manager._auf_tick(1, 1.0 / 24.0)
-	print("DIAGNOSE Loop: zustand=%s ziel=%d arbeitsziel=%d" % [
-		loop_status.zustand, loop_status.aktuelles_ziel_index, loop_status.job.aktuelles_ziel_index])
-	print("DIAGNOSE Objekte: %d Stueck" % loop_modell.objekt_anzahl())
 	var loop_laeuft_weiter := loop_status.zustand != Einheit_Status.Zustand.IDLE
 	var loop_ziel_index := loop_status.aktuelles_ziel_index
 	for _schritt in 150:
@@ -876,8 +873,9 @@ func _init() -> void:
 		prog_manager._auf_tick(0, 0.0)
 	var prog_lagerfeuer_fertig := prog_fertig_meldungen.has("lagerfeuer")
 	var prog_haus_frei := prog_maschine.stufe_frei(1)
-	# Zweite Stufe: Haus bauen.
-	var prog_haus := prog_manager.bauen_anfordern("haus", Vector2(430, 400))
+	# Zweite Stufe: Haus bauen; die Kachelkante ist 512 breit, das Haus braucht
+	# deshalb eine eigene Kachel neben dem Lagerfeuer.
+	var prog_haus := prog_manager.bauen_anfordern("haus", Vector2(900, 400))
 	var prog_haus_ok := bool(prog_haus.get("ok", false))
 	for _t2: int in range(600):
 		prog_manager._auf_tick(0, 0.0)

@@ -19,7 +19,8 @@ def test_welt_renderer_y_sort_und_fliesen_hintergrund():
 def test_tier_darstellung_und_y_sort():
     manager_inhalt = (ROOT / "world" / "logic" / "kategorie_tier" / "tier_manager.gd").read_text(encoding="utf-8")
     assert "y_sort_enabled = true" in manager_inhalt
-    assert "_darsteller_ebene.y_sort_enabled = true" in manager_inhalt
+    fabrik_inhalt = (ROOT / "world" / "logic" / "kategorie_tier" / "tier_darsteller_fabrik.gd").read_text(encoding="utf-8")
+    assert "_ebene.y_sort_enabled = true" in fabrik_inhalt
 
     darsteller_inhalt = (ROOT / "world" / "logic" / "kategorie_tier" / "tier_darsteller.gd").read_text(encoding="utf-8")
     assert "centered = true" in darsteller_inhalt

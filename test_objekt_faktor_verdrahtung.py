@@ -72,11 +72,11 @@ def test_job_basisklasse_nimmt_den_zielfaktor_in_die_zeit_auf():
         "Die Arbeitszeit muss durch den Ziel-Faktor geteilt werden"
 
 
-def test_manager_setzt_den_zielfaktor_bei_jedem_job_start():
-    """G1-Verdrahtung: Direkte Vergabe im Manager, Queue-Start und Loop-Fortsetzung in der Job-Fluss-Maschine."""
-    quelltext = _lies("game/logic/kategorie_einheit/einheit_manager.gd")
+def test_direkte_vergabe_setzt_den_zielfaktor():
+    """G1-Verdrahtung: Direkte Vergabe in der Vergabe-Maschine, Queue-Start und Loop-Fortsetzung in der Job-Fluss-Maschine."""
+    vergabe = _lies("game/logic/kategorie_einheit/einheit_job_vergabe_maschine.gd")
     fluss = _lies("game/logic/kategorie_einheit/einheit_job_fluss_maschine.gd")
-    assert quelltext.count("ziel_faktor_setzen") >= 1, \
+    assert vergabe.count("ziel_faktor_setzen") >= 1, \
         "Die direkte Vergabe braucht den Zielfaktor"
     assert fluss.count("ziel_faktor_setzen") >= 2, \
         "Queue-Start und Loop-Fortsetzung brauchen den Zielfaktor"

@@ -19,17 +19,17 @@ Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbrauc
 | [`orchestrator_config.json`](game/data/orchestrator_config.json) | `game/data` | 2 | `holzsammler_zone`, `jaeger_zone` | `ui/logic/kategorie_ui/ui_orchestrator_priority_panel.gd`, `world/logic/kategorie_orchestrator/orchestrator_manager.gd`, `world/logic/kategorie_orchestrator/orchestrator_registry.gd` und 1 weitere |
 | [`progression.json`](game/data/progression.json) | `game/data` | 2 | `_kommentar`, `stufen` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd`, `world/logic/kategorie_progression/welt_fortschritts_registry.gd`, `world/logic/kategorie_progression/welt_progressions_registry.gd` und 1 weitere |
 | [`ressourcen.json`](game/data/ressourcen.json) | `game/data` | 6 | `holz`, `stein`, `fleisch`, `werkzeug`, `raeuchelfleisch`, `beeren` | `game/logic/kategorie_einheit/einheit_inventar.gd`, `game/logic/kategorie_einheit/einheit_ressourcen.gd`, `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` und 2 weitere |
-| [`steuerung.json`](game/data/steuerung.json) | `game/data` | 8 | `version`, `_kommentar`, `kamera`, `auswahl`, `kontextmenue`, `pathfinding` und 2 weitere | `core/logic/kategorie_pathfinding/path_registry.gd`, `core/logic/kern_steuerung_basis.gd`, `core/logic/kern_steuerung_registry.gd` und 5 weitere |
+| [`steuerung.json`](game/data/steuerung.json) | `game/data` | 8 | `version`, `_kommentar`, `kamera`, `auswahl`, `kontextmenue`, `pathfinding` und 2 weitere | `core/logic/kategorie_pathfinding/path_registry.gd`, `core/logic/kern_steuerung_basis.gd`, `core/logic/kern_steuerung_registry.gd` und 6 weitere |
 | [`bindung.json`](population/data/bindung.json) | `population` | 5 | `_kommentar`, `regeln`, `stufen`, `ereignisse`, `verlust` | keiner |
 | [`mood_modifikatoren.json`](population/data/mood_modifikatoren.json) | `population` | 5 | `_kommentar`, `kaelte`, `hitze`, `hunger`, `kannibalismus` | `game/logic/kategorie_einheit/einheit_vital_status.gd`, `population/logic/mood/pop_mood_eskalation_stufe.gd`, `population/logic/mood/pop_mood_modifikator_registry.gd` und 1 weitere |
-| [`needs.json`](population/data/needs.json) | `population` | 3 | `weltrhythmus`, `nahrung`, `waerme` | `game/logic/kategorie_einheit/einheit_manager.gd`, `game/logic/kategorie_einheit/einheit_versorgung.gd`, `population/logic/needs/pop_need_basis.gd` und 5 weitere |
-| [`rassen_schemata.json`](population/data/rassen_schemata.json) | `population` | 3 | `mensch`, `elf`, `ork` | `population/logic/needs/pop_rassen_schema.gd`, `population/logic/needs/pop_rassen_schema_registry.gd`, `population/logic/needs/pop_rassen_zugriff.gd` und 3 weitere |
+| [`needs.json`](population/data/needs.json) | `population` | 3 | `weltrhythmus`, `nahrung`, `waerme` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd`, `game/logic/kategorie_einheit/einheit_versorgung.gd`, `population/logic/needs/pop_need_basis.gd` und 5 weitere |
+| [`rassen_schemata.json`](population/data/rassen_schemata.json) | `population` | 3 | `mensch`, `elf`, `ork` | `population/logic/needs/pop_rassen_schema.gd`, `population/logic/needs/pop_rassen_schema_registry.gd`, `population/logic/needs/pop_rassen_zugriff.gd` und 2 weitere |
 | [`rassen_vorlagen.json`](population/data/rassen_vorlagen.json) | `population` | 6 | `_kommentar`, `wald`, `berg`, `wasser`, `steppe`, `tundra` | `population/logic/needs/pop_rassen_generator.gd` |
 | [`sozial_regeln.json`](population/logic/sozial/data/sozial_regeln.json) | `population` | 6 | `_kommentar`, `zeugen`, `taten`, `geruechte`, `traits`, `beziehungen` | `population/logic/sozial/logic/soz_beziehungs_engine.gd`, `population/logic/sozial/logic/soz_datenpool.gd`, `population/logic/sozial/logic/soz_geruecht.gd` und 3 weitere |
 | [`menue_story.json`](ui/data/menue_story.json) | `ui` | 4 | `hinweis`, `schritte_pro_sekunde`, `untertitel_dauer`, `events` | `ui/logic/kategorie_ui/menue_story_daten.gd` |
 | [`atmosphaere.json`](world/data/atmosphaere.json) | `world/data` | 9 | `_dokumentation_atmosphaere`, `wind`, `partikel`, `sonne`, `papier`, `papier_licht` und 3 weitere | `world/logic/kategorie_atmosphaere/welt_atmosphaere_konfig.gd`, `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` |
 | [`biome.json`](world/data/biome.json) | `world/data` | 3 | `_kommentar`, `thresholds`, `biome` | `world/logic/kategorie_biom/biom_basis.gd`, `world/logic/kategorie_biom/biom_registry.gd`, `world/logic/kategorie_generator/welt_biom_analyser.gd` und 1 weitere |
-| [`element_katalog.json`](world/data/element_katalog.json) | `world/data` | 37 | `[Liste]` | `game/logic/kategorie_einheit/einheit_manager.gd`, `ui/scenes/panels/kontext_menue.gd`, `world/logic/kategorie_objekt/moebel_registry.gd` und 2 weitere |
+| [`element_katalog.json`](world/data/element_katalog.json) | `world/data` | 37 | `[Liste]` | `ui/scenes/panels/kontext_menue.gd`, `world/logic/kategorie_objekt/moebel_registry.gd`, `world/logic/kategorie_objekt/objekt_registry_basis.gd` und 1 weitere |
 | [`fraktions_ki_config.json`](world/data/fraktions_ki_config.json) | `world/data` | 9 | `_kommentar`, `expansion`, `handel`, `konflikt`, `aggressions_basis`, `keimling_schwellenwert` und 3 weitere | `world/logic/kategorie_generator/fraktions_keimling_analysator.gd`, `world/logic/kategorie_generator/welt_generator.gd`, `world/logic/kategorie_welt/fraktions_ki_maschine.gd` und 2 weitere |
 | [`gebaeude.json`](world/data/gebaeude.json) | `world/data` | 4 | `[Liste]` | `tools/lauf_pruefung_welt.gd`, `world/logic/kategorie_objekt/gebaeude_definition.gd`, `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` |
 | [`generator_gewichte.json`](world/data/generator_gewichte.json) | `world/data` | 9 | `_kommentar`, `domain_warp_amplitude`, `objekte`, `tiere`, `biome`, `gebaeude` und 3 weitere | `world/logic/kategorie_generator/generator_registry.gd`, `world/logic/kategorie_generator/welt_feld_analyser.gd`, `world/logic/kategorie_generator/welt_fraktions_generator.gd` und 2 weitere |
@@ -149,6 +149,7 @@ Pfad `game/data/steuerung.json`, Domaene `game/data`, 8 Eintraege.
 * `core/logic/kategorie_pathfinding/path_registry.gd`
 * `core/logic/kern_steuerung_basis.gd`
 * `core/logic/kern_steuerung_registry.gd`
+* `core/logic/kern_tasten_tabelle.gd`
 * `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd`
 * `ui/logic/kategorie_ui/ui_kamera_steuerung.gd`
 * `ui/scenes/panels/kontext_menue.gd`
@@ -168,7 +169,7 @@ Pfad `population/data/mood_modifikatoren.json`, Domaene `population`, 5 Eintraeg
 
 Pfad `population/data/needs.json`, Domaene `population`, 3 Eintraege.
 
-* `game/logic/kategorie_einheit/einheit_manager.gd`
+* `game/logic/kategorie_einheit/einheit_verdrahtung.gd`
 * `game/logic/kategorie_einheit/einheit_versorgung.gd`
 * `population/logic/needs/pop_need_basis.gd`
 * `population/logic/needs/pop_need_nahrung.gd`
@@ -185,7 +186,6 @@ Pfad `population/data/rassen_schemata.json`, Domaene `population`, 3 Eintraege.
 * `population/logic/needs/pop_rassen_schema_registry.gd`
 * `population/logic/needs/pop_rassen_zugriff.gd`
 * `world/logic/kategorie_orchestrator/orchestrator_manager.gd`
-* `world/logic/kategorie_welt/fraktions_ki_maschine.gd`
 * `world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd`
 
 ### rassen_vorlagen.json
@@ -231,7 +231,6 @@ Pfad `world/data/biome.json`, Domaene `world/data`, 3 Eintraege.
 
 Pfad `world/data/element_katalog.json`, Domaene `world/data`, 37 Eintraege.
 
-* `game/logic/kategorie_einheit/einheit_manager.gd`
 * `ui/scenes/panels/kontext_menue.gd`
 * `world/logic/kategorie_objekt/moebel_registry.gd`
 * `world/logic/kategorie_objekt/objekt_registry_basis.gd`

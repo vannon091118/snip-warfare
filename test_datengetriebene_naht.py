@@ -120,9 +120,11 @@ def test_bauplatz_regel_steht_in_den_daten():
 
 
 def test_tier_manager_prueft_freigegebene_darsteller():
-    code = _lies("world/logic/kategorie_tier/tier_manager.gd")
-    assert code.count("is_instance_valid(darsteller_knoten)") >= 1
-    assert "entfernte.reverse()" in code, \
+    takt = _lies("world/logic/kategorie_tier/tier_takt.gd")
+    manager = _lies("world/logic/kategorie_tier/tier_manager.gd")
+    assert takt.count("is_instance_valid(darsteller_knoten)") >= 1
+    assert "is_instance_valid(knoten)" in manager
+    assert "entfernte.reverse()" in takt, \
         "Austragen von hinten, sonst rutschen die Indizes"
 
 

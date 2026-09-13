@@ -71,13 +71,13 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 272 Klassen mit `class_name` im Projekt, davon 239 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 66 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 287 Klassen mit `class_name` im Projekt, davon 254 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
 _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 
-### core — Prefix `Kern_` — `core/` (20)
+### core — Prefix `Kern_` — `core/` (21)
 
 | Klasse | Datei |
 | --- | --- |
@@ -97,6 +97,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Kern_SignalBus` | `core/logic/events/kern_signal_bus.gd` |
 | `Kern_SteuerungBasis` | `core/logic/kern_steuerung_basis.gd` |
 | `Kern_SteuerungRegistry` | `core/logic/kern_steuerung_registry.gd` |
+| `Kern_TastenTabelle` | `core/logic/kern_tasten_tabelle.gd` |
 | `Kern_Timeline` | `core/logic/events/kern_timeline.gd` |
 | `Kern_TimelineEintrag` | `core/logic/events/kern_timeline_eintrag.gd` |
 | `Kern_Weltuhr` | `core/logic/clock/weltuhr.gd` |
@@ -119,7 +120,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (44)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (46)
 
 | Klasse | Datei |
 | --- | --- |
@@ -130,8 +131,10 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_EditorWerkzeug` | `world/logic/kategorie_welt/welt_editor_werkzeug.gd` |
 | `Welt_ErschoepfungMaschine` | `world/logic/kategorie_welt/welt_erschoepfung_maschine.gd` |
 | `Welt_Fraktion` | `world/logic/kategorie_welt/welt_fraktion.gd` |
+| `Welt_FraktionsErschoepfung` | `world/logic/kategorie_welt/fraktions_erschoepfung.gd` |
 | `Welt_FraktionsKiMaschine` | `world/logic/kategorie_welt/fraktions_ki_maschine.gd` |
 | `Welt_FraktionsKiVerdrahtung` | `world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd` |
+| `Welt_FraktionsProtokoll` | `world/logic/kategorie_welt/fraktions_protokoll.gd` |
 | `Welt_GrenzProfil` | `world/logic/kategorie_welt/welt_grenz_profil.gd` |
 | `Welt_HudRueckmeldung` | `world/logic/kategorie_welt/welt_hud_rueckmeldung.gd` |
 | `Welt_KachelGeste` | `world/logic/kategorie_welt/welt_kachel_geste.gd` |
@@ -168,7 +171,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` |
 | `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` |
 
-### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (32)
+### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (34)
 
 | Klasse | Datei |
 | --- | --- |
@@ -191,6 +194,8 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Hausgross` | `world/logic/kategorie_objekt/objekt_hausgross.gd` |
 | `Objekt_Kachel` | `world/logic/kategorie_objekt/objekt_kachel.gd` |
 | `Objekt_Kadaver` | `world/logic/kategorie_objekt/objekt_kadaver.gd` |
+| `Objekt_KatalogLader` | `world/logic/kategorie_objekt/objekt_katalog_lader.gd` |
+| `Objekt_KategorieSicht` | `world/logic/kategorie_objekt/objekt_kategorie_sicht.gd` |
 | `Objekt_Lagerfeuer` | `world/logic/kategorie_objekt/objekt_lagerfeuer.gd` |
 | `Objekt_MoebelPlatzierer` | `world/logic/kategorie_objekt/objekt_moebel_platzierer.gd` |
 | `Objekt_MoebelRegistry` | `world/logic/kategorie_objekt/moebel_registry.gd` |
@@ -205,22 +210,25 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Tisch` | `world/logic/kategorie_objekt/objekt_tisch.gd` |
 | `Objekt_TischStahl` | `world/logic/kategorie_objekt/objekt_tisch_stahl.gd` |
 
-### world/tier — Prefix `Tier_` — `world/logic/kategorie_tier/` (18)
+### world/tier — Prefix `Tier_` — `world/logic/kategorie_tier/` (21)
 
 | Klasse | Datei |
 | --- | --- |
 | `Tier_Baer` | `world/logic/kategorie_tier/tier_baer.gd` |
 | `Tier_Basis` | `world/logic/kategorie_tier/tier_basis.gd` |
 | `Tier_Darsteller` | `world/logic/kategorie_tier/tier_darsteller.gd` |
+| `Tier_DarstellerFabrik` | `world/logic/kategorie_tier/tier_darsteller_fabrik.gd` |
 | `Tier_Eisbaer` | `world/logic/kategorie_tier/tier_eisbaer.gd` |
 | `Tier_FeldAbfrage` | `world/logic/kategorie_tier/tier_feld_abfrage.gd` |
 | `Tier_Hase` | `world/logic/kategorie_tier/tier_hase.gd` |
 | `Tier_KlassenFabrik` | `world/logic/kategorie_tier/tier_klassen_fabrik.gd` |
+| `Tier_Leser` | `world/logic/kategorie_tier/tier_leser.gd` |
 | `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` |
 | `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` |
 | `Tier_SichtWaechter` | `world/logic/kategorie_tier/tier_sicht_waechter.gd` |
 | `Tier_Sichtung` | `world/logic/kategorie_tier/tier_sichtung.gd` |
 | `Tier_Status` | `world/logic/kategorie_tier/tier_status.gd` |
+| `Tier_Takt` | `world/logic/kategorie_tier/tier_takt.gd` |
 | `Tier_TempoBerechnung` | `world/logic/kategorie_tier/tier_tempo_berechnung.gd` |
 | `Tier_VerhaltenMaschine` | `world/logic/kategorie_tier/tier_verhalten_maschine.gd` |
 | `Tier_VitalStatus` | `world/logic/kategorie_tier/tier_vital_status.gd` |
@@ -240,10 +248,12 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Orchestrator_Status` | `world/logic/kategorie_orchestrator/orchestrator_status.gd` |
 | `Orchestrator_Verdrahtung` | `world/logic/kategorie_orchestrator/orchestrator_verdrahtung.gd` |
 
-### game/einheit — Prefix `Einheit_` — `game/logic/kategorie_einheit/` (25)
+### game/einheit — Prefix `Einheit_` — `game/logic/kategorie_einheit/` (31)
 
 | Klasse | Datei |
 | --- | --- |
+| `Einheit_Basis` | `game/logic/kategorie_einheit/einheit_basis.gd` |
+| `Einheit_Bewegung` | `game/logic/kategorie_einheit/einheit_bewegung.gd` |
 | `Einheit_Darsteller` | `game/logic/kategorie_einheit/einheit_darsteller.gd` |
 | `Einheit_EinwanderungsMaschine` | `game/logic/kategorie_einheit/einheit_einwanderungs_maschine.gd` |
 | `Einheit_ErnteMaschine` | `game/logic/kategorie_einheit/einheit_ernte_maschine.gd` |
@@ -253,6 +263,9 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Einheit_InventarMutationStart` | `game/logic/kategorie_einheit/einheit_inventar_mutation_start.gd` |
 | `Einheit_InventarSchema` | `game/logic/kategorie_einheit/einheit_inventar_schema.gd` |
 | `Einheit_JobFlussMaschine` | `game/logic/kategorie_einheit/einheit_job_fluss_maschine.gd` |
+| `Einheit_JobQueue` | `game/logic/kategorie_einheit/einheit_job_queue.gd` |
+| `Einheit_JobRegie` | `game/logic/kategorie_einheit/einheit_job_regie.gd` |
+| `Einheit_JobVergabeMaschine` | `game/logic/kategorie_einheit/einheit_job_vergabe_maschine.gd` |
 | `Einheit_LeseSchnittstelle` | `game/logic/kategorie_einheit/einheit_lese_schnittstelle.gd` |
 | `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` |
 | `Einheit_MutationErnte` | `game/logic/kategorie_einheit/einheit_mutation_ernte.gd` |
@@ -263,6 +276,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` |
 | `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` |
+| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` |
 | `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` |
 | `Einheit_Versorgung` | `game/logic/kategorie_einheit/einheit_versorgung.gd` |
 | `Einheit_VersorgungsMaschine` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd` |
@@ -336,7 +350,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Soz_TraitLedger` | `population/logic/sozial/logic/soz_trait_ledger.gd` |
 | `Soz_ZeugenMaschine` | `population/logic/sozial/logic/soz_zeugen_maschine.gd` |
 
-### economy — Prefix `Lager_` — `economy/` (6)
+### economy — Prefix `Lager_` — `economy/` (7)
 
 | Klasse | Datei |
 | --- | --- |
@@ -346,6 +360,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Lager_MutationEinlagern` | `economy/logic/storage/lager_mutation.gd` |
 | `Lager_MutationEntnehmen` | `economy/logic/storage/lager_entnahme.gd` |
 | `Lager_Registry` | `economy/logic/storage/lager_registry.gd` |
+| `Lager_StapelBauer` | `economy/logic/storage/lager_stapel_bauer.gd` |
 
 ### ui — Prefix `Ui_` — `ui/` (24)
 

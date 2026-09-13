@@ -48,9 +48,9 @@ def test_katalog_objekte_sind_ueber_script_ordenbar():
 
 def test_welt_registry_enthaelt_script_naht():
     """Die Registry-Naht lädt zuerst das script-Feld, Fallback bleibt match."""
-    quelle = (PROJEKT / "world/logic/kategorie_objekt/objekt_registry_basis.gd").read_text(encoding="utf-8")
+    quelle = (PROJEKT / "world/logic/kategorie_objekt/objekt_katalog_lader.gd").read_text(encoding="utf-8")
     assert "script" in quelle and "ResourceLoader.exists" in quelle, (
-        "Objekt_RegistryBasis muss das script-Feld laden (Muster aus Job_Registry)")
+        "Der Objekt_KatalogLader muss das script-Feld laden (Muster aus Job_Registry)")
 
 def test_welt_registry_match_ist_fallback_nicht_ersatz():
     """Die zentrale Zuordnung bleibt als Fallback bestehen (Abwärtskompatibilität)."""

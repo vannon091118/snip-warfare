@@ -1,7 +1,7 @@
-1. Der dritte Schnitt griff in die Welt-Domänen, wo Objekt-Katalog, Tiere, Fraktions-KI und das Weltmodell ihre Nachbarn mitschleppten.
-2. objekt_registry_basis.gd blieb als schlanke Naht mit 68 Zeilen, denn der Ladedurchlauf wohnt in objekt_katalog_lader.gd und die Kategorie-Fragen in objekt_kategorie_sicht.gd.
-3. tier_manager.gd fiel von 233 auf 143 Zeilen, weil Lesesaal, Darsteller-Fabrik und Takt nun tier_leser.gd, tier_darsteller_fabrik.gd und tier_takt.gd heißen.
-4. fraktions_ki_maschine.gd blieb mit 106 Zeilen unter der Grenze, denn Protokoll und Erschöpfungs-Saat zogen in fraktions_protokoll.gd und fraktions_erschoepfung.gd aus.
-5. welt_model.gd trägt jetzt die Objekt-Nummer durch den Speicher-Rundlauf, weil gelöschte Objekte Lücken hinterließen und jedes folgende beim Laden eine Stufe weiterrutschte.
-6. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und grünem Shinon-Tor.
-7. Sichtbar im laufenden Spiel: Möbel und Bäume stehen wie zuvor an ihrem Platz, die Tiere erwachen im Blickfeld der Kamera, und nach dem Laden trägt jedes Objekt wieder seine eigene Nummer.
+1. Der vierte Schnitt sammelte Beweise, Proben und Register ein, damit der neue Stand nicht nur auf der Platte, sondern auch im Gedächtnis des Projekts steht.
+2. In lauf_pruefung_welt.gd zeigen die Proben auf die neuen Häuser der Einheiten- und Welt-Domänen, und der Hausbau steht jetzt auf einer freien Kachel statt mitten auf dem Lagerfeuer.
+3. lauf_sonde_loop.gd und lauf_sonde_persistenz.gd bleiben als Wächter im Werkzeugkasten, damit ein verhungerter Arbeitsloop und eine verlorene Objekt-Nummer künftig in einem einzigen Lauf auffallen.
+4. test_datengetriebene_naht.py, test_objekt_faktor_verdrahtung.py, test_objekt_plugin_naht.py und test_y_sort_und_landeplatz.py folgen der neuen Heimat der Maschinen, ohne in der Prüfschärfe nachzugeben.
+5. README.md und ROADMAP.md erzählen den neuen Stand von 287 Klassen und 328 Dateien, und INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md sowie INDEX_LETZTE_AENDERUNG.md tragen denselben Stand in ihren Tabellen.
+6. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
+7. Zu zahlen bleiben vier Monster, nämlich gebaeude_manager.gd, pop_mood_maschine.gd, welt_karawanen_manager.gd und orchestrator_manager.gd, und erst wenn sie fallen, darf die Nachlass-Liste leer sein und die Zeilen-Grenze ohne Ausnahme gelten.
