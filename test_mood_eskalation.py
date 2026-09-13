@@ -85,10 +85,14 @@ def test_die_blase_erzaehlt_grund_und_wirkung():
 def test_maschine_liest_die_stufen_aus_den_daten():
     """Die Maschine wählt die Stufe über die Registry und kennt keine harte Schwelle."""
     maschine = _lies("population/logic/mood/pop_mood_maschine.gd")
-    assert "stufe_fuer" in maschine, "Maschine wählt keine Eskalationsstufe"
+    ableitung = _lies("population/logic/mood/pop_mood_ableitung.gd")
+    eskalation = _lies("population/logic/mood/pop_mood_eskalation.gd")
+    assert "stufe_fuer" in eskalation, "Die Eskalationsstufe wählt Pop_MoodEskalation"
+    assert "Pop_MoodEskalation.uebernehmen" in ableitung, "Die Ableitung nutzt die Kette"
+    assert "Pop_MoodAbleitung" in maschine, "Die Maschine delegiert die Ableitung"
     registry = _lies("population/logic/mood/pop_mood_modifikator_registry.gd")
     assert "mod_fuer_need" in registry, "Registry ordnet keinen Bedarf zu"
     schwellen = {float(stufe["schwelle"]) for eintrag in _mods().values() for stufe in eintrag["eskalation"]}
-    literale = {float(x) for x in re.findall(r"(?<![\w.])(\d+\.\d+)(?![\w])", maschine)}
+    literale = {float(x) for x in re.findall(r"(?<![\w.])(\d+\.\d+)(?![\w])", maschine + ableitung + eskalation)}
     treffer = sorted(schwellen & literale)
     assert not treffer, "harte Eskalationsschwellen im Code: %s" % treffer

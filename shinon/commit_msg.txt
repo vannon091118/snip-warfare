@@ -1,8 +1,9 @@
-1. Der Kommandant befahl, den Nachlass völlig abzuarbeiten und danach die Zeilen-Grenze verpflichtend zu machen, und der Gebäude-Manager war das erste der vier letzten Monster.
-2. gebaeude_manager.gd fiel von 309 auf 149 Zeilen, weil Prüfung, Buchung, Lesesaal und Kartengatter eigene Klassen bekamen.
-3. In gebaeude_bauplatz_pruefer.gd wohnt die Frage nach dem freien Bauplatz und der erfüllten Voraussetzung, die vorher zwischen den Aufträgen hing.
-4. In gebaeude_bau_auftrag.gd wohnt die Buchung: Kosten prüfen, atomar entnehmen, Baustelle schreiben und Startvorrat einbuchen.
-5. In gebaeude_status_leser.gd liest das HUD seine Zeilen, und in gebaeude_karten_gate.gd steht das Sechstel-Gate für die inaktiven Karten.
-6. Der Manager behält nur noch Signale, Takt und Durchreichen, und in test_datengetriebene_naht.py sowie test_makrokarte_und_barrieren.py zeigen die Proben auf die neuen Häuser statt auf die entkernte Fassade.
-7. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
-8. Sichtbar im laufenden Spiel: Bauaufträge erscheinen weiter als Baustelle mit Zeile im HUD, die Freigabe verlangt weiter das Lagerfeuer, und inaktive Karten ticken wie gehabt nur jedes sechste Frame.
+1. Der Nachlass traf zweitens die Stimmung, die mit 285 Zeilen schwerfällig über allen Einheiten hing.
+2. pop_mood_maschine.gd schrumpfte auf 112 Zeilen und trägt nur noch Bestand, Verbindung und Meldung.
+3. In pop_mood_raten.gd wohnen Dringlichkeit, Abfall, Schwellwert und die Faktoren für Nahrung und Bewegung, jeder über Modifikator mal Rassen-Schema.
+4. In pop_mood_waerme_gate.gd wohnt das Wärme-Gate mit den Schwellen aus der Registry, dem Ersatzwert für den Bedarf und dem Folgeziel in Sicherheit.
+5. In pop_mood_ableitung.gd rechnet der Need-Schritt und die Ableitung der Blase, und in pop_mood_eskalation.gd entstehen die Sprechblasen aus Stufen, Übergängen und Zeugen-Blicken.
+6. Die Nähe-Grenze des Zeugen steht dort als bewusster Notfallwert, weil der Mood-Pool dazu keinen eigenen Wert trägt und die Kachel-Regel sonst zweimal im Code läge.
+7. In test_mood_eskalation.py stehen die Prüfungen auf den neuen Häusern, ohne in der Schärfe nachzugeben.
+8. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
+9. Sichtbar im laufenden Spiel: Hunger, Kälte, Hitze und Kannibalismus erzählen ihre Blasen unverändert, und der Zeuge schweigt neben dem Tatort oder schreit ihn an wie zuvor.
