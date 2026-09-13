@@ -1,9 +1,7 @@
-1. Der Nachlass traf zweitens die Stimmung, die mit 285 Zeilen schwerfällig über allen Einheiten hing.
-2. pop_mood_maschine.gd schrumpfte auf 112 Zeilen und trägt nur noch Bestand, Verbindung und Meldung.
-3. In pop_mood_raten.gd wohnen Dringlichkeit, Abfall, Schwellwert und die Faktoren für Nahrung und Bewegung, jeder über Modifikator mal Rassen-Schema.
-4. In pop_mood_waerme_gate.gd wohnt das Wärme-Gate mit den Schwellen aus der Registry, dem Ersatzwert für den Bedarf und dem Folgeziel in Sicherheit.
-5. In pop_mood_ableitung.gd rechnet der Need-Schritt und die Ableitung der Blase, und in pop_mood_eskalation.gd entstehen die Sprechblasen aus Stufen, Übergängen und Zeugen-Blicken.
-6. Die Nähe-Grenze des Zeugen steht dort als bewusster Notfallwert, weil der Mood-Pool dazu keinen eigenen Wert trägt und die Kachel-Regel sonst zweimal im Code läge.
-7. In test_mood_eskalation.py stehen die Prüfungen auf den neuen Häusern, ohne in der Schärfe nachzugeben.
-8. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
-9. Sichtbar im laufenden Spiel: Hunger, Kälte, Hitze und Kannibalismus erzählen ihre Blasen unverändert, und der Zeuge schweigt neben dem Tatort oder schreit ihn an wie zuvor.
+1. Der Nachzug nahm die Welt-Domänen aufs Korn, deren Manager noch selbst rechneten, was eigene Maschinen besser tragen.
+2. orchestrator_manager.gd fiel von 229 auf 110 Zeilen, denn die Obergrenze liest orchestrator_spawn_cap.gd, die Ziele sucht orchestrator_ziel_suche.gd, die Zonen liest orchestrator_konfig_lader.gd und die Zuteilung rechnet orchestrator_verteiler.gd.
+3. welt_karawanen_manager.gd schrumpfte auf 136 Zeilen, weil die Reisedauer in welt_karawanen_reise.gd rechnet, das Malen in welt_karawanen_zeichner.gd wohnt und das Sichern in welt_karawanen_speicher.gd.
+4. tier_manager.gd übergibt der tier_darsteller_fabrik.gd das Regelwerk bei jedem Ruf, damit die Fabrik keinen Zustand trägt, der vor dem ersten Rahmen fehlen kann; dieser Fehler hatte den Tier-Darsteller im Laufbeweis zu Fall gebracht.
+5. In test_datengetriebene_naht.py und test_y_sort_und_landeplatz.py zeigen die Proben auf die neuen Häuser, ohne weicher zu prüfen.
+6. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis über fünfzig Stationen ohne einen einzigen Skript-Fehler.
+7. Sichtbar im laufenden Spiel: Der Orchestrator vergibt weiter alle sechzig Ticks Arbeit nach Priorität, Karawanen ziehen als gelbe Punkte zwischen den Karten, und Tiere erwachen im Kamerablick wie zuvor.

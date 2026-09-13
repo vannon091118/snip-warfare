@@ -24,7 +24,6 @@ var _model: Welt_Model = null
 ## Kategorie logik: Platzieren, Ernten, Sichten und der eigene Takt.
 func _ready() -> void:
 	y_sort_enabled = true
-	_fabrik.einrichten(_verhalten)
 
 func _enter_tree() -> void:
 	# Die Weltuhr wird zur Laufzeit aufgelöst statt über den Autoload-Namen,
@@ -74,7 +73,9 @@ func tier_platzieren(tier_id: String, welt_position: Vector2) -> int:
 	return tier_nummer
 
 func _darsteller_erzeugen(tier_id: String, status: Tier_Status, welt_position: Vector2) -> Tier_Darsteller:
-	return _fabrik.darsteller_erzeugen(self, tier_id, status, welt_position)
+	# Das Regelwerk reicht der Manager herein: Die Fabrik trägt keinen Zustand,
+	# der vor dem ersten Rahmen fehlen könnte.
+	return _fabrik.darsteller_erzeugen(self, tier_id, _verhalten, status, welt_position)
 
 func alle_entfernen() -> void:
 	## Idempotenz-Gate: Alle Darsteller fallen, die Liste leert sich, die
