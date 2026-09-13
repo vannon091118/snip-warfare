@@ -48,6 +48,6 @@ func _lese_kamera_richtung() -> Vector2:
 	# Die Eingabe-Aktionen erzeugt Kern_SteuerungBasis aus steuerung.json;
 	# keine Taste wird hier im Code gekannt. Ohne Aktionen (nackte Prüfläufe
 	# ohne Konfiguration) gilt der eingebaute ui_-Rückfall der Engine.
-	if InputMap.has_action(Kern_SteuerungBasis.AKTION_HOCH):
-		return Input.get_vector(Kern_SteuerungBasis.AKTION_LINKS, Kern_SteuerungBasis.AKTION_RECHTS, Kern_SteuerungBasis.AKTION_HOCH, Kern_SteuerungBasis.AKTION_RUNTER)
+	if InputMap.has_action(Kern_TastenTabelle.AKTION_HOCH):
+		return Input.get_vector(Kern_TastenTabelle.AKTION_LINKS, Kern_TastenTabelle.AKTION_RECHTS, Kern_TastenTabelle.AKTION_HOCH, Kern_TastenTabelle.AKTION_RUNTER)
 	return Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")

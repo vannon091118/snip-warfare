@@ -3,6 +3,8 @@ class_name Kern_SteuerungBasis
 ## Datenklasse der Steuerung. Haelt nur Daten aus game/data/steuerung.json;
 ## keine feste Verdrahtung, kein hart codierter Shortcut. Die Registry liest
 ## diese Datei und andere Maschinen ziehen nur ueber diese Klasse ihre Werte.
+## Die Uebersetzung von Tastennamen und die InputMap-Fuellung wohnen in der
+## eigenen Kern_TastenTabelle.
 
 ## Kategorie daten: Felder der Steuerungskonfiguration.
 var version: int = 1
@@ -43,122 +45,29 @@ func aus_eintrag(eintrag: Dictionary) -> void:
 	hinweis_werkzeug = str(eintrag.get("hinweis_werkzeug", ""))
 	ticks_hinweis = str(eintrag.get("ticks_hinweis", ""))
 
-func tooltip_fuer_aktion(aktion_id: String) -> String:
+func _aktion_wort(aktion_id: String, feld: String, rueckfall: Variant) -> Variant:
 	for aktion in kontext_aktionen:
 		if str(aktion.get("id", "")) == aktion_id:
-			var vorlage := str(aktion.get("tooltip", ""))
-			var werkzeug := str(aktion.get("werkzeug", ""))
-			return vorlage.replace("{werkzeug}", werkzeug)
-	return ""
+			return aktion.get(feld, rueckfall)
+	return rueckfall
+
+func tooltip_fuer_aktion(aktion_id: String) -> String:
+	var vorlage := str(_aktion_wort(aktion_id, "tooltip", ""))
+	return vorlage.replace("{werkzeug}", str(_aktion_wort(aktion_id, "werkzeug", "")))
 
 func icon_fuer_aktion(aktion_id: String) -> String:
-	for aktion in kontext_aktionen:
-		if str(aktion.get("id", "")) == aktion_id:
-			return str(aktion.get("icon_pfad", ""))
-	return ""
+	return str(_aktion_wort(aktion_id, "icon_pfad", ""))
 
 func label_fuer_aktion(aktion_id: String) -> String:
-	for aktion in kontext_aktionen:
-		if str(aktion.get("id", "")) == aktion_id:
-			return str(aktion.get("label", aktion_id))
-	return aktion_id
+	return str(_aktion_wort(aktion_id, "label", aktion_id))
 
 func logik_fuer_aktion(aktion_id: String) -> String:
-	for aktion in kontext_aktionen:
-		if str(aktion.get("id", "")) == aktion_id:
-			return str(aktion.get("logik_id", ""))
-	return ""
+	return str(_aktion_wort(aktion_id, "logik_id", ""))
 
 func faktor_fuer_aktion(aktion_id: String) -> float:
-	for aktion in kontext_aktionen:
-		if str(aktion.get("id", "")) == aktion_id:
-			return float(aktion.get("faktor", 1.0))
-	return 1.0
+	return float(_aktion_wort(aktion_id, "faktor", 1.0))
 
 func gesperrt_ab_stufe_fuer_aktion(aktion_id: String) -> int:
-	# Menschenlesbare Sperre je Aktion: 0 heißt immer offen, N heißt frei
-	# ab Progressions-Stufe N. Die Progressions-Maschine beantwortet die
-	# Frage, ob die Stufe erreicht ist; diese Klasse liest nur die Zahl.
-	for aktion in kontext_aktionen:
-		if str(aktion.get("id", "")) == aktion_id:
-			return int(aktion.get("gesperrt_ab_stufe", 0))
-	return 0
-
-## Kategorie logik: Eingabe-Aktionen (InputMap) aus der Konfiguration.
-
-## Die vier Kamera-Richtungs-Aktionen des Projekts: Die Spielszene liest
-## sie über Input.get_vector, ohne eine Taste im Code zu kennen.
-const AKTION_HOCH := "kamera_hoch"
-const AKTION_LINKS := "kamera_links"
-const AKTION_RUNTER := "kamera_runter"
-const AKTION_RECHTS := "kamera_rechts"
-## Vorgabe der Konfiguration: kamera.tasten steht in WASD-Reihenfolge,
-## alternativ_tasten in Pfeiltasten-Reihenfolge (hoch, links, runter, rechts).
-const KAMERA_RICHTUNGS_AKTIONEN: Array[String] = [AKTION_HOCH, AKTION_LINKS, AKTION_RUNTER, AKTION_RECHTS]
-const KAMERA_ALTERNATIV_AKTIONEN: Array[String] = ["ui_up", "ui_left", "ui_down", "ui_right"]
-
-## Menschliche Tastenbezeichnung aus steuerung.json in den Keycode der
-## Engine übersetzt. Unbekannte Namen liefern KEY_NONE und werden beim
-## Registrieren stillschweigend übergangen.
-static func keycode_fuer_taste(name: String) -> Key:
-	var nomen := name.strip_edges().to_lower()
-	match nomen:
-		"w":
-			return KEY_W
-		"a":
-			return KEY_A
-		"s":
-			return KEY_S
-		"d":
-			return KEY_D
-		"pfeil links", "links", "left":
-			return KEY_LEFT
-		"pfeil rechts", "rechts", "right":
-			return KEY_RIGHT
-		"pfeil hoch", "hoch", "up":
-			return KEY_UP
-		"pfeil runter", "runter", "down":
-			return KEY_DOWN
-		"leertaste", "space":
-			return KEY_SPACE
-		"escape", "esc":
-			return KEY_ESCAPE
-		"shift":
-			return KEY_SHIFT
-		"strg", "ctrl":
-			return KEY_CTRL
-		"enter":
-			return KEY_ENTER
-		_:
-			return KEY_NONE
-
-## Löst Gruppen-Namen in Einzeltasten auf: Ein einziger Eintrag
-## "Pfeiltasten" in alternativ_tasten steht für alle vier Pfeile in der
-## Reihenfolge hoch, links, runter, rechts. Alle anderen Listen bleiben
-## unverändert.
-static func tastenliste_aufloesen(tasten: Array[String]) -> Array[String]:
-	if tasten.size() == 1:
-		var einzeln := tasten[0].strip_edges().to_lower()
-		if einzeln == "pfeiltasten" or einzeln == "arrow keys" or einzeln == "arrowkeys":
-			return ["Pfeil hoch", "Pfeil links", "Pfeil runter", "Pfeil rechts"] as Array[String]
-	return tasten
-
-## Erzeugt die Engine-Aktionen aus kamera.tasten und kamera.alternativ_tasten.
-## Die Ausführung liegt bei Kern_SteuerungRegistry.inputmap_registrieren,
-## denn nur die Registry lädt die Konfiguration; diese Tabelle ordnet
-## jeder Konfigurationsstelle ihren Aktionsnamen zu.
-static func _aktion_auffuellen(tasten: Array[String], aktions_namen: Array[String]) -> int:
-	var neu_registriert := 0
-	for lauf in mini(tasten.size(), aktions_namen.size()):
-		var aktions_name := aktions_namen[lauf]
-		if not InputMap.has_action(aktions_name):
-			InputMap.add_action(aktions_name)
-		var code := keycode_fuer_taste(tasten[lauf])
-		if code == KEY_NONE:
-			continue
-		var ereignis := InputEventKey.new()
-		ereignis.keycode = code
-		if not InputMap.action_has_event(aktions_name, ereignis):
-			InputMap.action_add_event(aktions_name, ereignis)
-		neu_registriert += 1
-	return neu_registriert
+	# 0 heißt immer offen, N heißt frei ab Progressions-Stufe N; ob die Stufe
+	# erreicht ist, beantwortet die Progressions-Maschine, nicht diese Klasse.
+	return int(_aktion_wort(aktion_id, "gesperrt_ab_stufe", 0))

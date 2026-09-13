@@ -233,8 +233,8 @@ func _process(delta: float) -> void:
 	# Richtungen kommen aus der InputMap der Steuerungskonfiguration; ohne
 	# registrierte Aktionen gilt der ui_-Rückfall der Engine.
 	var richtung := Vector2.ZERO
-	if InputMap.has_action(Kern_SteuerungBasis.AKTION_HOCH):
-		richtung = Input.get_vector(Kern_SteuerungBasis.AKTION_LINKS, Kern_SteuerungBasis.AKTION_RECHTS, Kern_SteuerungBasis.AKTION_HOCH, Kern_SteuerungBasis.AKTION_RUNTER)
+	if InputMap.has_action(Kern_TastenTabelle.AKTION_HOCH):
+		richtung = Input.get_vector(Kern_TastenTabelle.AKTION_LINKS, Kern_TastenTabelle.AKTION_RECHTS, Kern_TastenTabelle.AKTION_HOCH, Kern_TastenTabelle.AKTION_RUNTER)
 	else:
 		richtung = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	_kamera.position += richtung * KAMERA_GESCHWINDIGKEIT * delta / maxf(_kamera.zoom.x, 0.2)

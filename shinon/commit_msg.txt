@@ -1,10 +1,7 @@
-1. Der Kommandant befahl, den Nachlass abzuarbeiten und die Zeilen-Grenze danach verpflichtend zu machen, und die Einheiten-Domäne war das schwerste Stück dieser Schuld.
-2. einheit_manager.gd schrumpfte von 394 auf 147 Zeilen, weil einheit_basis.gd den Bestand trägt und einheit_verdrahtung.gd die Aufbau-Choreografie samt Kontext-Bündeln.
-3. einheit_status.gd fiel von 306 auf 118 Zeilen, denn einheit_bewegung.gd geht die Schritte, einheit_job_queue.gd hält die Warteschlange und einheit_job_regie.gd führt die Auftrags-Regie.
-4. einheit_job_vergabe_maschine.gd ist neu und sucht und vergibt die Arbeit, damit der Manager nicht länger selbst den Fluss regiert.
-5. In einheit_einwanderungs_maschine.gd, einheit_job_fluss_maschine.gd, einheit_trupp_maschine.gd und einheit_takt_maschine.gd folgen die Rufe der neuen Heimat statt der alten Sammelstelle.
-6. Der Job-Fluss bekam beim Erstaufbau nie das Modell gereicht, weshalb der Arbeitsloop nach dem ersten Baum verhungerte; einheit_verdrahtung.gd reicht es jetzt durch, und die Takt-Maschine schweigt im Rohbau statt zu stolpern.
-7. Der tote Ruf auf ein fehlendes Trupp-Modell und die passiven Weiterleitungen des Managers sind begraben, damit keine Fassade mehr Arbeit vortäuscht.
-8. ui_pop_einheit_uebersetzer.gd liest den Zustand bei den neuen Maschinen, weil der entkernte Manager ihn nicht mehr selbst hält.
-9. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
-10. Sichtbar im laufenden Spiel: Die Einwanderer laufen weiter ihre Wege, ernten Baum für Baum und der Job-Loop zieht zum nächsten Ziel, statt nach dem ersten Baum zu verhungern.
+1. Der zweite Schnitt nahm die Kern-Steuerung und das Lager aufs Korn, weil beide ihre Nachbarn mitverantworteten.
+2. kern_steuerung_basis.gd fiel unter die Achtzig-Zeilen-Grenze, denn die Tasten-Tabelle und die Aktions-Namen wohnen jetzt in kern_tasten_tabelle.gd.
+3. kern_steuerung_registry.gd und ui_kamera_steuerung.gd lesen die Aktionen bei der neuen Tabelle, damit niemand mehr die alte Sammelstelle nach ihren Tasten fragt.
+4. karten_editor.gd holt seine Richtungen ebenfalls aus der Tabelle, weshalb Editor und Spiel dieselbe Wahrheit über die Kameratasten teilen.
+5. lager_darsteller.gd blieb unter hundert Zeilen, weil das Stapeln in lager_stapel_bauer.gd auszog und der Darsteller endlich wieder nur darstellt.
+6. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und grünem Shinon-Tor.
+7. Sichtbar im laufenden Spiel: Die Kamera fährt mit WASD und den Alternativtasten wie zuvor, und die Stapel im Lagerregal schichten sich unverändert.

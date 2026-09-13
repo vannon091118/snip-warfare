@@ -47,6 +47,6 @@ func inputmap_registrieren() -> int:
 	if steuerung == null:
 		return 0
 	var geprueft := 0
-	geprueft += Kern_SteuerungBasis._aktion_auffuellen(steuerung.kamera_tasten, Kern_SteuerungBasis.KAMERA_RICHTUNGS_AKTIONEN)
-	geprueft += Kern_SteuerungBasis._aktion_auffuellen(Kern_SteuerungBasis.tastenliste_aufloesen(steuerung.kamera_alternativ), Kern_SteuerungBasis.KAMERA_RICHTUNGS_AKTIONEN)
+	geprueft += Kern_TastenTabelle._aktion_auffuellen(steuerung.kamera_tasten, Kern_TastenTabelle.KAMERA_RICHTUNGS_AKTIONEN)
+	geprueft += Kern_TastenTabelle._aktion_auffuellen(Kern_TastenTabelle.tastenliste_aufloesen(steuerung.kamera_alternativ), Kern_TastenTabelle.KAMERA_RICHTUNGS_AKTIONEN)
 	return geprueft
