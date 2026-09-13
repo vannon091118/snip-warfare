@@ -36,7 +36,7 @@ func auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp, 
 	# Queue-Start: Frischen Job erzeugen.
 	if status.zustand != Einheit_Status.Zustand.IDLE:
 		return
-	var eintrag := status.queue_naechster()
+	var eintrag := status.queue.naechster()
 	if eintrag.is_empty():
 		return
 	var job_id := str(eintrag.get("job_id", ""))
@@ -48,15 +48,15 @@ func auf_naechster_job_aus_queue(_job_id: String, _ziel_typ: Job_Basis.ZielTyp, 
 	if job_id == "transport":
 		if _trupp.transport_starten(status, ziel_index, ziel_typ):
 			return
-		status.queue_vorne_entfernen()
+		status.queue.vorne_entfernen()
 		return
 
 	var folge_job := _job_registry.job_erzeugen(job_id)
 	var job: Job_Basis = folge_job
 	if job == null:
-		status.queue_vorne_entfernen()
+		status.queue.vorne_entfernen()
 		return
-	status.queue_vorne_entfernen()
+	status.queue.vorne_entfernen()
 	# G1: Auch aus der Queue startet der Job mit dem Faktor seines Ziels.
 	job.ziel_faktor_setzen(_ziel_suche.ziel_faktor_fuer(ziel_typ, ziel_index))
 	var ziel_position := _ziel_suche.ziel_position_fuer(ziel_typ, ziel_index)
@@ -102,7 +102,7 @@ func auf_inventar_voll(einheit_index: int) -> void:
 	var lager_index := _lager.naechstes_lager_fuer(status.welt_position)
 	if lager_index < 0:
 		return
-	status.job_vormerken("transport", Job_Basis.ZielTyp.OBJEKT, lager_index, "")
+	status.queue.vormerken("transport", Job_Basis.ZielTyp.OBJEKT, lager_index, "")
 	status.naechster_job_aus_queue.emit("transport", Job_Basis.ZielTyp.OBJEKT, lager_index, "")
 
 func auf_beute_erlegt(status: Einheit_Status) -> void:

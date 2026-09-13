@@ -1,10 +1,10 @@
-1. Der Nutzer brachte das Foto einer weißen Spielfläche mit sichtbarem HUD und berichtete, die Karte zeige sich nur drei Sekunden, bevor sie wieder überblendet werde, und verlangte zusätzlich den modularen Bau des Beobachter-Layers.
-2. Die Jagd lief über vier neue Sonden in tools, statt im Dunkeln zu raten: lauf_sonde_render.gd maß mit echtem Fenster zweiundachtzig Prozent Weiß über vollständigen Kacheln mit Bild, und lauf_sonde_diff.gd schaltete jede Ebene einzeln still.
-3. Der Täter war die TiefenNeige in world/logic/kategorie_atmosphaere/welt_tiefen_neige.gd: Ihr Abschalten ließ das Weiß von zweiundachtzig auf einundzwanzig Prozent fallen, weil ihr Aufbau die Anwendung ihres Shader-Materials verschlief.
-4. Zwei Löcher wurden dort geschlossen: Der Schleier holte sein Material erst im Einrichten nach, egal in welcher Reihenfolge Aufbau und Einrichten stehen, und der Verlauf trug sein opakes Zentrum in der Mitte statt am Rand, weshalb die Kameranähe vernebelt war, die klar bleiben sollte.
-5. In world/logic/kategorie_welt/welt_model.gd trägt der Regions-Griff jetzt einen Index statt der linearen Suche, in world/logic/kategorie_welt/welt_netzwerk_planer.gd cachen Fraktionsregionen und Barrieren ihre Antworten, und in world/logic/kategorie_welt/welt_world.gd schaltet nur eine wahrhaftige Basis die aktive Karte um.
-6. In world/scenes/welt.gd liest die Ladeleiste ihren Anteil nur, solange der Lader lebt, und in tools/lauf_pruefung_welt.gd gehen die Proben an die echte Verdrahtung der Ernte und des Job-Loops, damit die Testsuite nicht an einer erfundenen API hängt.
-7. Die vier Sonden bleiben im Katalog, damit der nächste weiße Vorhang mit einem einzigen Headless-Lauf überführt wird statt mit Wochen des Glaubens.
-8. INDEX.md, INDEX_DOMAENEN.md, INDEX_LETZTE_AENDERUNG.md, ROADMAP.md und README.md tragen den neuen Stand von zweihundertzweiundsiebzig Klassen und dreihundertelf Dateien, und die Spiel-Einstellung in project.godot wurde vom Müllzeilen-Unfall befreit.
-9. Geprüft ist alles: voller Preflight ohne Befund, alle hundertzweiunddreißig Proben grün, und die Render-Sonde zeigt sieben Prozent Weiß, also eine sichtbare Karte statt einer Schneefläche.
-10. Sichtbar im laufenden Spiel: Die Karte bleibt nach dem Laden stehen, der bläuliche Schleier sitzt nur noch am Bildrand wie Luft-Perspektive, und der Beobachter-Layer wartet als nächste Baustelle auf seine modulare Zerlegung, wenn der Spieler ihn ruft.
+1. Der Kommandant befahl, den Nachlass abzuarbeiten und die Zeilen-Grenze danach verpflichtend zu machen, und die Einheiten-Domäne war das schwerste Stück dieser Schuld.
+2. einheit_manager.gd schrumpfte von 394 auf 147 Zeilen, weil einheit_basis.gd den Bestand trägt und einheit_verdrahtung.gd die Aufbau-Choreografie samt Kontext-Bündeln.
+3. einheit_status.gd fiel von 306 auf 118 Zeilen, denn einheit_bewegung.gd geht die Schritte, einheit_job_queue.gd hält die Warteschlange und einheit_job_regie.gd führt die Auftrags-Regie.
+4. einheit_job_vergabe_maschine.gd ist neu und sucht und vergibt die Arbeit, damit der Manager nicht länger selbst den Fluss regiert.
+5. In einheit_einwanderungs_maschine.gd, einheit_job_fluss_maschine.gd, einheit_trupp_maschine.gd und einheit_takt_maschine.gd folgen die Rufe der neuen Heimat statt der alten Sammelstelle.
+6. Der Job-Fluss bekam beim Erstaufbau nie das Modell gereicht, weshalb der Arbeitsloop nach dem ersten Baum verhungerte; einheit_verdrahtung.gd reicht es jetzt durch, und die Takt-Maschine schweigt im Rohbau statt zu stolpern.
+7. Der tote Ruf auf ein fehlendes Trupp-Modell und die passiven Weiterleitungen des Managers sind begraben, damit keine Fassade mehr Arbeit vortäuscht.
+8. ui_pop_einheit_uebersetzer.gd liest den Zustand bei den neuen Maschinen, weil der entkernte Manager ihn nicht mehr selbst hält.
+9. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis der Kette über fünfzig Stationen.
+10. Sichtbar im laufenden Spiel: Die Einwanderer laufen weiter ihre Wege, ernten Baum für Baum und der Job-Loop zieht zum nächsten Ziel, statt nach dem ersten Baum zu verhungern.

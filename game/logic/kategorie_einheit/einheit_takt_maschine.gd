@@ -17,7 +17,8 @@ func einrichten(kontext: Dictionary) -> void:
 
 
 func tick(nummer: int, delta: float) -> void:
-	if not _aktive_karte():
+	# Ohne eingerichteten Kontext hat diese Maschine nichts zu führen.
+	if _kontext.is_empty() or not _aktive_karte():
 		return
 	var verhalten: Einheit_VerhaltensMaschine = _kontext["verhalten"]
 	var need_registry: Pop_NeedRegistry = _kontext["need_registry"]

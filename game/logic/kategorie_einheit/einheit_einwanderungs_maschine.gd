@@ -13,6 +13,12 @@ func einrichten(kontext: Dictionary) -> void:
 	_kontext = kontext
 
 
+func blasen_lesen() -> Array:
+	## Lese-Griff für den Blasen-Tick: die Soz-Blasen aller Einheiten.
+	var blasen: Variant = _kontext.get("sozial_blasen", [])
+	return blasen if blasen is Array else []
+
+
 func hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> int:
 	## Legt eine Einheit an und liefert ihren Index in der Einheitenliste.
 	var einheiten: Array[Dictionary] = _kontext["einheiten"]
@@ -25,7 +31,7 @@ func hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> int:
 	darsteller.animation_setzen(status.animation())
 	var rasse := _rasse_fuer(rasse_id)
 	var mood := _mood_fuer(rasse, welt_position)
-	status.rasse_faktor_setzen(mood.bewegungs_faktor())
+	status.bewegung.rasse_faktor_setzen(mood.bewegungs_faktor())
 	var ei := einheiten.size()
 	var denkblase := Pop_Denkblase.new()
 	denkblase.einrichten(mood)

@@ -84,7 +84,7 @@ func daten_fuer_einheit(index: int) -> Dictionary:
 		"need_werte": need_werte,
 		"mood": mood_daten,
 		"inventar": inventar,
-		"queue_laenge": status.queue_laenge(),
+		"queue_laenge": status.queue.laenge(),
 		"ziel_index": status.aktuelles_ziel_index,
 		"ziel_ressource": status.ziel_ressource,
 		"welt_position": status.welt_position,

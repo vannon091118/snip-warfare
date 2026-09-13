@@ -28,7 +28,7 @@ func beschreibung_fuer(index: int, rasse: String) -> Dictionary:
 	if st == null:
 		return {}
 	var job_text := "" if st.job == null else str(st.job.job_id)
-	return {"position": st.welt_position, "rasse": rasse, "zustand": st.zustand, "job_id": job_text, "ziel_index": st.aktuelles_ziel_index, "hp": st.vital.hp if st.vital != null else 0.0, "queue": st.queue_laenge()}
+	return {"position": st.welt_position, "rasse": rasse, "zustand": st.zustand, "job_id": job_text, "ziel_index": st.aktuelles_ziel_index, "hp": st.vital.hp if st.vital != null else 0.0, "queue": st.queue.laenge()}
 func auswahl_markierung_erneuern(aktiver_index: int, auswahl_liste: Array[int] = []) -> void:
 	for idx in _einheiten.size():
 		var d: Variant = _einheiten[idx].get("darsteller")
@@ -62,7 +62,7 @@ func transport_starten(status: Einheit_Status, lager_index: int, ziel_typ: Job_B
 	job.lager_index_setzen(lager_index)
 	job.lager_position_setzen(pos)
 	job.inventar_vorher_setzen(inv.alles_abgeben())
-	status.queue_vorne_entfernen()
+	status.queue.vorne_entfernen()
 	status.geh_ziel_setzen(pos)
 	if _planner.is_valid():
 		_planner.call(status, pos)
