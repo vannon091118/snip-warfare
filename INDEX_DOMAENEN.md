@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 287 Klassen, 328 Dateien, 65 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 302 Klassen, 345 Dateien, 65 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -10,18 +10,18 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 287 Klassen, 328 Dateien, 65 Sign
 | --- | --- | --- | --- | --- | --- |
 | `core` | `kern` | `Kern_` | `core/` | 21 | 21 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
-| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 46 | 46 |
-| `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 34 | 34 |
+| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 49 | 49 |
+| `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 38 | 38 |
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 21 | 21 |
-| `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 7 | 7 |
+| `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 11 | 11 |
 | `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 31 | 31 |
 | `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 18 | 18 |
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
-| `population` | `pop` | `Pop_` | `population/` | 26 | 27 |
+| `population` | `pop` | `Pop_` | `population/` | 30 | 31 |
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
 | `ui` | `ui` | `Ui_` | `ui/` | 24 | 36 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 23 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 25 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -112,14 +112,15 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 56 | 5 | 4 | 12 | 11 | - | - | 3 | 4 | - | 3 | 1 | 7 | - | 3 | 3 |
-| `Dictionary` | 38 | 3 | 1 | 7 | 1 | 4 | 2 | 9 | - | - | 1 | 1 | 5 | - | - | 4 |
-| `int` | 17 | - | - | 5 | - | 1 | 1 | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
+| `String` | 59 | 5 | 4 | 12 | 13 | - | - | 3 | 4 | - | 4 | 1 | 7 | - | 3 | 3 |
+| `Dictionary` | 39 | 3 | 1 | 7 | 1 | 4 | 3 | 9 | - | - | 1 | 1 | 5 | - | - | 4 |
+| `int` | 16 | - | - | 5 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 9 | 1 | 4 | 3 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `Vector2` | 6 | 1 | - | 1 | - | - | - | 3 | - | - | - | - | - | - | - | 1 |
 | `Objekt_Basis` | 5 | - | - | 1 | 4 | - | - | - | - | - | - | - | - | - | - | - |
 | `float` | 5 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | - | - |
 | `Kern_ModifikatorBasis` | 4 | 2 | - | - | - | - | - | 1 | - | - | - | - | - | - | 1 | - |
+| `Welt_Karawane` | 3 | - | - | 3 | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Orchestrator_Darsteller` | 2 | - | - | - | - | - | 1 | - | - | - | - | - | - | - | - | 1 |
 | `Ressource_Basis` | 2 | - | - | - | - | - | - | 2 | - | - | - | - | - | - | - | - |
 | `Sprite2D` | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | 1 |
@@ -143,7 +144,6 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | `Tier_Basis` | 1 | - | - | - | - | 1 | - | - | - | - | - | - | - | - | - | - |
 | `Welt_BiomBasis` | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | 1 |
 | `Welt_FraktionsKiMaschine` | 1 | - | - | 1 | - | - | - | - | - | - | - | - | - | - | - | - |
-| `Welt_Karawane` | 1 | - | - | 1 | - | - | - | - | - | - | - | - | - | - | - | - |
 
 ## 4. Domaenen im Einzelnen
 
@@ -244,7 +244,7 @@ _keine Signal-Deklaration in dieser Domaene_
 
 ### world/welt — Kuerzel `welt` — `world/logic/kategorie_welt/`
 
-Prefix `Welt_`, 46 Klassen.
+Prefix `Welt_`, 49 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -263,7 +263,10 @@ Prefix `Welt_`, 46 Klassen.
 | `Welt_HudRueckmeldung` | `world/logic/kategorie_welt/welt_hud_rueckmeldung.gd` | 47 |
 | `Welt_KachelGeste` | `world/logic/kategorie_welt/welt_kachel_geste.gd` | 43 |
 | `Welt_Karawane` | `world/logic/kategorie_welt/welt_karawane.gd` | 179 |
-| `Welt_KarawanenManager` | `world/logic/kategorie_welt/welt_karawanen_manager.gd` | 239 |
+| `Welt_KarawanenManager` | `world/logic/kategorie_welt/welt_karawanen_manager.gd` | 137 |
+| `Welt_KarawanenReise` | `world/logic/kategorie_welt/welt_karawanen_reise.gd` | 44 |
+| `Welt_KarawanenSpeicher` | `world/logic/kategorie_welt/welt_karawanen_speicher.gd` | 30 |
+| `Welt_KarawanenZeichner` | `world/logic/kategorie_welt/welt_karawanen_zeichner.gd` | 44 |
 | `Welt_KartenBeobachter` | `world/logic/kategorie_welt/welt_karten_beobachter.gd` | 24 |
 | `Welt_Ladevorgang` | `world/logic/kategorie_welt/welt_ladevorgang.gd` | 118 |
 | `Welt_LagerFabrik` | `world/logic/kategorie_welt/welt_lager_fabrik.gd` | 27 |
@@ -319,27 +322,31 @@ Prefix `Welt_`, 46 Klassen.
 | `Dictionary` | 7 |
 | `int` | 5 |
 | `Vector2i` | 3 |
+| `Welt_Karawane` | 3 |
 | `float` | 2 |
 | `Objekt_Basis` | 1 |
 | `RefCounted` | 1 |
 | `Vector2` | 1 |
 | `Welt_Fraktion` | 1 |
 | `Welt_FraktionsKiMaschine` | 1 |
-| `Welt_Karawane` | 1 |
 
 ### world/objekt — Kuerzel `obj` — `world/logic/kategorie_objekt/`
 
-Prefix `Objekt_/Gebaeude_`, 34 Klassen.
+Prefix `Objekt_/Gebaeude_`, 38 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
+| `Gebaeude_BauAuftrag` | `world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd` | 137 |
 | `Gebaeude_BauMaschine` | `world/logic/kategorie_objekt/gebaeude_bau_maschine.gd` | 102 |
+| `Gebaeude_BauplatzPruefer` | `world/logic/kategorie_objekt/gebaeude_bauplatz_pruefer.gd` | 60 |
 | `Gebaeude_Definition` | `world/logic/kategorie_objekt/gebaeude_definition.gd` | 83 |
 | `Gebaeude_DefinitionRegistry` | `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` | 55 |
+| `Gebaeude_KartenGate` | `world/logic/kategorie_objekt/gebaeude_karten_gate.gd` | 17 |
 | `Gebaeude_Laufzeit` | `world/logic/kategorie_objekt/gebaeude_laufzeit.gd` | 170 |
-| `Gebaeude_Manager` | `world/logic/kategorie_objekt/gebaeude_manager.gd` | 309 |
+| `Gebaeude_Manager` | `world/logic/kategorie_objekt/gebaeude_manager.gd` | 150 |
 | `Gebaeude_ProduktionsMaschine` | `world/logic/kategorie_objekt/gebaeude_produktions_maschine.gd` | 111 |
 | `Gebaeude_Registry` | `world/logic/kategorie_objekt/gebaeude_registry.gd` | 33 |
+| `Gebaeude_StatusLeser` | `world/logic/kategorie_objekt/gebaeude_status_leser.gd` | 62 |
 | `Natur_Registry` | `world/logic/kategorie_objekt/natur_registry.gd` | 31 |
 | `Objekt_Basis` | `world/logic/kategorie_objekt/objekt_basis.gd` | 65 |
 | `Objekt_Baum` | `world/logic/kategorie_objekt/objekt_baum.gd` | 31 |
@@ -384,7 +391,7 @@ Prefix `Objekt_/Gebaeude_`, 34 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 11 |
+| `String` | 13 |
 | `Objekt_Basis` | 4 |
 | `Dictionary` | 1 |
 | `Gebaeude_Definition` | 1 |
@@ -398,13 +405,13 @@ Prefix `Tier_`, 21 Klassen.
 | `Tier_Baer` | `world/logic/kategorie_tier/tier_baer.gd` | 40 |
 | `Tier_Basis` | `world/logic/kategorie_tier/tier_basis.gd` | 63 |
 | `Tier_Darsteller` | `world/logic/kategorie_tier/tier_darsteller.gd` | 92 |
-| `Tier_DarstellerFabrik` | `world/logic/kategorie_tier/tier_darsteller_fabrik.gd` | 39 |
+| `Tier_DarstellerFabrik` | `world/logic/kategorie_tier/tier_darsteller_fabrik.gd` | 38 |
 | `Tier_Eisbaer` | `world/logic/kategorie_tier/tier_eisbaer.gd` | 26 |
 | `Tier_FeldAbfrage` | `world/logic/kategorie_tier/tier_feld_abfrage.gd` | 40 |
 | `Tier_Hase` | `world/logic/kategorie_tier/tier_hase.gd` | 38 |
 | `Tier_KlassenFabrik` | `world/logic/kategorie_tier/tier_klassen_fabrik.gd` | 22 |
 | `Tier_Leser` | `world/logic/kategorie_tier/tier_leser.gd` | 64 |
-| `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` | 145 |
+| `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` | 146 |
 | `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` | 75 |
 | `Tier_SichtWaechter` | `world/logic/kategorie_tier/tier_sicht_waechter.gd` | 82 |
 | `Tier_Sichtung` | `world/logic/kategorie_tier/tier_sichtung.gd` | 68 |
@@ -436,17 +443,21 @@ Prefix `Tier_`, 21 Klassen.
 
 ### world/orchestrator — Kuerzel `orch` — `world/logic/kategorie_orchestrator/`
 
-Prefix `Orchestrator_`, 7 Klassen.
+Prefix `Orchestrator_`, 11 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
 | `Orchestrator_Darsteller` | `world/logic/kategorie_orchestrator/orchestrator_darsteller.gd` | 63 |
 | `Orchestrator_EinheitDerWelt` | `world/logic/kategorie_orchestrator/orchestrator_einheit.gd` | 49 |
+| `Orchestrator_KonfigLader` | `world/logic/kategorie_orchestrator/orchestrator_konfig_lader.gd` | 18 |
 | `Orchestrator_Konfiguration` | `world/logic/kategorie_orchestrator/orchestrator_konfiguration.gd` | 68 |
-| `Orchestrator_Manager` | `world/logic/kategorie_orchestrator/orchestrator_manager.gd` | 224 |
+| `Orchestrator_Manager` | `world/logic/kategorie_orchestrator/orchestrator_manager.gd` | 111 |
 | `Orchestrator_Registry` | `world/logic/kategorie_orchestrator/orchestrator_registry.gd` | 58 |
+| `Orchestrator_SpawnCap` | `world/logic/kategorie_orchestrator/orchestrator_spawn_cap.gd` | 30 |
 | `Orchestrator_Status` | `world/logic/kategorie_orchestrator/orchestrator_status.gd` | 50 |
 | `Orchestrator_Verdrahtung` | `world/logic/kategorie_orchestrator/orchestrator_verdrahtung.gd` | 30 |
+| `Orchestrator_Verteiler` | `world/logic/kategorie_orchestrator/orchestrator_verteiler.gd` | 52 |
+| `Orchestrator_ZielSuche` | `world/logic/kategorie_orchestrator/orchestrator_ziel_suche.gd` | 34 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -463,10 +474,9 @@ Prefix `Orchestrator_`, 7 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `Dictionary` | 2 |
+| `Dictionary` | 3 |
 | `Orchestrator_Darsteller` | 1 |
 | `Orchestrator_Konfiguration` | 1 |
-| `int` | 1 |
 
 ### game/einheit — Kuerzel `ein` — `game/logic/kategorie_einheit/`
 
@@ -610,23 +620,27 @@ _keine typisierten Arrays in dieser Domaene_
 
 ### population — Kuerzel `pop` — `population/`
 
-Prefix `Pop_`, 26 Klassen.
+Prefix `Pop_`, 30 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
 | `Pop_Denkblase` | `population/logic/mood/pop_denkblase.gd` | 58 |
 | `Pop_Mood` | `population/logic/mood/pop_mood.gd` | 42 |
+| `Pop_MoodAbleitung` | `population/logic/mood/pop_mood_ableitung.gd` | 60 |
+| `Pop_MoodEskalation` | `population/logic/mood/pop_mood_eskalation.gd` | 68 |
 | `Pop_MoodEskalationStufe` | `population/logic/mood/pop_mood_eskalation_stufe.gd` | 25 |
-| `Pop_MoodMaschine` | `population/logic/mood/pop_mood_maschine.gd` | 285 |
+| `Pop_MoodMaschine` | `population/logic/mood/pop_mood_maschine.gd` | 113 |
 | `Pop_MoodModifikator` | `population/logic/mood/pop_mood_modifikator.gd` | 56 |
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` | 57 |
+| `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` | 37 |
+| `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` | 85 |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` | 128 |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` | 30 |
 | `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` | 68 |
 | `Pop_NeedNahrung` | `population/logic/needs/pop_need_nahrung.gd` | 33 |
 | `Pop_NeedRegistry` | `population/logic/needs/pop_need_registry.gd` | 79 |
 | `Pop_NeedWaerme` | `population/logic/needs/pop_need_waerme.gd` | 6 |
-| `Pop_RassenGenerator` | `population/logic/needs/pop_rassen_generator.gd` | 128 |
+| `Pop_RassenGenerator` | `population/logic/needs/pop_rassen_generator.gd` | 138 |
 | `Pop_RassenSchema` | `population/logic/needs/pop_rassen_schema.gd` | 162 |
 | `Pop_RassenSchemaRegistry` | `population/logic/needs/pop_rassen_schema_registry.gd` | 92 |
 | `Pop_RassenZugriff` | `population/logic/needs/pop_rassen_zugriff.gd` | 29 |
@@ -655,7 +669,7 @@ Prefix `Pop_`, 26 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 3 |
+| `String` | 4 |
 | `Dictionary` | 1 |
 | `Pop_MoodEskalationStufe` | 1 |
 | `Pop_MoodModifikator` | 1 |

@@ -16,7 +16,7 @@ Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbrauc
 | [`job_config.json`](game/data/job_config.json) | `game/data` | 12 | `holzfaeller`, `steinmetz`, `jaeger`, `holzfaeller_stumpf`, `jaeger_kadaver`, `heiler` und 6 weitere | `game/logic/kategorie_job/job_beeren_sammler.gd`, `game/logic/kategorie_job/job_graben.gd`, `game/logic/kategorie_job/job_heiler.gd` und 7 weitere |
 | [`mutationen_inventar.json`](game/data/mutationen_inventar.json) | `game/data` | 3 | `schema_name`, `start_zustaende`, `mutationen` | `game/logic/kategorie_einheit/einheit_inventar.gd`, `game/logic/kategorie_einheit/einheit_inventar_schema.gd` |
 | [`mutationen_ressourcen.json`](game/data/mutationen_ressourcen.json) | `game/data` | 3 | `schema_name`, `start_zustaende`, `mutationen` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` |
-| [`orchestrator_config.json`](game/data/orchestrator_config.json) | `game/data` | 2 | `holzsammler_zone`, `jaeger_zone` | `ui/logic/kategorie_ui/ui_orchestrator_priority_panel.gd`, `world/logic/kategorie_orchestrator/orchestrator_manager.gd`, `world/logic/kategorie_orchestrator/orchestrator_registry.gd` und 1 weitere |
+| [`orchestrator_config.json`](game/data/orchestrator_config.json) | `game/data` | 2 | `holzsammler_zone`, `jaeger_zone` | `ui/logic/kategorie_ui/ui_orchestrator_priority_panel.gd`, `world/logic/kategorie_orchestrator/orchestrator_konfig_lader.gd`, `world/logic/kategorie_orchestrator/orchestrator_manager.gd` und 2 weitere |
 | [`progression.json`](game/data/progression.json) | `game/data` | 2 | `_kommentar`, `stufen` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd`, `world/logic/kategorie_progression/welt_fortschritts_registry.gd`, `world/logic/kategorie_progression/welt_progressions_registry.gd` und 1 weitere |
 | [`ressourcen.json`](game/data/ressourcen.json) | `game/data` | 6 | `holz`, `stein`, `fleisch`, `werkzeug`, `raeuchelfleisch`, `beeren` | `game/logic/kategorie_einheit/einheit_inventar.gd`, `game/logic/kategorie_einheit/einheit_ressourcen.gd`, `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` und 2 weitere |
 | [`steuerung.json`](game/data/steuerung.json) | `game/data` | 8 | `version`, `_kommentar`, `kamera`, `auswahl`, `kontextmenue`, `pathfinding` und 2 weitere | `core/logic/kategorie_pathfinding/path_registry.gd`, `core/logic/kern_steuerung_basis.gd`, `core/logic/kern_steuerung_registry.gd` und 6 weitere |
@@ -119,6 +119,7 @@ Pfad `game/data/mutationen_ressourcen.json`, Domaene `game/data`, 3 Eintraege.
 Pfad `game/data/orchestrator_config.json`, Domaene `game/data`, 2 Eintraege.
 
 * `ui/logic/kategorie_ui/ui_orchestrator_priority_panel.gd`
+* `world/logic/kategorie_orchestrator/orchestrator_konfig_lader.gd`
 * `world/logic/kategorie_orchestrator/orchestrator_manager.gd`
 * `world/logic/kategorie_orchestrator/orchestrator_registry.gd`
 * `world/scenes/welt.gd`
@@ -185,7 +186,7 @@ Pfad `population/data/rassen_schemata.json`, Domaene `population`, 3 Eintraege.
 * `population/logic/needs/pop_rassen_schema.gd`
 * `population/logic/needs/pop_rassen_schema_registry.gd`
 * `population/logic/needs/pop_rassen_zugriff.gd`
-* `world/logic/kategorie_orchestrator/orchestrator_manager.gd`
+* `world/logic/kategorie_orchestrator/orchestrator_spawn_cap.gd`
 * `world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd`
 
 ### rassen_vorlagen.json

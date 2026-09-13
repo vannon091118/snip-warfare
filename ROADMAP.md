@@ -7,7 +7,7 @@ Dieses Dokument ist die **einzige verbindliche Planungs- und Roadmap-Quelle** f�
 ## 1. Systemstatus & Geprüfter Bestand
 
 * **Engine:** Godot 4.7.2 (GL Compatibility)
-* **Klassenbestand:** 287 Klassen auf 328 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
+* **Klassenbestand:** 302 Klassen auf 345 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
 * **JSON-Datenpools:** 14 Pools (Wirtschaft, Bevölkerung, Welt, Jobs, Gebäude, Progression, Steuerung, Modifikatoren, Animationen)
 * **Szenen:** 11 aktive `.tscn`-Szenen
 * **Indizes:** `INDEX.md` als Wurzel, `INDEX_DOMAENEN.md` mit der Signal- und Array-Matrix je Domäne, `INDEX_DATEN.md` mit jedem JSON-Pool samt Besitzer und Verbrauchern und die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`, alle vier von `python tools/index_generieren.py` erzeugt und von der Prüfkategorie `index` (E044) bewacht
@@ -199,7 +199,7 @@ Alle Qualitäts-, Status- und Testprüfungen des Projekts lassen sich mit einem 
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 19 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus.
+* **Vollprüfung:** Führt alle 20 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus.
 * **Scope-Gezielt:**
   * `python tools/preflight.py --kategorie warnungen` (GDScript-Warnungs-Scan nach Regel 6)
   * `python tools/preflight.py --kategorie shinon` (Shinon Gate Prüfung E030–E039)

@@ -1,7 +1,8 @@
-1. Der Nachzug nahm die Welt-Domänen aufs Korn, deren Manager noch selbst rechneten, was eigene Maschinen besser tragen.
-2. orchestrator_manager.gd fiel von 229 auf 110 Zeilen, denn die Obergrenze liest orchestrator_spawn_cap.gd, die Ziele sucht orchestrator_ziel_suche.gd, die Zonen liest orchestrator_konfig_lader.gd und die Zuteilung rechnet orchestrator_verteiler.gd.
-3. welt_karawanen_manager.gd schrumpfte auf 136 Zeilen, weil die Reisedauer in welt_karawanen_reise.gd rechnet, das Malen in welt_karawanen_zeichner.gd wohnt und das Sichern in welt_karawanen_speicher.gd.
-4. tier_manager.gd übergibt der tier_darsteller_fabrik.gd das Regelwerk bei jedem Ruf, damit die Fabrik keinen Zustand trägt, der vor dem ersten Rahmen fehlen kann; dieser Fehler hatte den Tier-Darsteller im Laufbeweis zu Fall gebracht.
-5. In test_datengetriebene_naht.py und test_y_sort_und_landeplatz.py zeigen die Proben auf die neuen Häuser, ohne weicher zu prüfen.
-6. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und dem Laufbeweis über fünfzig Stationen ohne einen einzigen Skript-Fehler.
-7. Sichtbar im laufenden Spiel: Der Orchestrator vergibt weiter alle sechzig Ticks Arbeit nach Priorität, Karawanen ziehen als gelbe Punkte zwischen den Karten, und Tiere erwachen im Kamerablick wie zuvor.
+1. Damit war die Zeilen-Grenze reif für ihr Ende ohne Ausnahme, und der Rassen-Log bekam seine letzte Dämpfung.
+2. In pruef_locregel.py trägt kein Eintrag mehr eine Sonder-Grenze, denn die Nachlass-Liste ist abgearbeitet und gelöscht; jede Klassendatei fällt ab sofort ungeschont unter ihre Suffix-Grenze.
+3. Der Sinn der Grenze bleibt ungeteilt: Sie ist kein Platz-Sparen und keine Abkürzung, sondern die Weisung, jede Verantwortung in eine eigene Maschine zu bauen; braucht ein großes System als Manager seine fünfzehn Zeilen mehr, bekommt es eine eigene Maschine, nie den Kommentar „da ist noch Platz".
+4. In pop_rassen_generator.gd spricht am Ende des Generierungslaufs genau eine Zusammenfassungszeile über die Zahl der finalisierten Schemata, statt hundertzweiundneunzig einzelner Immutabel-Meldungen den Log zuzumüllen.
+5. Der Laufbeweis zeigt die Wirkung: null Immutabel-Zeilen im Log, fünfzig Stationen grün, und jede Generierung meldet sich einmal mit ihrer Bilanz.
+6. README.md, ROADMAP.md und die Index-Familie tragen den neuen Stand von dreihundert zwei Klassen und dreihundertfünfundvierzig Dateien.
+7. Geprüft ist alles mit dem vollen Preflight in allen eigenen Kategorien ohne Befund und 132 grünen Proben.
+8. Sichtbar im laufenden Spiel: Der Start läuft weiter wie gehabt, der Log bleibt lesbar, und wer künftig eine Grenze reißt, fällt rot statt still zu wachsen.

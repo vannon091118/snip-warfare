@@ -7,6 +7,8 @@ class_name Pop_RassenGenerator
 ## rassen_vorlagen.json und registriert das finalisierte Schema in der
 ## Pop_RassenSchemaRegistry. Namen entstehen pro Archetyp über den
 ## Pop_NamensGenerator, damit derselbe Seed dieselben Rassen hervorbringt.
+## Am Ende spricht genau eine Zusammenfassungszeile, keine Hundertschaft
+## einzelner Meldungen je Rasse.
 
 ## Kategorie daten: Konfigurationspfad und Vorlagen-Zuordnung.
 var vorlagen_pfad := "res://population/data/rassen_vorlagen.json"
@@ -27,12 +29,10 @@ const ARCHETYP_ZU_VORLAGE: Dictionary = {
 
 ## Kategorie logik: Generierung aus Keimpunkten.
 
-func _init() -> void:
-	pass
-
 func generiere_aus_keimpunkten(keimpunkte: Array[Dictionary], welt_seed: int) -> void:
 	## Für jeden Keimpunkt das passende Rassen-Schema generieren
 	var vorlagen := _lade_vorlagen()
+	var erzeugte_ids: Array[String] = []
 	for keimpunkt: Dictionary in keimpunkte:
 		var archetyp := str(keimpunkt.get("dominante_archetyp", "wald"))
 		var keimpunkt_id := str(keimpunkt.get("zellen_id", ""))
@@ -93,6 +93,16 @@ func generiere_aus_keimpunkten(keimpunkte: Array[Dictionary], welt_seed: int) ->
 		neue_rasse._finalisieren()
 		if _registry != null:
 			_registry.registriere_generiert(rassen_id, neue_rasse)
+		erzeugte_ids.append(rassen_id)
+	_zusammenfassung_sprechen(erzeugte_ids)
+
+func _zusammenfassung_sprechen(erzeugte_ids: Array[String]) -> void:
+	## Genau eine Zeile je Generierungslauf: Hunderte Rassen-Meldungen
+	## verdeckten im Lauf-Log jeden echten Fehler. Die Einzelheiten trägt
+	## die Registry; der Log erzählt nur noch die Bilanz.
+	if erzeugte_ids.is_empty():
+		return
+	print("Rassen generiert: %d Schemata finalisiert und registriert (%s …)" % [erzeugte_ids.size(), str(erzeugte_ids[0])])
 
 func _generiere_rassen_id(archetyp: String, keimpunkt_id: String, welt_seed: int) -> String:
 	## Deterministische ID: archetyp_keimpunkt_seedhash

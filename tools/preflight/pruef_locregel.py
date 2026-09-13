@@ -2,13 +2,15 @@
 """Prüfkategorie locregel (E041): Die 100-LOC-Regel als Architektur-Erzwingung.
 
 Differenzierte Zeilen-Grenzen je Datei-Suffix, nur für GD-Klassen in den
-Fach-Ordnern. Ein God-File scheitert künftig am rot fallenden Commit, nicht
-an der Disziplin. Ausnahmen (nie geprüft): tools/*, lauf_pruefung_*.gd,
-test_*.py, shinon/*.py, *.tscn. Die Nachlass-Liste locregel_nachlass.json
-trägt die bestehenden Monster-Dateien mit ihrem Ist-Wert; jeder Zerlegungs-
-Slice streicht seinen Eintrag, die Liste muss leer enden."""
+Fach-Ordnern. Ein God-File scheitert am rot fallenden Commit, nicht an der
+Disziplin. Ausnahmen (nie geprüft): tools/*, lauf_pruefung_*.gd, test_*.py,
+shinon/*.py, *.tscn.
 
-import json as _json
+Die Ausnahme-Liste ist geschlossen: Der Nachlass wurde am Ende abgearbeitet,
+die Grenze gilt jetzt ohne Ausnahme. Wer eine Verantwortung auslagern will,
+baut eine eigene Maschine; wer die Grenze reißt, fällt rot.
+"""
+
 import re
 
 from .kern import PROJEKT_STAMM, fehler
@@ -29,8 +31,6 @@ GRENZEN_NAME_ERGAENZUNG = {
 
 GEPRUEFTE_ORDNER = ("game/", "world/", "core/", "economy/", "population/", "military/")
 
-NACHLASS_PFAD = "tools/preflight/locregel_nachlass.json"
-
 
 def _grenze_fuer(datei_name: str):
     name = datei_name.lower()
@@ -44,22 +44,8 @@ def _grenze_fuer(datei_name: str):
     return None, None
 
 
-def _nachlass_lesen() -> dict:
-    pfad = PROJEKT_STAMM / NACHLASS_PFAD
-    if not pfad.is_file():
-        return {}
-    try:
-        daten = _json.loads(pfad.read_text(encoding="utf-8"))
-    except Exception:
-        return {}
-    if isinstance(daten, dict):
-        return daten
-    return {}
-
-
 def pruefe_locregel(dateien) -> None:
-    """E041: Zeilen-Grenze je Suffix; Nachlass-Dateien tragen ihren Ist-Wert."""
-    nachlass = _nachlass_lesen()
+    """E041: Zeilen-Grenze je Suffix, ohne Ausnahme und ohne Nachlass."""
     for pfad, code in dateien:
         rel = str(pfad.relative_to(PROJEKT_STAMM)).replace("\\", "/")
         normalisiert = rel.lower()
@@ -76,25 +62,13 @@ def pruefe_locregel(dateien) -> None:
             continue
         # Nur Klassen-Dateien prüfen; Szenen-Skripte ohne class_name ruhen auf
         # ihrer Szene und fallen nicht unter die Grenze.
-        treffer = re.search(r"^class_name\s+([A-Za-z_][A-Za-z0-9_]*)", code, re.M)
-        if treffer is None:
+        if re.search(r"^class_name\s+[A-Za-z_][A-Za-z0-9_]*", code, re.M) is None:
             continue
-        zeilen_zahl = code.count("\n") + 1
         grenze, suffix_label = _grenze_fuer(pfad.name)
         if grenze is None:
             continue
+        zeilen_zahl = code.count("\n") + 1
         if zeilen_zahl <= grenze:
-            continue
-        # Nachlass: Bestehende Monster tragen ihren eingetragenen Ist-Wert,
-        # bis ihr Zerlegungs-Slice sie streicht.
-        if rel in nachlass:
-            ist_wert = int(nachlass[rel].get("ist_zeilen", zeilen_zahl))
-            if zeilen_zahl <= ist_wert:
-                continue
-            fehler("E041", rel, 1,
-                   "Nachlass-Eintrag ueberschritten: %d Zeilen, vereinbart waren %d; "
-                   "der Zerlegungs-Slice muss die Datei striechen oder den Ist-Wert halten" %
-                   (zeilen_zahl, ist_wert))
             continue
         fehler("E041", rel, 1,
                "Zeilen-Grenze verletzt: %d Zeilen in einer %s-Datei, erlaubt sind %d; "

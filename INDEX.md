@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 287 Klassen mit `class_name` im Projekt, davon 254 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 302 Klassen mit `class_name` im Projekt, davon 269 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -120,7 +120,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (46)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (49)
 
 | Klasse | Datei |
 | --- | --- |
@@ -140,6 +140,9 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_KachelGeste` | `world/logic/kategorie_welt/welt_kachel_geste.gd` |
 | `Welt_Karawane` | `world/logic/kategorie_welt/welt_karawane.gd` |
 | `Welt_KarawanenManager` | `world/logic/kategorie_welt/welt_karawanen_manager.gd` |
+| `Welt_KarawanenReise` | `world/logic/kategorie_welt/welt_karawanen_reise.gd` |
+| `Welt_KarawanenSpeicher` | `world/logic/kategorie_welt/welt_karawanen_speicher.gd` |
+| `Welt_KarawanenZeichner` | `world/logic/kategorie_welt/welt_karawanen_zeichner.gd` |
 | `Welt_KartenBeobachter` | `world/logic/kategorie_welt/welt_karten_beobachter.gd` |
 | `Welt_Ladevorgang` | `world/logic/kategorie_welt/welt_ladevorgang.gd` |
 | `Welt_LagerFabrik` | `world/logic/kategorie_welt/welt_lager_fabrik.gd` |
@@ -171,17 +174,21 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` |
 | `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` |
 
-### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (34)
+### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (38)
 
 | Klasse | Datei |
 | --- | --- |
+| `Gebaeude_BauAuftrag` | `world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd` |
 | `Gebaeude_BauMaschine` | `world/logic/kategorie_objekt/gebaeude_bau_maschine.gd` |
+| `Gebaeude_BauplatzPruefer` | `world/logic/kategorie_objekt/gebaeude_bauplatz_pruefer.gd` |
 | `Gebaeude_Definition` | `world/logic/kategorie_objekt/gebaeude_definition.gd` |
 | `Gebaeude_DefinitionRegistry` | `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` |
+| `Gebaeude_KartenGate` | `world/logic/kategorie_objekt/gebaeude_karten_gate.gd` |
 | `Gebaeude_Laufzeit` | `world/logic/kategorie_objekt/gebaeude_laufzeit.gd` |
 | `Gebaeude_Manager` | `world/logic/kategorie_objekt/gebaeude_manager.gd` |
 | `Gebaeude_ProduktionsMaschine` | `world/logic/kategorie_objekt/gebaeude_produktions_maschine.gd` |
 | `Gebaeude_Registry` | `world/logic/kategorie_objekt/gebaeude_registry.gd` |
+| `Gebaeude_StatusLeser` | `world/logic/kategorie_objekt/gebaeude_status_leser.gd` |
 | `Natur_Registry` | `world/logic/kategorie_objekt/natur_registry.gd` |
 | `Objekt_Basis` | `world/logic/kategorie_objekt/objekt_basis.gd` |
 | `Objekt_Baum` | `world/logic/kategorie_objekt/objekt_baum.gd` |
@@ -236,17 +243,21 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Tier_Vogelgruppe` | `world/logic/kategorie_tier/tier_vogelgruppe.gd` |
 | `Tier_ZustandsNamen` | `world/logic/kategorie_tier/tier_zustands_namen.gd` |
 
-### world/orchestrator — Prefix `Orchestrator_` — `world/logic/kategorie_orchestrator/` (7)
+### world/orchestrator — Prefix `Orchestrator_` — `world/logic/kategorie_orchestrator/` (11)
 
 | Klasse | Datei |
 | --- | --- |
 | `Orchestrator_Darsteller` | `world/logic/kategorie_orchestrator/orchestrator_darsteller.gd` |
 | `Orchestrator_EinheitDerWelt` | `world/logic/kategorie_orchestrator/orchestrator_einheit.gd` |
+| `Orchestrator_KonfigLader` | `world/logic/kategorie_orchestrator/orchestrator_konfig_lader.gd` |
 | `Orchestrator_Konfiguration` | `world/logic/kategorie_orchestrator/orchestrator_konfiguration.gd` |
 | `Orchestrator_Manager` | `world/logic/kategorie_orchestrator/orchestrator_manager.gd` |
 | `Orchestrator_Registry` | `world/logic/kategorie_orchestrator/orchestrator_registry.gd` |
+| `Orchestrator_SpawnCap` | `world/logic/kategorie_orchestrator/orchestrator_spawn_cap.gd` |
 | `Orchestrator_Status` | `world/logic/kategorie_orchestrator/orchestrator_status.gd` |
 | `Orchestrator_Verdrahtung` | `world/logic/kategorie_orchestrator/orchestrator_verdrahtung.gd` |
+| `Orchestrator_Verteiler` | `world/logic/kategorie_orchestrator/orchestrator_verteiler.gd` |
+| `Orchestrator_ZielSuche` | `world/logic/kategorie_orchestrator/orchestrator_ziel_suche.gd` |
 
 ### game/einheit — Prefix `Einheit_` — `game/logic/kategorie_einheit/` (31)
 
@@ -319,16 +330,20 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Ressource_Stein` | `game/logic/kategorie_ressourcen/ressource_stein.gd` |
 | `Ressource_Werkzeug` | `game/logic/kategorie_ressourcen/ressource_werkzeug.gd` |
 
-### population — Prefix `Pop_` — `population/` (26)
+### population — Prefix `Pop_` — `population/` (30)
 
 | Klasse | Datei |
 | --- | --- |
 | `Pop_Denkblase` | `population/logic/mood/pop_denkblase.gd` |
 | `Pop_Mood` | `population/logic/mood/pop_mood.gd` |
+| `Pop_MoodAbleitung` | `population/logic/mood/pop_mood_ableitung.gd` |
+| `Pop_MoodEskalation` | `population/logic/mood/pop_mood_eskalation.gd` |
 | `Pop_MoodEskalationStufe` | `population/logic/mood/pop_mood_eskalation_stufe.gd` |
 | `Pop_MoodMaschine` | `population/logic/mood/pop_mood_maschine.gd` |
 | `Pop_MoodModifikator` | `population/logic/mood/pop_mood_modifikator.gd` |
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` |
+| `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` |
+| `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` |
 | `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` |
