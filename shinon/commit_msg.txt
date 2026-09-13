@@ -1,7 +1,9 @@
-1. Der Nutzer hielt die abgeschlossenen Slices der Roadmap gegen den echten Stand und verlangte, dass solches Altern kuenftig mechanisch bestraft wird, deshalb zog ich die letzten freien Zahlen unter den Zwang der Maschine.
-2. In tools/preflight/pruef_version.py zaehlen jetzt auch die Pytest-Faelle und die Pruefkategorien als Statuszahlen, gelesen aus den echten Testdateien und per AST aus dem Preflight selbst, damit keine Hand mehr eine Zahl erfindet.
-3. Der Nachzug loest Paarformen wie 85/85 auf und zieht sogar die Bildnummer im README-Abzeichen, die sich als kodierte URL vor den Mustern versteckt hielt.
-4. In tools/preflight/selbsttest.py tragen neue Proben diesen Vertrag, wer später ein Muster verschlankt, faengt E000 statt stiller Luecken.
-5. In README.md und ROADMAP.md steht nun die wahre Zahl von 97 Pruefungen statt der verwitterten 85, und die Sliceliste im README ist entsorgt, weil die Roadmap als einzige Planungsquelle gilt und Duplikate nur altern lernen.
-6. Sichtbar im Betrieb: Der naechste, der eine Pruefung ergaenzt oder eine Kategorie anbaut, sieht beim Commit, wie die Dokumente sich von selbst richten, und der alte Zustand von 85 haette heute fuenf rote Befunde bekommen.
-7. Uebrig bleiben die frische Sozial-Arbeit eines anderen Threads und der 31. Datenpool, die ihren eigenen Zug nehmen, wenn sie fertig sind.
+1. Der Nutzer verlangte, dass die offenen Slice-Kapitel der ROADMAP.md sich von selbst abhaken, sobald ihre Beweise bestehen, und dass die Roadmap endlich ehrlich gegen den echten Code antritt statt gegen ihre eigene Erinnerung.
+2. In tools/roadmap/__init__.py wird das neue Paket erzaehlt, in kern.py liegen die Muster und das Schreiben ohne CRLF, und in checkpoint.py wird jeder Checkpoint als Datenklasse geboren statt als Zeile im Nebel.
+3. In beweis.py urteilt der Beleg dreiwertig, naemlich gruen, rot oder ungeprueft, damit ein Lauf, den niemand gestartet hat, nie als Widerlegung durchgeht, und abhaken.py setzt das Haekchen ausschliesslich dort, wo ein benannter Beweis wirklich bestanden ist.
+4. In befund.py spricht die adversariale Gegenrede beide Richtungen der Luege aus, in erzeugen.py wacht allein die Reihenfolge der Schritte, und roadmap_abgleichen.py traegt den Befehl nach draussen auf die Kommandozeile.
+5. In test_roadmap_abgleich.py stehen sechzehn Proben, die den Mechanismus gegen erfundene Belegstaende halten, weil ein Werkzeug, das sich selbst das Haekchen schenkt, schlimmer ist als gar keines.
+6. In tools/hooks/pre-commit steht vor jedem Commit jetzt der Roadmap-Abgleich und die volle Pytest-Suite, und ein roter Test schlaegt die Tuer zu, bevor die teure Engine ueberhaupt anlaeuft.
+7. Der erste volle Lauf ueber fuenfundneunzig Checkpoints meldete null widerlegte Haekchen, vierzehn fehlende Klassennamen, neun offene Eintraege mit laengst vorhandenem Code, zwei rote Beweise und eine doppelt vergebene Nummer.
+8. Sichtbar wird das im Betrieb daran, dass die Roadmap kuenftig von allein hakt, was wirklich bestanden ist, und dass ein zerbrochener Beweis als rote Zeile auffaellt statt als stolzes Schweigen.
+9. Uebrig bleiben die vierzehn ungedeckten Klassennamen, die doppelte Nummer CP-0.15 und der kaputte Laufbeweis, die jeder ihren eigenen Zug brauchen.

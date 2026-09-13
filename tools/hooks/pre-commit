@@ -4,10 +4,22 @@
 # 1. Whitespace-Fix (E042) auf die Arbeitskopie anwenden.
 # 2. Dokumenten-Nachzug (version_bump.py --nachziehen): Version, Statuszahlen
 #    und Index-Familie werden mechanisch angeglichen, bevor E043/E044 urteilen.
-# 3. Selektive Preflight-Kategorien prüfen; Shinon bleibt immer scharf.
+# 3. Roadmap-Abgleich (roadmap_abgleichen.py): Offene Checkpoints, deren
+#    Beweis-Datei gruen ist, werden abgehakt. Ohne Nachweis passiert nichts.
+# 4. Pytest-Suite: Ein roter Test bricht den Commit ab, bevor die teure
+#    Engine-Prüfung überhaupt startet.
+# 5. Selektive Preflight-Kategorien prüfen; Shinon bleibt immer scharf.
 # Ein Fehlschlag bricht den Commit ab.
 
 set -e
+
+# Der Roadmap-Abgleich darf die Laufprüfungen an der Engine ausführen, wenn
+# SNAPWARFARE_ROADMAP_GODOT=1 gesetzt ist. Standard ist der schnelle Weg ohne
+# Engine-Start; Pytest-Beweise werden immer wirklich ausgeführt.
+ROADMAP_GODOT_FLAG="--ohne-godot"
+if [ "${SNAPWARFARE_ROADMAP_GODOT}" = "1" ]; then
+    ROADMAP_GODOT_FLAG=""
+fi
 
 GIT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null) || {
     echo "Fehler: Kein Git-Repository gefunden"
@@ -50,6 +62,32 @@ if [ -n "$NACHGEZOGEN" ]; then
     echo "$NACHGEZOGEN"
     git add -- $NACHGEZOGEN
 fi
+
+# Roadmap-Abgleich: Nur ein ausgefuehrter, gruener Beweis setzt ein Haekchen.
+# Ein falsches Haekchen wird gemeldet, aber nie stillschweigend entfernt.
+echo "Schritt 3: Roadmap-Checkpoints gegen den Code abgleichen..."
+python tools/roadmap_abgleichen.py ${ROADMAP_GODOT_FLAG} || {
+    echo "Roadmap-Abgleich meldet widerlegte Haekchen. Commit abgebrochen."
+    exit 1
+}
+
+ROADMAP_GEAENDERT=$(git diff --name-only | grep -Fx -f <(git diff --cached --name-only --diff-filter=ACM) || true)
+if [ -n "$ROADMAP_GEAENDERT" ]; then
+    echo "Abgehakte Roadmap wird neu gestagt:"
+    echo "$ROADMAP_GEAENDERT"
+    git add -- $ROADMAP_GEAENDERT
+fi
+
+# Pytest-Suite: Die Tests sind die einzige billige Wahrheit ueber die
+# Datenpools und Registry-Naehte. Ein roter Fall bricht ab, bevor die
+# Engine-Pruefung Zeit kostet.
+echo "Schritt 4: Pytest-Suite ausfuehren..."
+if ! python -m pytest -q; then
+    echo "Pytest-Suite fehlgeschlagen. Commit abgebrochen."
+    echo "Hinweis: Erst den roten Test beheben, dann erneut committen."
+    exit 1
+fi
+echo "Pytest-Suite bestanden."
 
 # Kategorien aus den Dateitypen der gestagten Datei bestimmen.
 CATEGORIES=""
@@ -111,7 +149,7 @@ CATEGORIES=$(echo "$CATEGORIES" | sed 's/,$//')
 
 echo "Gewaehlte Preflight-Kategorien: $CATEGORIES"
 
-echo "Schritt 3: Preflight-Pruefung (Shinon scharf)..."
+echo "Schritt 5: Preflight-Pruefung (Shinon scharf)..."
 if ! python tools/preflight.py --kategorie "$CATEGORIES"; then
     echo "Preflight fehlgeschlagen. Commit abgebrochen."
     exit 1
