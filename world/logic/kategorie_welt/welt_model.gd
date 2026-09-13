@@ -23,6 +23,9 @@ var aktive_z_ebene: int = 0 ## Standard 0, negativ = Untergrund
 ## technische Partition (Generator-Groesse), Objekte die konkreten Inhalte.
 var regionen: Array[Dictionary] = []
 var region_kante: int = 4
+## Regions-Index je Regions-Koordinate: Der O(1)-Griff für die zehntausenden
+## Abfragen des Netzwerk-Passes; wird mit regionen_leeren mitgeleert.
+var _regionen_index: Dictionary = {}
 var welt_seed: int = 0
 ## map_id: Kennung dieser Karte innerhalb einer World. Leer bedeutet, dass
 ## die Karte als eigenständige Einzelwelt geführt wird (abwärtskompatibel).
@@ -305,6 +308,7 @@ func objekte_leeren() -> void:
 
 func regionen_leeren() -> void:
 	regionen.clear()
+	_regionen_index.clear()
 
 func region_ergaenzen(region_x: int, region_y: int, biom: String, seed_beitrag: int, chunk_kante: int) -> void:
 	regionen.append({
@@ -314,6 +318,7 @@ func region_ergaenzen(region_x: int, region_y: int, biom: String, seed_beitrag: 
 		"seed_beitrag": seed_beitrag,
 		"chunk_kante": chunk_kante,
 	})
+	_regionen_index[Vector2i(region_x, region_y)] = regionen[regionen.size() - 1]
 
 func region_an(position: Vector2, z_ebene: int = 0) -> Dictionary:
 	# Liefert die Region der Kachel unter der Welt-Position; sonst leer.
@@ -322,11 +327,15 @@ func region_an(position: Vector2, z_ebene: int = 0) -> Dictionary:
 	return region_an_kachel(kachel_x, kachel_y, z_ebene)
 
 func region_an_kachel(kachel_x: int, kachel_y: int, _z_ebene: int = 0) -> Dictionary:
-	for region: Dictionary in regionen:
-		var start_x := int(region.get("region_x", 0)) * region_kante
-		var start_y := int(region.get("region_y", 0)) * region_kante
-		if kachel_x >= start_x and kachel_x < start_x + region_kante and kachel_y >= start_y and kachel_y < start_y + region_kante:
-			return region
+	# O(1)-Griff über den Regions-Index statt linearer Suche über alle
+	# Regionen: Der Netzwerk-Pass fragt zehntausende Male je Weltlauf,
+	# die lineare Variante machte daraus Sekunden.
+	var kante := maxi(region_kante, 1)
+	var regions_x := floori(float(kachel_x) / float(kante))
+	var regions_y := floori(float(kachel_y) / float(kante))
+	var gefunden: Variant = _regionen_index.get(Vector2i(regions_x, regions_y), null)
+	if gefunden != null:
+		return gefunden as Dictionary
 	return {}
 
 func biom_an_kachel(kachel_x: int, kachel_y: int, z_ebene: int = 0) -> String:

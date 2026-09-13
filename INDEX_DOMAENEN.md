@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 272 Klassen, 307 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 272 Klassen, 311 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 272 Klassen, 307 Dateien, 66 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
 | `ui` | `ui` | `Ui_` | `ui/` | 24 | 36 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 17 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 21 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -39,7 +39,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 272 Klassen, 307 Dateien, 66 Sign
 | `Einheit_Status.arbeitsschritt_erledigt` | - | - | - | - | - | - | DSV | S | - | - | - | - | - | - | - |
 | `Einheit_Status.gestorben` | S | - | - | - | - | - | DSV | - | - | V | - | - | - | - | V |
 | `Einheit_Status.job_beendet` | - | - | - | - | - | - | DSV | - | - | - | - | - | - | S | - |
-| `Einheit_Status.job_loop_gefragt` | - | - | - | - | - | - | DSV | - | - | - | - | - | - | - | - |
+| `Einheit_Status.job_loop_gefragt` | - | - | - | - | - | - | DSV | - | - | - | - | - | - | V | - |
 | `Einheit_Status.job_vergeben_fehlgeschlagen` | - | - | - | - | - | - | DS | - | - | - | - | - | - | - | - |
 | `Einheit_Status.naechster_job_aus_queue` | - | - | - | - | - | - | DSV | - | - | - | - | - | - | V | - |
 | `Einheit_Status.weg_ziele_neu` | - | - | - | - | - | - | DS | - | - | - | - | - | - | - | - |
@@ -113,7 +113,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 54 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 3 | 2 | 7 | - | 2 | 3 |
+| `String` | 55 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 3 | 2 | 7 | - | 3 | 3 |
 | `Dictionary` | 35 | 3 | 1 | 7 | 1 | 2 | 2 | 8 | - | - | 1 | 1 | 5 | - | - | 4 |
 | `int` | 16 | - | - | 5 | - | 1 | 1 | 3 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 9 | 1 | 4 | 3 | - | - | - | - | - | - | - | - | - | - | 1 | - |
@@ -268,8 +268,8 @@ Prefix `Welt_`, 44 Klassen.
 | `Welt_LandeplatzAnzeige` | `world/logic/kategorie_welt/welt_landeplatz_anzeige.gd` | 93 |
 | `Welt_MakroGenerator` | `world/logic/kategorie_welt/welt_makro_generator.gd` | 81 |
 | `Welt_MapFabrik` | `world/logic/kategorie_welt/welt_map_fabrik.gd` | 102 |
-| `Welt_Model` | `world/logic/kategorie_welt/welt_model.gd` | 513 |
-| `Welt_NetzwerkPlaner` | `world/logic/kategorie_welt/welt_netzwerk_planer.gd` | 274 |
+| `Welt_Model` | `world/logic/kategorie_welt/welt_model.gd` | 522 |
+| `Welt_NetzwerkPlaner` | `world/logic/kategorie_welt/welt_netzwerk_planer.gd` | 296 |
 | `Welt_ObjektDarsteller` | `world/logic/kategorie_welt/welt_objekt_darsteller.gd` | 90 |
 | `Welt_ObjektGitter` | `world/logic/kategorie_welt/welt_objekt_gitter.gd` | 68 |
 | `Welt_ObjektKnoten` | `world/logic/kategorie_welt/welt_objekt_knoten.gd` | 95 |
@@ -290,7 +290,7 @@ Prefix `Welt_`, 44 Klassen.
 | `Welt_UmsturzGeste` | `world/logic/kategorie_welt/welt_umsturz_geste.gd` | 39 |
 | `Welt_WaermeSammler` | `world/logic/kategorie_welt/welt_waerme_sammler.gd` | 32 |
 | `Welt_WasserAutomat` | `world/logic/kategorie_welt/welt_wasser_automat.gd` | 206 |
-| `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` | 301 |
+| `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` | 304 |
 | `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` | 23 |
 
 #### Signale (Rolle in dieser Domaene)
@@ -508,7 +508,7 @@ Prefix `Einheit_`, 25 Klassen.
 | `Einheit_Status.arbeitsschritt_erledigt` | DSV | ein, job |
 | `Einheit_Status.gestorben` | DSV | ein, kern, pop, rest |
 | `Einheit_Status.job_beendet` | DSV | ein, tools |
-| `Einheit_Status.job_loop_gefragt` | DSV | ein |
+| `Einheit_Status.job_loop_gefragt` | DSV | ein, tools |
 | `Einheit_Status.job_vergeben_fehlgeschlagen` | DS | ein |
 | `Einheit_Status.naechster_job_aus_queue` | DSV | ein, tools |
 | `Einheit_Status.weg_ziele_neu` | DS | ein |
@@ -759,6 +759,7 @@ Prefix `-`, 0 Klassen.
 | Signal | Rolle | mitwirkende Domaenen |
 | --- | --- | --- |
 | `Einheit_Status.job_beendet` | S | ein, tools |
+| `Einheit_Status.job_loop_gefragt` | V | ein, tools |
 | `Einheit_Status.naechster_job_aus_queue` | V | ein, tools |
 | `Gebaeude_Manager.gebaeude_fertiggestellt` | V | obj, tools |
 | `Job_Basis.job_beendet` | S | ein, job, tools |
@@ -771,7 +772,7 @@ Prefix `-`, 0 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 2 |
+| `String` | 3 |
 | `Kern_ModifikatorBasis` | 1 |
 | `Pop_MoodMaschine` | 1 |
 | `Vector2i` | 1 |
@@ -810,7 +811,7 @@ Prefix `-`, 33 Klassen.
 | `Welt_TagesZyklusFaerbung` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_faerbung.gd` | 53 |
 | `Welt_TagesZyklusSpeicher` | `world/logic/kategorie_tageszyklus/welt_tageszyklus_speicher.gd` | 20 |
 | `Welt_TageszyklusMaschine` | `world/logic/kategorie_tageszyklus/tageszyklus_maschine.gd` | 107 |
-| `Welt_TiefenNeige` | `world/logic/kategorie_atmosphaere/welt_tiefen_neige.gd` | 79 |
+| `Welt_TiefenNeige` | `world/logic/kategorie_atmosphaere/welt_tiefen_neige.gd` | 88 |
 | `Welt_TodAnzeige` | `world/logic/kategorie_feedback/feedback_tod_anzeige.gd` | 66 |
 | `Welt_WaermeFaktor` | `world/logic/kategorie_progression/welt_waerme_faktor.gd` | 22 |
 | `Welt_WaermeFeld` | `world/logic/kategorie_waerme/waerme_feld.gd` | 50 |

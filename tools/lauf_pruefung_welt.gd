@@ -500,9 +500,15 @@ func _init() -> void:
 	loop_manager.einrichten(loop_modell, null, Einheit_Ressourcen.new())
 	loop_manager.einheit_hinzufuegen(Vector2(200, 200))
 	loop_manager.job_vergeben(0, "holzfaeller", Job_Basis.ZielTyp.OBJEKT, 0, Vector2(200, 200))
+	# Die Loop-Brücke wie im Spiel: Der Einwanderungs-Aufbau verdrahtet das
+	# Loop-Signal auf den Manager-Handler; ohne sie startet kein Folge-Ziel.
+	var loop_status: Einheit_Status = loop_manager.einheit_status(0)
+	loop_status.job_loop_gefragt.connect(loop_manager._auf_job_loop_gefragt.bind(loop_status))
 	for _schritt in 240:
 		loop_manager._auf_tick(1, 1.0 / 24.0)
-	var loop_status: Einheit_Status = loop_manager.einheit_status(0)
+	print("DIAGNOSE Loop: zustand=%s ziel=%d arbeitsziel=%d" % [
+		loop_status.zustand, loop_status.aktuelles_ziel_index, loop_status.job.aktuelles_ziel_index])
+	print("DIAGNOSE Objekte: %d Stueck" % loop_modell.objekt_anzahl())
 	var loop_laeuft_weiter := loop_status.zustand != Einheit_Status.Zustand.IDLE
 	var loop_ziel_index := loop_status.aktuelles_ziel_index
 	for _schritt in 150:
@@ -694,10 +700,11 @@ func _init() -> void:
 	var jagd_status := Einheit_Status.new()
 	jagd_status.welt_position_setzen(Vector2(500, 500))
 	var jagd_ressourcen := Einheit_Ressourcen.new()
+	var jagd_inventar := Einheit_Inventar.new()
 	var jagd_modell := Welt_Model.new()
 	jagd_modell.karte_erzeugen(8, 8, "boden")
 	var jagd_ernte := Einheit_ErnteMaschine.new()
-	jagd_ernte.einrichten(jagd_ressourcen, jagd_modell, jagd_tiere)
+	jagd_ernte.einrichten(jagd_inventar, jagd_ressourcen, jagd_modell, jagd_tiere)
 	var jagd_job := queue_job_registry.job_erzeugen("jaeger")
 	jagd_status.job_vergeben(jagd_job, Job_Basis.ZielTyp.TIER, jagd_tier_nummer, "fleisch")
 	jagd_status._zu_zustand_wechseln(Einheit_Status.Zustand.ARBEITEN)
@@ -706,7 +713,9 @@ func _init() -> void:
 	var hase_lebt_nach_schlag := not jagd_tiere.tier_position(jagd_tier_nummer) == Vector2.INF
 	jagd_ernte.arbeitsschritt_verarbeiten("fleisch", 2, jagd_status)
 	jagd_ernte.arbeitsschritt_verarbeiten("fleisch", 2, jagd_status)
-	var fleisch_gefallen := jagd_ressourcen.bestand("fleisch")
+	# Die Ernte-Maschine bucht Beute heute ins Einheiten-Inventar, nicht in
+	# die geteilten Ressourcen; der Beweis liest deshalb am selben Ort nach.
+	var fleisch_gefallen := jagd_inventar.bestand("fleisch")
 	var hase_tot := not jagd_tiere.tier_position(jagd_tier_nummer) != Vector2.INF
 	var jagd_job_ende := jagd_status.job == null
 	var jagd_ok := hase_lebt_vor and hase_lebt_nach_schlag and hase_tot and fleisch_gefallen > 0 and jagd_job_ende

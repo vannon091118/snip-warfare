@@ -16,6 +16,12 @@ var _wege_index: Dictionary = {}
 var _spieler_region := Vector2i.ZERO
 var _spieler_nachbarn: Array[String] = []
 var _biome: Welt_BiomRegistry = null
+## Regions-Koordinate je Fraktions-ID: Im Wege-Pass fragt jedes Paar seine
+## Region dutzende Male; der Griff hier spart die wiederholte Teilung.
+var _regionen_von_fraktion: Dictionary = {}
+## Barriere-Merker je Regions-Koordinate: Die Antwort hängt nur am Modell
+## und Biom, nicht am Fragenden; der Cache macht den Linien-Pass billig.
+var _barrieren_cache: Dictionary = {}
 
 ## Kategorie logik: Planung, Pfadberechnung und Abfragen.
 
@@ -82,15 +88,21 @@ func netzwerk_planen(model: Welt_Model, registry: Welt_GeneratorRegistry, seed_o
 	return not _fraktionen.is_empty()
 
 func ist_barriere_region(model: Welt_Model, region_pos: Vector2i) -> bool:
-	# Barriere heißt: Das Biom dieser Region ist unpassierbar. Die Eigenschaft
-	# steht am Biom, die Frage beantwortet nur diese Stelle.
+	# Barriere heißt: Das Biom dieser Region ist unpassierbar. Die Antwort
+	# hängt nur an Modell und Biom, deshalb trägt der Cache sie einmal je
+	# Region; der Linien-Pass fragt dieselbe Region sonst tausende Male.
 	if model == null or _biome == null:
 		return false
+	var bekannt: Variant = _barrieren_cache.get(region_pos, null)
+	if bekannt != null:
+		return bool(bekannt)
 	var region := model.region_an_kachel(region_pos.x * model.region_kante, region_pos.y * model.region_kante)
-	if region.is_empty():
-		return false
-	var biom := _biome.biom_fuer(str(region.get("biom_id", "")))
-	return biom != null and biom.barriere
+	var antwort := false
+	if not region.is_empty():
+		var biom := _biome.biom_fuer(str(region.get("biom_id", "")))
+		antwort = biom != null and biom.barriere
+	_barrieren_cache[region_pos] = antwort
+	return antwort
 
 func _start_region_waehlen(model: Welt_Model, regionen: Vector2i, belegte: Array[Vector2i]) -> Vector2i:
 	# Startbereich: möglichst nahe der Mitte, niemals auf einer Barriere und
@@ -130,8 +142,15 @@ func _offene_nachbarn(model: Welt_Model, region_pos: Vector2i) -> Array[Welt_Fra
 	return treffer
 
 func _region_von_fraktion(model: Welt_Model, fraktion: Welt_Fraktion) -> Vector2i:
+	# Der Griff über den Cache: Jede Fraktion trägt ihre Regions-Koordinate
+	# einmal gerechnet; der Wege-Pass fragt sie je Paar mehrfach.
+	var bekannt: Variant = _regionen_von_fraktion.get(fraktion.fraktion_id, null)
+	if bekannt != null:
+		return bekannt as Vector2i
 	var kante := maxi(model.region_kante, 1)
-	return Vector2i(int(float(fraktion.position_kachel.x) / float(kante)), int(float(fraktion.position_kachel.y) / float(kante)))
+	var berechnet := Vector2i(floori(float(fraktion.position_kachel.x) / float(kante)), floori(float(fraktion.position_kachel.y) / float(kante)))
+	_regionen_von_fraktion[fraktion.fraktion_id] = berechnet
+	return berechnet
 
 func _linie_frei(model: Welt_Model, von: Vector2i, nach: Vector2i) -> bool:
 	# Wege umgehen Barrieren: Die Zellen zwischen zwei Regionen werden
@@ -265,9 +284,12 @@ func _belegte_regionen_ermitteln(model: Welt_Model, eingehende_fraktionen: Array
 	return belegte
 
 func _wege_berechnen_mit_fraktionen(model: Welt_Model, eingehende_fraktionen: Array[Welt_Fraktion]) -> void:
-	# Weise übergebene Fraktionen dem internen Array zu
+	# Weise übergebene Fraktionen dem internen Array zu; die Caches beginnen
+	# bei Null, damit ein zweiter Lauf keine Leichen der alten Welt trägt.
 	_fraktionen.clear()
 	for f in eingehende_fraktionen:
 		_fraktionen.append(f)
+	_regionen_von_fraktion.clear()
+	_barrieren_cache.clear()
 	# Berechne Wege wie im Original
 	_wege_berechnen(model)

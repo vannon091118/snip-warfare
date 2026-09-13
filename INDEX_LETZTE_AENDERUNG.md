@@ -15,7 +15,7 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | Kennzahl | Wert |
 | --- | --- |
 | klassen | 272 |
-| dateien | 307 |
+| dateien | 311 |
 | signale | 66 |
 | array_typen | 32 |
 | pools | 31 |
@@ -30,7 +30,7 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | population | 26 | 27 | 8a69c797ecdb |
 | rest | 33 | 38 | 6e21ba7cec30 |
 | shinon | 0 | 0 | da39a3ee5e6b |
-| tools | 0 | 17 | da39a3ee5e6b |
+| tools | 0 | 21 | da39a3ee5e6b |
 | ui | 24 | 36 | e85ef8c78a50 |
 | world/generator | 12 | 12 | 190186145ff4 |
 | world/objekt | 32 | 32 | 037fa65bf0a4 |

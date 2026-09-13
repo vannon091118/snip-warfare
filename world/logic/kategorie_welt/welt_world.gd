@@ -37,10 +37,13 @@ func map_hinzufuegen(model: Welt_Model, map_id: String, ist_basis: bool) -> bool
 	# Parallel-Map-Eintrag hinzufügen: Standardmäßig inaktiv, bis der
 	# Spieler die Karte wechselt. Lager-Daten werden leer initialisiert.
 	_karten[map_id] = {"model": model, "ist_aktiv": false, "lager_daten": []}
-	if ist_basis or _basis_map_id == "":
+	var eintrag_ist_basis := ist_basis or _basis_map_id == ""
+	if eintrag_ist_basis:
 		_basis_map_id = map_id
-	# Basis-Karte beim Setzen aktiv schalten
-	karte_aktiv_shetzen(map_id)
+	# Nur eine wahrhaftige Basis schaltet die aktive Karte um; Zusatz-Karten
+	# landen in der World, ohne dem Spieler die Karte unter den Füßen zu ziehen.
+	if eintrag_ist_basis:
+		karte_aktiv_shetzen(map_id)
 	return true
 
 func map_entfernen(map_id: String) -> bool:

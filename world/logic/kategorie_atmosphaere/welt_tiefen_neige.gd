@@ -15,6 +15,11 @@ var _letzte_stelle := Vector2.ZERO
 
 func einrichten(konfig: Welt_AtmosphaereKonfig) -> void:
 	_konfig = konfig
+	# Nachtrag fuer die Reihenfolge im Aufbau: Lief das Einrichten nach dem
+	# add_child, trug der Schleier bis hierhin sein rohes Bild ohne Shader
+	# und malte die Karte weiß. Die Anwendung zieht jetzt nach, sobald der
+	# Pool da ist, egal in welcher Reihenfolge Aufbau und Einrichten stehen.
+	_anwenden()
 
 func _ready() -> void:
 	_schleier = Sprite2D.new()
@@ -50,7 +55,11 @@ func _anwenden() -> void:
 
 func _neige_bild() -> Texture2D:
 	var verlauf := Gradient.new()
-	verlauf.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 0)])
+	# Die Kameranaehe bleibt klar: Vor dem ersten Anschlag haelt der Verlauf
+	# die erste Farbe, also transparent in der Mitte und erst am Rand die
+	# Neige. Umgekehrt stand hier ein opakes Zentrum, das die ganze Sicht
+	# in Nebel gehuellt hat, sobald der Radius die Sicht ueberdeckte.
+	verlauf.colors = PackedColorArray([Color(1, 1, 1, 0), Color(1, 1, 1, 1)])
 	verlauf.offsets = PackedFloat32Array([0.62, 1.0])
 	var textur := GradientTexture2D.new()
 	textur.gradient = verlauf

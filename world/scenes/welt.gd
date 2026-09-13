@@ -36,6 +36,9 @@ var _karten_viewer: Ui_KartenViewer = null
 var _karten_info: Ui_WeltInfo = null
 ## UI-Aufbau-Spitze: Baut Panels, Kartenebene und Lager-Darsteller.
 var _ui_aufbau := Welt_UiAufbau.new()
+## LadeLeiste-Ebene: Eigene Schicht für den Lader-Balken; die Deklaration
+## gehört zur Szene, die Nutzung sitzt in der Orchestrator-UI-Phase.
+var _lade_canvas: CanvasLayer = null
 ## Phasen-Anker des Aufbaus: Kartenmitte und Beobachtungsradius, die mehrere
 ## Aufbau-Phasen gemeinsam nutzen.
 var _start_position := Vector2.ZERO
@@ -378,7 +381,10 @@ func _process(delta: float) -> void:
 	# Chunks zuerst (Kartenmitte), der Rand folgt in den nächsten Frames.
 	if _chunk_lader != null and _chunk_lader.laeuft:
 		_chunk_lader.schritt()
-		if _ui_aufbau.lade_leiste != null:
+		# Der letzte schritt() kann fertig emittieren und die Szene lässt den
+		# Lader noch im selben Rahmen los; der Anteil wird nur gelesen, solange
+		# die Referenz noch lebt.
+		if _chunk_lader != null and _ui_aufbau.lade_leiste != null:
 			_ui_aufbau.lade_leiste.anteil_setzen(_chunk_lader.fortschritt_anteil())
 	_kamera_steuerung.kamera_bewegen(delta, _kamera)
 	_tiere.spieler_position_setzen(_kamera.position)
