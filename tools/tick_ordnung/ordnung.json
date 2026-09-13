@@ -1,0 +1,76 @@
+{
+  "_kommentar": "Erklaerte Reihenfolge der Weltuhr-Teilnehmer. Die Weltuhr sendet tick als Signal; die Anmeldereihenfolge bestimmt die Ausfuehrungsreihenfolge je Tick. Diese Liste ist die eine Quelle dieser Reihenfolge, damit sie nicht mehr ein Zufall der Aufbaureihenfolge bleibt. Jeder Teilnehmer traegt genau einmal ein: datei (der Ort der Anmeldung), domaene (die fachliche Zugehoerigkeit) und grund (warum er an dieser Stelle steht). Neue Teilnehmer muessen hier eingetragen werden, sonst faellt der Vertragstest.",
+  "uhr_autoload": "Weltuhr",
+  "uhr_klasse": "Kern_Weltuhr",
+  "regeln": {
+    "kein_direkter_autoload_zugriff": "Kein Skript greift auf den globalen Namen Weltuhr zu. Die Uhr wird zur Laufzeit ueber get_node_or_null(\"/root/Weltuhr\") oder Kern_Weltuhr.bus() aufgeloest und vor dem Zugriff auf Null geprueft; sonst bricht jeder Lauf ohne Autoload mit einem Nil-Zugriff ab.",
+    "keine_ungeschuetzte_anmeldung": "Jede tick.connect-Stelle steht hinter einer Null-Pruefung derselben Uhr-Referenz und einer is_connected-Pruefung, damit ein zweiter Aufbau die Verbindung nicht doppelt legt."
+  },
+  "teilnehmer": [
+    {
+      "datei": "world/logic/kategorie_tier/tier_manager.gd",
+      "domaene": "world/tier",
+      "grund": "Tiermanager ist ein Szenenknoten und meldet sich in _enter_tree an, bevor die Wurzel-_ready der Weltszene ihre Phasen faehrt. Er laeuft deshalb zuerst und bewegt Tiere, bevor Einheiten ihren Zustand lesen."
+    },
+    {
+      "datei": "world/logic/kategorie_tier/tier_darsteller.gd",
+      "domaene": "world/tier",
+      "grund": "Der Tierdarsteller folgt seinem Manager und zeichnet nur, was der Tiermanager im selben Tick bereits gerechnet hat."
+    },
+    {
+      "datei": "world/scenes/welt.gd",
+      "domaene": "world/tageszyklus",
+      "grund": "Die Tageszyklus-Maschine meldet sich in Phase 1 an. Licht und Farbe des Ticks stehen damit vor allem, was sie liest; jede andere Domaene sieht denselben Tageszustand."
+    },
+    {
+      "datei": "world/logic/kategorie_welt/welt_wasser_automat.gd",
+      "domaene": "world/wasser",
+      "grund": "Wasser laeuft nach dem Tageslicht und vor den Domaenen: Es schreibt nur Kacheln, und alle Leser desselben Ticks sehen das neue Wasser."
+    },
+    {
+      "datei": "world/logic/kategorie_atmosphaere/welt_schlag_staub.gd",
+      "domaene": "world/atmosphaere",
+      "grund": "Der Staub ist reine Darstellung und haengt am Atmospharenknoten der Phase 2. Er laeuft vor den Domaenen, weil er nur vergeht und nichts liest, was spaeter im Tick entsteht."
+    },
+    {
+      "datei": "world/logic/kategorie_atmosphaere/welt_atmosphaere_verdrahtung.gd",
+      "domaene": "world/atmosphaere",
+      "grund": "Die Atmosphaeren-Spitze folgt ihrem Staubknoten und rechnet Licht und Tiefe, bevor Einheiten und Gebaeude ihren Zustand buchen."
+    },
+    {
+      "datei": "game/logic/kategorie_einheit/einheit_manager.gd",
+      "domaene": "game/einheit",
+      "grund": "Einheiten stehen in Phase 3. Sie lesen Tiere und Atmosphaere und schreiben Jobs; alles, was Einheiten liest, muss davor stehen, alles was Einheiten folgt, danach."
+    },
+    {
+      "datei": "world/logic/kategorie_progression/welt_progressions_maschine.gd",
+      "domaene": "world/progression",
+      "grund": "Die Progressions-Maschine laeuft direkt nach den Einheiten, weil sie deren Schlaege und Ernten in Objektzustand uebersetzt."
+    },
+    {
+      "datei": "world/logic/kategorie_objekt/gebaeude_manager.gd",
+      "domaene": "world/objekt",
+      "grund": "Gebaeude ticken in Phase 4 und lesen Lager und Einheitenstand. Sie stehen nach den Einheiten, damit ein Tick nie auf halb verrechneten Einheiten baut."
+    },
+    {
+      "datei": "world/logic/kategorie_orchestrator/orchestrator_manager.gd",
+      "domaene": "world/orchestrator",
+      "grund": "Der Orchestrator verteilt Jobs in Phase 5. Er sieht Einheiten-, Gebaeude- und Fortschrittsstand desselben Ticks vollstaendig."
+    },
+    {
+      "datei": "world/logic/kategorie_welt/welt_karawanen_manager.gd",
+      "domaene": "world/karawanen",
+      "grund": "Karawanen bewegen sich auf dem Makronetz und buchen Fracht in Lager. Sie laufen nach den Gebaeuden, weil sie deren Produktion desselben Ticks mitnehmen."
+    },
+    {
+      "datei": "world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd",
+      "domaene": "world/fraktion",
+      "grund": "Die Fraktions-KI steht am Ende der Weltdomaenen. Sie entscheidet Expansion aus dem fertigen Weltzustand des Ticks."
+    },
+    {
+      "datei": "ui/logic/kategorie_ui/menue_story_regisseur.gd",
+      "domaene": "ui/story",
+      "grund": "Der Story-Regisseur laeuft zuletzt und liest nur. Er darf nie vor einer Fachdomaene stehen, sonst erzaehlt er den Zustand des vorigen Ticks."
+    }
+  ]
+}

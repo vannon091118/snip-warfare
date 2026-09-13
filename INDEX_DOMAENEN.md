@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 257 Klassen, 284 Dateien, 64 Signale, 31 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 260 Klassen, 287 Dateien, 64 Signale, 31 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -17,7 +17,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 257 Klassen, 284 Dateien, 64 Sign
 | `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 25 | 25 |
 | `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 18 | 18 |
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
-| `population` | `pop` | `Pop_` | `population/` | 15 | 16 |
+| `population` | `pop` | `Pop_` | `population/` | 18 | 19 |
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
 | `ui` | `ui` | `Ui_` | `ui/` | 23 | 35 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
@@ -110,7 +110,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 53 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 2 | 2 | 7 | - | 2 | 3 |
+| `String` | 54 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 3 | 2 | 7 | - | 2 | 3 |
 | `Dictionary` | 33 | 3 | 1 | 6 | 1 | 1 | 2 | 8 | - | - | 1 | 1 | 5 | - | - | 4 |
 | `int` | 15 | - | - | 5 | - | 1 | 1 | 3 | - | - | - | - | 3 | - | 1 | 1 |
 | `Vector2i` | 8 | 1 | 4 | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - |
@@ -273,7 +273,7 @@ Prefix `Welt_`, 42 Klassen.
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` | 96 |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
 | `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` | 36 |
-| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 533 |
+| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 556 |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` | 44 |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` | 50 |
 | `Welt_Speicher` | `world/logic/kategorie_welt/welt_speicher.gd` | 74 |
@@ -589,7 +589,7 @@ _keine typisierten Arrays in dieser Domaene_
 
 ### population — Kuerzel `pop` — `population/`
 
-Prefix `Pop_`, 15 Klassen.
+Prefix `Pop_`, 18 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -608,6 +608,9 @@ Prefix `Pop_`, 15 Klassen.
 | `Pop_RassenGenerator` | `population/logic/needs/pop_rassen_generator.gd` | 128 |
 | `Pop_RassenSchema` | `population/logic/needs/pop_rassen_schema.gd` | 161 |
 | `Pop_RassenSchemaRegistry` | `population/logic/needs/pop_rassen_schema_registry.gd` | 92 |
+| `Soz_Datenpool` | `population/logic/sozial/logic/soz_datenpool.gd` | 24 |
+| `Soz_Geruecht` | `population/logic/sozial/logic/soz_geruecht.gd` | 38 |
+| `Soz_TraitLedger` | `population/logic/sozial/logic/soz_trait_ledger.gd` | 37 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -620,7 +623,7 @@ Prefix `Pop_`, 15 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 2 |
+| `String` | 3 |
 | `Dictionary` | 1 |
 | `Pop_MoodEskalationStufe` | 1 |
 | `Pop_MoodModifikator` | 1 |
@@ -773,7 +776,7 @@ Prefix `-`, 33 Klassen.
 | `Welt_ProgressionsRegistry` | `world/logic/kategorie_progression/welt_progressions_registry.gd` | 80 |
 | `Welt_RessourcenZustand` | `world/logic/kategorie_progression/welt_ressourcen_zustand.gd` | 176 |
 | `Welt_SchadenAnzeige` | `world/logic/kategorie_feedback/feedback_schaden_anzeige.gd` | 68 |
-| `Welt_SchlagStaub` | `world/logic/kategorie_atmosphaere/welt_schlag_staub.gd` | 83 |
+| `Welt_SchlagStaub` | `world/logic/kategorie_atmosphaere/welt_schlag_staub.gd` | 92 |
 | `Welt_SeedSpawnMaschine` | `world/logic/kategorie_progression/welt_seed_spawn_maschine.gd` | 101 |
 | `Welt_SonnenEffekt` | `world/logic/kategorie_atmosphaere/welt_sonnen_effekt.gd` | 123 |
 | `Welt_StufenBilder` | `world/logic/kategorie_progression/welt_stufen_bilder.gd` | 91 |

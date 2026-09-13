@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 257 Klassen mit `class_name` im Projekt, davon 224 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 64 Signale, 31 Array-Elementtypen und 30 JSON-Pools._
+_Stand: V0.01 — 260 Klassen mit `class_name` im Projekt, davon 227 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 64 Signale, 31 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -302,7 +302,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Ressource_Stein` | `game/logic/kategorie_ressourcen/ressource_stein.gd` |
 | `Ressource_Werkzeug` | `game/logic/kategorie_ressourcen/ressource_werkzeug.gd` |
 
-### population — Prefix `Pop_` — `population/` (15)
+### population — Prefix `Pop_` — `population/` (18)
 
 | Klasse | Datei |
 | --- | --- |
@@ -321,6 +321,9 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Pop_RassenGenerator` | `population/logic/needs/pop_rassen_generator.gd` |
 | `Pop_RassenSchema` | `population/logic/needs/pop_rassen_schema.gd` |
 | `Pop_RassenSchemaRegistry` | `population/logic/needs/pop_rassen_schema_registry.gd` |
+| `Soz_Datenpool` | `population/logic/sozial/logic/soz_datenpool.gd` |
+| `Soz_Geruecht` | `population/logic/sozial/logic/soz_geruecht.gd` |
+| `Soz_TraitLedger` | `population/logic/sozial/logic/soz_trait_ledger.gd` |
 
 ### economy — Prefix `Lager_` — `economy/` (6)
 

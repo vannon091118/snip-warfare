@@ -13,6 +13,9 @@ const TREFFER := preload("res://world/assets/atmosphaere/treffer.svg")
 var _konfig: Welt_AtmosphaereKonfig = null
 var _ernte_position: Vector2 = Vector2.INF
 var _aktive: Array[Dictionary] = []
+## Die aufgeloeste Uhr-Referenz: Der Abgang loest dieselbe Verbindung, die der
+## Aufgang gelegt hat, statt den Autoload ein zweites Mal zu befragen.
+var _weltuhr: Node = null
 
 ## Kategorie logik: Erzeugen, Bewegen und Aufräumen der Puffs je Tick.
 
@@ -51,14 +54,20 @@ func schlag_zeigen(welt_position: Vector2) -> void:
 	_aktive.append({"knoten": blitz, "alter": 0, "dauer": maxi(int(dauer * 0.5), 1), "steig": steig * 2.0, "skalierung": skalierung * 3.0})
 
 func _enter_tree() -> void:
-	Weltuhr.tick.connect(_auf_tick)
+	# Die Uhr wird zur Laufzeit aufgeloest und vor dem Zugriff geprueft, wie in
+	# jeder anderen Domaene: Der globale Autoload-Name wuerde in jedem Lauf ohne
+	# Autoload (Editor, Prueflauf) mit einem Nil-Zugriff abbrechen.
+	_weltuhr = get_node_or_null("/root/Weltuhr")
+	if _weltuhr != null and _weltuhr.has_signal("tick") and not _weltuhr.tick.is_connected(_auf_tick):
+		_weltuhr.tick.connect(_auf_tick)
 	var bus := Kern_SignalBus.bus()
 	if bus != null and not bus.timeline_eintrag.is_connected(_timeline_buchung_gesehen):
 		bus.timeline_eintrag.connect(_timeline_buchung_gesehen)
 
 func _exit_tree() -> void:
-	if Weltuhr.tick.is_connected(_auf_tick):
-		Weltuhr.tick.disconnect(_auf_tick)
+	if _weltuhr != null and is_instance_valid(_weltuhr) and _weltuhr.tick.is_connected(_auf_tick):
+		_weltuhr.tick.disconnect(_auf_tick)
+	_weltuhr = null
 	var bus := Kern_SignalBus.bus()
 	if bus != null and bus.timeline_eintrag.is_connected(_timeline_buchung_gesehen):
 		bus.timeline_eintrag.disconnect(_timeline_buchung_gesehen)
