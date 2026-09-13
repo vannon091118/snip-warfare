@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 301 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 304 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 301 Dateien, 66 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
 | `ui` | `ui` | `Ui_` | `ui/` | 23 | 35 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 13 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 16 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
