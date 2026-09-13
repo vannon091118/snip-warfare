@@ -26,16 +26,23 @@ func hinzufuegen(welt_position: Vector2, rasse_id: String = "") -> int:
 	var rasse := _rasse_fuer(rasse_id)
 	var mood := _mood_fuer(rasse, welt_position)
 	status.rasse_faktor_setzen(mood.bewegungs_faktor())
+	var ei := einheiten.size()
 	var denkblase := Pop_Denkblase.new()
 	denkblase.einrichten(mood)
 	darsteller.add_child(denkblase)
+	# Die farbige Gerücht-Blase hängt als zweite Spitze an denselben Darsteller;
+	# sie liest über den Ruf im Kontext, ohne die Mood-Kette anzufassen.
+	if _kontext.get("sozial_lese_ruf", Callable()).is_valid():
+		var soz_blase := Soz_Denkblase.new()
+		soz_blase.einrichten(ei, _kontext["sozial_lese_ruf"])
+		darsteller.add_child(soz_blase)
+		(_kontext["sozial_blasen"] as Array).append(soz_blase)
 	(_kontext["node"] as Node2D).add_child(darsteller)
 	status.zustand_geaendert.connect(verbinder["zustand_geaendert"].bind(status, mood))
 	status.arbeitsschritt_erledigt.connect(verbinder["arbeitsschritt"].bind(status))
 	status.job_loop_gefragt.connect(verbinder["job_loop"].bind(status))
 	status.naechster_job_aus_queue.connect(verbinder["naechster_job"].bind(status))
 	var inventar := _inventar_anlegen()
-	var ei := einheiten.size()
 	inventar.einheit_id_setzen("einheit_%d" % ei)
 	inventar.inventar_voll.connect(verbinder["inventar_voll"].bind(ei))
 	einheiten.append({

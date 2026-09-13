@@ -1,0 +1,103 @@
+{
+    "_kommentar": "Sozial-Regeln: Alle Zahlen der Soz-Domaene. Taten-Gewichte speisen Ethik und Glauben; Geruechte tragen eine Farbe und Eskalationsstufe und wandern nur an Nachbarn; Traits sind Festwerte der Population und faerben Gerede und Beziehungen; die Beziehungs-Engine mischt alles zu langfristigen Beziehungen mit Verfall.",
+    "zeugen": {
+        "radius_px": 220.0,
+        "erinnerung_tiefe": 8
+    },
+    "taten": {
+        "kannibalismus": {
+            "ethik_stoss": -0.6,
+            "gerecht_stoss": 0.6,
+            "geruecht_art": "grauen"
+        },
+        "jagd_erfolg": {
+            "ethik_stoss": 0.1,
+            "gerecht_stoss": -0.1,
+            "geruecht_art": "lob"
+        },
+        "ernte_erfolg": {
+            "ethik_stoss": 0.05,
+            "gerecht_stoss": 0.0,
+            "geruecht_art": "lob"
+        },
+        "teilen": {
+            "ethik_stoss": 0.3,
+            "gerecht_stoss": -0.2,
+            "geruecht_art": "lob"
+        }
+    },
+    "geruechte": {
+        "gerede_takt_ticks": 48,
+        "paare_pro_takt": 6,
+        "konfidenz_verlust_je_stufe": 0.82,
+        "art": {
+            "lob": {
+                "farbe": [0.35, 0.8, 0.4],
+                "image_wirkung": 0.25,
+                "eskalation": 0
+            },
+            "tratsch": {
+                "farbe": [0.9, 0.8, 0.3],
+                "image_wirkung": -0.05,
+                "eskalation": 1
+            },
+            "hasstirade": {
+                "farbe": [0.95, 0.45, 0.25],
+                "image_wirkung": -0.4,
+                "eskalation": 2
+            },
+            "grauen": {
+                "farbe": [0.6, 0.2, 0.55],
+                "image_wirkung": -0.7,
+                "eskalation": 3
+            }
+        },
+        "stufen_namen": ["fluestern", "gepraeg", "aufruhr"],
+        "eskalation_ab_glaube": 0.75
+    },
+    "traits": {
+        "tratscht_gerne": {
+            "gerede_bonus": 2.0,
+            "glaubens_bonus": 0.1,
+            "image_empfaenglichkeit": 1.2,
+            "beziehungs_wirkung": -0.05
+        },
+        "hasst_geruechte": {
+            "gerede_bonus": 0.5,
+            "glaubens_bonus": 0.35,
+            "image_empfaenglichkeit": 0.7,
+            "beziehungs_wirkung": -0.2
+        },
+        "glaubt_alles": {
+            "gerede_bonus": 1.0,
+            "glaubens_bonus": 0.5,
+            "image_empfaenglichkeit": 1.5,
+            "beziehungs_wirkung": 0.0
+        },
+        "skeptiker": {
+            "gerede_bonus": 0.5,
+            "glaubens_bonus": -0.4,
+            "image_empfaenglichkeit": 0.4,
+            "beziehungs_wirkung": 0.1
+        },
+        "loyal": {
+            "gerede_bonus": 1.0,
+            "glaubens_bonus": -0.2,
+            "image_empfaenglichkeit": 0.6,
+            "beziehungs_wirkung": 0.25
+        }
+    },
+    "beziehungen": {
+        "start_wert": 0.0,
+        "bild_gewicht": 0.4,
+        "ethik_gewicht": 0.2,
+        "geruecht_gewicht": 0.4,
+        "verfall_je_tick": 0.0008,
+        "stufen": {
+            "feindschaft": -0.6,
+            "spannung": -0.25,
+            "neutral": 0.25,
+            "freundschaft": 0.6
+        }
+    }
+}

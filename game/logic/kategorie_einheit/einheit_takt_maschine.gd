@@ -31,6 +31,11 @@ func tick(nummer: int, delta: float) -> void:
 	var einheiten: Array[Dictionary] = _kontext["einheiten"]
 	for ei: int in einheiten.size():
 		_eine_einheit(einheiten[ei], ei, nummer, delta)
+	# Die Soz-Blasen lesen pro Takt den stärksten Gerücht-Stand; der Ruf ist
+	# optional, damit der Takt auch ohne Sozial-Domäne läuft.
+	var soz_bubble_tick: Callable = _kontext.get("sozial_bubble_tick", Callable())
+	if soz_bubble_tick.is_valid():
+		soz_bubble_tick.call(nummer)
 
 
 func _eine_einheit(einheit: Dictionary, ei: int, nummer: int, delta: float) -> void:

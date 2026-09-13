@@ -21,6 +21,7 @@ KATEGORIE_PRAEFIXE = {
     "Lager_": "economy/logic/storage",
     "Orchestrator_": "world/logic/kategorie_orchestrator",
     "Pop_": "population",
+    "Soz_": "population/logic/sozial",
     "Welt_": None,          # Welt_ darf domänenübergreifend liegen
     "Kern_": "core",
 }

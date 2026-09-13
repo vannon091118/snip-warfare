@@ -352,6 +352,13 @@ func _auf_tick(nummer: int, delta: float) -> void:
 	## Der Manager reicht den Takt nur an seine Takt-Maschine weiter.
 	_takt.tick(nummer, delta)
 
+func _sozial_blasen_ticken(nummer: int) -> void:
+	# Die Soz-Domäne wird über den Ruf im Kontext gespeist; der Manager kennt
+	# nur die Blasen-Liste der Einwanderung, nicht die Domäne selbst.
+	var blasen: Array = _einwanderungs_kontext().get("sozial_blasen", [])
+	for blase: Soz_Denkblase in blasen:
+		blase.auf_tick(nummer)
+
 func _takt_kontext() -> Dictionary:
 	# Alles, was die Takt-Maschine fuer einen Takt braucht, in einem Bund.
 	return {
@@ -366,6 +373,7 @@ func _takt_kontext() -> Dictionary:
 		"trupp": _trupp,
 		"mood_mod_registry": _mood_mod_registry,
 		"zufall": _zufall,
+		"sozial_bubble_tick": _sozial_blasen_ticken,
 	}
 
 func _naechstes_objekt(status: Einheit_Status, alter_ziel_index: int) -> int:
