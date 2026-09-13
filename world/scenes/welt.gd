@@ -361,7 +361,8 @@ func _process(delta: float) -> void:
 	# Modell bleibt die volle Wahrheit. Ohne Kamera bleibt der Bestand voll.
 	if _kamera != null:
 		var blick := _kamera.get_viewport_rect().size / _kamera.zoom.x
-		_karte.sichtbereich_setzen(Rect2(_kamera.position - blick * 0.5 - Vector2.ONE * _karte.SICHT_RAND_PX, blick + Vector2.ONE * (_karte.SICHT_RAND_PX * 2.0)))
+		var rand := _karte.sicht_rand_px()
+		_karte.sichtbereich_setzen(Rect2(_kamera.position - blick * 0.5 - Vector2.ONE * rand, blick + Vector2.ONE * (rand * 2.0)))
 
 func _auf_produktion_status(zeilen: Array[String]) -> void:
 	# Reiner Weitergabe-Schritt: Die Zeilen kommen vom Gebaeude_Manager, die

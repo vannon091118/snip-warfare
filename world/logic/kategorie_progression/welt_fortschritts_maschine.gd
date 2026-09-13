@@ -76,11 +76,11 @@ func _spawn_cap_erreicht(rasse_id: String) -> bool:
 	if _einheit_manager == null:
 		return false
 	if _rassen_registry == null:
-		return _einheit_manager.einheiten_zahl() >= 20
+		return _einheit_manager.einheit_zahl() >= 20
 	var schema := _rassen_registry.schema_fuer(rasse_id)
 	if schema == null:
 		return false
-	return _einheit_manager.einheiten_zahl() >= schema.max_einheiten
+	return _einheit_manager.einheit_zahl() >= schema.max_einheiten
 
 func _fortschalten() -> void:
 	var stufe := aktive_stufe()

@@ -38,7 +38,7 @@ func einrichten(fraktion: Welt_Fraktion, welt_model: Welt_Model, welt_world: Wel
 	_config = config
 	_tick_zaehler = 0
 
-func tick(_weltuhr_tick: int) -> void:
+func tick(_weltuhr_tick: int, _delta: float = 0.0) -> void:
 	_tick_zaehler += 1
 	if _tick_zaehler < KI_TICK_INTERVALL:
 		return

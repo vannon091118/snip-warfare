@@ -106,7 +106,7 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 
 	# Spawn-Cap prüfen: Einheiten_count < max_einheiten aus rassen_schemata.json
 	var max_einheiten := _max_einheiten_fuer_rasse()
-	if _einheit_manager.einheiten_zahl() >= max_einheiten:
+	if _einheit_manager.einheit_zahl() >= max_einheiten:
 		# Cap erreicht: Es tickt weiter, aber keine neuen Einheiten mehr.
 		return
 
