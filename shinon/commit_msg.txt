@@ -1,7 +1,7 @@
-1. Der zweite Schnitt nahm die Kern-Steuerung und das Lager aufs Korn, weil beide ihre Nachbarn mitverantworteten.
-2. kern_steuerung_basis.gd fiel unter die Achtzig-Zeilen-Grenze, denn die Tasten-Tabelle und die Aktions-Namen wohnen jetzt in kern_tasten_tabelle.gd.
-3. kern_steuerung_registry.gd und ui_kamera_steuerung.gd lesen die Aktionen bei der neuen Tabelle, damit niemand mehr die alte Sammelstelle nach ihren Tasten fragt.
-4. karten_editor.gd holt seine Richtungen ebenfalls aus der Tabelle, weshalb Editor und Spiel dieselbe Wahrheit über die Kameratasten teilen.
-5. lager_darsteller.gd blieb unter hundert Zeilen, weil das Stapeln in lager_stapel_bauer.gd auszog und der Darsteller endlich wieder nur darstellt.
+1. Der dritte Schnitt griff in die Welt-Domänen, wo Objekt-Katalog, Tiere, Fraktions-KI und das Weltmodell ihre Nachbarn mitschleppten.
+2. objekt_registry_basis.gd blieb als schlanke Naht mit 68 Zeilen, denn der Ladedurchlauf wohnt in objekt_katalog_lader.gd und die Kategorie-Fragen in objekt_kategorie_sicht.gd.
+3. tier_manager.gd fiel von 233 auf 143 Zeilen, weil Lesesaal, Darsteller-Fabrik und Takt nun tier_leser.gd, tier_darsteller_fabrik.gd und tier_takt.gd heißen.
+4. fraktions_ki_maschine.gd blieb mit 106 Zeilen unter der Grenze, denn Protokoll und Erschöpfungs-Saat zogen in fraktions_protokoll.gd und fraktions_erschoepfung.gd aus.
+5. welt_model.gd trägt jetzt die Objekt-Nummer durch den Speicher-Rundlauf, weil gelöschte Objekte Lücken hinterließen und jedes folgende beim Laden eine Stufe weiterrutschte.
 6. Geprüft ist alles mit dem vollen Preflight ohne Befund, 132 grünen Proben und grünem Shinon-Tor.
-7. Sichtbar im laufenden Spiel: Die Kamera fährt mit WASD und den Alternativtasten wie zuvor, und die Stapel im Lagerregal schichten sich unverändert.
+7. Sichtbar im laufenden Spiel: Möbel und Bäume stehen wie zuvor an ihrem Platz, die Tiere erwachen im Blickfeld der Kamera, und nach dem Laden trägt jedes Objekt wieder seine eigene Nummer.

@@ -397,6 +397,13 @@ func aus_woerterbuch(daten: Dictionary) -> bool:
 			if typeof(eintrag) == TYPE_DICTIONARY and eintrag.has("element_id") and eintrag.has("position"):
 				var position_werte: Array = eintrag["position"]
 				var objekt_index := objekt_hinzufuegen(str(eintrag["element_id"]), Vector2(position_werte[0], position_werte[1]))
+				# Die fachliche Objekt-Nummer übersteht den Rundlauf: Entfernte
+				# Objekte hinterlassen Lücken, und ohne diese Rückgabe rückt jedes
+				# folgende Objekt beim Laden eine Nummer weiter.
+				var gespeicherte_nummer := int((eintrag as Dictionary).get("id", 0))
+				if gespeicherte_nummer > 0:
+					objekt_feld_setzen(objekt_index, "id", gespeicherte_nummer)
+					_naechste_objekt_nummer = maxi(_naechste_objekt_nummer, gespeicherte_nummer + 1)
 				# Zusatzfelder (Gebäudezustand, Fortschritte) müssen den
 				# Speicher-Rundlauf überstehen: alle fremden Schlüssel kopieren.
 				for schluessel: String in (eintrag as Dictionary).keys():
