@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 270 Klassen mit `class_name` im Projekt, davon 237 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 66 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 271 Klassen mit `class_name` im Projekt, davon 238 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 66 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -346,7 +346,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Lager_MutationEntnehmen` | `economy/logic/storage/lager_entnahme.gd` |
 | `Lager_Registry` | `economy/logic/storage/lager_registry.gd` |
 
-### ui — Prefix `Ui_` — `ui/` (23)
+### ui — Prefix `Ui_` — `ui/` (24)
 
 | Klasse | Datei |
 | --- | --- |
@@ -366,6 +366,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` |
 | `Ui_KartenViewer` | `ui/logic/kategorie_ui/ui_karten_viewer.gd` |
+| `Ui_LadeLeiste` | `ui/logic/kategorie_ui/ui_lade_leiste.gd` |
 | `Ui_MenueZustaende` | `ui/logic/kategorie_ui/ui_menue_zustaende.gd` |
 | `Ui_OrchestratorPriorityPanel` | `ui/logic/kategorie_ui/ui_orchestrator_priority_panel.gd` |
 | `Ui_PopEinheitUebersetzer` | `ui/logic/kategorie_ui/ui_pop_einheit_uebersetzer.gd` |

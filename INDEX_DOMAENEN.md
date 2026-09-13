@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 304 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 271 Klassen, 305 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -19,7 +19,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 304 Dateien, 66 Sign
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
 | `population` | `pop` | `Pop_` | `population/` | 26 | 27 |
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
-| `ui` | `ui` | `Ui_` | `ui/` | 23 | 35 |
+| `ui` | `ui` | `Ui_` | `ui/` | 24 | 36 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
 | `tools` | `tools` | `-` | `tools/` | 0 | 16 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
@@ -286,7 +286,7 @@ Prefix `Welt_`, 44 Klassen.
 | `Welt_StadiumGeste` | `world/logic/kategorie_welt/welt_stadium_geste.gd` | 25 |
 | `Welt_TerrainBlatt` | `world/logic/kategorie_welt/welt_terrain_blatt.gd` | 39 |
 | `Welt_TierPlatzierer` | `world/logic/kategorie_welt/welt_tier_platzierer.gd` | 20 |
-| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 106 |
+| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 118 |
 | `Welt_UmsturzGeste` | `world/logic/kategorie_welt/welt_umsturz_geste.gd` | 39 |
 | `Welt_WaermeSammler` | `world/logic/kategorie_welt/welt_waerme_sammler.gd` | 32 |
 | `Welt_WasserAutomat` | `world/logic/kategorie_welt/welt_wasser_automat.gd` | 206 |
@@ -684,7 +684,7 @@ Prefix `Lager_`, 6 Klassen.
 
 ### ui — Kuerzel `ui` — `ui/`
 
-Prefix `Ui_`, 23 Klassen.
+Prefix `Ui_`, 24 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -704,6 +704,7 @@ Prefix `Ui_`, 23 Klassen.
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` | 105 |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` | 54 |
 | `Ui_KartenViewer` | `ui/logic/kategorie_ui/ui_karten_viewer.gd` | 139 |
+| `Ui_LadeLeiste` | `ui/logic/kategorie_ui/ui_lade_leiste.gd` | 69 |
 | `Ui_MenueZustaende` | `ui/logic/kategorie_ui/ui_menue_zustaende.gd` | 23 |
 | `Ui_OrchestratorPriorityPanel` | `ui/logic/kategorie_ui/ui_orchestrator_priority_panel.gd` | 208 |
 | `Ui_PopEinheitUebersetzer` | `ui/logic/kategorie_ui/ui_pop_einheit_uebersetzer.gd` | 112 |

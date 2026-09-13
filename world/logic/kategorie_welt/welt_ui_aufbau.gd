@@ -9,6 +9,7 @@ const _DebugPanelSkript := preload("res://ui/scenes/hud/hud_debug_panel.gd")
 const _BauPanelSzene := preload("res://ui/scenes/panels/bau_panel.tscn")
 const _PopEinheitUebersetzerSkript := preload("res://ui/logic/kategorie_ui/ui_pop_einheit_uebersetzer.gd")
 const _PopEinheitPanelSzene := preload("res://ui/scenes/panels/pop_einheit_panel.tscn")
+const _LadeLeisteSkript := preload("res://ui/logic/kategorie_ui/ui_lade_leiste.gd")
 
 ## Kategorie daten: Gebaute Referenzen und Darsteller-Verwaltung.
 var karten_ebene: CanvasLayer = null
@@ -18,6 +19,8 @@ var debug_panel: Control = null
 var bau_panel: Ui_BauPanelSzene = null
 var pop_einheit_panel: Control = null
 var pop_einheit_uebersetzer: Ui_PopEinheitUebersetzer = null
+## Schmale Ladeleiste für den Chunk-Lader; die Szene speist sie je Frame.
+var lade_leiste: Ui_LadeLeiste = null
 var _lager_darsteller_eltern: Node = null
 
 ## Kategorie logik: Aufbau und Pflege der UI-Knoten.
@@ -45,6 +48,15 @@ func karten_ebene_bauen(eltern: Node, model: Welt_Model, registry: Welt_Registry
 	karten_viewer.einrichten(model, registry, biome)
 	eltern.add_child(karten_ebene)
 	karten_info = info
+
+func lade_leiste_bauen(canvas: CanvasLayer) -> void:
+	## Die Leiste hängt an der UI-Ebene und startet unsichtbar; anteil_setzen
+	## weckt sie, fertig_anzeigen verabschiedet sie nach dem Lader-Ende.
+	if canvas == null:
+		return
+	lade_leiste = _LadeLeisteSkript.new()
+	lade_leiste.name = "LadeLeiste"
+	canvas.add_child(lade_leiste)
 
 func debug_panel_bauen(canvas: CanvasLayer, auswahl: Ui_AuswahlManager, stockmaenner: Einheit_Manager, tiere: Tier_Manager) -> void:
 	# Debug-Fenster als eigener Knoten unter der UI-Ebene. Es ist standardmäßig

@@ -1,8 +1,10 @@
-1. Der Nutzer brachte den Monitor-Foto einer laufenden Partie mit, auf dem fuenfhundertzwanzig verwaiste Knoten und dreihundertsechsundachtzig Megabyte Statik stehen, und verlangte zu wissen, wo meine Kette die Leichen liegen laesst.
-2. In tools/lauf_sonde_verwaiste.gd misst die erste Sonde den OBJECT_ORPHAN_NODE_COUNT nach jedem Schritt der Renderer-Kette und lernte dabei selbst Bescheidenheit: Wer Knoten zaehlt, bevor die Engine ihren Aufbau abgearbeitet hat, sieht Geister, die nach zwei Rahmen laengst Kinder im Baum sind.
-3. In tools/lauf_sonde_welt_szene.gd laedt die zweite Sonde die echte Welt-Szene mit Autoloads, Overlays, Domaenen und dreissig Rahmen Wartezeit, und der Monitor bleibt bei null Verwaisten vom Aufbau bis zum Teardown.
-4. In tools/lauf_sonde_szene_kreis.gd laeuft die dritte Sonde den echten Szenenwechsel-Kreis des Spiels ab, Hauptmenue, Weltkarte, Welt, Rueckkehr, eine zweite Welt, zweite Rueckkehr, und der Zaehler steht nach jedem Bein auf null.
-5. Das Ergebnis ist eine Freisprechung mit Auflage: Der heutige Code-Stand hinterlaesst keine Verwaisten, das Foto stammt aus einem Lauf mit dem alten Chunk-Experiment von vor dem Rueckbau, und der Spieler soll die Zahl nach einem Neustart mit frischem Build erneut lesen.
-6. Die drei Sonden bleiben als Werkzeuge im Katalog, damit jede kuenftige Verwaisten-Meldung mit einem einzigen Headless-Lauf widerlegt oder bestaetigt wird, statt im Dunkeln geraten zu muessen.
-7. Sichtbar im laufenden Spiel: Beim Szenenwechsel bleibt der Knoten-Zaehler flach, und wer die Sonden laeuft, sieht die Zahlen schwarz auf weiss statt auf Glauben.
-8. Uebrig bleibt der Blick auf die Statik-Kurve im Spieler-Monitor, denn falls sie nach dem Neustart weiter wandert, zeigt die naechste Sonde auf die Textur-Caches, nicht auf die Knoten.
+1. Der Nutzer wollte den Fortschritt des Chunk-Laders als schmale Ladeleiste im HUD sehen, bis die Welt voll materialisiert ist.
+2. Also baute der Welt eine schmale Tafel am unteren Rand, die sich füllt, während die Chunks aus dem Verborgenen steigen, und die sich nach der Vollendung still verabschiedet, als hätte sie nie gefehlt.
+3. Die neue Klasse ui_lade_leiste.gd trägt Balken, Zahl und Abschied und weiß vom Lader selbst nichts, denn Tafeln sollen zeigen, nicht fragen.
+4. In welt_ui_aufbau.gd erhielt die Tafel ihren Haken an der UI-Ebene, neben den Fenstern, die schon immer dort hingen.
+5. welt.gd speist die Tafel in jedem Rahmen mit dem Anteil des Laders und lässt sie im Abschluss einmal voll laufen, bevor sie verblasst wie ein Versprechen nach der Wahl.
+6. Die Index-Familie INDEX.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md zog die Zähler auf 271 Klassen und 305 Dateien nach, weil jede neue Klasse ihren Stempel braucht.
+7. README.md und ROADMAP.md tragen dieselben frischen Zahlen, damit keine zweite Wahrheit still altern kann.
+8. docs/architektur_bestandsaufnahme_plan.md kam als Lesepfad mit Versionszeile hinzu, damit die Prüfung ihn kennt, ohne dass er Code berührt.
+9. Geprüft ist alles: Preflight ohne Befund, 132 Proben grün, und der Lader-Beweis zeigt Start mit null Kacheln, 256 nach dem ersten Schritt und 1536 am Ende.
+10. Wenn die Welt eines Tages schneller ist als die Tafel, lacht sie uns aus; heute steht sie still, füllt sich ehrlich und lügt nicht.

@@ -220,6 +220,12 @@ func _bereit_orchestrator_und_ui() -> void:
 	_rueckmeldung.einrichten(_hud, _fortschritt)
 	_kontext.einrichten(_steuerung, _fortschritt)
 	_kontext.aktion_gewaehlt.connect(_auf_kontext_aktion)
+	# Ladeleiste der Chunk-Füllung: Eigene UI-Ebene, startet unsichtbar und
+	# wird je Frame aus dem Lader-Fortschritt gespeist, bis er fertig ist.
+	_lade_canvas = CanvasLayer.new()
+	_lade_canvas.layer = 25
+	add_child(_lade_canvas)
+	_ui_aufbau.lade_leiste_bauen(_lade_canvas)
 
 	# Orchestrator-Priority-Panel für Spieler-Steuerung
 	_orchestrator_priority_panel = _OrchestratorPriorityPanelSkript.new()
@@ -372,6 +378,8 @@ func _process(delta: float) -> void:
 	# Chunks zuerst (Kartenmitte), der Rand folgt in den nächsten Frames.
 	if _chunk_lader != null and _chunk_lader.laeuft:
 		_chunk_lader.schritt()
+		if _ui_aufbau.lade_leiste != null:
+			_ui_aufbau.lade_leiste.anteil_setzen(_chunk_lader.fortschritt_anteil())
 	_kamera_steuerung.kamera_bewegen(delta, _kamera)
 	_tiere.spieler_position_setzen(_kamera.position)
 	# Sprint 3: Die Kamerastelle führt die Tiefen-Neige mit; das Licht
@@ -433,6 +441,9 @@ func _auf_welt_gefuellt() -> void:
 	# Der Abschluss-Pass schreibt Gewässer und Fels erst nach der Chunk-
 	# Füllung; der Faulbau endet und trägt den vollen Stand in einem Rutsch.
 	_karte.faulbau_abschliessen()
+	# Die Leiste verabschiedet sich weich, statt mitten im Bild zu enden.
+	if _ui_aufbau.lade_leiste != null:
+		_ui_aufbau.lade_leiste.fertig_anzeigen()
 	# Erst jetzt, mit voller Welt, geht der Stand auf die Platte; vorher
 	# stünde eine leere Karte im Save.
 	var world := WeltSitzung.world
