@@ -37,7 +37,7 @@ func tile_leben_initialisieren_fuer_kachel(model: Welt_Model, x: int, y: int, z_
 	var tile_id := model.fliese(x, y, z_ebene)
 	if tile_id != "fels" and tile_id != "geroell":
 		return
-	var registry := Welt_Registry.new()
+	var registry := Welt_RegistryZugriff.welt()
 	var kachel_eintrag := registry.finde_objekt(tile_id)
 	var max_leben := 100
 	if kachel_eintrag != null and kachel_eintrag.schluessel_daten.has("leben"):

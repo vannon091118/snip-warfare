@@ -23,9 +23,9 @@ Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbrauc
 | [`bindung.json`](population/data/bindung.json) | `population` | 5 | `_kommentar`, `regeln`, `stufen`, `ereignisse`, `verlust` | keiner |
 | [`mood_modifikatoren.json`](population/data/mood_modifikatoren.json) | `population` | 5 | `_kommentar`, `kaelte`, `hitze`, `hunger`, `kannibalismus` | `game/logic/kategorie_einheit/einheit_vital_status.gd`, `population/logic/mood/pop_mood_eskalation_stufe.gd`, `population/logic/mood/pop_mood_modifikator_registry.gd` und 1 weitere |
 | [`needs.json`](population/data/needs.json) | `population` | 3 | `weltrhythmus`, `nahrung`, `waerme` | `game/logic/kategorie_einheit/einheit_manager.gd`, `game/logic/kategorie_einheit/einheit_versorgung.gd`, `population/logic/needs/pop_need_basis.gd` und 5 weitere |
-| [`rassen_schemata.json`](population/data/rassen_schemata.json) | `population` | 3 | `mensch`, `elf`, `ork` | `population/logic/needs/pop_rassen_schema.gd`, `population/logic/needs/pop_rassen_schema_registry.gd`, `world/logic/kategorie_orchestrator/orchestrator_manager.gd` und 2 weitere |
+| [`rassen_schemata.json`](population/data/rassen_schemata.json) | `population` | 3 | `mensch`, `elf`, `ork` | `population/logic/needs/pop_rassen_schema.gd`, `population/logic/needs/pop_rassen_schema_registry.gd`, `population/logic/needs/pop_rassen_zugriff.gd` und 3 weitere |
 | [`rassen_vorlagen.json`](population/data/rassen_vorlagen.json) | `population` | 6 | `_kommentar`, `wald`, `berg`, `wasser`, `steppe`, `tundra` | `population/logic/needs/pop_rassen_generator.gd` |
-| [`sozial_regeln.json`](population/logic/sozial/data/sozial_regeln.json) | `population` | 6 | `_kommentar`, `zeugen`, `taten`, `geruechte`, `traits`, `beziehungen` | `population/logic/sozial/logic/soz_datenpool.gd`, `population/logic/sozial/logic/soz_geruecht.gd`, `population/logic/sozial/logic/soz_trait_ledger.gd` |
+| [`sozial_regeln.json`](population/logic/sozial/data/sozial_regeln.json) | `population` | 6 | `_kommentar`, `zeugen`, `taten`, `geruechte`, `traits`, `beziehungen` | `population/logic/sozial/logic/soz_beziehungs_engine.gd`, `population/logic/sozial/logic/soz_datenpool.gd`, `population/logic/sozial/logic/soz_geruecht.gd` und 3 weitere |
 | [`menue_story.json`](ui/data/menue_story.json) | `ui` | 4 | `hinweis`, `schritte_pro_sekunde`, `untertitel_dauer`, `events` | `ui/logic/kategorie_ui/menue_story_daten.gd` |
 | [`atmosphaere.json`](world/data/atmosphaere.json) | `world/data` | 9 | `_dokumentation_atmosphaere`, `wind`, `partikel`, `sonne`, `papier`, `papier_licht` und 3 weitere | `world/logic/kategorie_atmosphaere/welt_atmosphaere_konfig.gd`, `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` |
 | [`biome.json`](world/data/biome.json) | `world/data` | 3 | `_kommentar`, `thresholds`, `biome` | `world/logic/kategorie_biom/biom_basis.gd`, `world/logic/kategorie_biom/biom_registry.gd`, `world/logic/kategorie_generator/welt_biom_analyser.gd` und 1 weitere |
@@ -184,6 +184,7 @@ Pfad `population/data/rassen_schemata.json`, Domaene `population`, 3 Eintraege.
 
 * `population/logic/needs/pop_rassen_schema.gd`
 * `population/logic/needs/pop_rassen_schema_registry.gd`
+* `population/logic/needs/pop_rassen_zugriff.gd`
 * `world/logic/kategorie_orchestrator/orchestrator_manager.gd`
 * `world/logic/kategorie_welt/fraktions_ki_maschine.gd`
 * `world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd`
@@ -198,9 +199,12 @@ Pfad `population/data/rassen_vorlagen.json`, Domaene `population`, 6 Eintraege.
 
 Pfad `population/logic/sozial/data/sozial_regeln.json`, Domaene `population`, 6 Eintraege.
 
+* `population/logic/sozial/logic/soz_beziehungs_engine.gd`
 * `population/logic/sozial/logic/soz_datenpool.gd`
 * `population/logic/sozial/logic/soz_geruecht.gd`
+* `population/logic/sozial/logic/soz_manager.gd`
 * `population/logic/sozial/logic/soz_trait_ledger.gd`
+* `tools/lauf_datenpool_beweis.gd`
 
 ### menue_story.json
 

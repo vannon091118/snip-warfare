@@ -1,10 +1,12 @@
-1. Der Nutzer verlangte, dass die Uebergaben und die Reihenfolge der Datenverarbeitung gegen einen Vertrag geprueft werden, damit die Zeitordnung nicht laenger ein Zufall der Aufbaureihenfolge bleibt.
-2. In tools/tick_ordnung/ordnung.json steht jetzt die erklaerte Reihenfolge aller dreizehn Teilnehmer an der Weltuhr, jeder mit seiner Domaene und mit dem Grund fuer seinen Platz im Takt.
-3. In tools/tick_ordnung/__init__.py erzaehlt das Paket seinen Zweck, und in pruefer.py haelt der Pruefer den Vertrag statisch gegen den Code, indem er Vollstaendigkeit, Anmeldeform und Ordnungssauberkeit getrennt befragt.
-4. Der Pruefer fand genau eine echte Bruchstelle: In world/logic/kategorie_atmosphaere/welt_schlag_staub.gd griff der Staub dreimal ungeschuetzt auf den globalen Autoload zu, also auf dieselbe Nil-Falle, die zuvor den Orchestrator zerlegt hatte.
-5. Der Staub loest seine Uhr nun zur Laufzeit ueber den Wurzelknoten auf, prueft sie vor jedem Zugriff und merkt sie sich fuer den Abgang, damit Aufgang und Abgang dieselbe Verbindung halten.
-6. In test_tick_ordnung_contract.py stehen zehn Proben gegen den echten Baum, darunter der Gegentest, dass der Pruefer einen fehlenden Eintrag und eine ungeschuetzte Anmeldung wirklich meldet statt immer gruen zu winken.
-7. Eine Probe bestaetigt, dass im ganzen Projekt genau ein Tick-Signal existiert, damit die eine Weltzeit auch mechanisch eine bleibt und kein zweiter Taktgeber einschleicht.
-8. In README.md, ROADMAP.md, INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md sind die Zahlen und die Indizes dem Nachzug gefolgt, damit die Dokumente nicht wieder altern wie Milch in der Sonne.
-9. Der Pruefer meldet dreizehn Teilnehmer ohne Abweichung, alle einhundertdreiundzwanzig Proben laufen gruen, und der volle Preflight schweigt weiterhin zufrieden.
-10. Uebrig bleibt die Absicht, diese erklaerte Reihenfolge alsbald zum einzigen Verteiler zu machen, damit die dreizehn verstreuten Anmeldungen einem einzigen Ordner weichen.
+1. Der Nutzer verlangte einen geteilten Zugriffspunkt fuer die drei Welt-Registries und das Ende der Bremse: synchrones Laden, fehlendes Lazy Loading, zu viele Drawcalls und hartes Ploppen.
+2. In welt_registry_zugriff.gd sitzt der eine Zugriffspunkt mit Cache, und in pop_rassen_zugriff.gd teilt sich der Rassen-Pool dieselbe Idee.
+3. In welt_generator.gd, welt_model.gd, biom_manager.gd, job_graben.gd, einheit_ziel_suche.gd, welt_seed_spawn_maschine.gd, welt_fraktions_ki_verdrahtung.gd, karten_editor.gd, welt_map.gd, welt.gd und pop_need_baum.gd weichen die direkten new-Aufrufe dem geteilten Griff, der hundertacht-fache Parsevorgang ist tot.
+4. In welt_generator.gd liegt der Weltbau in drei Phasen: welt_planen ohne Fuellung, chunk_fuellen_oeffentlich als Bruecke und welt_abschliessen fuer Gewaesser, Fels und Fraktions-Pass.
+5. In welt_async_chunk_lader.gd zieht ein getakteter Lader vier Chunks pro Ruf nach, sortiert nach Kamera-Naehe, und lauf_pruefung_async_lader.gd beweist die Gleichheit mit dem synchronen Weg.
+6. In welt_ladevorgang.gd erzeugt die Generierung nur Plan und Lader; das Speichern wanderte in den Abschluss-Pass, damit nicht die leere Welt auf die Platte geriet, und welt.gd speist den Lader je Frame.
+7. In welt_renderer.gd teilen sich Knoten einer Kennung eine Textur, Kacheln eines Bioms eine Farbe und fehlende Bilder einen Farb-Platzhalter aus Caches, was die Drawcalls durch stabiles Batching drueckt.
+8. In welt_renderer.gd steigen frische Objekt-Knoten interpoliert aus dem Boden statt zu ploppen, und project.godot traegt wieder die echte Textur-Filter-Einstellung.
+9. In fraktions_keimling_analysator.gd und welt_fraktions_ki_verdrahtung.gd teilen sich Generator und Verdrahtung denselben Keimpunkt-Fund, in pop_rassen_schema.gd und pop_rassen_schema_registry.gd verstummt der Rassen-Spam.
+10. In einheit_ernte_maschine.gd schlaegt der Kannibale nur einmal, in fraktions_ki_maschine.gd und welt_erschoepfung_maschine.gd runden Chunk-Grenzen auf, in objekt_moebel_platzierer.gd, welt_terrain_blatt.gd, orchestrator_manager.gd und welt_tiefen_neige.gd heilen Divisionen und tote Variablen.
+11. Sichtbar im laufenden Spiel: Die Welt fuellt sich vom Kartenmittelpunkt aus frameweise, und die Processing-Spitze von dreihundertvierunddreissig Millisekunden kollabiert auf ruhige Frames.
+12. Uebrig bleibt der Zug an den Tier-Spawns, damit auch sie nur im Blick erwachen.

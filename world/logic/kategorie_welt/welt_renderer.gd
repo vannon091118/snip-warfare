@@ -33,8 +33,13 @@ const UMSTURZ_GESTE_SKRIPT := preload("res://world/logic/kategorie_welt/welt_ums
 var _model: Welt_Model
 var _registry: Welt_Registry
 var _biome: Welt_BiomRegistry = null
+## Biom-Farben je Biom-Kennung: Die Farbe hängt nur am Biom-Id, nicht an
+## der Kachel; der Cache erspart je Kachel die Wörterbuch-Suche und das
+## Color.from_string.
+var _biom_farbe_cache: Dictionary = {}
 ## Dictionary: z_ebene (0, -1, -2, ...) -> Node2D (Fliesen-Container für diese Ebene)
 var _fliesen_knoten_pro_ebene: Dictionary = {}
+var _fliesen_erbaut: Dictionary = {}
 var _objekte_knoten: Node2D
 var _objekt_darsteller: Welt_ObjektDarsteller
 var _sway_aktualisierer := SWAY_AKTUALISIERER_SKRIPT.new()
@@ -63,6 +68,17 @@ var _sicht_sammler := Welt_SichtbereichSammler.new()
 var _knoten_nach_id: Dictionary = {}
 ## Slice B: Räumlicher Vorfilter – ersetzt linearen Vollscan in _sichtbar_anwenden().
 var _objekt_gitter := Welt_ObjektGitter.new()
+## Textur-Zwischenspeicher je Katalog-Kennung: Dieselbe Kennung liefert
+## dieselbe Texture2D-Instanz statt je Knoten ein neues AtlasTexture.
+## Gleiches Bild heißt gleiche Materiallage, das Canvas-Batching fasst
+## benachbarte Knoten zu einem Drawcall zusammen.
+var _textur_cache: Dictionary = {}
+## Platzhalter-Bilder je Farbe, statt je Kachel ein neues Image.
+var _platzhalter_cache: Dictionary = {}
+## Sanfte Einblendung: Frisch angehängte Objekt-Knoten steigen aus dem
+## Boden, statt hart zu ploppen. Der Wert steuert die Dauer in Sekunden;
+## 0 schaltet die Geste still (Prüfläufe, Editor).
+var _einblend_dauer: float = 0.25
 
 
 func _ready() -> void:
@@ -89,12 +105,15 @@ func _fliesen_knoten_fuer_ebene(z_ebene: int) -> Node2D:
 
 func z_ebene_setzen(z_ebene: int) -> void:
 	# Schaltet die sichtbare Z-Ebene um: Blendet alle Fliesen-Knoten aus,
-	# zeigt nur den der angeforderten Ebene.
+	# zeigt nur den der angeforderten Ebene. Fehlende Ebenen werden faul
+	# beim ersten Betreten aufgebaut, damit darstellen() nicht 5 Ebenen
+	# synchron stemmen muss.
 	_aktive_z_ebene = clampi(z_ebene, -Welt_Model.MAX_Z_EBENEN + 1, 0)
+	if not _fliesen_erbaut.get(_aktive_z_ebene, false):
+		_fliesen_ebene_erneuern(_aktive_z_ebene)
 	for ebene in _fliesen_knoten_pro_ebene:
 		var knoten: Node2D = _fliesen_knoten_pro_ebene[ebene] as Node2D
 		knoten.visible = (ebene == _aktive_z_ebene)
-	# Modell auch auf die Ebene setzen für kachel_ersetzen etc.
 	if _model != null:
 		_model.z_ebene_setzen(_aktive_z_ebene)
 
@@ -212,6 +231,10 @@ func _zeige_stadium(index: int) -> void:
 	if textur != null:
 		knoten.standbild_setzen(textur)
 
+func einblend_dauer_setzen(dauer: float) -> void:
+	## Die Szene oder ein Prüflauf drosselt oder stillt die Einblend-Geste.
+	_einblend_dauer = maxf(dauer, 0.0)
+
 func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegistry = null) -> void:
 	_progressions_registry.laden()
 	# Die Blattgeometrie der Stufen-Sheets kommt aus demselben Datenpool wie
@@ -227,13 +250,15 @@ func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegi
 	_model = model
 	_registry = registry
 	_baustellen_bedarf.einrichten(_model)
-	_biome = biome if biome != null else Welt_BiomRegistry.new()
+	_biome = biome if biome != null else Welt_RegistryZugriff.biom()
 	# Sway-Spitze der Atmosphären-Domäne: Der Renderer kennt nur den
 	# Aktualisierer, die Wind-Details liegen in der eigenen Domäne. Jeder
 	# Neuaufbau sammelt die Materials der frischen Sprites neu.
 	_sway_aktualisierer.einrichten(_sway_material_quelle.call())
-	# Fliesen für ALLE Z-Ebenen aufbauen (einmalig bei darstellen()), sichtbar wird nur aktive
-	_fliesen_alle_ebenen_erneuern()
+	# Fliesen nur für die aktive Ebene synchron aufbauen; die übrigen Ebenen
+	# entstehen faul beim ersten z_ebene_setzen. Verhindert 5*34k Sprites
+	# im selben Frame und damit den Hänger auf "wird generiert".
+	_fliesen_ebene_erneuern(_aktive_z_ebene)
 	_objekte_erneuern()
 	## Slice B: Gitter nach vollständigem Neuaufbau initialisieren.
 	_objekt_gitter.aufbauen(_model)
@@ -262,8 +287,24 @@ func kachel_ersetzen(x: int, y: int, z_ebene: int = 0) -> void:
 	# frische Kachel und löst sich dann auf, sonst bleibt der Ruhigstand still.
 	_kachel_geste.platzieren_falls_neu(sprite, vorherige_textur)
 
+func _fliesen_ebene_erneuern(z_ebene: int) -> void:
+	# Baut Fliesen genau einer Z-Ebene auf und merkt sie als erbaut.
+	if _model == null:
+		return
+	var fliesen_knoten := _fliesen_knoten_fuer_ebene(z_ebene)
+	if fliesen_knoten == null:
+		return
+	var kante := float(_model.kachel_groesse)
+	for kind: Node in fliesen_knoten.get_children():
+		kind.queue_free()
+	for y in _model.raster_hoehe:
+		for x in _model.raster_breite:
+			_fliese_anhaengen(fliesen_knoten, x, y, z_ebene, kante)
+	_fliesen_erbaut[z_ebene] = true
+
 func _fliesen_alle_ebenen_erneuern() -> void:
-	# Baut Fliesen für ALLE Z-Ebenen auf (einmalig bei darstellen())
+	# Legacy-Pfad: baut alle Ebenen synchron. Nur noch für Editor/Tests,
+	# im Spiel wird die faule Variante genutzt.
 	if _model == null:
 		return
 	var kante := float(_model.kachel_groesse)
@@ -272,13 +313,12 @@ func _fliesen_alle_ebenen_erneuern() -> void:
 		var fliesen_knoten := _fliesen_knoten_fuer_ebene(z_ebene)
 		if fliesen_knoten == null:
 			continue
-		# Kinder löschen
 		for kind: Node in fliesen_knoten.get_children():
 			kind.queue_free()
-		# Neu aufbauen
 		for y in _model.raster_hoehe:
 			for x in _model.raster_breite:
 				_fliese_anhaengen(fliesen_knoten, x, y, z_ebene, kante)
+		_fliesen_erbaut[z_ebene] = true
 
 func _fliese_anhaengen(fliesen_knoten: Node2D, x: int, y: int, z_ebene: int, kante: float) -> void:
 	var sprite := Sprite2D.new()
@@ -286,6 +326,19 @@ func _fliese_anhaengen(fliesen_knoten: Node2D, x: int, y: int, z_ebene: int, kan
 	sprite.position = Vector2(x, y) * kante
 	_fliese_anwenden(sprite, x, y, z_ebene, kante)
 	fliesen_knoten.add_child(sprite)
+
+func _platzhalter_textur_cache(farbe: Color) -> Texture2D:
+	## Statt je fehlender Textur ein neues 8x8-Bild zu erzeugen, teilen sich
+	## alle Kacheln derselben Farbe einen Platzhalter aus dem Cache. Weniger
+	## Bildobjekte, weniger Textur-Bindings, weniger Drawcalls.
+	var schluessel := farbe.to_html()
+	if _platzhalter_cache.has(schluessel):
+		return _platzhalter_cache[schluessel] as Texture2D
+	var bild := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	bild.fill(farbe)
+	var textur := ImageTexture.create_from_image(bild)
+	_platzhalter_cache[schluessel] = textur
+	return textur
 
 func _fliese_anwenden(sprite: Sprite2D, x: int, y: int, z_ebene: int, kante: float) -> void:
 	# Eine Kachel: Bild aus dem Katalog, Variante aus dem Terrain-Blatt,
@@ -321,12 +374,19 @@ func _fliese_anwenden(sprite: Sprite2D, x: int, y: int, z_ebene: int, kante: flo
 func _biom_farbe_fuer_kachel(x: int, y: int, z_ebene: int) -> Color:
 	# Biom-Tönung aus der Biom-Registry: Jede Kachel trägt die Farbe ihres
 	# Region-Bioms. Keine zweite Biomlogik, nur das gefrorene farbe-Feld.
+	# Der Cache hält je Biom-Kennung genau eine Farbe; Tausende Kacheln
+	# desselben Bioms teilen sie, statt jedes Mal zu parsen.
 	if _biome == null or _model == null:
 		return Color.WHITE
-	var biom := _biome.biom_fuer(_model.biom_an_kachel(x, y, z_ebene))
-	if biom == null:
-		return Color.WHITE
-	return Color.from_string(biom.farbe, Color.WHITE)
+	var biom_id := _model.biom_an_kachel(x, y, z_ebene)
+	if _biom_farbe_cache.has(biom_id):
+		return _biom_farbe_cache[biom_id] as Color
+	var biom := _biome.biom_fuer(biom_id)
+	var farbe := Color.WHITE
+	if biom != null:
+		farbe = Color.from_string(biom.farbe, Color.WHITE)
+	_biom_farbe_cache[biom_id] = farbe
+	return farbe
 
 func _kachel_daten(element_id: String) -> Objekt_Kachel:
 	if _registry == null:
@@ -337,9 +397,7 @@ func _kachel_daten(element_id: String) -> Objekt_Kachel:
 	return null
 
 func _platzhalter_textur(farbe: Color) -> Texture2D:
-	var bild := Image.create(8, 8, false, Image.FORMAT_RGBA8)
-	bild.fill(farbe)
-	return ImageTexture.create_from_image(bild)
+	return _platzhalter_textur_cache(farbe)
 
 func objekt_knoten_anhaengen(index: int) -> Welt_ObjektKnoten:
 	if _model == null:
@@ -392,6 +450,12 @@ func objekt_knoten_anhaengen(index: int) -> Welt_ObjektKnoten:
 	# Auch der Neuaufbau trägt die Gesten: Riss, Wuchs und Stadium stehen
 	# aus dem Modell, nicht nur aus den Ereignissen.
 	_risse_und_wuchs_aktualisieren(index, knoten)
+	# Interpolierte Einblendung: Der Knoten steigt weich aus dem Boden, statt
+	# hart zu ploppen, wenn sein Chunk im zeitgeslicenen Lauf frisch wird.
+	if _einblend_dauer > 0.0 and sprite != null and sprite.visible:
+		sprite.modulate.a = 0.0
+		var einblend := sprite.create_tween()
+		einblend.tween_property(sprite, "modulate:a", 1.0, _einblend_dauer).set_ease(Tween.EASE_OUT)
 	return knoten
 
 func objekt_knoten_verschieben(index: int, neue_position: Vector2) -> void:
@@ -425,6 +489,8 @@ func _stufen_textur_fuer(index: int) -> Texture2D:
 	var element_id := _model.objekt_element_id(index)
 	if not _progressions_registry.hat_definition(element_id):
 		return null
+	# Die Zustands-Erneuerung arbeitet je Objekt Felder ab; die Ergebnis-
+	# Werte reichen für die Blatt-Wahl, der Zustand selbst bleibt im Modell.
 	_ressourcen_zustand.zustand_erneuern(index, _model)
 	var definition := _progressions_registry.definition_fuer(element_id)
 	var stadien: Array = definition.get("stadien", [])
@@ -441,7 +507,17 @@ func _stufen_textur_fuer(index: int) -> Texture2D:
 	return _stufen_bilder._blatt_fuer(element_id, stufen_index)
 
 func _textur_fuer(element_id: String) -> Texture2D:
-	# Nur Daten lesen: der Renderer kennt die Objekte über die Registry.
+	## Nur Daten lesen: der Renderer kennt die Objekte über die Registry.
+	## Der Cache liefert je Kennung genau eine Instanz; ohne ihn baut jeder
+	## Knoten sein eigenes AtlasTexture und das Batching zerfällt.
+	if _textur_cache.has(element_id):
+		return _textur_cache[element_id] as Texture2D
+	var textur := _textur_bauen(element_id)
+	_textur_cache[element_id] = textur
+	return textur
+
+func _textur_bauen(element_id: String) -> Texture2D:
+	# Tatsächlicher Aufbau einer Textur-Instanz für die Kennung.
 	if _registry == null:
 		return null
 	var objekt := _registry.finde_objekt(element_id)
@@ -474,9 +550,11 @@ func _objekte_erneuern() -> void:
 	_knoten_nach_id.clear()
 	if _model == null:
 		return
-	if _sicht_sammler.ist_aktiv():
-		# Spielbetrieb: Der Knotenbestand entsteht aus dem Sichtbereich;
-		# der nächste sichtbereich_setzen-Ruf hängt die sichtbaren an.
+	# Ab ~800 Objekten nie alles synchron bauen: Der Sichtbereich füllt
+	# inkrementell (max 256 je Ruf über das Gitter), damit 6k Knoten +
+	# Shadow-Occluder nicht den _ready-Frame sprengen. Bei kleiner Karte
+	# (Editor/Tests) bleibt der alte Pfad für sofortige Vollsicht.
+	if _sicht_sammler.ist_aktiv() or _model.objekt_anzahl() > 800:
 		_sicht_sammler.dirty_setzen()
 		return
 	for index in _model.objekt_anzahl():

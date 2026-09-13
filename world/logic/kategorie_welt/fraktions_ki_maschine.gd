@@ -128,9 +128,9 @@ func _erschoepfung_fuer_neue_karte_zuruecksetzen(karte: Welt_Model) -> void:
 	if karte == null:
 		return
 	var erschoepfung_daten: Dictionary = {}
-	var chunk_kante := karte.chunk_groesse
-	var chunk_x_max := karte.raster_breite / chunk_kante
-	var chunk_y_max := karte.raster_hoehe / chunk_kante
+	var chunk_kante := maxi(karte.chunk_groesse, 1)
+	var chunk_x_max := ceili(float(karte.raster_breite) / float(chunk_kante))
+	var chunk_y_max := ceili(float(karte.raster_hoehe) / float(chunk_kante))
 	for cx in range(chunk_x_max):
 		for cy in range(chunk_y_max):
 			var chunk_key := "%d_%d" % [cx, cy]

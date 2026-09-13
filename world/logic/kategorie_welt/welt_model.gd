@@ -227,7 +227,7 @@ func objekt_bei(ziel: Vector2, such_radius: float) -> int:
 	# Für die Trefferprüfung wird nur die Datenklasse Objekt_Basis gelesen;
 	# hier fließt keine Logik einer anderen Domäne ein.
 	if _welt_registry == null:
-		_welt_registry = Welt_Registry.new()
+		_welt_registry = Welt_RegistryZugriff.welt()
 	var registry := _welt_registry
 	var bester_index := -1
 	var beste_flaeche := INF

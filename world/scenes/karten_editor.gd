@@ -12,7 +12,7 @@ const KAMERA_ZOOM_MIN := 0.08
 const KAMERA_ZOOM_MAX := 2.5
 
 var _model := Welt_Model.new()
-var _registry := Welt_Registry.new()
+var _registry := Welt_RegistryZugriff.welt()
 var _werkzeug := Welt_EditorWerkzeug.new()
 var _vorschau: Sprite2D
 var _maus_welt_position := Vector2.ZERO

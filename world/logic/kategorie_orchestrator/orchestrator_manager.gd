@@ -117,7 +117,6 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 
 	# Jede Orchestrator-Zone abarbeiten nach Priorität
 	for eintrag: Dictionary in _orchestratoren:
-		var status: Orchestrator_Status = eintrag["status"]
 		var konfig: Orchestrator_Konfiguration = eintrag["konfig"]
 
 		# Aus der Konfiguration Bedarfsliste lesen und nach Priorität sortieren
@@ -129,7 +128,6 @@ func _auf_tick(_tick_nummer: int, _delta: float) -> void:
 
 			var ressource := str(bedarf.get("ressource", ""))
 			var job_id := str(bedarf.get("job_id", ""))
-			var prioritaet := int(bedarf.get("prioritaet", 1))
 
 			if job_id == "" or ressource == "":
 				continue

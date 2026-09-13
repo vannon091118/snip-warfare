@@ -10,7 +10,6 @@ class_name Welt_TiefenNeige
 var _konfig: Welt_AtmosphaereKonfig = null
 var _schleier: Sprite2D = null
 var _letzte_stelle := Vector2.ZERO
-var _einmal_ankoppeln := false
 
 ## Kategorie logik: Aufbau und Kamera-Folge.
 
@@ -43,11 +42,11 @@ func neige_radius(radius: float) -> void:
 func _anwenden() -> void:
 	if _schleier == null or _konfig == null:
 		return
-	var material := ShaderMaterial.new()
-	material.shader = _neige_shader_instanz()
-	material.set_shader_parameter("staerke", _konfig.tiefen_wert("staerke", 0.16))
-	material.set_shader_parameter("neige_farbe", _konfig.tiefen_farbe("farbe", Color("#C3CDE2")))
-	_schleier.material = material
+	var neige_material := ShaderMaterial.new()
+	neige_material.shader = _neige_shader_instanz()
+	neige_material.set_shader_parameter("staerke", _konfig.tiefen_wert("staerke", 0.16))
+	neige_material.set_shader_parameter("neige_farbe", _konfig.tiefen_farbe("farbe", Color("#C3CDE2")))
+	_schleier.material = neige_material
 
 func _neige_bild() -> Texture2D:
 	var verlauf := Gradient.new()

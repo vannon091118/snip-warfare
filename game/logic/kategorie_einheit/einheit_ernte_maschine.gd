@@ -54,7 +54,6 @@ func arbeitsschritt_verarbeiten(ressource: String, menge: int, status: Einheit_S
 			_jagd_schlag(status, menge)
 		Job_Basis.ZielTyp.OWN:
 			_kannibale_schlag(status, menge)
-			_kannibale_schlag(status, menge)
 
 func _objekt_position(index: int) -> Vector2:
 	if _model == null or index < 0 or index >= _model.objekt_anzahl():

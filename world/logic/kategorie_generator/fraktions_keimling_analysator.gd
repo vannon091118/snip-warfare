@@ -15,6 +15,11 @@ var welt_hoehe: int = 0
 var analyse_ergebnisse: Array[Dictionary] = []
 var keimpunkte: Array[Dictionary] = []
 
+## Geteilter Keimpunkt-Cache: Der Generator-Pass führt die Analyse einmal
+## und legt das Ergebnis hier ab; die Fraktions-KI-Verdrahtung liest
+## denselben Fund, statt die Welt ein zweites Mal zu analysieren
+## (192 Rassen doppelt gebaut, 400 Log-Zeilen je Lauf).
+
 ## Mapping: Biom-ID zu Archetyp für Score-Berechnung
 const BIOME_ZU_ARCHETYP: Dictionary = {
 	"gemaaessigt": "wald",
@@ -61,7 +66,10 @@ func _laden_konfiguration() -> void:
 		push_warning("weltkarte_definition.json nicht gefunden, nutze Standard 16x12")
 
 func analyse_ausfuehren(welt_model: Welt_Model, fraktions_ki_config: Dictionary) -> void:
-	## Führe Analyse der fertigen Welt aus
+	## Führe Analyse der fertigen Welt aus - vorherigen Lauf leeren, damit
+	## Generator und Verdrahtung nicht denselben Fund doppelt anhängen.
+	keimpunkte.clear()
+	analyse_ergebnisse.clear()
 	welt_breite = welt_model.raster_breite
 	welt_hoehe = welt_model.raster_hoehe
 
@@ -244,6 +252,22 @@ func _prüfe_und_erzeuge_keimpunkte(analyse_ergebnis: Dictionary, fraktions_ki_c
 
 func get_keimpunkte() -> Array[Dictionary]:
 	return keimpunkte.duplicate(true)
+
+## Kategorie logik: Geteilter Keimpunkt-Cache der Domäne.
+
+static var _geteilte_keimpunkte: Array[Dictionary] = []
+
+static func geteilte_keimpunkte_ablegen(punkte: Array[Dictionary]) -> void:
+	## Der Generator-Pass legt sein Analyse-Ergebnis für die Verdrahtung ab.
+	_geteilte_keimpunkte = punkte
+
+static func geteilte_keimpunkte() -> Array[Dictionary]:
+	## Die Verdrahtung liest denselben Fund; ohne Ablage bleibt die Liste leer
+	## und der Rückfall analysiert selbst.
+	return _geteilte_keimpunkte
+
+static func geteilte_keimpunkte_leeren() -> void:
+	_geteilte_keimpunkte.clear()
 
 func get_analyse_ergebnisse() -> Array[Dictionary]:
 	return analyse_ergebnisse.duplicate(true)

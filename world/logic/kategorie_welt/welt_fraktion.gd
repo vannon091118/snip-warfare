@@ -39,6 +39,8 @@ func nach_woerterbuch() -> Dictionary:
 		"farbe": farbe.to_html(),
 		"position_kachel": [position_kachel.x, position_kachel.y],
 		"nachbarn": nachbarn,
+		"keimpunkt_daten": _keimpunkt_daten,
+		"archetyp": _archetyp,
 	}
 
 func aus_woerterbuch(daten: Dictionary) -> void:
@@ -59,3 +61,6 @@ func aus_woerterbuch(daten: Dictionary) -> void:
 	if typeof(nachbarn_roh) == TYPE_ARRAY:
 		for n: Variant in nachbarn_roh as Array:
 			nachbarn.append(str(n))
+	var keimpunkt_roh: Variant = daten.get("keimpunkt_daten", {})
+	_keimpunkt_daten = (keimpunkt_roh as Dictionary).duplicate(true) if typeof(keimpunkt_roh) == TYPE_DICTIONARY else {}
+	_archetyp = str(daten.get("archetyp", ""))

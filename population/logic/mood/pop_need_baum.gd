@@ -9,7 +9,7 @@ class_name Pop_NeedBaum
 
 ## Kategorie daten: Registries der Domäne und Zähler der Kinder.
 var _need_registry := Pop_NeedRegistry.new()
-var _rassen_registry := Pop_RassenSchemaRegistry.new()
+var _rassen_registry := Pop_RassenZugriff.registry()
 var _naechste_kind_nummer: int = 1
 
 ## Kategorie logik: Schema-Abfragen und Erzeugung der Kind-Maschinen.

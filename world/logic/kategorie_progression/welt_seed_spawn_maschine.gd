@@ -17,7 +17,7 @@ var _kachel_groesse: float = 512.0
 func einrichten(progression: Welt_ProgressionsRegistry, kachel_groesse: float, start_seed: int) -> void:
 	_progression = progression
 	_kachel_groesse = kachel_groesse
-	_gewichte = Welt_GeneratorRegistry.new()
+	_gewichte = Welt_RegistryZugriff.generator()
 	_zufall.start_zustand_setzen(start_seed + 7919)
 
 func fruchtbarkeit_fuer_biom(faktor: float) -> float:

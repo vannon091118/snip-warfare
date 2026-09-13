@@ -42,8 +42,8 @@ func _kachel_anker(wunsch: Vector2, fuss: Vector2i, kante: int) -> Vector2:
 	## Der Wunschpunkt wird zur Kachel gerundet; der Anker liegt an der
 	## linken oberen Kachel-Ecke des Fusses, damit Anzeige und Belegung
 	## dieselbe Wahrheit teilen. Der Fuss wächst nach rechts und unten.
-	var kachel_x := int(floor(wunsch.x / float(kante))) - (fuss.x - 1) / 2
-	var kachel_y := int(floor(wunsch.y / float(kante))) - (fuss.y - 1) / 2
+	var kachel_x := int(floor(wunsch.x / float(kante))) - int(float(fuss.x - 1) / 2.0)
+	var kachel_y := int(floor(wunsch.y / float(kante))) - int(float(fuss.y - 1) / 2.0)
 	return Vector2(float(kachel_x * kante), float(kachel_y * kante))
 
 func _fuss_frei(anker: Vector2, fuss: Vector2i, kante: int) -> bool:

@@ -14,28 +14,35 @@ const STANDARD_CONFIG := {"expansion": 0.6, "handel": 0.4, "konflikt": 0.7, "agg
 var _fraktions_ki_config: Dictionary = {}
 var _ki_maschinen: Array[Welt_FraktionsKiMaschine] = []
 var _netzwerk_planer := Welt_NetzwerkPlaner.new()
+var _keimling_analysator: Welt_FraktionsKeimlingAnalysator = null
+var _rassen_generator: Pop_RassenGenerator = null
+## Modell des letzten Laufs: Rückfall-Anker für die Keimpunkt-Abfrage in
+## Headless-Tests ohne WeltSitzung.
+var _letztes_modell: Welt_Model = null
 
 ## Kategorie logik: Aufbau der Fraktions-KI aus den gereichten Referenzen.
 
 func initialisieren(p: Dictionary) -> void:
 	## Fraktions-KI initialisieren: Netzwerk planen und KI-Maschinen pro Fraktion starten.
 	var model: Welt_Model = p.get("model")
+	_letztes_modell = model
 	var biome: Welt_BiomRegistry = p.get("biome")
 	var rassen_registry: Pop_RassenSchemaRegistry = p.get("rassen_registry")
 	var map_fabrik: Welt_MapFabrik = p.get("map_fabrik")
 	var lager: Lager_Manager = p.get("lager")
 	_fraktions_ki_config_laden()
-	if not _netzwerk_planer.netzwerk_planen(model, Welt_GeneratorRegistry.new(), 0, biome):
+	if not _netzwerk_planer.netzwerk_planen(model, Welt_RegistryZugriff.generator(), 0, biome):
 		push_warning("Fraktions-Netzwerk konnte nicht geplant werden")
 		return
-	# Rassen-Schemata für jede Fraktion generieren (aus Keimpunkten)
-	var keimling_analysator := Welt_FraktionsKeimlingAnalysator.new()
-	keimling_analysator.analyse_ausfuehren(model, _fraktions_ki_config)
-	var keimpunkte := keimling_analysator.get_keimpunkte()
-	# Rassen-Generator für Keimpunkte
-	var rassen_generator := Pop_RassenGenerator.new()
-	rassen_generator.registry_setzen(rassen_registry)
-	rassen_generator.generiere_aus_keimpunkten(keimpunkte, model.welt_seed)
+	# Rassen-Schemata für jede Fraktion generieren (aus Keimpunkten).
+	# Der Generator-Pass hat die Keimpunkt-Analyse schon geführt; die Verdrahtung
+	# teilt dieselben Keimpunkte und denselben Rassen-Cache, statt die Welt
+	# ein zweites Mal zu analysieren (192 Schemata doppelt gebaut).
+	var keimpunkte := _generator_keimpunkte()
+	if not keimpunkte.is_empty():
+		var rassen_generator := Pop_RassenGenerator.new()
+		rassen_generator.registry_setzen(rassen_registry)
+		rassen_generator.generiere_aus_keimpunkten(keimpunkte, model.welt_seed)
 	for fraktion in _netzwerk_planer.fraktionen():
 		var rassen_id := str(fraktion.fraktion_id)  # Vereinfacht: Fraktion-ID als Rassen-ID
 		var rassen_schema := _rassen_schema_fuer(rassen_id, rassen_registry)
@@ -62,6 +69,21 @@ func _fraktions_ki_config_laden() -> void:
 	else:
 		push_warning("fraktions_ki_config.json nicht gefunden, nutze Standardwerte")
 		_fraktions_ki_config = STANDARD_CONFIG.duplicate()
+
+func _generator_keimpunkte() -> Array[Dictionary]:
+	## Holt die Keimpunkte aus dem Generator-Pass über die Welt-Sitzung; fehlt
+	## er (Headless-Tests), liefert eine frische Analyse den Rückfall.
+	var szene := Engine.get_main_loop() as SceneTree
+	if szene != null:
+		var sitzung := szene.root.get_node_or_null("/root/WeltSitzung")
+		if sitzung != null and sitzung.get("generator") != null:
+			var generator: Variant = sitzung.get("generator")
+			var analysator: Variant = generator.get("keimling_analysator")
+			if analysator != null:
+				return analysator.get_keimpunkte()
+	var rückfall := Welt_FraktionsKeimlingAnalysator.new()
+	rückfall.analyse_ausfuehren(_letztes_modell, _fraktions_ki_config)
+	return rückfall.get_keimpunkte()
 
 func _rassen_schema_fuer(rassen_id: String, rassen_registry: Pop_RassenSchemaRegistry) -> Pop_RassenSchema:
 	var rassen_schema: Pop_RassenSchema = rassen_registry.schema_fuer(rassen_id)

@@ -10,6 +10,11 @@ class_name Welt_Ladevorgang
 var _model: Welt_Model = null
 var _generator: Welt_Generator = null
 var _map_fabrik := Welt_MapFabrik.new()
+## Asynchroner Lauf: Der Chunk-Lader des letzten Erzeugungsvorgangs.
+## Er ist null, wenn die Welt aus einem Speicherstand kam (dort gibt es
+## nichts zu materialisieren). Die Szene zieht ihn sich nach dem Laden und
+## speist seine schritt()-Methode an der Weltuhr.
+var lauf_lader: Welt_AsyncChunkLader = null
 
 func einrichten(model: Welt_Model, generator: Welt_Generator) -> void:
 	_model = model
@@ -76,18 +81,23 @@ func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> b
 		basis_seed = int(ableitung.naechste_zahl() % 1000000000)
 		if basis_seed == 0:
 			basis_seed = 13371337
-	var kandidat_zufall := Kern_Zufall.new()
-	kandidat_zufall.start_zustand_setzen(basis_seed)
 	var seed_wert := basis_seed
-	for _versuch in range(20):
-		if _generator.welt_erzeugen(_model, seed_wert, effektives_biom) and _generator.verworfene_chunks == 0:
-			break
-		seed_wert = kandidat_zufall.naechste_zahl() % 1000000000
-	if not _generator.welt_erzeugen(_model, seed_wert, effektives_biom):
+	# Plan ohne Füllung: Groesse, Seed und Regionen stehen danach im
+	# Modell, kein Chunk ist gefüllt. Die Füllung zieht der Lader nach.
+	if not _generator.welt_planen(_model, seed_wert, effektives_biom):
 		return false
+	# Asynchroner Füll-Lauf: Sichtbare Chunks zuerst, Budget je Tick.
+	# Der Abschluss (Gewaesser, Fels, Fraktionen) feuert am Lader-Signal.
+	lauf_lader = Welt_AsyncChunkLader.new()
+	# Ordnungs-Anker ist die Kartenmitte: Die Kamera startet dort, also
+	# materialisiert der Lader zuerst, was der Spieler zu sehen bekommt.
+	lauf_lader.kamera_position_setzen(Vector2(_model.groesse()) * float(_model.kachel_groesse) * 0.5)
+	lauf_lader.starten(_model, _generator, effektives_biom, _model.aktive_z_ebene)
 	# World-Ebene: Die erzeugte Szene-Karte ist die Basis-Karte. Die World
 	# übernimmt die laufende Instanz, es wird nicht ein zweites Mal
 	# generiert: Genau eine Kartenwahrheit auch auf dem Erzeugungsweg.
+	# Gespeichert wird erst nach der Füllung, sonst stünde eine leere Welt
+	# auf der Platte; die Szene ruft welt_speichern_aktiv im Abschluss.
 	var world := Welt_World.new()
 	var speicher_welt_name := welt_name
 	if speicher_welt_name == "":
@@ -96,8 +106,6 @@ func _welt_generieren(welt_name: String, seed_wunsch: int, biom_id: String) -> b
 	world.map_hinzufuegen(_model, "karte_0", true)
 	WeltSitzung.world = world
 	WeltSitzung.aktive_map_id = "karte_0"
-	var speicher := Welt_Speicher.new()
-	speicher.world_speichern(speicher_welt_name, world)
 	WeltSitzung.welt_name = speicher_welt_name
 	return true
 

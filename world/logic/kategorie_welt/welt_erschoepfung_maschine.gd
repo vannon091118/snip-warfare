@@ -43,8 +43,8 @@ func maximum() -> int:
 func initialisieren(chunk_groesse: int, raster_breite: int, raster_hoehe: int) -> void:
 	# Setzt Erschöpfung für alle Chunks auf 0 bei Weltgenerierung.
 	_erschoepfung_pro_chunk.clear()
-	var chunk_x_max := maxi(1, raster_breite / chunk_groesse)
-	var chunk_y_max := maxi(1, raster_hoehe / chunk_groesse)
+	var chunk_x_max := maxi(1, ceili(float(raster_breite) / float(maxi(chunk_groesse, 1))))
+	var chunk_y_max := maxi(1, ceili(float(raster_hoehe) / float(maxi(chunk_groesse, 1))))
 	for cx in range(chunk_x_max):
 		for cy in range(chunk_y_max):
 			var chunk_key := "%d_%d" % [cx, cy]

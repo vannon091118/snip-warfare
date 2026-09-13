@@ -98,7 +98,8 @@ func _finalisieren() -> void:
 		push_error("Pop_RassenSchema '%s' bereits finalisiert" % rasse_id)
 		return
 	_finalisiert = true
-	print("Pop_RassenSchema '%s' (%s) ist nun immutabel - keine weiteren Änderungen erlaubt." % [rasse_id, angezeigter_name])
+	# Immuntable-Meldung bewusst still: Der vorherige Print spammte bei 192
+	# generierten Rassen den Lauf-Log (400+ Zeilen) und verdeckte echte Fehler.
 
 func _pruefe_nicht_finalisiert(aufrufer: String) -> void:
 	if _finalisiert:

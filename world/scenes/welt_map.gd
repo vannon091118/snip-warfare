@@ -8,8 +8,8 @@ const SZENE_HAUPTMENUE := "res://ui/scenes/hauptmenue.tscn"
 const SZENE_UEBERGANG := "res://ui/scenes/uebergang.tscn"
 
 var _model := Welt_Model.new()
-var _registry := Welt_GeneratorRegistry.new()
-var _biome := Welt_BiomRegistry.new()
+var _registry := Welt_RegistryZugriff.generator()
+var _biome := Welt_RegistryZugriff.biom()
 var _netzwerk_planer := Welt_NetzwerkPlaner.new()
 ## Die Makrokarte hat ihre eigene Domäne: Sie plant nur Regionen und ruft
 ## niemals den lokalen Generator.

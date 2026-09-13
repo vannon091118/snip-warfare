@@ -25,7 +25,7 @@ func entscheidung_fuer(kachel: Objekt_Kachel, kachel_x: int, kachel_y: int, welt
 		entscheidung["spiegel_x"] = (zahlenwert & 1) == 1
 		entscheidung["spiegel_y"] = (zahlenwert & 2) == 2
 	if not kachel.kachel_toenungen.is_empty():
-		var index := int(zahlenwert / 4) % kachel.kachel_toenungen.size()
+		var index := int(zahlenwert / 4.0) % kachel.kachel_toenungen.size()
 		entscheidung["toenumg"] = Color.from_string(kachel.kachel_toenungen[index], Color.WHITE)
 	return entscheidung
 

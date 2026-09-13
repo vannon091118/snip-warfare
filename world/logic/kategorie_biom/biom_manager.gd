@@ -12,7 +12,7 @@ var _schema: Kern_Mutationsschema
 ## Kategorie logik: Wechsel und Zustandsableitung.
 
 func _init(biom_registry: Welt_BiomRegistry = null) -> void:
-	registry = biom_registry if biom_registry != null else Welt_BiomRegistry.new()
+	registry = biom_registry if biom_registry != null else Welt_RegistryZugriff.biom()
 	_schema = Kern_Mutationsschema.new("Welt_Biom")
 	_schema.start_zustand_definieren("bestaende", {})
 	_biom_mutationen_anhaengen()

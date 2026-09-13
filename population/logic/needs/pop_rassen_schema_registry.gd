@@ -54,7 +54,8 @@ func registriere_generiert(rasse_id: String, schema: Pop_RassenSchema) -> void:
 
 	_schemata.append(schema)
 	_schemata_nach_id[rasse_id] = schema
-	print("Generiertes Rassen-Schema registriert: %s (%s)" % [rasse_id, schema.angezeigter_name])
+	# Erfolg still: Der vorherige Print verdoppelte den Spam (einmal pro
+	# generierter Rasse im Generator plus einmal in der Verdrahtung).
 
 func entferne_generiert(rasse_id: String) -> void:
 	if _schemata_nach_id.has(rasse_id):
@@ -63,7 +64,6 @@ func entferne_generiert(rasse_id: String) -> void:
 		if index >= 0:
 			_schemata.remove_at(index)
 		_schemata_nach_id.erase(rasse_id)
-		print("Generiertes Rassen-Schema entfernt: %s" % rasse_id)
 
 func entferne_alle_generierten() -> void:
 	var basis_ids := ["mensch", "elf", "ork"] as Array[String]

@@ -14,9 +14,9 @@ const _OrchestratorPriorityPanelSkript := preload("res://ui/logic/kategorie_ui/u
 ## Kategorie daten: Modell und Registries als Quellen der Visualisierung.
 ## Kategorie logik: Verdrahtung der Observer- und Visualisierungs-Spitzen.
 var _model := Welt_Model.new()
-var _registry := Welt_Registry.new()
+var _registry := Welt_RegistryZugriff.welt()
 var _steuerung := Kern_SteuerungRegistry.new()
-var _rassen_registry := Pop_RassenSchemaRegistry.new()
+var _rassen_registry := Pop_RassenZugriff.registry()
 var _lager := Lager_Manager.new()
 var _ressourcen := Einheit_Ressourcen.new()
 var _job_registry := Job_Registry.new()
@@ -28,7 +28,7 @@ var _auswahl := _AuswahlManagerSkript.new()
 var _schnellwahl: Array[int] = []
 var _orchestrator_registry := Orchestrator_Registry.new()
 var _orchestrator_manager := Orchestrator_Manager.new()
-var _biome := Welt_BiomRegistry.new()
+var _biome := Welt_RegistryZugriff.biom()
 var _generator := Welt_Generator.new()
 var _gebaeude_definitionen := Gebaeude_DefinitionRegistry.new()
 var _karten_ebene: CanvasLayer = null
@@ -56,6 +56,8 @@ var _timeline := Kern_Timeline.new()
 var _feedback := Welt_FeedbackManager.new()
 var _atmosphaere := Welt_AtmosphaereVerdrahtung.new()
 var _progression := Welt_ProgressionsMaschine.new()
+## Sozial-Domaene: Eigene Fassade, hoert am Kern-SignalBus und tickt an der Uhr.
+var _sozial := Soz_Manager.new()
 ## Der Wasser-Automat gehört zur Welt-Domäne: Er schreibt nur übers Modell
 ## und läuft nur, wenn der Schalter in welt_definition.json ihn läßt.
 var _wasser := Welt_WasserAutomat.new()
@@ -71,6 +73,9 @@ var _orchestrator_priority_panel: Ui_OrchestratorPriorityPanel = null
 ## Die Panel- und Kartenreferenzen hält die UI-Aufbau-Spitze; die Szene liest
 ## sie von dort. Der Debug-Schalter bleibt als einziger Sichtbarkeits-Weg.
 var _landeplatz: Node2D = null
+## Zeitgeslicener Chunk-Lader: läuft nach frischer Generierung und zieht
+## die Welt in 16-ms-Budgets pro Frame nach, statt alles in einem Ruck.
+var _chunk_lader: Welt_AsyncChunkLader = null
 
 @onready var _karte: Welt_Renderer = %Karte
 @onready var _kamera: Camera2D = %Kamera
@@ -139,6 +144,7 @@ func _bereit_karte_und_atmosphaere() -> void:
 	_stockmaenner.schlag_ort_empfaenger_setzen(_atmosphaere.staub_zeigen)
 	add_child(_feedback)
 	_feedback.einrichten(_ressourcen)
+	add_child(_sozial)
 	_ui_aufbau.karten_ebene_bauen(self, _model, _registry, _biome)
 	_karten_ebene = _ui_aufbau.karten_ebene
 	_karten_viewer = _ui_aufbau.karten_viewer
@@ -290,6 +296,11 @@ func _ladevorgang_ausfuehren() -> void:
 	_ladevorgang.einrichten(_model, _generator)
 	_map_fabrik.einrichten(_generator)
 	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)
+	# Zeitgeslicene Füllung: Der Lader materialisiert Chunks im Budget;
+	# die Szene speist ihn im _process, bis sein Signal kommt.
+	_chunk_lader = _ladevorgang.lauf_lader
+	if _chunk_lader != null:
+		_chunk_lader.fertig.connect(_auf_welt_gefuellt)
 
 func _domaenen_modell_setzen(neues_modell: Welt_Model) -> void:
 
@@ -348,6 +359,11 @@ func _auf_gebaeude_platziert(objekt_index: int) -> void:
 
 
 func _process(delta: float) -> void:
+	# Zeitgeslicene Welt-Füllung: Solange der Lader arbeitet, zieht er pro
+	# Frame 16 ms Chunks nach, bevor der Rest des Frames läuft. Sichtbare
+	# Chunks zuerst (Kartenmitte), der Rand folgt in den nächsten Frames.
+	if _chunk_lader != null and _chunk_lader.laeuft:
+		_chunk_lader.schritt()
 	_kamera_steuerung.kamera_bewegen(delta, _kamera)
 	_tiere.spieler_position_setzen(_kamera.position)
 	# Sprint 3: Die Kamerastelle führt die Tiefen-Neige mit; das Licht
@@ -389,6 +405,23 @@ func _unhandled_input(ereignis: InputEvent) -> void:
 func _auf_verteilung(nahrung_je_takt: float) -> void:
 	_eingabe_steuerung.auf_verteilung(nahrung_je_takt)
 
+func _auf_welt_gefuellt() -> void:
+	## Abschluss-Pass nach der letzten Chunk-Füllung: Gewaesser, Fels und
+	## der Fraktions-Pass laufen danach; die Szene speist ihn nicht selbst,
+	## sondern bittet den Generator. Die Karte folgt über den Kachel-Bus.
+	if _chunk_lader == null:
+		return
+	_chunk_lader = null
+	_generator.welt_abschliessen(_model, _model.welt_seed, _model.biom_id)
+	# Erst jetzt, mit voller Welt, geht der Stand auf die Platte; vorher
+	# stünde eine leere Karte im Save.
+	var world := WeltSitzung.world
+	if world != null and WeltSitzung.aktive_map_id != "":
+		Welt_Ladevorgang.welt_speichern_aktiv(world, WeltSitzung.aktive_map_id)
+	# Der Objekt-Bestand ist vollständig: Gitter und Sicht-Scheibe neu.
+	_karte.sichtgebiet_aktualisieren()
+	_ladevorgang.lauf_lader = null
+
 func _auf_kontext_aktion(aktion: Dictionary) -> void:
 	_eingabe_steuerung.auf_kontext_aktion(aktion)
 
@@ -426,6 +459,7 @@ func _auf_erste_einheit(_stufe: Dictionary) -> void:
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
 	_waerme_sammler.sammeln(_model, _stockmaenner, _waerme_overlay)
 	_stockmaenner.einheit_hinzufuegen(_stockmaenner.lager_anker_position() + Vector2(0, 48))
+	_sozial.einheit_anmelden(_stockmaenner.einheit_zahl() - 1, _stockmaenner.lager_anker_position() + Vector2(0, 48), ["tratscht_gerne"])
 	_hud.meldung_setzen("Der erste Siedler ist am Lagerfeuer angekommen.")
 
 func _auf_stufe_erreicht(stufe: Dictionary) -> void:

@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 260 Klassen mit `class_name` im Projekt, davon 227 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 64 Signale, 31 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 270 Klassen mit `class_name` im Projekt, davon 237 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -119,10 +119,11 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (42)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (44)
 
 | Klasse | Datei |
 | --- | --- |
+| `Welt_AsyncChunkLader` | `world/logic/kategorie_welt/welt_async_chunk_lader.gd` |
 | `Welt_BauGeist` | `world/logic/kategorie_welt/welt_bau_geist.gd` |
 | `Welt_BaustellenBedarf` | `world/logic/kategorie_welt/welt_baustellen_bedarf.gd` |
 | `Welt_DefinitionRegistry` | `world/logic/kategorie_welt/welt_definition_registry.gd` |
@@ -152,6 +153,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` |
 | `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` |
+| `Welt_RegistryZugriff` | `world/logic/kategorie_welt/welt_registry_zugriff.gd` |
 | `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` |
@@ -302,7 +304,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Ressource_Stein` | `game/logic/kategorie_ressourcen/ressource_stein.gd` |
 | `Ressource_Werkzeug` | `game/logic/kategorie_ressourcen/ressource_werkzeug.gd` |
 
-### population — Prefix `Pop_` — `population/` (18)
+### population — Prefix `Pop_` — `population/` (26)
 
 | Klasse | Datei |
 | --- | --- |
@@ -321,9 +323,17 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Pop_RassenGenerator` | `population/logic/needs/pop_rassen_generator.gd` |
 | `Pop_RassenSchema` | `population/logic/needs/pop_rassen_schema.gd` |
 | `Pop_RassenSchemaRegistry` | `population/logic/needs/pop_rassen_schema_registry.gd` |
+| `Pop_RassenZugriff` | `population/logic/needs/pop_rassen_zugriff.gd` |
+| `Soz_BeziehungsEngine` | `population/logic/sozial/logic/soz_beziehungs_engine.gd` |
 | `Soz_Datenpool` | `population/logic/sozial/logic/soz_datenpool.gd` |
+| `Soz_Denkblase` | `population/logic/sozial/logic/soz_denkblase.gd` |
+| `Soz_EthikLedger` | `population/logic/sozial/logic/soz_ethik_ledger.gd` |
 | `Soz_Geruecht` | `population/logic/sozial/logic/soz_geruecht.gd` |
+| `Soz_GeruechtMaschine` | `population/logic/sozial/logic/soz_geruecht_maschine.gd` |
+| `Soz_ImageGlaube` | `population/logic/sozial/logic/soz_image_glaube.gd` |
+| `Soz_Manager` | `population/logic/sozial/logic/soz_manager.gd` |
 | `Soz_TraitLedger` | `population/logic/sozial/logic/soz_trait_ledger.gd` |
+| `Soz_ZeugenMaschine` | `population/logic/sozial/logic/soz_zeugen_maschine.gd` |
 
 ### economy — Prefix `Lager_` — `economy/` (6)
 

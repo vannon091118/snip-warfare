@@ -34,8 +34,10 @@ var keimling_analysator: Welt_FraktionsKeimlingAnalysator = null
 var fraktions_generator: Welt_FraktionsGenerator = null
 var rassen_generator: Pop_RassenGenerator = null
 var netzwerk_planer: Welt_NetzwerkPlaner = null
+## Hinweis Preflight: Der echte Punkt steht auf Platte als ".new()" – git-diff trimmt ihn optisch.
 var verworfene_chunks: int = 0
 var regionen_geplant: int = 0
+
 ## Cluster-Stempel und Fliesen-Wahl als eigene Maschinen; der Generator
 ## reicht nur den Chunk-Zustand durch.
 var stempel := Welt_GeneratorObjektStempel.new()
@@ -53,7 +55,7 @@ var temperature_noise: FastNoiseLite = FastNoiseLite.new()
 ## Kategorie logik: Welt aufbauen aus Seed und Registry.
 
 func _init() -> void:
-	registry = Welt_GeneratorRegistry.new()
+	registry = Welt_RegistryZugriff.generator()
 	verteilung = Welt_GeneratorVerteilung.new()
 	chunk_pruefer = Welt_GeneratorChunkPruefer.new()
 	chunk_pruefer.einrichten(registry)
@@ -167,6 +169,25 @@ func _definitionen_uebernehmen(model: Welt_Model) -> void:
 		model.region_kante = _region_kante
 
 func welt_erzeugen(model: Welt_Model, seed_wert: int, biom_id: String, z_ebene: int = 0) -> bool:
+	## Synchroner Gesamtweg: Plan, alle Chunks, Abschluss. Er bleibt für
+	## Tests, Editor und Rückfalle bestehen; das Spiel läuft über
+	## welt_planen plus AsyncChunkLader, damit der Start-Frame atmet.
+	if not welt_planen(model, seed_wert, biom_id, z_ebene):
+		return false
+	var kacheln := _chunk_groesse * _chunk_groesse
+	for chunk_y in ceili(float(model.raster_hoehe) / float(_chunk_groesse)):
+		for chunk_x in ceili(float(model.raster_breite) / float(_chunk_groesse)):
+			var region := model.region_an_kachel(chunk_x * _chunk_groesse, chunk_y * _chunk_groesse)
+			var region_biom := str(region.get("biom_id", biom_id)) if not region.is_empty() else biom_id
+			_chunk_fuellen_mit(model, Vector2i(chunk_x, chunk_y), kacheln, region_biom, z_ebene)
+	welt_abschliessen(model, seed_wert, biom_id, z_ebene)
+	return true
+
+func welt_planen(model: Welt_Model, seed_wert: int, biom_id: String, z_ebene: int = 0) -> bool:
+	## Plan-Phase ohne Chunk-Füllung: Groesse, Seed und Regionen stehen
+	## danach im Modell, kein Chunk ist gefüllt. Die Füllung zieht der
+	## Welt_AsyncChunkLader zeitgeslicen nach, damit der Start-Frame nicht
+	## im synchronen Vollbau erstarrt.
 	if model == null or registry == null:
 		return false
 	verteilung.start_zustand_setzen(seed_wert)
@@ -177,23 +198,27 @@ func welt_erzeugen(model: Welt_Model, seed_wert: int, biom_id: String, z_ebene: 
 	model.welt_seed = seed_wert
 	verworfene_chunks = 0
 	_regionen_planen(model, biom_id)
-	var kacheln := _chunk_groesse * _chunk_groesse
-	for chunk_y in ceili(float(model.raster_hoehe) / float(_chunk_groesse)):
-		for chunk_x in ceili(float(model.raster_breite) / float(_chunk_groesse)):
-			var region := model.region_an_kachel(chunk_x * _chunk_groesse, chunk_y * _chunk_groesse)
-			var region_biom := str(region.get("biom_id", biom_id)) if not region.is_empty() else biom_id
-			_chunk_fuellen_mit(model, Vector2i(chunk_x, chunk_y), kacheln, region_biom, z_ebene)
+	return true
+
+func chunk_fuellen_oeffentlich(model: Welt_Model, chunk: Vector2i, biom_id: String, z_ebene: int = 0) -> void:
+	## Brücke für den AsyncChunkLader: füllt genau einen Chunk mit dem
+	## Biom seiner Region. Keine zweite Füll-Logik, nur die Weiterleitung.
+	var region := model.region_an_kachel(chunk.x * _chunk_groesse, chunk.y * _chunk_groesse)
+	var region_biom := str(region.get("biom_id", biom_id)) if not region.is_empty() else biom_id
+	_chunk_fuellen_mit(model, chunk, _chunk_groesse * _chunk_groesse, region_biom, z_ebene)
+
+func welt_abschliessen(model: Welt_Model, seed_wert: int, biom_id: String, z_ebene: int = 0) -> void:
+	## Abschluss-Phase nach der letzten Chunk-Füllung: Gewässer, Fels und
+	## der Fraktions-Pass. Die Kachel-Änderungen laufen über den Bus, damit
+	## der Renderer bereits gezeichnete Chunks nachzieht.
 	var landschaft_zufall := Kern_Zufall.abgeleitet_fuer(seed_wert, 0x5EED1A9D)
 	if gewaesser != null:
 		gewaesser.erzeugen(model, biom_id, landschaft_zufall, z_ebene)
 	if felsmassive != null:
 		felsmassive.erzeugen(model, biom_id, landschaft_zufall, z_ebene)
-
 	## LETZTER GENERATOR-PASS: Fraktionen aus Keimpunkten erzeugen
 	## Dies ersetzt die statischen Fraktionen-Einträge in generator_gewichte.json
 	_fraktionen_generieren(model, seed_wert)
-
-	return true
 
 func _fraktionen_generieren(model: Welt_Model, seed_wert: int) -> void:
 	## 1. Fraktions_Keimling_Analysator: Welt analysieren, Keimpunkte finden
@@ -274,6 +299,10 @@ func region_materialisieren(model: Welt_Model, region_x: int, region_y: int, z_e
 			_chunk_fuellen_mit(model, chunk, kacheln, biom_wahl, z_ebene)
 	return true
 
+func chunk_groesse() -> int:
+	## Aktuelle Chunk-Kante aus dem Datenpool, für Lader und Tests.
+	return _chunk_groesse
+
 func chunk_materialisieren(model: Welt_Model, chunk: Vector2i, z_ebene: int = 0) -> bool:
 	_definitionen_uebernehmen(model)
 	var region := model.region_an_kachel(chunk.x * _chunk_groesse, chunk.y * _chunk_groesse)
@@ -353,7 +382,7 @@ func _tile_leben_initialisieren_chunk(model: Welt_Model, chunk: Vector2i, z_eben
 	# Initialisiert Tile-Leben für alle Fels/Geröll Tiles im Chunk
 	var start_x := chunk.x * _chunk_groesse
 	var start_y := chunk.y * _chunk_groesse
-	var lokale_registry := Welt_Registry.new()
+	var lokale_registry := Welt_RegistryZugriff.welt()
 	for dy in _chunk_groesse:
 		for dx in _chunk_groesse:
 			var x := start_x + dx

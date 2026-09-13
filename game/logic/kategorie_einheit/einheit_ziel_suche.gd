@@ -10,6 +10,10 @@ class_name Einheit_ZielSuche
 var _model: Welt_Model = null
 var _tiere: Tier_Manager = null
 var _einheiten: Einheit_Manager = null
+## Katalog der Objekt-Faktoren: genau einmal gebaut. Ein Neubau je
+## Faktor-Abfrage hat den gesamten Katalog pro Ziel neu geparst und
+## damit jeden Takt der Einheiten ausgebremst.
+var _katalog: Welt_Registry = null
 
 ## Kategorie logik: Einrichten, Übersetzen, Prüfen, Suchen.
 
@@ -44,7 +48,9 @@ func ziel_faktor_fuer(ziel_typ: Job_Basis.ZielTyp, ziel_index: int) -> float:
 	match ziel_typ:
 		Job_Basis.ZielTyp.OBJEKT:
 			if _model != null and ziel_index >= 0 and ziel_index < _model.objekt_anzahl():
-				var eintrag: Objekt_Basis = Welt_Registry.new().finde_objekt(_model.objekt_element_id(ziel_index))
+				if _katalog == null:
+					_katalog = Welt_RegistryZugriff.welt()
+				var eintrag: Objekt_Basis = _katalog.finde_objekt(_model.objekt_element_id(ziel_index))
 				return 1.0 if eintrag == null else eintrag.effektiver_faktor()
 		Job_Basis.ZielTyp.TIER:
 			if _tiere != null:
