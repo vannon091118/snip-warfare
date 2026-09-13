@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 302 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 301 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 302 Dateien, 66 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
 | `ui` | `ui` | `Ui_` | `ui/` | 23 | 35 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 14 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 13 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -279,7 +279,7 @@ Prefix `Welt_`, 44 Klassen.
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
 | `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` | 36 |
 | `Welt_RegistryZugriff` | `world/logic/kategorie_welt/welt_registry_zugriff.gd` | 45 |
-| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 757 |
+| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 633 |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` | 44 |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` | 50 |
 | `Welt_Speicher` | `world/logic/kategorie_welt/welt_speicher.gd` | 74 |
@@ -484,7 +484,7 @@ Prefix `Einheit_`, 25 Klassen.
 | `Einheit_Status` | `game/logic/kategorie_einheit/einheit_status.gd` | 306 |
 | `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` | 119 |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` | 40 |
-| `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` | 103 |
+| `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` | 104 |
 | `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` | 100 |
 | `Einheit_Versorgung` | `game/logic/kategorie_einheit/einheit_versorgung.gd` | 48 |
 | `Einheit_VersorgungsMaschine` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd` | 47 |

@@ -27,7 +27,8 @@ func beschreibung_fuer(index: int, rasse: String) -> Dictionary:
 	var st := status_bei(index)
 	if st == null:
 		return {}
-	return {"position": st.welt_position, "rasse": rasse, "zustand": st.zustand, "job_id": str(st.job.job_id) if st.job != null else "", "ziel_index": st.aktuelles_ziel_index, "hp": st.vital.hp if st.vital != null else 0.0, "queue": st.queue_laenge()}
+	var job_text := "" if st.job == null else str(st.job.job_id)
+	return {"position": st.welt_position, "rasse": rasse, "zustand": st.zustand, "job_id": job_text, "ziel_index": st.aktuelles_ziel_index, "hp": st.vital.hp if st.vital != null else 0.0, "queue": st.queue_laenge()}
 func auswahl_markierung_erneuern(aktiver_index: int, auswahl_liste: Array[int] = []) -> void:
 	for idx in _einheiten.size():
 		var d: Variant = _einheiten[idx].get("darsteller")

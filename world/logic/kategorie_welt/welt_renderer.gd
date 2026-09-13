@@ -40,12 +40,6 @@ var _biom_farbe_cache: Dictionary = {}
 ## Dictionary: z_ebene (0, -1, -2, ...) -> Node2D (Fliesen-Container für diese Ebene)
 var _fliesen_knoten_pro_ebene: Dictionary = {}
 var _fliesen_erbaut: Dictionary = {}
-## Chunk-Container je Ebene: Schlüssel z_ebene -> Dictionary Vector2i -> Node2D.
-## Jede Kachel-Gruppe wohnt in ihrem eigenen Chunk-Knoten, damit der Blick
-## ganze Chunks ein- und aushängt statt tausende Sprites einzeln zu fragen.
-var _chunk_container_pro_ebene: Dictionary = {}
-## Anhang-Zustand je Chunk: z_ebene -> Dictionary Vector2i -> bool.
-var _chunk_ist_angehaengt_pro_ebene: Dictionary = {}
 var _objekte_knoten: Node2D
 var _objekt_darsteller: Welt_ObjektDarsteller
 var _sway_aktualisierer := SWAY_AKTUALISIERER_SKRIPT.new()
@@ -109,12 +103,6 @@ func _ready() -> void:
 func _fliesen_knoten_fuer_ebene(z_ebene: int) -> Node2D:
 	return _fliesen_knoten_pro_ebene.get(z_ebene, null)
 
-func _chunk_kante_aktiv() -> int:
-	## Chunk-Kante des Modells in Kacheln, mit Rückfall für Prüf-Raster.
-	if _model == null:
-		return 8
-	return maxi(_model.chunk_groesse, 1)
-
 func z_ebene_setzen(z_ebene: int) -> void:
 	# Schaltet die sichtbare Z-Ebene um: Blendet alle Fliesen-Knoten aus,
 	# zeigt nur den der angeforderten Ebene. Fehlende Ebenen werden faul
@@ -126,9 +114,6 @@ func z_ebene_setzen(z_ebene: int) -> void:
 	for ebene in _fliesen_knoten_pro_ebene:
 		var knoten: Node2D = _fliesen_knoten_pro_ebene[ebene] as Node2D
 		knoten.visible = (ebene == _aktive_z_ebene)
-	# Der Ebenen-Wechsel ruft die Chunk-Ordnung der neuen Ebene: Ohne
-	# Kamerabewegung würde sonst ein ausgehängter Chunk als Loch bleiben.
-	_chunks_an_blick_anpassen()
 	if _model != null:
 		_model.z_ebene_setzen(_aktive_z_ebene)
 
@@ -274,10 +259,6 @@ func darstellen(model: Welt_Model, registry: Welt_Registry, biome: Welt_BiomRegi
 	# entstehen faul beim ersten z_ebene_setzen. Verhindert 5*34k Sprites
 	# im selben Frame und damit den Hänger auf "wird generiert".
 	_fliesen_ebene_erneuern(_aktive_z_ebene)
-	# Frische Karte, frische Buchführung: Ohne aktiven Blick (Editor, Prüflauf)
-	# bleiben alle Chunks angehängt; im Spiel ordnet der erste Blick sofort.
-	if _sicht_sammler.ist_aktiv():
-		_chunks_an_blick_anpassen()
 	_objekte_erneuern()
 	## Slice B: Gitter nach vollständigem Neuaufbau initialisieren.
 	_objekt_gitter.aufbauen(_model)
@@ -289,12 +270,12 @@ func kachel_ersetzen(x: int, y: int, z_ebene: int = 0) -> void:
 	var z := z_ebene if z_ebene != 0 else _aktive_z_ebene
 	# Die Kachel wohnt in ihrem Chunk-Knoten: Genau dort wird sie gesucht
 	# und ersetzt, gleich ob ihr Chunk gerade im Baum hängt oder ruht.
-	var chunk_knoten := _kachel_chunk_knoten(x, y, z)
-	if chunk_knoten == null:
+	var fliesen_knoten := _fliesen_knoten_fuer_ebene(z)
+	if fliesen_knoten == null:
 		return
 	# Sprites tragen ihre Kachel-Adresse im Namen, damit kein Index-Buch
 	# geführt werden muss; die Adresse bleibt dieselbe wie beim Aufbau.
-	var sprite := chunk_knoten.get_node_or_null(NodePath("Kachel_%d_%d" % [x, y])) as Sprite2D
+	var sprite := fliesen_knoten.get_node_or_null(NodePath("Kachel_%d_%d" % [x, y])) as Sprite2D
 	if sprite == null:
 		return
 	sprite.position = Vector2(x, y) * float(_model.kachel_groesse)
@@ -309,13 +290,11 @@ func fliesen_aktive_ebene_erneuern() -> void:
 	## Generators schreibt Gewässer und Fels nach der Chunk-Füllung; die
 	## Szene lässt die Ebene deshalb einmal ganz neu zeichnen.
 	_fliesen_ebene_erneuern(_aktive_z_ebene)
-	if _sicht_sammler.ist_aktiv():
-		_chunks_an_blick_anpassen()
 
 func _fliesen_ebene_erneuern(z_ebene: int) -> void:
-	# Baut Fliesen genau einer Z-Ebene auf und merkt sie als erbaut.
-	# Die Kacheln wohnen in Chunk-Containern, damit der Blick ganze
-	# Chunks an- und abhängt statt tausende Sprites einzeln zu ziehen.
+	# Baut Fliesen genau einer Z-Ebene synchron auf und merkt sie als erbaut.
+	# Die Sprites hängen direkt am Ebenen-Knoten; die Sprites selbst entstehen
+	# über den zeitgeslicenen Chunk-Lader, dieser Nachbau folgt je Füllung.
 	if _model == null:
 		return
 	var fliesen_knoten := _fliesen_knoten_fuer_ebene(z_ebene)
@@ -324,40 +303,22 @@ func _fliesen_ebene_erneuern(z_ebene: int) -> void:
 	var kante := float(_model.kachel_groesse)
 	for kind: Node in fliesen_knoten.get_children():
 		kind.queue_free()
-	var container := _chunk_container_fuer_ebene(z_ebene)
-	container.clear()
-	_ist_angehaengt_fuer_ebene(z_ebene).clear()
-	var kante_chunk := _chunk_kante_aktiv()
-	var chunk_x_zahl := ceili(float(_model.raster_breite) / float(kante_chunk))
-	var chunk_y_zahl := ceili(float(_model.raster_hoehe) / float(kante_chunk))
-	for cy in chunk_y_zahl:
-		for cx in chunk_x_zahl:
-			var chunk_knoten := Node2D.new()
-			chunk_knoten.name = "Chunk_%d_%d" % [cx, cy]
-			fliesen_knoten.add_child(chunk_knoten)
-			container[Vector2i(cx, cy)] = chunk_knoten
-			# Frisch gebaut hängt jeder Chunk im Baum; das Buch führt das
-			# von Anfang an, sonst sieht der Abgleich die Menge nie als drin.
-			_ist_angehaengt_fuer_ebene(z_ebene)[Vector2i(cx, cy)] = true
 	for y in _model.raster_hoehe:
 		for x in _model.raster_breite:
-			var chunk := Vector2i(floori(float(x) / float(kante_chunk)), floori(float(y) / float(kante_chunk)))
-			_fliese_anhaengen(container[chunk] as Node2D, x, y, z_ebene, kante)
+			_fliese_anhaengen(fliesen_knoten, x, y, z_ebene, kante)
 	_fliesen_erbaut[z_ebene] = true
 
-func chunk_erneuern(chunk: Vector2i, z_ebene: int) -> void:
-	## Nachschub aus dem zeitgeslicenen Lader: Nur die Sprites des
-	## gefüllten Chunks werden neu angewendet, die Ebene bleibt stehen.
-	## Der Chunk-Knoten hängt danach im Baum, damit die frische Füllung
-	## sofort sichtbar ist, auch wenn der Blick noch woanders ruht.
+func kachel_erneuern_fuer_chunk(chunk: Vector2i, z_ebene: int) -> void:
+	## Nachschub aus dem zeitgeslicenen Lader: Genau die Sprites des
+	## gefüllten Chunks tragen ihr frisches Bild, ohne dass die Ebene als
+	## Ganzes neu baut. Die Kacheln hängen direkt am Ebenen-Knoten.
 	if _model == null or not _fliesen_erbaut.get(z_ebene, false):
 		return
-	var container := _chunk_container_fuer_ebene(z_ebene)
-	var knoten := container.get(chunk) as Node2D
-	if knoten == null or not is_instance_valid(knoten):
+	var fliesen_knoten := _fliesen_knoten_fuer_ebene(z_ebene)
+	if fliesen_knoten == null:
 		return
 	var kante := float(_model.kachel_groesse)
-	var kante_chunk := _chunk_kante_aktiv()
+	var kante_chunk := maxi(_model.chunk_groesse, 1)
 	var start_x := chunk.x * kante_chunk
 	var start_y := chunk.y * kante_chunk
 	for dy in kante_chunk:
@@ -366,16 +327,10 @@ func chunk_erneuern(chunk: Vector2i, z_ebene: int) -> void:
 			var y := start_y + dy
 			if x >= _model.raster_breite or y >= _model.raster_hoehe:
 				continue
-			var sprite := knoten.get_node_or_null(NodePath("Kachel_%d_%d" % [x, y])) as Sprite2D
+			var sprite := fliesen_knoten.get_node_or_null(NodePath("Kachel_%d_%d" % [x, y])) as Sprite2D
 			if sprite == null:
 				continue
 			_fliese_anwenden(sprite, x, y, z_ebene, kante)
-	# Sichtbar stellen: Ein frisch gefüllter Chunk kehrt in den Baum zurück,
-	# der Blick ordnet ihn beim nächsten Rahmen ohnehin neu.
-	var buch := _ist_angehaengt_fuer_ebene(z_ebene)
-	if knoten.get_parent() == null:
-		_fliesen_knoten_fuer_ebene(z_ebene).add_child(knoten)
-	buch[chunk] = true
 
 func _fliesen_alle_ebenen_erneuern() -> void:
 	# Legacy-Pfad: baut alle Ebenen synchron. Nur noch für Editor/Tests,
@@ -384,27 +339,6 @@ func _fliesen_alle_ebenen_erneuern() -> void:
 		return
 	for z in range(Welt_Model.MAX_Z_EBENEN):
 		_fliesen_ebene_erneuern(-z)
-
-func _chunk_container_fuer_ebene(z_ebene: int) -> Dictionary:
-	## Chunk-Knoten-Verzeichnis der Ebene, auf Wunsch frisch angelegt.
-	if not _chunk_container_pro_ebene.has(z_ebene):
-		_chunk_container_pro_ebene[z_ebene] = {}
-	return _chunk_container_pro_ebene[z_ebene] as Dictionary
-
-func _ist_angehaengt_fuer_ebene(z_ebene: int) -> Dictionary:
-	## Anhang-Buch der Ebene: Welche Chunk-Knoten hängen gerade im Baum.
-	if not _chunk_ist_angehaengt_pro_ebene.has(z_ebene):
-		_chunk_ist_angehaengt_pro_ebene[z_ebene] = {}
-	return _chunk_ist_angehaengt_pro_ebene[z_ebene] as Dictionary
-
-func _chunk_von_kachel(kachel: Vector2i, kante_chunk: int) -> Vector2i:
-	## Kachel-Adresse zur Chunk-Adresse, für jede Vorzeichenlage korrekt.
-	return Vector2i(floori(float(kachel.x) / float(kante_chunk)), floori(float(kachel.y) / float(kante_chunk)))
-
-func _kachel_chunk_knoten(x: int, y: int, z_ebene: int) -> Node2D:
-	## Der Chunk-Knoten, in dem die Kachel (x, y) der Ebene wohnt.
-	var container := _chunk_container_fuer_ebene(z_ebene)
-	return container.get(_chunk_von_kachel(Vector2i(x, y), _chunk_kante_aktiv()), null) as Node2D
 
 func _fliese_anhaengen(fliesen_knoten: Node2D, x: int, y: int, z_ebene: int, kante: float) -> void:
 	var sprite := Sprite2D.new()
@@ -651,28 +585,14 @@ func _objekte_erneuern() -> void:
 
 func sichtbereich_setzen(rechteck: Rect2) -> void:
 	# Die Szene reicht je Rahmen den Kamera-Bereich hinein; der Sammler
-	# entscheidet, ob ein Abgleich fällig ist. Die Fliesen-Chunks folgen
-	# derselben Scheibe: Ganze Kachel-Gruppen hängen aus, wenn sie den
-	# Blick verlassen, und kehren zurück, sobald die Kamera sie ansieht.
+	# entscheidet, ob ein Abgleich fällig ist. Nur der Objekt-Bestand folgt
+	# der Scheibe; die Kacheln hängen voll am Ebenen-Knoten.
 	if _sicht_sammler.bereich_setzen(rechteck):
-		_chunks_an_blick_anpassen()
 		_sichtbar_anwenden()
 
 func sichtbereich_deaktivieren() -> void:
 	# Der Editor und Prüfläufe ohne Kamera hängen alles an, wie bisher.
 	_sicht_sammler.deaktivieren()
-	_alle_chunks_anhaengen()
-
-func _alle_chunks_anhaengen() -> void:
-	## Vollansicht: Jeder gebaute Chunk-Knoten kehrt in den Baum zurück.
-	for ebene in _chunk_container_pro_ebene:
-		var container := _chunk_container_pro_ebene[ebene] as Dictionary
-		var buch := _ist_angehaengt_fuer_ebene(ebene)
-		for adresse: Vector2i in container:
-			var knoten := container[adresse] as Node2D
-			if knoten != null and is_instance_valid(knoten) and knoten.get_parent() == null:
-				_fliesen_knoten_fuer_ebene(ebene).add_child(knoten)
-			buch[adresse] = true
 
 func sicht_rand_px() -> float:
 	return Welt_SichtbereichSammler.SICHT_RAND_PX
@@ -682,51 +602,7 @@ func sichtgebiet_aktualisieren() -> void:
 	# oder Spawn-Ereignissen, ohne auf Kamerabewegung warten zu müssen.
 	_sicht_sammler.dirty_setzen()
 	if _sicht_sammler.ist_aktiv():
-		_chunks_an_blick_anpassen()
 		_sichtbar_anwenden()
-
-func _chunks_an_blick_anpassen() -> void:
-	## Die Fliesen-Chunks folgen dem Blick: Jeder Chunk-Knoten, dessen
-	## Kachel-Rechteck die Sicht-Scheibe schneidet, hängt im Baum; alle
-	## anderen werden als ganze Gruppe ausgehängt und ruhen ohne Kosten.
-	if _model == null or not _sicht_sammler.ist_aktiv():
-		return
-	if not _fliesen_erbaut.get(_aktive_z_ebene, false):
-		return
-	var container := _chunk_container_fuer_ebene(_aktive_z_ebene)
-	if container.is_empty():
-		return
-	var kante_chunk := _chunk_kante_aktiv()
-	var kante := float(_model.kachel_groesse)
-	var sicht := _sicht_sammler.rechteck()
-	var buch := _ist_angehaengt_fuer_ebene(_aktive_z_ebene)
-	# Sichtrechteck in Chunk-Adressen überführen (Kachel-Ecken, dann Boden).
-	var min_kachel := Vector2i(floori(sicht.position.x / kante), floori(sicht.position.y / kante))
-	var max_kachel := Vector2i(floori((sicht.position.x + sicht.size.x) / kante), floori((sicht.position.y + sicht.size.y) / kante))
-	var min_chunk := _chunk_von_kachel(min_kachel, kante_chunk)
-	var max_chunk := _chunk_von_kachel(max_kachel, kante_chunk)
-	# Gewünschte Menge sammeln und zuerst die fehlenden anhängen, damit
-	# die Kamera-Richtung nie eine leere Stelle zeigt.
-	var gewuenscht: Dictionary = {}
-	for cy in range(min_chunk.y, max_chunk.y + 1):
-		for cx in range(min_chunk.x, max_chunk.x + 1):
-			gewuenscht[Vector2i(cx, cy)] = true
-	for adresse: Vector2i in gewuenscht:
-		if bool(buch.get(adresse, false)):
-			continue
-		var knoten := container.get(adresse) as Node2D
-		if knoten != null and is_instance_valid(knoten) and knoten.get_parent() == null:
-			_fliesen_knoten_fuer_ebene(_aktive_z_ebene).add_child(knoten)
-		buch[adresse] = true
-	# Danach die Überzähligen als ganze Gruppe aushängen; der Lauf geht über
-	# den ganzen Container, damit auch Buch-Lücken selbstheilend ruhend werden.
-	for adresse: Vector2i in container:
-		if gewuenscht.has(adresse):
-			continue
-		var ruher := container[adresse] as Node2D
-		if ruher != null and is_instance_valid(ruher) and ruher.get_parent() != null:
-			ruher.get_parent().remove_child(ruher)
-		buch[adresse] = false
 
 
 func _sichtbar_anwenden() -> void:

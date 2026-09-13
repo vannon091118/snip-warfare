@@ -413,7 +413,7 @@ func _auf_chunk_gefuellt(chunk: Vector2i) -> void:
 	## vor der ersten Füllung aus dem leeren Modell gebaut hat.
 	if _model == null:
 		return
-	_karte.chunk_erneuern(chunk, _model.aktive_z_ebene)
+	_karte.kachel_erneuern_fuer_chunk(chunk, _model.aktive_z_ebene)
 
 func _auf_welt_gefuellt() -> void:
 	## Abschluss-Pass nach der letzten Chunk-Füllung: Gewaesser, Fels und
