@@ -7,12 +7,12 @@ Dieses Dokument ist die **einzige verbindliche Planungs- und Roadmap-Quelle** f�
 ## 1. Systemstatus & Geprüfter Bestand
 
 * **Engine:** Godot 4.7.2 (GL Compatibility)
-* **Klassenbestand:** 257 Klassen auf 284 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
+* **Klassenbestand:** 260 Klassen auf 287 GDScript-Dateien — Inventar siehe [`INDEX.md`](INDEX.md) via `python tools/index_generieren.py`
 * **JSON-Datenpools:** 14 Pools (Wirtschaft, Bevölkerung, Welt, Jobs, Gebäude, Progression, Steuerung, Modifikatoren, Animationen)
 * **Szenen:** 11 aktive `.tscn`-Szenen
 * **Indizes:** `INDEX.md` als Wurzel, `INDEX_DOMAENEN.md` mit der Signal- und Array-Matrix je Domäne, `INDEX_DATEN.md` mit jedem JSON-Pool samt Besitzer und Verbrauchern und die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`, alle vier von `python tools/index_generieren.py` erzeugt und von der Prüfkategorie `index` (E044) bewacht
 * **Autoloads:** `Weltuhr` (`Kern_Weltuhr`, 24 Hz), `WeltSitzung` (`Ui_WeltSitzung`), `KernSignalBusAutoload` (`Kern_SignalBus`)
-* **Testabdeckung:** 85/85 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–19 inkl. Whitespace E042, Version E043 und Index E044) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
+* **Testabdeckung:** 97 Pytest-Fälle grün, Preflight-Prüfung (Kategorien 1–19 inkl. Whitespace E042, Version E043 und Index E044) grün (0 Befunde), dazu die Laufbeweise `tools/lauf_pruefung_hud.gd` und `tools/lauf_pruefung_makrokarte.gd`
 
 ---
 
@@ -204,7 +204,7 @@ python tools/preflight.py
   * `python tools/preflight.py --kategorie warnungen` (GDScript-Warnungs-Scan nach Regel 6)
   * `python tools/preflight.py --kategorie shinon` (Shinon Gate Prüfung E030–E039)
   * `python tools/preflight.py --kategorie godot` (Headless Engine-Kompilierung)
-* **Unittests:** `python -m pytest` führt alle 85 Unittests aus.
+* **Unittests:** `python -m pytest` führt alle 97 Unittests aus.
 * **Index:** `python tools/index_generieren.py` frischt die Index-Familie auf: Root-, Domänen- und Datenindex plus die eine Last-Datei.
 
 Version: V0.01

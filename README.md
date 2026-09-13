@@ -10,7 +10,7 @@
 [![Godot Engine](https://img.shields.io/badge/Godot-4.7.2%20GL--Compatibility-478cbf?style=for-the-badge&logo=godotengine&logoColor=white)](https://godotengine.org)
 [![Preflight Status](https://img.shields.io/badge/Preflight-100%25%20Gr%C3%BCn%20(E001--E044)-2ea44f?style=for-the-badge&logo=githubactions&logoColor=white)
 [![Version](https://img.shields.io/badge/Version-V0.01-1f6feb?style=for-the-badge&logo=semver&logoColor=white)](#-versionierung-eine-zahl-f%C3%BCr-alle-dokumente)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
-[![Tests](https://img.shields.io/badge/pytest-85%2F85%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
+[![Tests](https://img.shields.io/badge/pytest-97%2F97%20Passed-brightgreen?style=for-the-badge&logo=pytest&logoColor=white)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
 [![Index](https://img.shields.io/badge/Index-INDEX.md%20(LLM--%C3%9Cbersicht)-8a2be2?style=for-the-badge)](#-der-gnadenlose-preflight-shinons-t%C3%BCv)
 [![Architecture](https://img.shields.io/badge/Architecture-Config--Driven%20%7C%20Single--Source-orange?style=for-the-badge)](#-die-architektur-pyramide)
 
@@ -149,21 +149,12 @@ Jede Ressource besitzt ihr eigenes SVG-Icon und eine dedizierte Datenklasse:
 
 ## 🗺️ Aktueller Zustand & Master-Roadmap
 
-Der aktuelle **Zustand** und **Stand** umfasst ein gehärtetes Fundament mit 257 Klassen, 11 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 85 bestandenen Pytest-Prüfungen. Diese README ist Teil des Vertrags: Sie wird bei jedem Versionsbump mechanisch mitgezogen und beschreibt den echten Stand, nie einen Wunsch. Der maschinenlesbare Router ist [`INDEX.md`](INDEX.md) — Index-Familie, Domänen-Tabelle, Zuständigkeiten, Abhängigkeits-Graph und auto-generiertes Klasseninventar. Dazu kommen [`INDEX_DOMAENEN.md`](INDEX_DOMAENEN.md) mit der Signal- und Array-Matrix je Domäne, [`INDEX_DATEN.md`](INDEX_DATEN.md) mit jedem JSON-Pool samt Besitzer und Verbrauchern sowie die eine Last-Datei [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md), die den Delta des letzten Index-Laufs mitschreibt. Alle vier erzeugt `python tools/index_generieren.py`, alle vier bewacht die Prüfkategorie `index` (E044).
+Der aktuelle **Zustand** und **Stand** umfasst ein gehärtetes Fundament mit 260 Klassen, 11 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 97 bestandenen Pytest-Prüfungen. Diese README ist Teil des Vertrags: Sie wird bei jedem Versionsbump mechanisch mitgezogen und beschreibt den echten Stand, nie einen Wunsch. Der maschinenlesbare Router ist [`INDEX.md`](INDEX.md) — Index-Familie, Domänen-Tabelle, Zuständigkeiten, Abhängigkeits-Graph und auto-generiertes Klasseninventar. Dazu kommen [`INDEX_DOMAENEN.md`](INDEX_DOMAENEN.md) mit der Signal- und Array-Matrix je Domäne, [`INDEX_DATEN.md`](INDEX_DATEN.md) mit jedem JSON-Pool samt Besitzer und Verbrauchern sowie die eine Last-Datei [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md), die den Delta des letzten Index-Laufs mitschreibt. Alle vier erzeugt `python tools/index_generieren.py`, alle vier bewacht die Prüfkategorie `index` (E044).
 
-Unsere konsolidierte **Vision** ist in der [`ROADMAP.md`](ROADMAP.md) nach Slices strukturiert:
+Unsere konsolidierte **Vision** lebt ausschließlich in der [`ROADMAP.md`](ROADMAP.md): Sie ist die einzige verbindliche Planungs- und Roadmap-Quelle mit allen Slices, Checkpoints und ihrem Erledigt-Status. Diese README wiederholt die Sliceliste bewusst nicht, damit keine zweite Wahrheit still altern kann — wer den Stand wissen will, liest die Roadmap, und deren Zahlen hier im Kopf werden mechanisch bewacht.
 
 * [x] **Phase 0 (Kern):** 24-Hz-Weltuhr, deterministischer RNG, Signalbus, Multi-Map-Savegames, A*-Pfadfinder.
 * [x] **Phase P1 (Progression):** Datengetriebene Einstiegskette: *Lagerfeuer* ➔ *Erstes Haus* ➔ *Einwanderung*.
-* [ ] **Slice 1 (Aufräumen & Gating):** Entkoppeltes Bau-Panel, Ziel-Tags im Katalog, saubere Statusleisten.
-* [ ] **Slice 2 (Maßstab & Terrain):** 64px-Micro-Tiles, Terrain-Pool (`terrain.json`), Varianten-Blatt & Y-Sort-Tiefensortierung.
-* [ ] **Slice 3 (Landschaft):** Deterministische Fluss- & Felsmassive-Generatoren, Erzadern, Ruinen & dichte Wälder.
-* [ ] **Slice 4 (Weltkarte):** Makrokarte mit Fraktionsnetzwerk, minimaler Startbereich & sichtbare Landeplatzmarkierung.
-* [ ] **Slice 5 (Bauen & Logistik):** Blueprint-Planung, Materialtransport (`Job_BaustelleBeliefern`) vor Baubeginn.
-* [ ] **Slice 6 (Auswahl & Autonomie):** Goldener Stern für aktive Einheit, Queue-Abbruch bei Direktklick & Idle-Autonomie.
-* [ ] **Slice 7 (UI & Rahmung):** Feste HUD-Leisten, Blueprint-Ghost-Vorschau und ereignisgesteuerte Signal-Updates.
-* [ ] **Slice 8 (Eskalation & Moral):** Verzweigte Mood-Ketten in der Timeline, Spielergrundsätze (`Pop_MoralInstanz`) & Trait *"Mag kein Papier"*.
-* [ ] **Slice 9 (Ökonomie & Erze):** Schmelze, Schmiede, Barren und stufenweiser Erzabbau.
 
 ---
 
@@ -191,7 +182,7 @@ python tools/preflight.py
 ```
 
 * **Vollprüfung:** Führt alle 19 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus — `python tools/preflight.py --kategorie whitespace --fix` repariert Leerzeichen idempotent.
-* **Unittests:** `python -m pytest` führt alle 85 Unittests aus.
+* **Unittests:** `python -m pytest` führt alle 97 Unittests aus.
 * **LLM-Übersicht:** `python tools/index_generieren.py` frischt die ganze Index-Familie auf: `INDEX.md`, `INDEX_DOMAENEN.md`, `INDEX_DATEN.md` und die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`.
 
 > [!IMPORTANT]

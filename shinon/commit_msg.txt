@@ -1,10 +1,7 @@
-1. Der Nutzer verlangte, dass der lokale Worktree geordnet wird und dann als verifizierter Zug in die Ferne rollt, deshalb kehrte ich zuerst in der Werkstatt auf und trennte die wahren Anpassungen von den Blessuren, die parallele Maschinen hinterlassen hatten.
-2. In project.godot heilte ich die Renderungs-Einstellung, die eine Maschine zu einer zerrissenen Ein-Zeile-Wurst zusammengepresst hatte; der Papier-Schnitt behält seine harte Kante mit Mipmaps, und die Treiber-Zeilen stehen wieder in sauberer Ordnung.
-3. In world/logic/kategorie_progression/welt_fortschritts_maschine.gd wischt ich den verwaisten Buchstaben vom Ende der Datei, den ein anderer Thread als Caret-Rest zurückgelassen hatte, damit der Godot-Lauf nicht stolpert.
-4. In world/logic/kategorie_orchestrator/orchestrator_manager.gd und world/logic/kategorie_progression/welt_fortschritts_maschine.gd trägt der Einheiten-Zähler seinen echten Namen einheit_zahl, wie ihn der Manager in game/logic/kategorie_einheit/einheit_manager.gd wirklich anbietet, statt eines Namens, den es nie gab.
-5. In world/logic/kategorie_welt/fraktions_ki_maschine.gd nimmt der KI-Tick jetzt optional das Delta der Weltuhr mit, denn das Signal tick(tick_nummer, delta) feuert zwei Werte, und die Verbindung in welt_fraktions_ki_verdrahtung.gd hätte sonst gebrochen.
-6. In world/scenes/welt.gd holt sich die Kamera den Sicht-Rand über die neue Funktion sicht_rand_px des Renderers in world/logic/kategorie_welt/welt_renderer.gd, statt die Konstante aus einer anderen Domäne zu pflücken.
-7. In core/data/kern_logik.json und core/data/kern_modifikatoren.json kehrte die Einrückung zu Tabulatoren zurück, wie es das Hausrecht verlangt, nachdem ein fremdes Werkzeug sie auf Leerzeichen verbogen hatte.
-8. In INDEX_DOMAENEN.md zählt Welt_Renderer seine wahre Zeilenzahl, weil die Funktion sicht_rand_px den Renderer um drei Zeilen wachsen ließ.
-9. In shinon/commit_msg.txt erzählt Shinon selbst, was dieser Zug trägt, damit das Gate grün bleibt.
-10. Sichtbar im Betrieb: Preflight und alle 97 Tests stehen grün, und der Zug rollt nach dem Zusammenzug mit origin/main auf die Ferne.
+1. Der Nutzer hielt die abgeschlossenen Slices der Roadmap gegen den echten Stand und verlangte, dass solches Altern kuenftig mechanisch bestraft wird, deshalb zog ich die letzten freien Zahlen unter den Zwang der Maschine.
+2. In tools/preflight/pruef_version.py zaehlen jetzt auch die Pytest-Faelle und die Pruefkategorien als Statuszahlen, gelesen aus den echten Testdateien und per AST aus dem Preflight selbst, damit keine Hand mehr eine Zahl erfindet.
+3. Der Nachzug loest Paarformen wie 85/85 auf und zieht sogar die Bildnummer im README-Abzeichen, die sich als kodierte URL vor den Mustern versteckt hielt.
+4. In tools/preflight/selbsttest.py tragen neue Proben diesen Vertrag, wer später ein Muster verschlankt, faengt E000 statt stiller Luecken.
+5. In README.md und ROADMAP.md steht nun die wahre Zahl von 97 Pruefungen statt der verwitterten 85, und die Sliceliste im README ist entsorgt, weil die Roadmap als einzige Planungsquelle gilt und Duplikate nur altern lernen.
+6. Sichtbar im Betrieb: Der naechste, der eine Pruefung ergaenzt oder eine Kategorie anbaut, sieht beim Commit, wie die Dokumente sich von selbst richten, und der alte Zustand von 85 haette heute fuenf rote Befunde bekommen.
+7. Uebrig bleiben die frische Sozial-Arbeit eines anderen Threads und der 31. Datenpool, die ihren eigenen Zug nehmen, wenn sie fertig sind.

@@ -87,7 +87,8 @@ def selbsttest():
             probleme.append("Zeit-Detektor meldet faelschlich die reine Konvertierung %s" % zeile.strip())
     # Versionswaechter Selbsttest: Bump, Auslesen und Abweichung muessen stimmen.
     try:
-        from .pruef_version import (dokument_version, statuszahlen_nachziehen,
+        from .pruef_version import (badge_nachziehen, dokument_version,
+                                    paarformen_aufloesen, statuszahlen_nachziehen,
                                     statuszahlen_verletzungen, version_erhoehen)
         if version_erhoehen("V0.01") != "V0.02":
             probleme.append("Versionswaechter erhoeht V0.01 nicht auf V0.02")
@@ -99,7 +100,7 @@ def selbsttest():
             probleme.append("Versionswaechter meldet bei fehlender Zeile faelschlich eine Version")
         # Statuszahlen: Der Nachzug tauscht nur die Zahl und nie das Substantiv.
         probe_stand = "Fundament mit 227 Klassen, 11 Szenen, 251 GDScript-Dateien.\n"
-        stand = {"klassen": 300, "dateien": 400, "szenen": 12}
+        stand = {"klassen": 300, "dateien": 400, "szenen": 12, "tests": 97, "kategorien": 19}
         nachgezogen = statuszahlen_nachziehen(probe_stand, stand)
         if nachgezogen != "Fundament mit 300 Klassen, 12 Szenen, 400 GDScript-Dateien.\n":
             probleme.append("Statuszahl-Nachzug frisst das Substantiv neben der Zahl: %r" % nachgezogen)
@@ -107,6 +108,21 @@ def selbsttest():
             probleme.append("Versionswaechter meldet eine falsche Statuszahl nicht")
         if statuszahlen_verletzungen("Fundament mit 300 Klassen.\n", stand):
             probleme.append("Versionswaechter meldet eine korrekte Statuszahl als Fehler")
+        # Paarform, Badge sowie Tests und Kategorien: Auch sie gehoeren zum Zwang.
+        paar = paarformen_aufloesen("85/85 Pytest-Fälle grün.\n")
+        if paar != "85 Pytest-Fälle grün.\n":
+            probleme.append("Paarform-Aufloesung formt 85/85 Pytest-Faelle nicht um: %r" % paar)
+        badge_probe = badge_nachziehen("pytest-85%2F85%20Passed\n", {"tests": 97})
+        if badge_probe != "pytest-97%2F97%20Passed\n":
+            probleme.append("Badge-Nachzug zieht die Test-Badge-Zahl nicht nach: %r" % badge_probe)
+        voll = {"klassen": 300, "dateien": 400, "szenen": 12, "tests": 97, "kategorien": 19}
+        probe_neu = statuszahlen_nachziehen("alle 85 Unittests, 20 Prüfkategorien.\n", voll)
+        if probe_neu != "alle 97 Unittests, 19 Prüfkategorien.\n":
+            probleme.append("Statuszahl-Nachzug zieht Tests und Kategorien nicht nach: %r" % probe_neu)
+        if not statuszahlen_verletzungen("alle 85 Unittests.\n", voll):
+            probleme.append("Versionswaechter meldet eine falsche Testanzahl nicht")
+        if statuszahlen_verletzungen("alle 97 Unittests.\n", voll):
+            probleme.append("Versionswaechter meldet eine korrekte Testanzahl als Fehler")
     except ImportError:
         probleme.append("Versionswaechter ist nicht importierbar")
     # Index-Waechter Selbsttest: Abweichung muss gefunden, Gleichheit nicht gemeldet.

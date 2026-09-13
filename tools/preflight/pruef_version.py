@@ -77,7 +77,49 @@ STATUSMUSTER = (
     (re.compile(r"(?P<zahl>\b\d+)(?P<rest> Szenen\b)"), "szenen"),
     # Schreibweise der Roadmap: "11 aktive `.tscn`-Szenen".
     (re.compile(r"(?P<zahl>\b\d+)(?P<rest>(?=\s+aktive\b))"), "szenen"),
+    # Anzahl der Pytest-Faelle: "97 bestandenen Pytest-Pruefungen" und
+    # "97/97"-Paarform wird vorab in die Einzelform gebracht.
+    (re.compile(r"(?P<zahl>\b\d+)(?P<rest> bestandenen Pytest-Prüfungen\b)"), "tests"),
+    (re.compile(r"(?P<zahl>\b\d+)(?P<rest> Pytest-Fälle\b)"), "tests"),
+    (re.compile(r"(?P<zahl>\b\d+)(?P<rest> Unittests\b)"), "tests"),
+    (re.compile(r"(?P<zahl>\b\d+)(?P<rest> bestandenen Pytest-Pruefungen\b)"), "tests"),
+    # Anzahl der Pruefkategorien: "alle 19 Prüfkategorien".
+    (re.compile(r"(?P<zahl>\b\d+)(?P<rest> Prüfkategorien\b)"), "kategorien"),
+    (re.compile(r"(?P<zahl>\b\d+)(?P<rest> Pruefkategorien\b)"), "kategorien"),
 )
+
+# Paarform wie "85/85" oder "85 / 85": Der Nachzug bringt sie zuerst in die
+# Einzelform, damit die obigen Muster den zweiten Anteil tauschen koennen.
+PAARFORM_MUSTER = re.compile(r"\b(\d+)\s*/\s*(\d+)\s*(Pytest-Fälle)\b")
+
+# Badge-Form im README-Kopf: Die Zahl steckt URL-kodiert in einem Bild-Link
+# (pytest-85%2F85%20Passed) und entzieht sich den Fliesstext-Mustern.
+BADGE_MUSTER = re.compile(r"(?P<vorn>pytest-)(?P<zahl>\d+)(?P<mitte>%2F)(?P<zwei>\d+)(?P<hinten>%20Passed)")
+
+
+def paarformen_aufloesen(text):
+    """Bringt Paarformen wie 85/85 Pytest-Fälle in die Einzelform 97 Pytest-Fälle."""
+    return PAARFORM_MUSTER.sub(lambda t: "%s %s" % (t.group(2), t.group(3)), text)
+
+
+def badge_nachziehen(text, zahlen):
+    """Zieht beide Anteile des Test-Badges auf die echte Testanzahl."""
+    zahl = str(zahlen["tests"])
+    return BADGE_MUSTER.sub(
+        lambda t: "%s%s%s%s%s" % (t.group("vorn"), zahl, t.group("mitte"), zahl, t.group("hinten")),
+        text)
+
+
+def badge_verletzungen(text, zahlen):
+    """Meldet Badge-Abweichungen als (zeile, schluessel, ist, soll)."""
+    verletzungen = []
+    for treffer in BADGE_MUSTER.finditer(text):
+        zeile = text[:treffer.start()].count("\n") + 1
+        ist = int(treffer.group("zahl"))
+        soll = zahlen["tests"]
+        if ist != soll or int(treffer.group("zwei")) != soll:
+            verletzungen.append((zeile, "tests", ist, soll))
+    return verletzungen
 
 
 def version_lesen(stamm=None):
@@ -127,7 +169,8 @@ def statuszahlen_lesen(dateien=None):
     klassen.discard(None)
     szenen = [pfad for pfad in PROJEKT_STAMM.rglob("*.tscn")
               if not _pfad_ignoriert(pfad)]
-    return {"klassen": len(klassen), "dateien": len(dateien), "szenen": len(szenen)}
+    return {"klassen": len(klassen), "dateien": len(dateien), "szenen": len(szenen),
+            "tests": _testanzahl_lesen(), "kategorien": _kategorieanzahl_lesen()}
 
 
 def _pfad_ignoriert(pfad):
@@ -136,6 +179,47 @@ def _pfad_ignoriert(pfad):
     return relativ.startswith(IGNORIERTE_PRAEFIXE)
 
 
+def _testanzahl_lesen():
+    """Zaehlt alle Testfunktionen in test_*.py des Projektstamms.
+
+    Das ist dieselbe Wahrheit, die pytest sammelt: def test_* auf oberster
+    Ebene je Wurzel-Testdatei. Paarformen wie "97/97" ergeben denselben
+    Betrag, weil beide Anteile dieselbe Zahl nennen.
+    """
+    import re
+    anzahl = 0
+    for pfad in sorted(PROJEKT_STAMM.glob("test_*.py")):
+        try:
+            text = pfad.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        anzahl += len(re.findall(r"^\s*def test_", text, re.M))
+    return anzahl
+
+
+def _kategorieanzahl_lesen():
+    """Zaehlt die Pruefkategorien mechanisch aus tools/preflight.py.
+
+    Per AST, ohne den Preflight zu importieren: Der Import wuerde den
+    globalen Klassenstand des Preflights selbst veraendern und Zirkel
+    erzeugen. Nur die Zuweisung PRUEFKATEGORIEN zaehlt.
+    """
+    import ast
+    preflight_pfad = PROJEKT_STAMM / "tools" / "preflight.py"
+    if not preflight_pfad.is_file():
+        return 0
+    try:
+        baum = ast.parse(preflight_pfad.read_text(encoding="utf-8"))
+    except SyntaxError:
+        return 0
+    for knoten in ast.walk(baum):
+        if isinstance(knoten, ast.Assign):
+            for ziel in knoten.targets:
+                if isinstance(ziel, ast.Name) and ziel.id == "PRUEFKATEGORIEN":
+                    if isinstance(knoten.value, ast.Dict):
+                        return len(knoten.value.keys)
+    return 0
+
 def statuszahl_ersetzen(text, muster, zahl):
     """Tauscht nur die Zahl eines Treffers und laesst das Substantiv stehen."""
     return muster.sub(lambda treffer: str(zahl) + treffer.group("rest"), text)
@@ -143,6 +227,8 @@ def statuszahl_ersetzen(text, muster, zahl):
 
 def statuszahlen_nachziehen(text, zahlen):
     """Zieht alle erkannten Statuszahlen eines Dokuments auf den echten Stand."""
+    text = paarformen_aufloesen(text)
+    text = badge_nachziehen(text, zahlen)
     for muster, schluessel in STATUSMUSTER:
         text = statuszahl_ersetzen(text, muster, zahlen[schluessel])
     return text
@@ -151,6 +237,8 @@ def statuszahlen_nachziehen(text, zahlen):
 def statuszahlen_verletzungen(text, zahlen):
     """Meldet jede abweichende Statuszahl als (zeile, schluessel, ist, soll)."""
     verletzungen = []
+    text = paarformen_aufloesen(text)
+    verletzungen.extend(badge_verletzungen(text, zahlen))
     for nummer, zeile in enumerate(text.splitlines(), start=1):
         for muster, schluessel in STATUSMUSTER:
             for treffer in muster.finditer(zeile):
