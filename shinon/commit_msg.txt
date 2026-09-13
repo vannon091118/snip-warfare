@@ -1,10 +1,10 @@
-1. Der Nutzer wollte den Fortschritt des Chunk-Laders als schmale Ladeleiste im HUD sehen, bis die Welt voll materialisiert ist.
-2. Also baute der Welt eine schmale Tafel am unteren Rand, die sich füllt, während die Chunks aus dem Verborgenen steigen, und die sich nach der Vollendung still verabschiedet, als hätte sie nie gefehlt.
-3. Die neue Klasse ui_lade_leiste.gd trägt Balken, Zahl und Abschied und weiß vom Lader selbst nichts, denn Tafeln sollen zeigen, nicht fragen.
-4. In welt_ui_aufbau.gd erhielt die Tafel ihren Haken an der UI-Ebene, neben den Fenstern, die schon immer dort hingen.
-5. welt.gd speist die Tafel in jedem Rahmen mit dem Anteil des Laders und lässt sie im Abschluss einmal voll laufen, bevor sie verblasst wie ein Versprechen nach der Wahl.
-6. Die Index-Familie INDEX.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md zog die Zähler auf 271 Klassen und 305 Dateien nach, weil jede neue Klasse ihren Stempel braucht.
-7. README.md und ROADMAP.md tragen dieselben frischen Zahlen, damit keine zweite Wahrheit still altern kann.
-8. docs/architektur_bestandsaufnahme_plan.md kam als Lesepfad mit Versionszeile hinzu, damit die Prüfung ihn kennt, ohne dass er Code berührt.
-9. Geprüft ist alles: Preflight ohne Befund, 132 Proben grün, und der Lader-Beweis zeigt Start mit null Kacheln, 256 nach dem ersten Schritt und 1536 am Ende.
-10. Wenn die Welt eines Tages schneller ist als die Tafel, lacht sie uns aus; heute steht sie still, füllt sich ehrlich und lügt nicht.
+1. Der Nutzer wollte, dass die Tiere wie die Objekte nur im sichtbaren Kamerabereich als Knoten erwachen und außerhalb wieder einschlafen.
+2. Also zog der Tier-Manager einen Wächter über den Blick, der über jedes Tier wacht und ihm einen Darsteller zusteht, wenn die Kamera hinsieht, und ihn wieder einsammelt, wenn sie sich abwendet.
+3. Die neue Klasse tier_sicht_waechter.gd trägt das ganze Wach-Sein: Wecken im Blick mit einem Budget je Takt, Einschlafen außerhalb, Geister und Ernte-Ausblendungen zum Austrag, und der Vogel endet logisch, statt als Abflug-Geist ewig weiterzufliegen.
+4. tier_manager.gd schrumpfte auf Einträge, Tick und Zugriffe und delegiert das Sichtbar-Sein; totzeilen wie der ungenutzte Darsteller-Deckel und der nie gerufene tier_info-Leser flogen raus.
+5. In welt.gd wandert das Kamera-Rechteck neu auch zu den Tieren, derselbe Griff wie zur Karte, damit keine zweite Wahrheit über den Blick entsteht.
+6. Der Lauf-Beweis lauf_pruefung_tier_schlaf.gd zeigt alle fünf Sprünge: alles wach ohne Blick, sparsam mit Blick, Einschlafen mit lebendem Eintrag, Aufwachen mit Budget, und das Deaktivieren weckt alles für Editor und Prüfläufe.
+7. locregel_nachlass.json trägt den echten Zeilenwert des Managers, weil die 100-Zeilen-Regel keine Ausreden kennt, nur Ist-Stände.
+8. Die Index-Familie zog auf 272 Klassen und 307 Dateien nach, README und ROADMAP tragen dieselben Zahlen, und das neue Domänen-Gap-Register kam mit seiner Versionszeile ins Dokument-Regal.
+9. Geprüft ist alles: voller Preflight ohne Befund, 132 Proben grün, und der Schlaf-Beweis läuft grün durch alle Stationen.
+10. Die Wiese ist jetzt nicht mehr voller Bären, die niemand sieht; sie warten im Hintergrund als Zahlen auf ihrem Eintrag, bis die Kamera vorbeikommt, und kosten bis dahin keinen einzigen Knoten.

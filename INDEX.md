@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 271 Klassen mit `class_name` im Projekt, davon 238 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 66 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 272 Klassen mit `class_name` im Projekt, davon 239 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 66 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -205,7 +205,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Tisch` | `world/logic/kategorie_objekt/objekt_tisch.gd` |
 | `Objekt_TischStahl` | `world/logic/kategorie_objekt/objekt_tisch_stahl.gd` |
 
-### world/tier — Prefix `Tier_` — `world/logic/kategorie_tier/` (17)
+### world/tier — Prefix `Tier_` — `world/logic/kategorie_tier/` (18)
 
 | Klasse | Datei |
 | --- | --- |
@@ -218,6 +218,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Tier_KlassenFabrik` | `world/logic/kategorie_tier/tier_klassen_fabrik.gd` |
 | `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` |
 | `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` |
+| `Tier_SichtWaechter` | `world/logic/kategorie_tier/tier_sicht_waechter.gd` |
 | `Tier_Sichtung` | `world/logic/kategorie_tier/tier_sichtung.gd` |
 | `Tier_Status` | `world/logic/kategorie_tier/tier_status.gd` |
 | `Tier_TempoBerechnung` | `world/logic/kategorie_tier/tier_tempo_berechnung.gd` |

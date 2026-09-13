@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 271 Klassen, 305 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 272 Klassen, 307 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -12,7 +12,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 271 Klassen, 305 Dateien, 66 Sign
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
 | `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 44 | 44 |
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 32 | 32 |
-| `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 17 | 17 |
+| `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 18 | 18 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 7 | 7 |
 | `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 25 | 25 |
 | `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 18 | 18 |
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 271 Klassen, 305 Dateien, 66 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
 | `ui` | `ui` | `Ui_` | `ui/` | 24 | 36 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 16 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 17 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -114,7 +114,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `String` | 54 | 4 | 4 | 12 | 10 | - | - | 3 | 4 | - | 3 | 2 | 7 | - | 2 | 3 |
-| `Dictionary` | 34 | 3 | 1 | 7 | 1 | 1 | 2 | 8 | - | - | 1 | 1 | 5 | - | - | 4 |
+| `Dictionary` | 35 | 3 | 1 | 7 | 1 | 2 | 2 | 8 | - | - | 1 | 1 | 5 | - | - | 4 |
 | `int` | 16 | - | - | 5 | - | 1 | 1 | 3 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 9 | 1 | 4 | 3 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `Vector2` | 5 | 1 | - | 1 | - | - | - | 2 | - | - | - | - | - | - | - | 1 |
@@ -387,7 +387,7 @@ Prefix `Objekt_/Gebaeude_`, 32 Klassen.
 
 ### world/tier — Kuerzel `tier` — `world/logic/kategorie_tier/`
 
-Prefix `Tier_`, 17 Klassen.
+Prefix `Tier_`, 18 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -398,8 +398,9 @@ Prefix `Tier_`, 17 Klassen.
 | `Tier_FeldAbfrage` | `world/logic/kategorie_tier/tier_feld_abfrage.gd` | 40 |
 | `Tier_Hase` | `world/logic/kategorie_tier/tier_hase.gd` | 38 |
 | `Tier_KlassenFabrik` | `world/logic/kategorie_tier/tier_klassen_fabrik.gd` | 22 |
-| `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` | 234 |
+| `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` | 233 |
 | `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` | 75 |
+| `Tier_SichtWaechter` | `world/logic/kategorie_tier/tier_sicht_waechter.gd` | 82 |
 | `Tier_Sichtung` | `world/logic/kategorie_tier/tier_sichtung.gd` | 68 |
 | `Tier_Status` | `world/logic/kategorie_tier/tier_status.gd` | 111 |
 | `Tier_TempoBerechnung` | `world/logic/kategorie_tier/tier_tempo_berechnung.gd` | 32 |
@@ -422,7 +423,7 @@ Prefix `Tier_`, 17 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `Dictionary` | 1 |
+| `Dictionary` | 2 |
 | `Tier_Basis` | 1 |
 | `int` | 1 |
 

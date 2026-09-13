@@ -394,7 +394,9 @@ func _process(delta: float) -> void:
 	if _kamera != null:
 		var blick := _kamera.get_viewport_rect().size / _kamera.zoom.x
 		var rand := _karte.sicht_rand_px()
-		_karte.sichtbereich_setzen(Rect2(_kamera.position - blick * 0.5 - Vector2.ONE * rand, blick + Vector2.ONE * (rand * 2.0)))
+		var blick_rechteck := Rect2(_kamera.position - blick * 0.5 - Vector2.ONE * rand, blick + Vector2.ONE * (rand * 2.0))
+		_karte.sichtbereich_setzen(blick_rechteck)
+		_tiere.sichtbereich_setzen(blick_rechteck)
 
 func _auf_produktion_status(zeilen: Array[String]) -> void:
 	# Reiner Weitergabe-Schritt: Die Zeilen kommen vom Gebaeude_Manager, die

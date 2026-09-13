@@ -8,7 +8,7 @@ Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbrauc
 
 | Pool | Domaene | Eintraege | Oberste Schluessel | Verbraucher |
 | --- | --- | --- | --- | --- |
-| [`kern_logik.json`](core/data/kern_logik.json) | `core` | 9 | `baer_verfolgen`, `hase_flucht`, `vogel_flucht`, `vogelgruppe_flucht`, `ressource_holz`, `ressource_stein` und 3 weitere | `core/logic/kern_logik_basis.gd`, `core/logic/kern_logik_registry.gd`, `world/logic/kategorie_objekt/objekt_basis.gd` und 1 weitere |
+| [`kern_logik.json`](core/data/kern_logik.json) | `core` | 9 | `baer_verfolgen`, `hase_flucht`, `vogel_flucht`, `vogelgruppe_flucht`, `ressource_holz`, `ressource_stein` und 3 weitere | `core/logic/kern_logik_basis.gd`, `core/logic/kern_logik_registry.gd`, `world/logic/kategorie_objekt/objekt_basis.gd` |
 | [`kern_modifikatoren.json`](core/data/kern_modifikatoren.json) | `core` | 7 | `normal`, `aggressiv`, `langsam`, `schnell`, `verletzung_bein`, `verletzung_arm` und 1 weitere | `core/logic/kern_modifikator_maschine.gd`, `core/logic/kern_modifikator_registry.gd` |
 | [`modifikator_settings.json`](core/data/modifikator_settings.json) | `core` | 3 | `_kommentar`, `global`, `bereiche` | `core/logic/kern_modifikator_maschine.gd` |
 | [`lager.json`](economy/data/lager.json) | `economy` | 2 | `kleines_lager`, `grosses_lager` | `economy/logic/storage/lager_registry.gd` |
@@ -58,7 +58,6 @@ Pfad `core/data/kern_logik.json`, Domaene `core`, 9 Eintraege.
 * `core/logic/kern_logik_basis.gd`
 * `core/logic/kern_logik_registry.gd`
 * `world/logic/kategorie_objekt/objekt_basis.gd`
-* `world/logic/kategorie_tier/tier_manager.gd`
 
 ### kern_modifikatoren.json
 
