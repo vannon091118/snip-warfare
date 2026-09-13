@@ -1,12 +1,6 @@
-1. Der Nutzer verlangte einen geteilten Zugriffspunkt fuer die drei Welt-Registries und das Ende der Bremse: synchrones Laden, fehlendes Lazy Loading, zu viele Drawcalls und hartes Ploppen.
-2. In welt_registry_zugriff.gd sitzt der eine Zugriffspunkt mit Cache, und in pop_rassen_zugriff.gd teilt sich der Rassen-Pool dieselbe Idee.
-3. In welt_generator.gd, welt_model.gd, biom_manager.gd, job_graben.gd, einheit_ziel_suche.gd, welt_seed_spawn_maschine.gd, welt_fraktions_ki_verdrahtung.gd, karten_editor.gd, welt_map.gd, welt.gd und pop_need_baum.gd weichen die direkten new-Aufrufe dem geteilten Griff, der hundertacht-fache Parsevorgang ist tot.
-4. In welt_generator.gd liegt der Weltbau in drei Phasen: welt_planen ohne Fuellung, chunk_fuellen_oeffentlich als Bruecke und welt_abschliessen fuer Gewaesser, Fels und Fraktions-Pass.
-5. In welt_async_chunk_lader.gd zieht ein getakteter Lader vier Chunks pro Ruf nach, sortiert nach Kamera-Naehe, und lauf_pruefung_async_lader.gd beweist die Gleichheit mit dem synchronen Weg.
-6. In welt_ladevorgang.gd erzeugt die Generierung nur Plan und Lader; das Speichern wanderte in den Abschluss-Pass, damit nicht die leere Welt auf die Platte geriet, und welt.gd speist den Lader je Frame.
-7. In welt_renderer.gd teilen sich Knoten einer Kennung eine Textur, Kacheln eines Bioms eine Farbe und fehlende Bilder einen Farb-Platzhalter aus Caches, was die Drawcalls durch stabiles Batching drueckt.
-8. In welt_renderer.gd steigen frische Objekt-Knoten interpoliert aus dem Boden statt zu ploppen, und project.godot traegt wieder die echte Textur-Filter-Einstellung.
-9. In fraktions_keimling_analysator.gd und welt_fraktions_ki_verdrahtung.gd teilen sich Generator und Verdrahtung denselben Keimpunkt-Fund, in pop_rassen_schema.gd und pop_rassen_schema_registry.gd verstummt der Rassen-Spam.
-10. In einheit_ernte_maschine.gd schlaegt der Kannibale nur einmal, in fraktions_ki_maschine.gd und welt_erschoepfung_maschine.gd runden Chunk-Grenzen auf, in objekt_moebel_platzierer.gd, welt_terrain_blatt.gd, orchestrator_manager.gd und welt_tiefen_neige.gd heilen Divisionen und tote Variablen.
-11. Sichtbar im laufenden Spiel: Die Welt fuellt sich vom Kartenmittelpunkt aus frameweise, und die Processing-Spitze von dreihundertvierunddreissig Millisekunden kollabiert auf ruhige Frames.
-12. Uebrig bleibt der Zug an den Tier-Spawns, damit auch sie nur im Blick erwachen.
+1. Der Nutzer wollte die neunzehntausend Fliesen-Sprites in Chunk-Familien zusammengelegt haben, damit verdeckte Nachbarn den Baum als Ganzes verlassen und bei der Rueckkehr des Blicks wie alte Bekannte wieder einziehen.
+2. In world/logic/kategorie_welt/welt_renderer.gd zieht je Z-Ebene jede Kachel in ihren eigenen Chunk-Container, und der Sichtbereich schaltet ganze Wohnbloecke ein und aus, statt tausend einzelne Sprites am Kragen zu packen wie ein Wirte, der Gaeste einzeln rauswirft.
+3. In tools/lauf_pruefung_fliesen_chunks.gd steht der Beweis schriftlich: Ohne Blick haengen alle vierundsechzig Chunk-Knoten im Baum, im Blick genau einer, und bei der Rueckkehr steht Chunk_0_0 wieder an seinem Platz, als waere nie jemand fort gewesen.
+4. In INDEX_DOMAENEN.md, INDEX_LETZTE_AENDERUNG.md und ROADMAP.md sind die Zahlen dem Nachzug gefolgt, denn Dokumente, die ihre eigene Belegschaft falsch zaehlen, wirken bald wie leere Bierkruge an der Theke.
+5. Sichtbar im laufenden Spiel: Der Blick ueber die Karte laesst ganze Chunks hinter sich verschwinden und kehrt sie beim Zurueckscrollen intakt zurueck, der Baum atmet statt zu wuchten.
+6. Uebrig bleibt die Fraktion des Objekt-Baums, die dieselbe Wanderung noch vor sich hat, damit auch die Moebel als ganze Quartiere reisen statt als einzelne Stuehle.
