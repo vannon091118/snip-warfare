@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 301 Dateien, 65 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 302 Dateien, 66 Signale, 32 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 301 Dateien, 65 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 6 | 6 |
 | `ui` | `ui` | `Ui_` | `ui/` | 23 | 35 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 0 | 13 |
+| `tools` | `tools` | `-` | `tools/` | 0 | 14 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -87,6 +87,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 270 Klassen, 301 Dateien, 65 Sign
 | `Ui_OrchestratorPriorityPanel.panel_geschlossen` | - | - | - | - | - | - | - | - | - | - | - | DS | - | - | - |
 | `Ui_WeltAuswahlDialog.welt_gewaehlt` | - | - | - | - | - | - | - | - | - | - | - | DSV | - | - | - |
 | `kontext_menue.aktion_gewaehlt` | - | - | - | - | - | - | - | - | - | - | - | DS | - | - | V |
+| `Welt_AsyncChunkLader.chunk_gefuellt` | - | - | DS | - | - | - | - | - | - | - | - | - | - | V | V |
 | `Welt_AsyncChunkLader.fertig` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Welt_KarawanenManager.handels_abgeschlossen` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Welt_KarawanenManager.karawane_angekommen` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | - |
@@ -247,7 +248,7 @@ Prefix `Welt_`, 44 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
-| `Welt_AsyncChunkLader` | `world/logic/kategorie_welt/welt_async_chunk_lader.gd` | 103 |
+| `Welt_AsyncChunkLader` | `world/logic/kategorie_welt/welt_async_chunk_lader.gd` | 108 |
 | `Welt_BauGeist` | `world/logic/kategorie_welt/welt_bau_geist.gd` | 70 |
 | `Welt_BaustellenBedarf` | `world/logic/kategorie_welt/welt_baustellen_bedarf.gd` | 108 |
 | `Welt_DefinitionRegistry` | `world/logic/kategorie_welt/welt_definition_registry.gd` | 71 |
@@ -255,7 +256,7 @@ Prefix `Welt_`, 44 Klassen.
 | `Welt_ErschoepfungMaschine` | `world/logic/kategorie_welt/welt_erschoepfung_maschine.gd` | 115 |
 | `Welt_Fraktion` | `world/logic/kategorie_welt/welt_fraktion.gd` | 67 |
 | `Welt_FraktionsKiMaschine` | `world/logic/kategorie_welt/fraktions_ki_maschine.gd` | 166 |
-| `Welt_FraktionsKiVerdrahtung` | `world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd` | 116 |
+| `Welt_FraktionsKiVerdrahtung` | `world/logic/kategorie_welt/welt_fraktions_ki_verdrahtung.gd` | 114 |
 | `Welt_GrenzProfil` | `world/logic/kategorie_welt/welt_grenz_profil.gd` | 61 |
 | `Welt_HudRueckmeldung` | `world/logic/kategorie_welt/welt_hud_rueckmeldung.gd` | 47 |
 | `Welt_KachelGeste` | `world/logic/kategorie_welt/welt_kachel_geste.gd` | 43 |
@@ -278,7 +279,7 @@ Prefix `Welt_`, 44 Klassen.
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
 | `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` | 36 |
 | `Welt_RegistryZugriff` | `world/logic/kategorie_welt/welt_registry_zugriff.gd` | 45 |
-| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 717 |
+| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 757 |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` | 44 |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` | 50 |
 | `Welt_Speicher` | `world/logic/kategorie_welt/welt_speicher.gd` | 74 |
@@ -300,6 +301,7 @@ Prefix `Welt_`, 44 Klassen.
 | `Kern_SignalBus.kachel_geaendert` | V | kern, tools, welt |
 | `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Ui_BauPanelSzene.bau_gewaehlt` | V | ui, welt |
+| `Welt_AsyncChunkLader.chunk_gefuellt` | DS | rest, tools, welt |
 | `Welt_AsyncChunkLader.fertig` | DS | rest, welt |
 | `Welt_KarawanenManager.handels_abgeschlossen` | DS | welt |
 | `Welt_KarawanenManager.karawane_angekommen` | DS | welt |
@@ -759,6 +761,7 @@ Prefix `-`, 0 Klassen.
 | `Gebaeude_Manager.gebaeude_fertiggestellt` | V | obj, tools |
 | `Job_Basis.job_beendet` | S | ein, job, tools |
 | `Kern_SignalBus.kachel_geaendert` | V | kern, tools, welt |
+| `Welt_AsyncChunkLader.chunk_gefuellt` | V | rest, tools, welt |
 | `Welt_ProgressionsMaschine.folge_objekt_entstanden` | V | rest, tools |
 | `Welt_ProgressionsMaschine.stadium_geaendert` | V | rest, tools |
 
@@ -829,6 +832,7 @@ Prefix `-`, 33 Klassen.
 | `Kern_Weltuhr.tick` | V | ein, kern, obj, orch, rest, tier, ui, welt |
 | `Objekt_MoebelPlatzierer.moebel_platziert` | V | obj, rest |
 | `Ui_EingabeSteuerung.debug_umgeschaltet` | V | rest, ui |
+| `Welt_AsyncChunkLader.chunk_gefuellt` | V | rest, tools, welt |
 | `Welt_AsyncChunkLader.fertig` | V | rest, welt |
 | `Welt_FortschrittsMaschine.orchestrator_gespawnt` | DS | rest |
 | `Welt_FortschrittsMaschine.stufe_erreicht` | DSV | rest |

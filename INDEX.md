@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 270 Klassen mit `class_name` im Projekt, davon 237 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 270 Klassen mit `class_name` im Projekt, davon 237 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 66 Signale, 32 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 

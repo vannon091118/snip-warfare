@@ -21,6 +21,10 @@ var laeuft: bool = false
 
 ## Einmal-Ereignis: wird beim Abschluss gefeuert.
 signal fertig
+## Jede Füllung meldet ihre Chunk-Adresse; die Szene reicht sie an die
+## Karte weiter, damit frisch gefüllte Kacheln sichtbar werden, ohne dass
+## der Renderer die ganze Ebene neu baut.
+signal chunk_gefuellt(chunk: Vector2i)
 
 var _chunks: Array[Vector2i] = []
 var _index: int = 0
@@ -72,6 +76,7 @@ func schritt() -> void:
 		var chunk := _chunks[_index]
 		_index += 1
 		_generator.chunk_fuellen_oeffentlich(_model, chunk, _biom_id, _z_ebene)
+		chunk_gefuellt.emit(chunk)
 		verarbeitet += 1
 	if _index >= _chunks.size():
 		_abschliessen()

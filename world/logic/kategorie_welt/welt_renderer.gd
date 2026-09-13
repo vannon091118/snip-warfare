@@ -304,6 +304,14 @@ func kachel_ersetzen(x: int, y: int, z_ebene: int = 0) -> void:
 	# frische Kachel und löst sich dann auf, sonst bleibt der Ruhigstand still.
 	_kachel_geste.platzieren_falls_neu(sprite, vorherige_textur)
 
+func fliesen_aktive_ebene_erneuern() -> void:
+	## Öffentlicher Nachbau der aktiven Ebene: Der Abschluss-Pass des
+	## Generators schreibt Gewässer und Fels nach der Chunk-Füllung; die
+	## Szene lässt die Ebene deshalb einmal ganz neu zeichnen.
+	_fliesen_ebene_erneuern(_aktive_z_ebene)
+	if _sicht_sammler.ist_aktiv():
+		_chunks_an_blick_anpassen()
+
 func _fliesen_ebene_erneuern(z_ebene: int) -> void:
 	# Baut Fliesen genau einer Z-Ebene auf und merkt sie als erbaut.
 	# Die Kacheln wohnen in Chunk-Containern, damit der Blick ganze
@@ -333,9 +341,41 @@ func _fliesen_ebene_erneuern(z_ebene: int) -> void:
 			_ist_angehaengt_fuer_ebene(z_ebene)[Vector2i(cx, cy)] = true
 	for y in _model.raster_hoehe:
 		for x in _model.raster_breite:
-			var chunk := Vector2i(x / kante_chunk, y / kante_chunk)
+			var chunk := Vector2i(floori(float(x) / float(kante_chunk)), floori(float(y) / float(kante_chunk)))
 			_fliese_anhaengen(container[chunk] as Node2D, x, y, z_ebene, kante)
 	_fliesen_erbaut[z_ebene] = true
+
+func chunk_erneuern(chunk: Vector2i, z_ebene: int) -> void:
+	## Nachschub aus dem zeitgeslicenen Lader: Nur die Sprites des
+	## gefüllten Chunks werden neu angewendet, die Ebene bleibt stehen.
+	## Der Chunk-Knoten hängt danach im Baum, damit die frische Füllung
+	## sofort sichtbar ist, auch wenn der Blick noch woanders ruht.
+	if _model == null or not _fliesen_erbaut.get(z_ebene, false):
+		return
+	var container := _chunk_container_fuer_ebene(z_ebene)
+	var knoten := container.get(chunk) as Node2D
+	if knoten == null or not is_instance_valid(knoten):
+		return
+	var kante := float(_model.kachel_groesse)
+	var kante_chunk := _chunk_kante_aktiv()
+	var start_x := chunk.x * kante_chunk
+	var start_y := chunk.y * kante_chunk
+	for dy in kante_chunk:
+		for dx in kante_chunk:
+			var x := start_x + dx
+			var y := start_y + dy
+			if x >= _model.raster_breite or y >= _model.raster_hoehe:
+				continue
+			var sprite := knoten.get_node_or_null(NodePath("Kachel_%d_%d" % [x, y])) as Sprite2D
+			if sprite == null:
+				continue
+			_fliese_anwenden(sprite, x, y, z_ebene, kante)
+	# Sichtbar stellen: Ein frisch gefüllter Chunk kehrt in den Baum zurück,
+	# der Blick ordnet ihn beim nächsten Rahmen ohnehin neu.
+	var buch := _ist_angehaengt_fuer_ebene(z_ebene)
+	if knoten.get_parent() == null:
+		_fliesen_knoten_fuer_ebene(z_ebene).add_child(knoten)
+	buch[chunk] = true
 
 func _fliesen_alle_ebenen_erneuern() -> void:
 	# Legacy-Pfad: baut alle Ebenen synchron. Nur noch für Editor/Tests,

@@ -14,8 +14,6 @@ const STANDARD_CONFIG := {"expansion": 0.6, "handel": 0.4, "konflikt": 0.7, "agg
 var _fraktions_ki_config: Dictionary = {}
 var _ki_maschinen: Array[Welt_FraktionsKiMaschine] = []
 var _netzwerk_planer := Welt_NetzwerkPlaner.new()
-var _keimling_analysator: Welt_FraktionsKeimlingAnalysator = null
-var _rassen_generator: Pop_RassenGenerator = null
 ## Modell des letzten Laufs: Rückfall-Anker für die Keimpunkt-Abfrage in
 ## Headless-Tests ohne WeltSitzung.
 var _letztes_modell: Welt_Model = null

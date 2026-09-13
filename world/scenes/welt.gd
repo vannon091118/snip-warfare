@@ -301,6 +301,7 @@ func _ladevorgang_ausfuehren() -> void:
 	_chunk_lader = _ladevorgang.lauf_lader
 	if _chunk_lader != null:
 		_chunk_lader.fertig.connect(_auf_welt_gefuellt)
+		_chunk_lader.chunk_gefuellt.connect(_auf_chunk_gefuellt)
 
 func _domaenen_modell_setzen(neues_modell: Welt_Model) -> void:
 
@@ -405,6 +406,15 @@ func _unhandled_input(ereignis: InputEvent) -> void:
 func _auf_verteilung(nahrung_je_takt: float) -> void:
 	_eingabe_steuerung.auf_verteilung(nahrung_je_takt)
 
+func _auf_chunk_gefuellt(chunk: Vector2i) -> void:
+	## Frische Füllung sichtbar machen: Genau dieser Chunk kehrt mit neuen
+	## Kachel-Bildern in die Karte zurück, der Rest der Ebene bleibt unberührt.
+	## Ohne diesen Ruf bliebe die Karte weiß, weil der Renderer sie schon
+	## vor der ersten Füllung aus dem leeren Modell gebaut hat.
+	if _model == null:
+		return
+	_karte.chunk_erneuern(chunk, _model.aktive_z_ebene)
+
 func _auf_welt_gefuellt() -> void:
 	## Abschluss-Pass nach der letzten Chunk-Füllung: Gewaesser, Fels und
 	## der Fraktions-Pass laufen danach; die Szene speist ihn nicht selbst,
@@ -413,6 +423,10 @@ func _auf_welt_gefuellt() -> void:
 		return
 	_chunk_lader = null
 	_generator.welt_abschliessen(_model, _model.welt_seed, _model.biom_id)
+	# Der Abschluss-Pass schreibt Gewässer und Fels erst nach der Chunk-
+	# Füllung; ein einziger Neuaufbau der aktiven Ebene zeigt sie. Danach
+	# ordnet der Blick die Chunks sofort wieder nach Kameranähe.
+	_karte.fliesen_aktive_ebene_erneuern()
 	# Erst jetzt, mit voller Welt, geht der Stand auf die Platte; vorher
 	# stünde eine leere Karte im Save.
 	var world := WeltSitzung.world
