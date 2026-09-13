@@ -279,7 +279,7 @@ Prefix `Welt_`, 44 Klassen.
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
 | `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` | 36 |
 | `Welt_RegistryZugriff` | `world/logic/kategorie_welt/welt_registry_zugriff.gd` | 45 |
-| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 633 |
+| `Welt_Renderer` | `world/logic/kategorie_welt/welt_renderer.gd` | 676 |
 | `Welt_RissGeste` | `world/logic/kategorie_welt/welt_riss_geste.gd` | 44 |
 | `Welt_SichtbereichSammler` | `world/logic/kategorie_welt/welt_sichtbereich_sammler.gd` | 50 |
 | `Welt_Speicher` | `world/logic/kategorie_welt/welt_speicher.gd` | 74 |

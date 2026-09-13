@@ -40,6 +40,14 @@ var _biom_farbe_cache: Dictionary = {}
 ## Dictionary: z_ebene (0, -1, -2, ...) -> Node2D (Fliesen-Container für diese Ebene)
 var _fliesen_knoten_pro_ebene: Dictionary = {}
 var _fliesen_erbaut: Dictionary = {}
+## Fauler Sprite-Aufbau: Bei frischer Generierung erzeugt erst der
+## zeitgeslicene Lader die Kachel-Sprites je Füllung; der Start-Frame baut
+## keine tausend Sprites mehr. Editor und Save-Lauf behalten den sofortigen
+## Vollbau, weil dort kein Lader läuft.
+var _sprites_faul: bool = false
+## Merker der faul gestellten Ebenen: Der Repaint je Füllung darf sie
+## bespriteln, der Ebenen-Wechsel darf sie trotzdem synchron nachbauen.
+var _faul_gestellt: Dictionary = {}
 var _objekte_knoten: Node2D
 var _objekt_darsteller: Welt_ObjektDarsteller
 var _sway_aktualisierer := SWAY_AKTUALISIERER_SKRIPT.new()
@@ -102,6 +110,12 @@ func _ready() -> void:
 
 func _fliesen_knoten_fuer_ebene(z_ebene: int) -> Node2D:
 	return _fliesen_knoten_pro_ebene.get(z_ebene, null)
+
+func sprites_faul_setzen(faul: bool) -> void:
+	## Die Szene stellt den Faulbau vor der Generierung scharf; das Ende
+	## meldet faulbau_abschliessen, nachdem der Lader die letzte Füllung
+	## gebracht hat.
+	_sprites_faul = faul
 
 func z_ebene_setzen(z_ebene: int) -> void:
 	# Schaltet die sichtbare Z-Ebene um: Blendet alle Fliesen-Knoten aus,
@@ -293,26 +307,32 @@ func fliesen_aktive_ebene_erneuern() -> void:
 
 func _fliesen_ebene_erneuern(z_ebene: int) -> void:
 	# Baut Fliesen genau einer Z-Ebene synchron auf und merkt sie als erbaut.
-	# Die Sprites hängen direkt am Ebenen-Knoten; die Sprites selbst entstehen
-	# über den zeitgeslicenen Chunk-Lader, dieser Nachbau folgt je Füllung.
+	# Im Faulbau bleibt die Ebene leer; die Sprites entstehen je Lader-Füllung
+	# in kachel_erneuern_fuer_chunk, bis faulbau_abschliessen den Endstand trägt.
 	if _model == null:
 		return
 	var fliesen_knoten := _fliesen_knoten_fuer_ebene(z_ebene)
 	if fliesen_knoten == null:
 		return
-	var kante := float(_model.kachel_groesse)
 	for kind: Node in fliesen_knoten.get_children():
 		kind.queue_free()
+	if _sprites_faul:
+		_fliesen_erbaut[z_ebene] = false
+		_faul_gestellt[z_ebene] = true
+		return
+	_faul_gestellt.erase(z_ebene)
+	var kante := float(_model.kachel_groesse)
 	for y in _model.raster_hoehe:
 		for x in _model.raster_breite:
 			_fliese_anhaengen(fliesen_knoten, x, y, z_ebene, kante)
 	_fliesen_erbaut[z_ebene] = true
 
 func kachel_erneuern_fuer_chunk(chunk: Vector2i, z_ebene: int) -> void:
-	## Nachschub aus dem zeitgeslicenen Lader: Genau die Sprites des
-	## gefüllten Chunks tragen ihr frisches Bild, ohne dass die Ebene als
-	## Ganzes neu baut. Die Kacheln hängen direkt am Ebenen-Knoten.
-	if _model == null or not _fliesen_erbaut.get(z_ebene, false):
+	## Nachschub aus dem zeitgeslicenen Lader: Genau die Kacheln des
+	## gefüllten Chunks entstehen oder tragen ihr frisches Bild, ohne dass
+	## die Ebene als Ganzes neu baut. Im Faulbau erzeugt dieser Ruf die
+	## Sprites erstmals; danach hängt die Ebene wieder voll.
+	if _model == null:
 		return
 	var fliesen_knoten := _fliesen_knoten_fuer_ebene(z_ebene)
 	if fliesen_knoten == null:
@@ -329,8 +349,31 @@ func kachel_erneuern_fuer_chunk(chunk: Vector2i, z_ebene: int) -> void:
 				continue
 			var sprite := fliesen_knoten.get_node_or_null(NodePath("Kachel_%d_%d" % [x, y])) as Sprite2D
 			if sprite == null:
-				continue
+				sprite = Sprite2D.new()
+				sprite.name = "Kachel_%d_%d" % [x, y]
+				sprite.centered = false
+				sprite.position = Vector2(x, y) * kante
+				fliesen_knoten.add_child(sprite)
 			_fliese_anwenden(sprite, x, y, z_ebene, kante)
+	# Die Ebene trägt wieder Kacheln; der Abschluss kann den Rest nachbauen,
+	# ohne den Faulbau-Zustand zu ignorieren.
+	_faul_gestellt.erase(z_ebene)
+
+func faulbau_abschliessen() -> void:
+	## Ende des zeitgeslicenen Laufs: Alle Sprites existieren bereits aus
+	## den Füllungen; der Abschluss-Pass (Gewässer, Fels) wird nur noch
+	## auf die bestehenden Kacheln neu bemalt, nichts wird weggeworfen.
+	## Fehlende Sprites erzeugt der Lauf self-heilend nach.
+	_sprites_faul = false
+	_faul_gestellt.clear()
+	if _model == null:
+		return
+	var kante_chunk := maxi(_model.chunk_groesse, 1)
+	var chunk_x_zahl := ceili(float(_model.raster_breite) / float(kante_chunk))
+	var chunk_y_zahl := ceili(float(_model.raster_hoehe) / float(kante_chunk))
+	for cy in chunk_y_zahl:
+		for cx in chunk_x_zahl:
+			kachel_erneuern_fuer_chunk(Vector2i(cx, cy), _aktive_z_ebene)
 
 func _fliesen_alle_ebenen_erneuern() -> void:
 	# Legacy-Pfad: baut alle Ebenen synchron. Nur noch für Editor/Tests,

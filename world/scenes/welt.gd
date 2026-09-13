@@ -295,6 +295,9 @@ func _ladevorgang_ausfuehren() -> void:
 	## Slice D: Kapselt den Ladevorgang aus welt_ladevorgang.gd und map_fabrik.gd.
 	_ladevorgang.einrichten(_model, _generator)
 	_map_fabrik.einrichten(_generator)
+	# Faulbau scharf: Der Start-Frame baut keine tausend Kachel-Sprites;
+	# der Lader erzeugt sie je Füllung, der Abschluss trägt den Endstand.
+	_karte.sprites_faul_setzen(true)
 	_ladevorgang.ausfuehren(WeltSitzung.welt_name, WeltSitzung.seed_wunsch, _model.biom_id)
 	# Zeitgeslicene Füllung: Der Lader materialisiert Chunks im Budget;
 	# die Szene speist ihn im _process, bis sein Signal kommt.
@@ -302,6 +305,10 @@ func _ladevorgang_ausfuehren() -> void:
 	if _chunk_lader != null:
 		_chunk_lader.fertig.connect(_auf_welt_gefuellt)
 		_chunk_lader.chunk_gefuellt.connect(_auf_chunk_gefuellt)
+	else:
+		# Save-Lauf ohne Generator: Der Vollbau in darstellen() ist die
+		# Wahrheit, der Faulbau würde für immer leer bleiben.
+		_karte.sprites_faul_setzen(false)
 
 func _domaenen_modell_setzen(neues_modell: Welt_Model) -> void:
 
@@ -424,9 +431,8 @@ func _auf_welt_gefuellt() -> void:
 	_chunk_lader = null
 	_generator.welt_abschliessen(_model, _model.welt_seed, _model.biom_id)
 	# Der Abschluss-Pass schreibt Gewässer und Fels erst nach der Chunk-
-	# Füllung; ein einziger Neuaufbau der aktiven Ebene zeigt sie. Danach
-	# ordnet der Blick die Chunks sofort wieder nach Kameranähe.
-	_karte.fliesen_aktive_ebene_erneuern()
+	# Füllung; der Faulbau endet und trägt den vollen Stand in einem Rutsch.
+	_karte.faulbau_abschliessen()
 	# Erst jetzt, mit voller Welt, geht der Stand auf die Platte; vorher
 	# stünde eine leere Karte im Save.
 	var world := WeltSitzung.world
