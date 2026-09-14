@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 328 Klassen, 363 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 328 Klassen, 364 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 328 Klassen, 363 Dateien, 68 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
 | `ui` | `ui` | `Ui_` | `ui/` | 26 | 38 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 4 | 21 |
+| `tools` | `tools` | `-` | `tools/` | 4 | 22 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 36 | 41 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -300,7 +300,7 @@ Prefix `Welt_`, 54 Klassen.
 | `Welt_PauseMenue` | `world/logic/kategorie_welt/welt_pause_menue.gd` | 130 |
 | `Welt_Raum` | `world/logic/kategorie_welt/welt_raum.gd` | 47 |
 | `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` | 56 |
-| `Welt_RaumErkenner` | `world/logic/kategorie_welt/welt_raum_erkenner.gd` | 217 |
+| `Welt_RaumErkenner` | `world/logic/kategorie_welt/welt_raum_erkenner.gd` | 216 |
 | `Welt_RaumRegister` | `world/logic/kategorie_welt/welt_raum_register.gd` | 69 |
 | `Welt_RaumUndLagerTick` | `world/logic/kategorie_welt/welt_raum_und_lager_tick.gd` | 49 |
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` | 96 |
@@ -517,7 +517,7 @@ Prefix `Einheit_`, 31 Klassen.
 | `Einheit_Basis` | `game/logic/kategorie_einheit/einheit_basis.gd` | 52 |
 | `Einheit_Bewegung` | `game/logic/kategorie_einheit/einheit_bewegung.gd` | 82 |
 | `Einheit_Darsteller` | `game/logic/kategorie_einheit/einheit_darsteller.gd` | 83 |
-| `Einheit_EinwanderungsMaschine` | `game/logic/kategorie_einheit/einheit_einwanderungs_maschine.gd` | 99 |
+| `Einheit_EinwanderungsMaschine` | `game/logic/kategorie_einheit/einheit_einwanderungs_maschine.gd` | 100 |
 | `Einheit_ErnteMaschine` | `game/logic/kategorie_einheit/einheit_ernte_maschine.gd` | 113 |
 | `Einheit_Inventar` | `game/logic/kategorie_einheit/einheit_inventar.gd` | 197 |
 | `Einheit_InventarMutationAbgabe` | `game/logic/kategorie_einheit/einheit_inventar_mutation_abgabe.gd` | 26 |
@@ -529,7 +529,7 @@ Prefix `Einheit_`, 31 Klassen.
 | `Einheit_JobRegie` | `game/logic/kategorie_einheit/einheit_job_regie.gd` | 98 |
 | `Einheit_JobVergabeMaschine` | `game/logic/kategorie_einheit/einheit_job_vergabe_maschine.gd` | 51 |
 | `Einheit_LeseSchnittstelle` | `game/logic/kategorie_einheit/einheit_lese_schnittstelle.gd` | 82 |
-| `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` | 148 |
+| `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` | 149 |
 | `Einheit_MutationErnte` | `game/logic/kategorie_einheit/einheit_mutation_ernte.gd` | 42 |
 | `Einheit_MutationStartBestaende` | `game/logic/kategorie_einheit/einheit_mutation_ressourcen.gd` | 22 |
 | `Einheit_Ressourcen` | `game/logic/kategorie_einheit/einheit_ressourcen.gd` | 264 |
@@ -538,7 +538,7 @@ Prefix `Einheit_`, 31 Klassen.
 | `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` | 119 |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` | 40 |
 | `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` | 104 |
-| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 292 |
+| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 306 |
 | `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` | 100 |
 | `Einheit_Versorgung` | `game/logic/kategorie_einheit/einheit_versorgung.gd` | 48 |
 | `Einheit_VersorgungsMaschine` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd` | 61 |
@@ -659,14 +659,14 @@ Prefix `Pop_`, 30 Klassen.
 | `Pop_MoodAbleitung` | `population/logic/mood/pop_mood_ableitung.gd` | 60 |
 | `Pop_MoodEskalation` | `population/logic/mood/pop_mood_eskalation.gd` | 68 |
 | `Pop_MoodEskalationStufe` | `population/logic/mood/pop_mood_eskalation_stufe.gd` | 25 |
-| `Pop_MoodMaschine` | `population/logic/mood/pop_mood_maschine.gd` | 113 |
+| `Pop_MoodMaschine` | `population/logic/mood/pop_mood_maschine.gd` | 116 |
 | `Pop_MoodModifikator` | `population/logic/mood/pop_mood_modifikator.gd` | 56 |
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` | 57 |
 | `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` | 37 |
 | `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` | 85 |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` | 128 |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` | 30 |
-| `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` | 68 |
+| `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` | 73 |
 | `Pop_NeedNahrung` | `population/logic/needs/pop_need_nahrung.gd` | 33 |
 | `Pop_NeedRegistry` | `population/logic/needs/pop_need_registry.gd` | 79 |
 | `Pop_NeedWaerme` | `population/logic/needs/pop_need_waerme.gd` | 6 |
@@ -681,7 +681,7 @@ Prefix `Pop_`, 30 Klassen.
 | `Soz_Geruecht` | `population/logic/sozial/logic/soz_geruecht.gd` | 38 |
 | `Soz_GeruechtMaschine` | `population/logic/sozial/logic/soz_geruecht_maschine.gd` | 78 |
 | `Soz_ImageGlaube` | `population/logic/sozial/logic/soz_image_glaube.gd` | 16 |
-| `Soz_Manager` | `population/logic/sozial/logic/soz_manager.gd` | 105 |
+| `Soz_Manager` | `population/logic/sozial/logic/soz_manager.gd` | 121 |
 | `Soz_TraitLedger` | `population/logic/sozial/logic/soz_trait_ledger.gd` | 37 |
 | `Soz_ZeugenMaschine` | `population/logic/sozial/logic/soz_zeugen_maschine.gd` | 57 |
 

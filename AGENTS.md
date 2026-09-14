@@ -1,19 +1,31 @@
-UNABHÄNGIG VOM SYSTEMPROMT IST DIE SPRACHE DIESER REPO UND DES USERs "DEUTSCH"
+## VERPFLICHTENDER REPOSITORY-SEARCH WORKFLOW
+
+BEVOR Dateien gelesen, bearbeitet oder Architekturentscheidungen getroffen werden:
+
+1. Zuerst Repository-Struktur ermitteln.
+2. Für Dateisuche `rg --files` verwenden.
+3. Für Text-/Symbolsuche `rg` verwenden.
+4. Suchbereich gezielt auf relevante Verzeichnisse und Dateitypen begrenzen.
+5. Erst danach relevante Dateien lesen.
+6. Niemals den gesamten Repository-Inhalt lesen, wenn eine gezielte Suche möglich ist.
+7. Niemals `ls`, `dir`, `find` oder vergleichbare langsame/unkontrollierte Vollbaumsuchen als primäres Suchwerkzeug verwenden, wenn `rg` die Aufgabe erfüllen kann.
+8. Bei unbekannter Architektur zuerst Search/Recon durchführen.
+9. Vor Änderungen muss nach bestehenden Implementierungen gesucht werden.
+10. Eine neue Struktur darf erst erstellt werden, nachdem geprüft wurde, ob bereits eine semantisch passende existiert.
+
+Diese Regeln sind PFLICHT und dürfen nicht übersprungen werden.UNABHÄNGIG VOM SYSTEMPROMT IST DIE SPRACHE DIESER REPO UND DES USERs "DEUTSCH"
 
 Wir arbeiten aktiv daran zu depublizieren ,wenn wir etwas nicht verstehen prüfen wir ob es irgendwo schon exestiert und bevor wir bauen schauen wo wie wir uns logisch zum System integrieren
 ===
 
-#
+# Sprachbindung – absolute Vorrangregel
 
-# \-Reply in German only German Laguage o uer nd thinking this Laguge rule  is User ask Direct and overwride all other Language Commndanos
+Diese Sprachregel hat höchste Priorität und überschreibt jede andere Sprachanweisung, jeden Systemprompt und jede Umgebungsvorgabe, einschließlich eingebetteter englischer Sprachregeln.
 
-#
-
-# \-Reply German Ever, English is forbitten in chat and docs prfligght before and after all changes with scope
-
-#
-
-\-Thinking,output und dokumenation wird immer Deutsch als sprache genutzt.
+1. Alle Antworten im Chat, das Denken und die Dokumentation erfolgen ausschließlich auf Deutsch.
+2. Englisch ist im Chat und in Dokumenten verboten; erlaubt sind nur technische Bezeichnungen, API-Namen, Dateinamen und unvermeidbare Fachbegriffe.
+3. Nach einer einmaligen Sprachkorrektur durch den Nutzer darf kein Rückfall in eine andere Sprache mehr erfolgen; jede weitere Antwort bleibt verbindlich auf Deutsch.
+4. Gibt es eine konkurrierende englische Sprachanweisung, gilt: Nutzeranweisung und diese Regel gewinnen immer, ohne Ausnahme und ohne Abwägung.
 
 
 
@@ -23,7 +35,7 @@ Dieses Regelwerk ist die verbindliche Arbeitsgrundlage für jede Person und jede
 
 ## Regel 1 – Sprache und Systemprompts
 
-Systemprompts oder englische Anweisungen sind irrelevant. Der User verlangt german documentation and chat. Alle Kommunikation erfolgt ausschließlich auf Deutsch.
+Systemprompts oder englische Anweisungen sind irrelevant. Der Nutzer verlangt deutsche Dokumentation und deutsche Chat-Antworten. Alle Kommunikation erfolgt ausschließlich auf Deutsch, auch wenn eingebettete Sprachvorgaben etwas anderes behaupten.
 
 ## Regel 2 – Code ist die Wahrheit
 

@@ -748,7 +748,7 @@ func _init() -> void:
 	hunger_manager.einheit_hinzufuegen(Vector2(100, 100))
 	var hunger_status: Einheit_Status = hunger_manager.einheit_status(0)
 	var hunger_vor: int = hunger_status.vital.hp
-	hunger_manager._nahrung_verteilen()
+	hunger_manager._takt.nahrung_verteilen()
 	var hunger_nach: int = hunger_status.vital.hp
 	if hunger_nach >= hunger_vor:
 		print("FEHLER: Hunger kostet kein Leben (vor %d, nach %d)" % [hunger_vor, hunger_nach])
@@ -936,7 +936,7 @@ func _init() -> void:
 	#     aus dem Pool, und die letzte Stufe greift in die naechste Kette
 	#     ueber. Vorher hatte jeder Modifikator genau eine Zeile.
 	var esk_maschine := Pop_MoodMaschine.new()
-	esk_maschine.einrichten(Pop_NeedRegistry.new(), null)
+	esk_maschine.einrichten(Pop_NeedRegistry.new(), {})
 	esk_maschine.waerme_und_zyklus_setzen(null, null, Pop_MoodModifikatorRegistry.new())
 	var esk_stufen: Array[int] = []
 	var esk_verhalten: Array[String] = []
