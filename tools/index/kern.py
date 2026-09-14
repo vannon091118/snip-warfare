@@ -81,7 +81,11 @@ def versionszeile():
 
 
 def _ignoriert(pfad):
-    return bool(IGNORIERTE_TEILE.intersection(pfad.parts))
+    try:
+        relativ = pfad.relative_to(PROJEKT_STAMM)
+    except ValueError:
+        return bool(IGNORIERTE_TEILE.intersection(pfad.parts))
+    return bool(IGNORIERTE_TEILE.intersection(relativ.parts))
 
 
 def gd_dateien():

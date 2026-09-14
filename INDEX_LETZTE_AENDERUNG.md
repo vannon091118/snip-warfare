@@ -14,10 +14,10 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 308 |
-| dateien | 342 |
-| signale | 65 |
-| array_typen | 33 |
+| klassen | 321 |
+| dateien | 355 |
+| signale | 68 |
+| array_typen | 34 |
 | pools | 31 |
 
 | Domaene | Klassen | Dateien | Fingerabdruck |
@@ -28,15 +28,15 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | game/job | 18 | 18 | 3f316a555feb |
 | game/ressourcen | 7 | 7 | 2b115f627e10 |
 | population | 30 | 31 | a890f98ef2ab |
-| rest | 33 | 38 | 6e21ba7cec30 |
+| rest | 34 | 39 | 2acb45a9bf77 |
 | shinon | 0 | 0 | da39a3ee5e6b |
 | tools | 4 | 20 | 19f1df624f1a |
-| ui | 24 | 36 | e85ef8c78a50 |
+| ui | 26 | 38 | 2d8d3fb005aa |
 | world/generator | 12 | 12 | 190186145ff4 |
-| world/objekt | 39 | 39 | 17592ef55a6a |
+| world/objekt | 44 | 44 | 850d6524e744 |
 | world/orchestrator | 11 | 11 | 683626f6950f |
 | world/tier | 21 | 21 | cfebd1d0bcd0 |
-| world/welt | 49 | 49 | ae3dc3b877b0 |
+| world/welt | 54 | 54 | 299918dbcfbe |
 
 <!-- STAND:ENDE -->
 

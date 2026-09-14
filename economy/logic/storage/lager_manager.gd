@@ -117,11 +117,15 @@ func entnehmen(ressource: String, menge: int, lager_index: int) -> bool:
 	lager_geaendert_emit(lager_index, ressource, -menge)
 	return true
 
-func lager_geaendert_emit(lager_index: int, _ressource: String, _menge_delta: int) -> void:
+func lager_geaendert_emit(lager_index: int, ress_str: String, menge_delta: int) -> void:
 	var lager_id := "lager_%d" % lager_index
 	var bus := Kern_SignalBus.bus()
 	if bus != null and bus.has_signal("lager_geaendert"):
 		bus._emit_lager_geaendert(lager_id)
+	# Onboarding-Puls: Jede Einlagerung ist ein echtes Welt-Ereignis und löst
+	# den Schritt "erstes Holz sammeln" aus. Nur positive Mengen melden.
+	if menge_delta > 0 and ress_str != "" and bus != null and bus.has_signal("ressource_eingelagert"):
+		bus._emit_ressource_eingelagert(ress_str, menge_delta, lager_position(lager_index))
 
 func _ready() -> void:
 	_zufall.start_zustand_setzen(42)

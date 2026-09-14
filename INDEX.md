@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 308 Klassen mit `class_name` im Projekt, davon 275 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 33 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 321 Klassen mit `class_name` im Projekt, davon 287 in den 14 Domaenen-Ordnern und 34 ohne Domaenen-Ordner, 68 Signale, 34 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -121,7 +121,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (49)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (54)
 
 | Klasse | Datei |
 | --- | --- |
@@ -147,6 +147,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_KartenBeobachter` | `world/logic/kategorie_welt/welt_karten_beobachter.gd` |
 | `Welt_Ladevorgang` | `world/logic/kategorie_welt/welt_ladevorgang.gd` |
 | `Welt_LagerFabrik` | `world/logic/kategorie_welt/welt_lager_fabrik.gd` |
+| `Welt_LagerzoneRegister` | `world/logic/kategorie_welt/welt_lagerzone_register.gd` |
 | `Welt_LandeplatzAnzeige` | `world/logic/kategorie_welt/welt_landeplatz_anzeige.gd` |
 | `Welt_MakroGenerator` | `world/logic/kategorie_welt/welt_makro_generator.gd` |
 | `Welt_MapFabrik` | `world/logic/kategorie_welt/welt_map_fabrik.gd` |
@@ -156,7 +157,11 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_ObjektGitter` | `world/logic/kategorie_welt/welt_objekt_gitter.gd` |
 | `Welt_ObjektKnoten` | `world/logic/kategorie_welt/welt_objekt_knoten.gd` |
 | `Welt_PauseMenue` | `world/logic/kategorie_welt/welt_pause_menue.gd` |
+| `Welt_Raum` | `world/logic/kategorie_welt/welt_raum.gd` |
 | `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` |
+| `Welt_RaumErkenner` | `world/logic/kategorie_welt/welt_raum_erkenner.gd` |
+| `Welt_RaumRegister` | `world/logic/kategorie_welt/welt_raum_register.gd` |
+| `Welt_RaumUndLagerTick` | `world/logic/kategorie_welt/welt_raum_und_lager_tick.gd` |
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` |
 | `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` |
@@ -175,7 +180,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` |
 | `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` |
 
-### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (39)
+### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (44)
 
 | Klasse | Datei |
 | --- | --- |
@@ -197,6 +202,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Baumstumpf` | `world/logic/kategorie_objekt/objekt_baumstumpf.gd` |
 | `Objekt_Berg` | `world/logic/kategorie_objekt/objekt_berg.gd` |
 | `Objekt_Bett` | `world/logic/kategorie_objekt/objekt_bett.gd` |
+| `Objekt_BodenObj` | `world/logic/kategorie_objekt/objekt_boden_obj.gd` |
 | `Objekt_Erzader` | `world/logic/kategorie_objekt/objekt_erzader.gd` |
 | `Objekt_Felswand` | `world/logic/kategorie_objekt/objekt_felswand.gd` |
 | `Objekt_Haus` | `world/logic/kategorie_objekt/objekt_haus.gd` |
@@ -208,6 +214,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Lagerfeuer` | `world/logic/kategorie_objekt/objekt_lagerfeuer.gd` |
 | `Objekt_MoebelPlatzierer` | `world/logic/kategorie_objekt/objekt_moebel_platzierer.gd` |
 | `Objekt_MoebelRegistry` | `world/logic/kategorie_objekt/moebel_registry.gd` |
+| `Objekt_Rathaus` | `world/logic/kategorie_objekt/objekt_rathaus.gd` |
 | `Objekt_Registry` | `world/logic/kategorie_objekt/objekt_registry.gd` |
 | `Objekt_RegistryBasis` | `world/logic/kategorie_objekt/objekt_registry_basis.gd` |
 | `Objekt_Ruine` | `world/logic/kategorie_objekt/objekt_ruine.gd` |
@@ -218,6 +225,9 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Objekt_Stuhl` | `world/logic/kategorie_objekt/objekt_stuhl.gd` |
 | `Objekt_Tisch` | `world/logic/kategorie_objekt/objekt_tisch.gd` |
 | `Objekt_TischStahl` | `world/logic/kategorie_objekt/objekt_tisch_stahl.gd` |
+| `Objekt_Tuer` | `world/logic/kategorie_objekt/objekt_tuer.gd` |
+| `Objekt_WandHolz` | `world/logic/kategorie_objekt/objekt_wand_holz.gd` |
+| `Objekt_WandStein` | `world/logic/kategorie_objekt/objekt_wand_stein.gd` |
 
 ### world/tier — Prefix `Tier_` — `world/logic/kategorie_tier/` (21)
 
@@ -379,7 +389,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Lager_Registry` | `economy/logic/storage/lager_registry.gd` |
 | `Lager_StapelBauer` | `economy/logic/storage/lager_stapel_bauer.gd` |
 
-### ui — Prefix `Ui_` — `ui/` (24)
+### ui — Prefix `Ui_` — `ui/` (26)
 
 | Klasse | Datei |
 | --- | --- |
@@ -392,10 +402,12 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Ui_BauAuftragMaschine` | `ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd` |
 | `Ui_BauPanel` | `ui/logic/kategorie_ui/ui_bau_panel.gd` |
 | `Ui_BauPanelSzene` | `ui/scenes/panels/bau_panel.gd` |
+| `Ui_BaufensterFilter` | `ui/logic/kategorie_ui/ui_baufenster_filter.gd` |
 | `Ui_DebugPanelSzene` | `ui/scenes/hud/hud_debug_panel.gd` |
 | `Ui_EingabeSteuerung` | `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd` |
 | `Ui_EinheitPanel` | `ui/logic/kategorie_ui/ui_einheit_panel.gd` |
 | `Ui_ExpansionMaschine` | `ui/logic/kategorie_ui/ui_expansion_maschine.gd` |
+| `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` |
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` |
 | `Ui_KartenViewer` | `ui/logic/kategorie_ui/ui_karten_viewer.gd` |
@@ -421,7 +433,7 @@ _keine `class_name`-Klassen_
 | `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` |
 | `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` |
 
-### rest — Prefix `-` — `(kein Domaenen-Ordner)` (33)
+### rest — Prefix `-` — `(kein Domaenen-Ordner)` (34)
 
 | Klasse | Datei |
 | --- | --- |
@@ -434,6 +446,7 @@ _keine `class_name`-Klassen_
 | `Welt_ComicOverlayer` | `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` |
 | `Welt_FeedbackManager` | `world/logic/kategorie_feedback/feedback_manager.gd` |
 | `Welt_FeedbackTexturCache` | `world/logic/kategorie_feedback/feedback_textur_cache.gd` |
+| `Welt_FortschrittHelfer` | `world/logic/kategorie_progression/welt_fortschritt_helfer.gd` |
 | `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` |
 | `Welt_PapierKornEbene` | `world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd` |

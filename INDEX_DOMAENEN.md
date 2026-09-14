@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 308 Klassen, 342 Dateien, 65 Signale, 33 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 321 Klassen, 355 Dateien, 68 Signale, 34 Array-Elementtypen; 34 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -10,8 +10,8 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 308 Klassen, 342 Dateien, 65 Sign
 | --- | --- | --- | --- | --- | --- |
 | `core` | `kern` | `Kern_` | `core/` | 22 | 22 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
-| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 49 | 49 |
-| `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 39 | 39 |
+| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 54 | 54 |
+| `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 44 | 44 |
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 21 | 21 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 11 | 11 |
 | `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 31 | 31 |
@@ -19,10 +19,10 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 308 Klassen, 342 Dateien, 65 Sign
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
 | `population` | `pop` | `Pop_` | `population/` | 30 | 31 |
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
-| `ui` | `ui` | `Ui_` | `ui/` | 24 | 36 |
+| `ui` | `ui` | `Ui_` | `ui/` | 26 | 38 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
 | `tools` | `tools` | `-` | `tools/` | 4 | 20 |
-| `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
+| `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 34 | 39 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
 
@@ -56,8 +56,11 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 308 Klassen, 342 Dateien, 65 Sign
 | `Kern_SignalBus.kannibalismus_erreignis` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_SignalBus.konflikt_erklaert` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_SignalBus.lager_geaendert` | DS | - | - | - | - | - | - | - | - | - | V | - | - | - | - |
+| `Kern_SignalBus.lagerzone_registriert` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_SignalBus.menue_geoeffnet` | DSV | - | - | V | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_SignalBus.produktionsraum_entstanden` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
+| `Kern_SignalBus.raum_entstanden` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
+| `Kern_SignalBus.ressource_eingelagert` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_SignalBus.schaden_erhalten` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_SignalBus.timeline_eintrag` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_Timeline.eintrag_neu` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
@@ -73,7 +76,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 308 Klassen, 342 Dateien, 65 Sign
 | `Pop_MoodMaschine.mood_geaendert` | - | - | - | - | - | - | - | - | - | DSV | - | - | - | - | - |
 | `verteilung_dialog.verteilung_gesetzt` | - | - | - | - | - | - | - | - | - | DS | - | V | - | - | - |
 | `Welt_FortschrittsMaschine.orchestrator_gespawnt` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DS |
-| `Welt_FortschrittsMaschine.stufe_erreicht` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
+| `Welt_FortschrittsMaschine.stufe_erreicht` | - | - | - | - | - | - | - | - | - | - | - | V | - | - | DSV |
 | `Welt_FortschrittsMaschine.ziel_erreicht` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
 | `Welt_ProgressionsMaschine.folge_objekt_entstanden` | - | - | - | - | - | - | - | - | - | - | - | - | - | V | DS |
 | `Welt_ProgressionsMaschine.objekt_erschoepft` | - | - | - | - | - | - | - | - | - | - | - | - | - | - | DSV |
@@ -94,7 +97,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 308 Klassen, 342 Dateien, 65 Sign
 | `Welt_KarawanenManager.karawane_gestartet` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Welt_PauseMenue.menue_gewuenscht` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | V |
 
-_Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt: 12._
+_Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt: 14._
 * `_progressions_maschine` wird in welt gerufen, aber im Projekt nicht deklariert.
 * `about_to_popup` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `close_requested` wird in pop gerufen, aber im Projekt nicht deklariert.
@@ -103,8 +106,10 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 * `gui_input` wird in rest gerufen, aber im Projekt nicht deklariert.
 * `id_pressed` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `item_activated` wird in ui gerufen, aber im Projekt nicht deklariert.
+* `item_selected` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `pressed` wird in pop, rest, ui, welt gerufen, aber im Projekt nicht deklariert.
 * `process_frame` wird in tools gerufen, aber im Projekt nicht deklariert.
+* `text_changed` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `timeout` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `value_changed` wird in pop gerufen, aber im Projekt nicht deklariert.
 
@@ -112,10 +117,10 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 59 | 5 | 4 | 12 | 14 | - | - | 3 | 4 | - | 4 | 1 | 7 | - | 2 | 3 |
-| `Dictionary` | 39 | 3 | 1 | 7 | 1 | 4 | 3 | 9 | - | - | 1 | 1 | 5 | - | - | 4 |
-| `int` | 16 | - | - | 5 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
-| `Vector2i` | 9 | 1 | 4 | 3 | - | - | - | - | - | - | - | - | - | - | 1 | - |
+| `String` | 62 | 5 | 4 | 12 | 14 | - | - | 3 | 4 | - | 4 | 1 | 10 | - | 2 | 3 |
+| `Dictionary` | 45 | 3 | 1 | 9 | 1 | 4 | 3 | 9 | - | - | 1 | 1 | 8 | - | - | 5 |
+| `int` | 15 | - | - | 4 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
+| `Vector2i` | 10 | 1 | 4 | 4 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `float` | 7 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | 2 | - |
 | `Vector2` | 6 | 1 | - | 1 | - | - | - | 3 | - | - | - | - | - | - | - | 1 |
 | `Objekt_Basis` | 5 | - | - | 1 | 4 | - | - | - | - | - | - | - | - | - | - | - |
@@ -125,6 +130,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | `Ressource_Basis` | 2 | - | - | - | - | - | - | 2 | - | - | - | - | - | - | - | - |
 | `Sprite2D` | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | 1 |
 | `Welt_Fraktion` | 2 | - | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - |
+| `Welt_Raum` | 2 | - | - | 2 | - | - | - | - | - | - | - | - | - | - | - | - |
 | `AnimatedSprite2D` | 1 | - | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - |
 | `Array` | 1 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | - |
 | `Gebaeude_Definition` | 1 | - | - | - | 1 | - | - | - | - | - | - | - | - | - | - | - |
@@ -167,7 +173,7 @@ Prefix `Kern_`, 22 Klassen.
 | `Kern_PathKnoten` | `core/logic/kategorie_pathfinding/path_knoten.gd` | 22 |
 | `Kern_PathNetz` | `core/logic/kategorie_pathfinding/path_netz.gd` | 67 |
 | `Kern_PathRegistry` | `core/logic/kategorie_pathfinding/path_registry.gd` | 63 |
-| `Kern_SignalBus` | `core/logic/events/kern_signal_bus.gd` | 103 |
+| `Kern_SignalBus` | `core/logic/events/kern_signal_bus.gd` | 126 |
 | `Kern_SteuerungBasis` | `core/logic/kern_steuerung_basis.gd` | 74 |
 | `Kern_SteuerungRegistry` | `core/logic/kern_steuerung_registry.gd` | 53 |
 | `Kern_TaktGlaetter` | `core/logic/clock/kern_takt_glaetter.gd` | 68 |
@@ -191,8 +197,11 @@ Prefix `Kern_`, 22 Klassen.
 | `Kern_SignalBus.kannibalismus_erreignis` | DS | kern |
 | `Kern_SignalBus.konflikt_erklaert` | DS | kern |
 | `Kern_SignalBus.lager_geaendert` | DS | kern, lager |
+| `Kern_SignalBus.lagerzone_registriert` | DS | kern, rest |
 | `Kern_SignalBus.menue_geoeffnet` | DSV | kern, obj |
 | `Kern_SignalBus.produktionsraum_entstanden` | DS | kern, rest |
+| `Kern_SignalBus.raum_entstanden` | DS | kern, rest |
+| `Kern_SignalBus.ressource_eingelagert` | DS | kern, rest |
 | `Kern_SignalBus.schaden_erhalten` | DS | kern, rest |
 | `Kern_SignalBus.timeline_eintrag` | DS | kern, rest |
 | `Kern_Timeline.eintrag_neu` | DS | kern, rest |
@@ -246,7 +255,7 @@ _keine Signal-Deklaration in dieser Domaene_
 
 ### world/welt — Kuerzel `welt` — `world/logic/kategorie_welt/`
 
-Prefix `Welt_`, 49 Klassen.
+Prefix `Welt_`, 54 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -272,6 +281,7 @@ Prefix `Welt_`, 49 Klassen.
 | `Welt_KartenBeobachter` | `world/logic/kategorie_welt/welt_karten_beobachter.gd` | 24 |
 | `Welt_Ladevorgang` | `world/logic/kategorie_welt/welt_ladevorgang.gd` | 118 |
 | `Welt_LagerFabrik` | `world/logic/kategorie_welt/welt_lager_fabrik.gd` | 27 |
+| `Welt_LagerzoneRegister` | `world/logic/kategorie_welt/welt_lagerzone_register.gd` | 109 |
 | `Welt_LandeplatzAnzeige` | `world/logic/kategorie_welt/welt_landeplatz_anzeige.gd` | 93 |
 | `Welt_MakroGenerator` | `world/logic/kategorie_welt/welt_makro_generator.gd` | 81 |
 | `Welt_MapFabrik` | `world/logic/kategorie_welt/welt_map_fabrik.gd` | 102 |
@@ -281,7 +291,11 @@ Prefix `Welt_`, 49 Klassen.
 | `Welt_ObjektGitter` | `world/logic/kategorie_welt/welt_objekt_gitter.gd` | 68 |
 | `Welt_ObjektKnoten` | `world/logic/kategorie_welt/welt_objekt_knoten.gd` | 95 |
 | `Welt_PauseMenue` | `world/logic/kategorie_welt/welt_pause_menue.gd` | 130 |
-| `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` | 119 |
+| `Welt_Raum` | `world/logic/kategorie_welt/welt_raum.gd` | 47 |
+| `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` | 56 |
+| `Welt_RaumErkenner` | `world/logic/kategorie_welt/welt_raum_erkenner.gd` | 217 |
+| `Welt_RaumRegister` | `world/logic/kategorie_welt/welt_raum_register.gd` | 69 |
+| `Welt_RaumUndLagerTick` | `world/logic/kategorie_welt/welt_raum_und_lager_tick.gd` | 49 |
 | `Welt_Registry` | `world/logic/kategorie_welt/welt_registry.gd` | 96 |
 | `Welt_RegistryBasis` | `world/logic/kategorie_welt/welt_registry_basis.gd` | 73 |
 | `Welt_RegistryKlassenZuordnung` | `world/logic/kategorie_welt/welt_registry_klassen_zuordnung.gd` | 36 |
@@ -293,7 +307,7 @@ Prefix `Welt_`, 49 Klassen.
 | `Welt_StadiumGeste` | `world/logic/kategorie_welt/welt_stadium_geste.gd` | 25 |
 | `Welt_TerrainBlatt` | `world/logic/kategorie_welt/welt_terrain_blatt.gd` | 39 |
 | `Welt_TierPlatzierer` | `world/logic/kategorie_welt/welt_tier_platzierer.gd` | 20 |
-| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 118 |
+| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 141 |
 | `Welt_UmsturzGeste` | `world/logic/kategorie_welt/welt_umsturz_geste.gd` | 39 |
 | `Welt_WaermeSammler` | `world/logic/kategorie_welt/welt_waerme_sammler.gd` | 32 |
 | `Welt_WasserAutomat` | `world/logic/kategorie_welt/welt_wasser_automat.gd` | 206 |
@@ -321,10 +335,11 @@ Prefix `Welt_`, 49 Klassen.
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
 | `String` | 12 |
-| `Dictionary` | 7 |
-| `int` | 5 |
-| `Vector2i` | 3 |
+| `Dictionary` | 9 |
+| `Vector2i` | 4 |
+| `int` | 4 |
 | `Welt_Karawane` | 3 |
+| `Welt_Raum` | 2 |
 | `float` | 2 |
 | `Objekt_Basis` | 1 |
 | `RefCounted` | 1 |
@@ -334,14 +349,14 @@ Prefix `Welt_`, 49 Klassen.
 
 ### world/objekt — Kuerzel `obj` — `world/logic/kategorie_objekt/`
 
-Prefix `Objekt_/Gebaeude_`, 39 Klassen.
+Prefix `Objekt_/Gebaeude_`, 44 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
 | `Gebaeude_BauAuftrag` | `world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd` | 146 |
 | `Gebaeude_BauMaschine` | `world/logic/kategorie_objekt/gebaeude_bau_maschine.gd` | 102 |
 | `Gebaeude_BauplatzPruefer` | `world/logic/kategorie_objekt/gebaeude_bauplatz_pruefer.gd` | 73 |
-| `Gebaeude_Definition` | `world/logic/kategorie_objekt/gebaeude_definition.gd` | 90 |
+| `Gebaeude_Definition` | `world/logic/kategorie_objekt/gebaeude_definition.gd` | 101 |
 | `Gebaeude_DefinitionRegistry` | `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` | 55 |
 | `Gebaeude_KartenGate` | `world/logic/kategorie_objekt/gebaeude_karten_gate.gd` | 17 |
 | `Gebaeude_Laufzeit` | `world/logic/kategorie_objekt/gebaeude_laufzeit.gd` | 170 |
@@ -356,6 +371,7 @@ Prefix `Objekt_/Gebaeude_`, 39 Klassen.
 | `Objekt_Baumstumpf` | `world/logic/kategorie_objekt/objekt_baumstumpf.gd` | 28 |
 | `Objekt_Berg` | `world/logic/kategorie_objekt/objekt_berg.gd` | 30 |
 | `Objekt_Bett` | `world/logic/kategorie_objekt/objekt_bett.gd` | 10 |
+| `Objekt_BodenObj` | `world/logic/kategorie_objekt/objekt_boden_obj.gd` | 7 |
 | `Objekt_Erzader` | `world/logic/kategorie_objekt/objekt_erzader.gd` | 30 |
 | `Objekt_Felswand` | `world/logic/kategorie_objekt/objekt_felswand.gd` | 30 |
 | `Objekt_Haus` | `world/logic/kategorie_objekt/objekt_haus.gd` | 28 |
@@ -367,6 +383,7 @@ Prefix `Objekt_/Gebaeude_`, 39 Klassen.
 | `Objekt_Lagerfeuer` | `world/logic/kategorie_objekt/objekt_lagerfeuer.gd` | 20 |
 | `Objekt_MoebelPlatzierer` | `world/logic/kategorie_objekt/objekt_moebel_platzierer.gd` | 70 |
 | `Objekt_MoebelRegistry` | `world/logic/kategorie_objekt/moebel_registry.gd` | 71 |
+| `Objekt_Rathaus` | `world/logic/kategorie_objekt/objekt_rathaus.gd` | 7 |
 | `Objekt_Registry` | `world/logic/kategorie_objekt/objekt_registry.gd` | 31 |
 | `Objekt_RegistryBasis` | `world/logic/kategorie_objekt/objekt_registry_basis.gd` | 69 |
 | `Objekt_Ruine` | `world/logic/kategorie_objekt/objekt_ruine.gd` | 30 |
@@ -377,6 +394,9 @@ Prefix `Objekt_/Gebaeude_`, 39 Klassen.
 | `Objekt_Stuhl` | `world/logic/kategorie_objekt/objekt_stuhl.gd` | 10 |
 | `Objekt_Tisch` | `world/logic/kategorie_objekt/objekt_tisch.gd` | 10 |
 | `Objekt_TischStahl` | `world/logic/kategorie_objekt/objekt_tisch_stahl.gd` | 10 |
+| `Objekt_Tuer` | `world/logic/kategorie_objekt/objekt_tuer.gd` | 7 |
+| `Objekt_WandHolz` | `world/logic/kategorie_objekt/objekt_wand_holz.gd` | 7 |
+| `Objekt_WandStein` | `world/logic/kategorie_objekt/objekt_wand_stein.gd` | 7 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -690,7 +710,7 @@ Prefix `Lager_`, 7 Klassen.
 | --- | --- | --- |
 | `Lager_Basis` | `economy/logic/storage/lager_basis.gd` | 22 |
 | `Lager_Darsteller` | `economy/logic/storage/lager_darsteller.gd` | 60 |
-| `Lager_Manager` | `economy/logic/storage/lager_manager.gd` | 136 |
+| `Lager_Manager` | `economy/logic/storage/lager_manager.gd` | 140 |
 | `Lager_MutationEinlagern` | `economy/logic/storage/lager_mutation.gd` | 34 |
 | `Lager_MutationEntnehmen` | `economy/logic/storage/lager_entnahme.gd` | 32 |
 | `Lager_Registry` | `economy/logic/storage/lager_registry.gd` | 51 |
@@ -715,7 +735,7 @@ Prefix `Lager_`, 7 Klassen.
 
 ### ui — Kuerzel `ui` — `ui/`
 
-Prefix `Ui_`, 24 Klassen.
+Prefix `Ui_`, 26 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -725,13 +745,15 @@ Prefix `Ui_`, 24 Klassen.
 | `Menue_Unterschrift` | `ui/logic/kategorie_ui/menue_unterschrift.gd` | 34 |
 | `Ui_AuswahlManager` | `ui/scenes/selection/auswahl_manager.gd` | 50 |
 | `Ui_AuswahlMarkierung` | `ui/logic/kategorie_ui/ui_auswahl_markierung.gd` | 60 |
-| `Ui_BauAuftragMaschine` | `ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd` | 65 |
-| `Ui_BauPanel` | `ui/logic/kategorie_ui/ui_bau_panel.gd` | 37 |
-| `Ui_BauPanelSzene` | `ui/scenes/panels/bau_panel.gd` | 59 |
+| `Ui_BauAuftragMaschine` | `ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd` | 105 |
+| `Ui_BauPanel` | `ui/logic/kategorie_ui/ui_bau_panel.gd` | 88 |
+| `Ui_BauPanelSzene` | `ui/scenes/panels/bau_panel.gd` | 132 |
+| `Ui_BaufensterFilter` | `ui/logic/kategorie_ui/ui_baufenster_filter.gd` | 36 |
 | `Ui_DebugPanelSzene` | `ui/scenes/hud/hud_debug_panel.gd` | 46 |
-| `Ui_EingabeSteuerung` | `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd` | 369 |
+| `Ui_EingabeSteuerung` | `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd` | 398 |
 | `Ui_EinheitPanel` | `ui/logic/kategorie_ui/ui_einheit_panel.gd` | 39 |
 | `Ui_ExpansionMaschine` | `ui/logic/kategorie_ui/ui_expansion_maschine.gd` | 38 |
+| `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` | 116 |
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` | 105 |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` | 54 |
 | `Ui_KartenViewer` | `ui/logic/kategorie_ui/ui_karten_viewer.gd` | 139 |
@@ -756,6 +778,7 @@ Prefix `Ui_`, 24 Klassen.
 | `Ui_EingabeSteuerung.debug_umgeschaltet` | DS | rest, ui |
 | `Ui_OrchestratorPriorityPanel.panel_geschlossen` | DS | ui |
 | `Ui_WeltAuswahlDialog.welt_gewaehlt` | DSV | ui |
+| `Welt_FortschrittsMaschine.stufe_erreicht` | V | rest, ui |
 | `kontext_menue.aktion_gewaehlt` | DS | rest, ui |
 | `verteilung_dialog.verteilung_gesetzt` | V | pop, ui |
 
@@ -763,8 +786,8 @@ Prefix `Ui_`, 24 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 7 |
-| `Dictionary` | 5 |
+| `String` | 10 |
+| `Dictionary` | 8 |
 | `int` | 3 |
 | `AnimatedSprite2D` | 1 |
 
@@ -818,7 +841,7 @@ Prefix `-`, 4 Klassen.
 
 ### rest — Kuerzel `rest` — `(kein Domaenen-Ordner)`
 
-Prefix `-`, 33 Klassen.
+Prefix `-`, 34 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -831,6 +854,7 @@ Prefix `-`, 33 Klassen.
 | `Welt_ComicOverlayer` | `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` | 120 |
 | `Welt_FeedbackManager` | `world/logic/kategorie_feedback/feedback_manager.gd` | 64 |
 | `Welt_FeedbackTexturCache` | `world/logic/kategorie_feedback/feedback_textur_cache.gd` | 28 |
+| `Welt_FortschrittHelfer` | `world/logic/kategorie_progression/welt_fortschritt_helfer.gd` | 100 |
 | `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 113 |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` | 49 |
 | `Welt_PapierKornEbene` | `world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd` | 88 |
@@ -866,7 +890,10 @@ Prefix `-`, 33 Klassen.
 | `Gebaeude_Manager.gebaeude_platziert` | V | obj, rest |
 | `Gebaeude_Manager.status_geaendert` | V | obj, rest |
 | `Kern_SignalBus.gestorben` | V | ein, kern, pop, rest |
+| `Kern_SignalBus.lagerzone_registriert` | V | kern, rest |
 | `Kern_SignalBus.produktionsraum_entstanden` | V | kern, rest |
+| `Kern_SignalBus.raum_entstanden` | V | kern, rest |
+| `Kern_SignalBus.ressource_eingelagert` | V | kern, rest |
 | `Kern_SignalBus.schaden_erhalten` | V | kern, rest |
 | `Kern_SignalBus.timeline_eintrag` | V | kern, rest |
 | `Kern_Timeline.eintrag_neu` | V | kern, rest |
@@ -876,7 +903,7 @@ Prefix `-`, 33 Klassen.
 | `Welt_AsyncChunkLader.chunk_gefuellt` | V | rest, tools, welt |
 | `Welt_AsyncChunkLader.fertig` | V | rest, welt |
 | `Welt_FortschrittsMaschine.orchestrator_gespawnt` | DS | rest |
-| `Welt_FortschrittsMaschine.stufe_erreicht` | DSV | rest |
+| `Welt_FortschrittsMaschine.stufe_erreicht` | DSV | rest, ui |
 | `Welt_FortschrittsMaschine.ziel_erreicht` | DSV | rest |
 | `Welt_PauseMenue.menue_gewuenscht` | V | rest, welt |
 | `Welt_ProgressionsMaschine.folge_objekt_entstanden` | DS | rest, tools |
@@ -890,7 +917,7 @@ Prefix `-`, 33 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `Dictionary` | 4 |
+| `Dictionary` | 5 |
 | `String` | 3 |
 | `Orchestrator_Darsteller` | 1 |
 | `Sprite2D` | 1 |

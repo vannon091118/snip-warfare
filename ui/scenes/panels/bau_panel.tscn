@@ -3,21 +3,73 @@
 [ext_resource type="Script" path="res://ui/scenes/panels/bau_panel.gd" id="1_bau"]
 
 [node name="BauPanel" type="PanelContainer"]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -300.0
-offset_top = -70.0
-offset_right = 300.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 0
+anchors_preset = 11
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -364.0
+offset_top = -260.0
+offset_right = -12.0
+offset_bottom = 260.0
+grow_horizontal = 0
+grow_vertical = 2
+visible = false
 script = ExtResource("1_bau")
 
-[node name="ButtonContainer" type="HBoxContainer" parent="."]
-unique_name_in_owner = true
+[node name="Root" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TitelZeile" type="HBoxContainer" parent="Root"]
 layout_mode = 2
 alignment = 1
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
+
+[node name="Titel" type="Label" parent="Root/TitelZeile"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+text = "Baufenster [B]"
+
+[node name="Spacer" type="Control" parent="Root/TitelZeile"]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SchliessenKnopf" type="Button" parent="Root/TitelZeile"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+text = "×"
+
+[node name="Trenner" type="HSeparator" parent="Root"]
+layout_mode = 2
+
+[node name="SucheZeile" type="HBoxContainer" parent="Root"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="Suchfeld" type="LineEdit" parent="Root/SucheZeile"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Suchen (Name, Kategorie, ID)…"
+
+[node name="KategorieWahl" type="OptionButton" parent="Root/SucheZeile"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+
+[node name="ScrollFenster" type="ScrollContainer" parent="Root"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(328, 380)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
+
+[node name="ButtonContainer" type="GridContainer" parent="Root/ScrollFenster"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2

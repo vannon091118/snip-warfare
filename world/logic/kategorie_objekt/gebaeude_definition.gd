@@ -27,6 +27,13 @@ var voraussetzungen: Array[String] = []
 ## Bau freigegeben wird. Der Vertrag steht in gebaeude.json als benötigt_tags
 ## und wird von Gebaeude_MoebelBedarf gelesen; ohne Leser bliebe er tot.
 var benoetigt_tags: Array[String] = []
+## Bautyp der Platzierung: gebaeude, wand, tuer, boden, moebel, lagerzone, produktion.
+## Die Fachbedeutung wohnt im Eintrag, die UI verteilt nur nach Datum.
+var bautyp: String = "gebaeude"
+var platzierung: Dictionary = {}
+## Optionaler Lager-Typ (kleines_lager, lagerflaeche, ...). Leer wenn kein Lager.
+var lager_typ: String = ""
+var einwanderer_lieferant: bool = false
 var inputs: Array[Dictionary] = []
 var outputs: Array[Dictionary] = []
 var dauer_ticks: int = 0
@@ -54,6 +61,10 @@ func aus_konfig_eintrag(eintrag: Dictionary) -> void:
 	benoetigt_tags.clear()
 	for tag: Variant in (eintrag.get("benötigt_tags", []) as Array):
 		benoetigt_tags.append(str(tag))
+	bautyp = str(eintrag.get("bautyp", "gebaeude"))
+	platzierung = (eintrag.get("platzierung", {}) as Dictionary).duplicate(true) if typeof(eintrag.get("platzierung", {})) == TYPE_DICTIONARY else {}
+	lager_typ = str(eintrag.get("lager_typ", ""))
+	einwanderer_lieferant = bool(eintrag.get("einwanderer_lieferant", false))
 	var produktion: Dictionary = eintrag.get("produktion", {})
 	inputs.clear()
 	for input: Variant in (produktion.get("inputs", []) as Array):

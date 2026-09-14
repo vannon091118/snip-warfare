@@ -1,9 +1,7 @@
-1. Der Nutzer hat die Umsetzung des Blackboard-Migrationsplans freigegeben und Slice 0 beginnt mit dem Aufräumen des Werkstatt-Bestands.
-2. Der Nutzer hatte verlangt, dass der ausgearbeitete Plan als Dokument gespeichert wird und dass anschließend über das Shinon-Gate gepusht wird, und genau dieses Versprechen löst dieser Commit ein, bevor irgendeine Migration beginnt.
-3. Die Datei docs/plan_blackboard_migration.md hält den gesamten sechsteiligen Migrationsplan fest, inklusive der acht Korrekturen aus der Code-Verifikation, damit jede weitere Sitzung auf demselben Bild baut.
-4. In game/logic/kategorie_einheit/einheit_manager.gd wurde der Ankunftsort-Vertrag als Delegat zur Verdrahtung zurückgehangen, den die Parallel-Arbeit in der Welt-Fortschritts-Maschine benötigt, und drei überflüssige Kommentarzeilen wanderten, damit die Manager-Datei wieder unter der Zeilen-Grenze von 150 atmet.
-5. In game/logic/kategorie_einheit/einheit_verdrahtung.gd trägt die Datei den umgezogenen Ankunftsort-Vertrag, ohne ihre eigene Verantwortlichkeit zu verbreitern.
-6. In world/logic/kategorie_progression/welt_fortschritts_maschine.gd kam der Aufruf der Parallel-Arbeit hinzu, der den Delegat braucht; er bleibt unangetastet und funktioniert nun wieder.
-7. Die vier Index-Dateien, die Readme, die Roadmap, die Gitignore und die Shinon-Nachricht spiegeln den neuen Zustand, wie es die Preflight-Kategorien E043 und E044 für jeden Commit verlangen.
-8. Der gesamte Bestand war zuvor in neun Slices zu je höchstens fünfzehn Dateien committed und gepusht worden; dieser zehnte Slice schließt die Werkstatt-Ära ab.
-9. Als Nächstes startet Slice 1 mit den Kern-Klassen des Blackboards, dem Konsolidator und der neuen Preflight-Kategorie engine_bruecken, und erst danach kommen die Domänen einzeln mit je einem Beweislauf dran.
+1. Der Kommandant verlangte Ordnung im Vertrag, und was die Hände taten, war der Index, die Tick-Ordnung und die Dokumentation auf den neuen Stand zu bringen, damit jeder, der nach den Klassen sucht, sie auch findet.
+2. In tools/index/kern.py wurde der Filter für den Worktree gefixt, damit die Klassenzählung nicht mehr durch absolute Pfade mit .freebuff im Namen getäuscht wird.
+3. In tools/tick_ordnung/ordnung.json wurde der neue Teilnehmer Welt_RaumUndLagerTick an Position vier nach den Gebäuden eingetragen, denn die Raum- und Lagerzone-Erkennung liest den fertigen Gebäudezustand und muss danach laufen.
+4. In tools/tick_ordnung/pruefer.py wurde die Worktree-Kompatibilität hergestellt, damit der Prüfer relative Pfade prüft statt auf absolute zu bauen, die im Worktree versagen.
+5. In INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md wurden die Klassenzahlen, Dateizahlen und Szenen nachgezogen, damit der Index den wahren Bestand spiegelt.
+6. In README.md und ROADMAP.md wurden der aktuelle Stand und die offenen Punkte aktualisiert, damit niemand nach einer Landkarte sucht, die nicht mehr zum Terrain passt.
+7. Als Nächstes steht die sichtbare Ingame-Verifikation an: Das Spielfeld muss zeigen, was die vier Slices gebaut haben, und erst dann gilt der Auftrag als erfüllt.

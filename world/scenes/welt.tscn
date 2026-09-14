@@ -95,21 +95,26 @@ script = ExtResource("8b_produktion")
 
 [node name="HilfeLabel" type="Label" parent="UILayer/HUDRahmen/HUD"]
 layout_mode = 2
-text = "F3: Debug | M: Weltkarte | WASD: Kamera"
+text = "B: Bau | F3: Debug | M: Weltkarte | WASD: Kamera"
 
-[node name="KnopfZeile" type="HBoxContainer" parent="UILayer/HUDRahmen/HUD"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="ZurueckKnopf" type="Button" parent="UILayer/HUDRahmen/HUD/KnopfZeile"]
+[node name="ZurueckKnopf" type="Button" parent="UILayer/HUDRahmen/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Hauptmenü"
 
-[node name="WarumKnopf" type="Button" parent="UILayer/HUDRahmen/HUD/KnopfZeile"]
+[node name="WarumKnopf" type="Button" parent="UILayer/HUDRahmen/HUD"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Warum?"
+
+[node name="FensterLeisteAnchor" type="Control" parent="UILayer"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 6.0
+offset_bottom = 44.0
+grow_horizontal = 2
 
 [node name="WarumFenster" type="AcceptDialog" parent="UILayer"]
 unique_name_in_owner = true

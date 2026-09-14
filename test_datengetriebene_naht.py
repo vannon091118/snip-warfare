@@ -111,7 +111,11 @@ def test_produktionszeile_wird_nur_bei_aenderung_gemeldet():
 
 
 def test_bauplatz_regel_steht_in_den_daten():
+    # Moebel, Lagerzone und Boden belegen keine Kachel im Sinne eines Gebaeudes
+    nicht_beleger = {"boden", "betten", "stuhl", "tisch", "lagerzone"}
     for gebaeude in _json("world/data/gebaeude.json"):
+        if gebaeude["id"] in nicht_beleger:
+            continue
         assert gebaeude.get("belegt_kachel") is True, gebaeude["id"]
     definition = _lies("world/logic/kategorie_objekt/gebaeude_definition.gd")
     assert "var belegt_kachel: bool = true" in definition

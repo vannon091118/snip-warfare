@@ -349,6 +349,66 @@
     "schatten_wurf": true
   },
   {
+    "id": "wand_holz",
+    "name": "Wand Holz",
+    "typ": "objekt",
+    "kategorie": "Wand Holz",
+    "textur_pfad": "res://world/assets/bauen/wand_holz.svg",
+    "anzeige_breite": 96.0,
+    "anzeige_hoehe": 96.0,
+    "ziel_tags": ["wand", "holz", "blockade"],
+    "script": "res://world/logic/kategorie_objekt/objekt_wand_holz.gd",
+    "schatten_wurf": true
+  },
+  {
+    "id": "wand_stein",
+    "name": "Wand Stein",
+    "typ": "objekt",
+    "kategorie": "Wand Stein",
+    "textur_pfad": "res://world/assets/bauen/wand_stein.svg",
+    "anzeige_breite": 96.0,
+    "anzeige_hoehe": 96.0,
+    "ziel_tags": ["wand", "stein", "blockade"],
+    "script": "res://world/logic/kategorie_objekt/objekt_wand_stein.gd",
+    "schatten_wurf": true
+  },
+  {
+    "id": "tuer",
+    "name": "Tür",
+    "typ": "objekt",
+    "kategorie": "Tür",
+    "textur_pfad": "res://world/assets/bauen/tuer.svg",
+    "anzeige_breite": 96.0,
+    "anzeige_hoehe": 96.0,
+    "ziel_tags": ["tuer", "durchgang"],
+    "script": "res://world/logic/kategorie_objekt/objekt_tuer.gd",
+    "schatten_wurf": true
+  },
+  {
+    "id": "boden_holz",
+    "name": "Boden",
+    "typ": "objekt",
+    "kategorie": "Boden",
+    "textur_pfad": "res://world/assets/terrain/boden_holz.svg",
+    "anzeige_breite": 64.0,
+    "anzeige_hoehe": 64.0,
+    "ziel_tags": ["boden", "bau"],
+    "script": "res://world/logic/kategorie_objekt/objekt_boden_obj.gd",
+    "schatten_wurf": false
+  },
+  {
+    "id": "rathaus",
+    "name": "Rathaus",
+    "typ": "objekt",
+    "kategorie": "Gebäude",
+    "textur_pfad": "res://world/assets/terrain/rathaus.svg",
+    "anzeige_breite": 160.0,
+    "anzeige_hoehe": 144.0,
+    "ziel_tags": ["rathaus", "verwaltung"],
+    "script": "res://world/logic/kategorie_objekt/objekt_rathaus.gd",
+    "schatten_wurf": true
+  },
+  {
     "id": "baer",
     "ziel_tags": [
       "tier",

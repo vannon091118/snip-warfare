@@ -10,5 +10,11 @@
     "kapazitaet": 250,
     "icon_pfad": "res://world/assets/terrain/haus_gross.svg",
     "welt_objekt_id": "haus_gross"
+  },
+  "lagerflaeche": {
+    "name": "Lagerfläche",
+    "kapazitaet": 200,
+    "icon_pfad": "res://world/assets/terrain/boden_holz.svg",
+    "welt_objekt_id": "boden_holz"
   }
 }

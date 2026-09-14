@@ -45,6 +45,20 @@ signal einheit_ausgewaehlt(einheit_id: int)
 # Wasser-Tiles direkt über dem Loch zur Dirty-Queue hinzu.
 @warning_ignore("unused_signal")
 signal decken_entfernt(position: Vector2, z_ebene: int)
+# Lager-Einlagerung: Wird ausgestoßen, sobald eine Ressource tatsächlich
+# ins Lager eingebucht wurde (Inventar -> Lager). Die Progressions-Maschine
+# hört darauf für das Onboarding (erstes Holz sammeln).
+@warning_ignore("unused_signal")
+signal ressource_eingelagert(ressource: String, menge: int, welt_position: Vector2)
+# Geschlossener Raum: Wird ausgestoßen, sobald die Raumerkennung einen
+# geschlossenen Innenraum mit definiertem Profil findet. Die Fortschritts-
+# Maschine nutzt dies als echten Weltzustand statt UI-Flags.
+@warning_ignore("unused_signal")
+signal raum_entstanden(raum_id: String, innen_flaeche: int, hat_tuer: bool, geschlossen: bool)
+# Lagerzone: Wird ausgestoßen, sobald eine Fläche als Lagerplatz im Welt-
+# Zustand registriert wurde. Er löst den Schritt Rathaus/Vorarbeiter aus.
+@warning_ignore("unused_signal")
+signal lagerzone_registriert(welt_position: Vector2)
 # Kachel-Zustand: Wird ausgestoßen, wenn eine Kachel im Raster ihren Inhalt
 # wechselt (Wasser fließt, Ufer wächst, Graben öffnet). Der Renderer hört
 # darauf und zeichnet genau diese eine Kachel neu; die Szene koppelt die
@@ -97,6 +111,15 @@ func _emit_einheit_ausgewaehlt(einheit_id: int) -> void:
 
 func _emit_decke_entfernt(position: Vector2, z_ebene: int) -> void:
 	decken_entfernt.emit(position, z_ebene)
+
+func _emit_ressource_eingelagert(ressource: String, menge: int, welt_position: Vector2) -> void:
+	ressource_eingelagert.emit(ressource, menge, welt_position)
+
+func _emit_raum_entstanden(raum_id: String, innen_flaeche: int, hat_tuer: bool, geschlossen: bool) -> void:
+	raum_entstanden.emit(raum_id, innen_flaeche, hat_tuer, geschlossen)
+
+func _emit_lagerzone_registriert(welt_position: Vector2) -> void:
+	lagerzone_registriert.emit(welt_position)
 
 func _emit_kachel_geaendert(x: int, y: int, element_id: String, z_ebene: int) -> void:
 	kachel_geaendert.emit(x, y, element_id, z_ebene)
