@@ -25,6 +25,14 @@ func ankunftsort_erneuern(mgr: Einheit_Manager, ankunft: Callable) -> void:
 	versorgung_erneuern(mgr)
 
 
+func ankunftsort(anker: Vector2) -> Vector2:
+	## Mit Blick-Vertrag genau dort, wo der Spieler hinsieht; sonst der
+	## Lager-Anker, versetzt wie zuvor.
+	if _ankunftsort.is_valid():
+		return _ankunftsort.call()
+	return anker + Vector2(24, 20)
+
+
 ## Erster Aufbau: Modell-Referenzen des Managers setzen und die Kette bauen.
 func einrichten(mgr: Einheit_Manager, model: Welt_Model, tiere: Tier_Manager,
 		ressourcen: Einheit_Ressourcen, welt_world: Welt_World) -> void:

@@ -149,7 +149,7 @@ Jede Ressource besitzt ihr eigenes SVG-Icon und eine dedizierte Datenklasse:
 
 ## 🗺️ Aktueller Zustand & Master-Roadmap
 
-Der aktuelle **Zustand** und **Stand** umfasst ein gehärtetes Fundament mit 306 Klassen, 11 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 132 bestandenen Pytest-Prüfungen. Diese README ist Teil des Vertrags: Sie wird bei jedem Versionsbump mechanisch mitgezogen und beschreibt den echten Stand, nie einen Wunsch. Der maschinenlesbare Router ist [`INDEX.md`](INDEX.md) — Index-Familie, Domänen-Tabelle, Zuständigkeiten, Abhängigkeits-Graph und auto-generiertes Klasseninventar. Dazu kommen [`INDEX_DOMAENEN.md`](INDEX_DOMAENEN.md) mit der Signal- und Array-Matrix je Domäne, [`INDEX_DATEN.md`](INDEX_DATEN.md) mit jedem JSON-Pool samt Besitzer und Verbrauchern sowie die eine Last-Datei [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md), die den Delta des letzten Index-Laufs mitschreibt. Alle vier erzeugt `python tools/index_generieren.py`, alle vier bewacht die Prüfkategorie `index` (E044).
+Der aktuelle **Zustand** und **Stand** umfasst ein gehärtetes Fundament mit 308 Klassen, 11 Szenen, funktionierender A*-Wegplanung, multi-map-fähiger World-Expansion und 132 bestandenen Pytest-Prüfungen. Diese README ist Teil des Vertrags: Sie wird bei jedem Versionsbump mechanisch mitgezogen und beschreibt den echten Stand, nie einen Wunsch. Der maschinenlesbare Router ist [`INDEX.md`](INDEX.md) — Index-Familie, Domänen-Tabelle, Zuständigkeiten, Abhängigkeits-Graph und auto-generiertes Klasseninventar. Dazu kommen [`INDEX_DOMAENEN.md`](INDEX_DOMAENEN.md) mit der Signal- und Array-Matrix je Domäne, [`INDEX_DATEN.md`](INDEX_DATEN.md) mit jedem JSON-Pool samt Besitzer und Verbrauchern sowie die eine Last-Datei [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md), die den Delta des letzten Index-Laufs mitschreibt. Alle vier erzeugt `python tools/index_generieren.py`, alle vier bewacht die Prüfkategorie `index` (E044).
 
 Unsere konsolidierte **Vision** lebt ausschließlich in der [`ROADMAP.md`](ROADMAP.md): Sie ist die einzige verbindliche Planungs- und Roadmap-Quelle mit allen Slices, Checkpoints und ihrem Erledigt-Status. Diese README wiederholt die Sliceliste bewusst nicht, damit keine zweite Wahrheit still altern kann — wer den Stand wissen will, liest die Roadmap, und deren Zahlen hier im Kopf werden mechanisch bewacht.
 
@@ -181,7 +181,7 @@ Bevor irgendein Commit ins Repo wandert, muss er durch mein mechanisches Schafot
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 20 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus — `python tools/preflight.py --kategorie whitespace --fix` repariert Leerzeichen idempotent.
+* **Vollprüfung:** Führt alle 21 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus — `python tools/preflight.py --kategorie whitespace --fix` repariert Leerzeichen idempotent.
 * **Unittests:** `python -m pytest` führt alle 132 Unittests aus.
 * **LLM-Übersicht:** `python tools/index_generieren.py` frischt die ganze Index-Familie auf: `INDEX.md`, `INDEX_DOMAENEN.md`, `INDEX_DATEN.md` und die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`.
 

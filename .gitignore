@@ -23,6 +23,12 @@ __pycache__/
 # Lauf-Logs: immer nur der letzte Lauf, niemals auf GitHub
 tools/logs/
 
+# Sonden: Agent-gebundene Snaps/Signaturen, immer nur letzter Zustand
+.sonden/
+
+# Warteschlange Tickets: immer nur laufende Belegung, niemals auf GitHub
+.warteschlange/
+
 # Lokale Editor- und OS-Artefakte
 *.tmp
 *.log

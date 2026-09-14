@@ -31,7 +31,7 @@ Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbrauc
 | [`biome.json`](world/data/biome.json) | `world/data` | 3 | `_kommentar`, `thresholds`, `biome` | `world/logic/kategorie_biom/biom_basis.gd`, `world/logic/kategorie_biom/biom_registry.gd`, `world/logic/kategorie_generator/welt_biom_analyser.gd` und 1 weitere |
 | [`element_katalog.json`](world/data/element_katalog.json) | `world/data` | 37 | `[Liste]` | `ui/scenes/panels/kontext_menue.gd`, `world/logic/kategorie_objekt/moebel_registry.gd`, `world/logic/kategorie_objekt/objekt_registry_basis.gd` und 1 weitere |
 | [`fraktions_ki_config.json`](world/data/fraktions_ki_config.json) | `world/data` | 9 | `_kommentar`, `expansion`, `handel`, `konflikt`, `aggressions_basis`, `keimling_schwellenwert` und 3 weitere | `world/logic/kategorie_generator/fraktions_keimling_analysator.gd`, `world/logic/kategorie_generator/welt_generator.gd`, `world/logic/kategorie_welt/fraktions_ki_maschine.gd` und 2 weitere |
-| [`gebaeude.json`](world/data/gebaeude.json) | `world/data` | 4 | `[Liste]` | `tools/lauf_pruefung_welt.gd`, `world/logic/kategorie_objekt/gebaeude_definition.gd`, `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` |
+| [`gebaeude.json`](world/data/gebaeude.json) | `world/data` | 4 | `[Liste]` | `tools/lauf_pruefung_welt.gd`, `world/logic/kategorie_objekt/gebaeude_definition.gd`, `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` und 1 weitere |
 | [`generator_gewichte.json`](world/data/generator_gewichte.json) | `world/data` | 9 | `_kommentar`, `domain_warp_amplitude`, `objekte`, `tiere`, `biome`, `gebaeude` und 3 weitere | `world/logic/kategorie_generator/generator_registry.gd`, `world/logic/kategorie_generator/welt_feld_analyser.gd`, `world/logic/kategorie_generator/welt_fraktions_generator.gd` und 2 weitere |
 | [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 | `_kommentar`, `grundsaetze`, `ersatzhandlungen`, `wirkung_je_rasse`, `verzweigung` | keiner |
 | [`ressourcen_progression.json`](world/data/ressourcen_progression.json) | `world/data` | 5 | `_kommentar`, `stufen`, `stufen_blatt`, `waerme`, `seed_spawn` | `world/logic/kategorie_progression/welt_progressions_registry.gd`, `world/logic/kategorie_progression/welt_stufen_bilder.gd` |
@@ -254,6 +254,7 @@ Pfad `world/data/gebaeude.json`, Domaene `world/data`, 4 Eintraege.
 * `tools/lauf_pruefung_welt.gd`
 * `world/logic/kategorie_objekt/gebaeude_definition.gd`
 * `world/logic/kategorie_objekt/gebaeude_definition_registry.gd`
+* `world/logic/kategorie_objekt/gebaeude_moebel_bedarf.gd`
 
 ### generator_gewichte.json
 

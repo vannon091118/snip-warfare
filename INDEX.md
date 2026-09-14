@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 306 Klassen mit `class_name` im Projekt, davon 273 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 33 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 308 Klassen mit `class_name` im Projekt, davon 275 in den 14 Domaenen-Ordnern und 33 ohne Domaenen-Ordner, 65 Signale, 33 Array-Elementtypen und 31 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -175,7 +175,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_World` | `world/logic/kategorie_welt/welt_world.gd` |
 | `Welt_WuchsGeste` | `world/logic/kategorie_welt/welt_wuchs_geste.gd` |
 
-### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (38)
+### world/objekt — Prefix `Objekt_/Gebaeude_` — `world/logic/kategorie_objekt/` (39)
 
 | Klasse | Datei |
 | --- | --- |
@@ -187,6 +187,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Gebaeude_KartenGate` | `world/logic/kategorie_objekt/gebaeude_karten_gate.gd` |
 | `Gebaeude_Laufzeit` | `world/logic/kategorie_objekt/gebaeude_laufzeit.gd` |
 | `Gebaeude_Manager` | `world/logic/kategorie_objekt/gebaeude_manager.gd` |
+| `Gebaeude_MoebelBedarf` | `world/logic/kategorie_objekt/gebaeude_moebel_bedarf.gd` |
 | `Gebaeude_ProduktionsMaschine` | `world/logic/kategorie_objekt/gebaeude_produktions_maschine.gd` |
 | `Gebaeude_Registry` | `world/logic/kategorie_objekt/gebaeude_registry.gd` |
 | `Gebaeude_StatusLeser` | `world/logic/kategorie_objekt/gebaeude_status_leser.gd` |
@@ -411,10 +412,11 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 
 _keine `class_name`-Klassen_
 
-### tools — Prefix `-` — `tools/` (3)
+### tools — Prefix `-` — `tools/` (4)
 
 | Klasse | Datei |
 | --- | --- |
+| `Sonden_BildVergleich` | `tools/sonden/sonden_bild_vergleich.gd` |
 | `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` |
 | `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` |
 | `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` |

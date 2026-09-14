@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 306 Klassen, 349 Dateien, 65 Signale, 33 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 308 Klassen, 342 Dateien, 65 Signale, 33 Array-Elementtypen; 33 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -11,7 +11,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 306 Klassen, 349 Dateien, 65 Sign
 | `core` | `kern` | `Kern_` | `core/` | 22 | 22 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
 | `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 49 | 49 |
-| `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 38 | 38 |
+| `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 39 | 39 |
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 21 | 21 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 11 | 11 |
 | `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 31 | 31 |
@@ -21,7 +21,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 306 Klassen, 349 Dateien, 65 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
 | `ui` | `ui` | `Ui_` | `ui/` | 24 | 36 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 3 | 28 |
+| `tools` | `tools` | `-` | `tools/` | 4 | 20 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 33 | 38 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
@@ -112,13 +112,13 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 59 | 5 | 4 | 12 | 13 | - | - | 3 | 4 | - | 4 | 1 | 7 | - | 3 | 3 |
+| `String` | 59 | 5 | 4 | 12 | 14 | - | - | 3 | 4 | - | 4 | 1 | 7 | - | 2 | 3 |
 | `Dictionary` | 39 | 3 | 1 | 7 | 1 | 4 | 3 | 9 | - | - | 1 | 1 | 5 | - | - | 4 |
 | `int` | 16 | - | - | 5 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 9 | 1 | 4 | 3 | - | - | - | - | - | - | - | - | - | - | 1 | - |
+| `float` | 7 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | 2 | - |
 | `Vector2` | 6 | 1 | - | 1 | - | - | - | 3 | - | - | - | - | - | - | - | 1 |
 | `Objekt_Basis` | 5 | - | - | 1 | 4 | - | - | - | - | - | - | - | - | - | - | - |
-| `float` | 5 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | - | - |
 | `Kern_ModifikatorBasis` | 4 | 2 | - | - | - | - | - | 1 | - | - | - | - | - | - | 1 | - |
 | `Welt_Karawane` | 3 | - | - | 3 | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Orchestrator_Darsteller` | 2 | - | - | - | - | - | 1 | - | - | - | - | - | - | - | - | 1 |
@@ -128,7 +128,6 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | `AnimatedSprite2D` | 1 | - | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - |
 | `Array` | 1 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | - |
 | `Gebaeude_Definition` | 1 | - | - | - | 1 | - | - | - | - | - | - | - | - | - | - | - |
-| `Image` | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `Kern_LogikBasis` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_Mutation` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_TimelineEintrag` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
@@ -145,6 +144,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | `Tier_Basis` | 1 | - | - | - | - | 1 | - | - | - | - | - | - | - | - | - | - |
 | `Welt_BiomBasis` | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - | 1 |
 | `Welt_FraktionsKiMaschine` | 1 | - | - | 1 | - | - | - | - | - | - | - | - | - | - | - | - |
+| `bool` | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | 1 | - |
 
 ## 4. Domaenen im Einzelnen
 
@@ -334,18 +334,19 @@ Prefix `Welt_`, 49 Klassen.
 
 ### world/objekt — Kuerzel `obj` — `world/logic/kategorie_objekt/`
 
-Prefix `Objekt_/Gebaeude_`, 38 Klassen.
+Prefix `Objekt_/Gebaeude_`, 39 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
-| `Gebaeude_BauAuftrag` | `world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd` | 137 |
+| `Gebaeude_BauAuftrag` | `world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd` | 146 |
 | `Gebaeude_BauMaschine` | `world/logic/kategorie_objekt/gebaeude_bau_maschine.gd` | 102 |
-| `Gebaeude_BauplatzPruefer` | `world/logic/kategorie_objekt/gebaeude_bauplatz_pruefer.gd` | 60 |
-| `Gebaeude_Definition` | `world/logic/kategorie_objekt/gebaeude_definition.gd` | 83 |
+| `Gebaeude_BauplatzPruefer` | `world/logic/kategorie_objekt/gebaeude_bauplatz_pruefer.gd` | 73 |
+| `Gebaeude_Definition` | `world/logic/kategorie_objekt/gebaeude_definition.gd` | 90 |
 | `Gebaeude_DefinitionRegistry` | `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` | 55 |
 | `Gebaeude_KartenGate` | `world/logic/kategorie_objekt/gebaeude_karten_gate.gd` | 17 |
 | `Gebaeude_Laufzeit` | `world/logic/kategorie_objekt/gebaeude_laufzeit.gd` | 170 |
 | `Gebaeude_Manager` | `world/logic/kategorie_objekt/gebaeude_manager.gd` | 150 |
+| `Gebaeude_MoebelBedarf` | `world/logic/kategorie_objekt/gebaeude_moebel_bedarf.gd` | 66 |
 | `Gebaeude_ProduktionsMaschine` | `world/logic/kategorie_objekt/gebaeude_produktions_maschine.gd` | 111 |
 | `Gebaeude_Registry` | `world/logic/kategorie_objekt/gebaeude_registry.gd` | 33 |
 | `Gebaeude_StatusLeser` | `world/logic/kategorie_objekt/gebaeude_status_leser.gd` | 62 |
@@ -393,7 +394,7 @@ Prefix `Objekt_/Gebaeude_`, 38 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 13 |
+| `String` | 14 |
 | `Objekt_Basis` | 4 |
 | `Dictionary` | 1 |
 | `Gebaeude_Definition` | 1 |
@@ -415,10 +416,10 @@ Prefix `Tier_`, 21 Klassen.
 | `Tier_Leser` | `world/logic/kategorie_tier/tier_leser.gd` | 64 |
 | `Tier_Manager` | `world/logic/kategorie_tier/tier_manager.gd` | 146 |
 | `Tier_Registry` | `world/logic/kategorie_tier/tier_registry.gd` | 75 |
-| `Tier_SichtWaechter` | `world/logic/kategorie_tier/tier_sicht_waechter.gd` | 82 |
+| `Tier_SichtWaechter` | `world/logic/kategorie_tier/tier_sicht_waechter.gd` | 96 |
 | `Tier_Sichtung` | `world/logic/kategorie_tier/tier_sichtung.gd` | 68 |
 | `Tier_Status` | `world/logic/kategorie_tier/tier_status.gd` | 111 |
-| `Tier_Takt` | `world/logic/kategorie_tier/tier_takt.gd` | 50 |
+| `Tier_Takt` | `world/logic/kategorie_tier/tier_takt.gd` | 52 |
 | `Tier_TempoBerechnung` | `world/logic/kategorie_tier/tier_tempo_berechnung.gd` | 32 |
 | `Tier_VerhaltenMaschine` | `world/logic/kategorie_tier/tier_verhalten_maschine.gd` | 115 |
 | `Tier_VitalStatus` | `world/logic/kategorie_tier/tier_vital_status.gd` | 18 |
@@ -507,13 +508,13 @@ Prefix `Einheit_`, 31 Klassen.
 | `Einheit_Ressourcen` | `game/logic/kategorie_einheit/einheit_ressourcen.gd` | 264 |
 | `Einheit_RessourcenSchema` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` | 51 |
 | `Einheit_Status` | `game/logic/kategorie_einheit/einheit_status.gd` | 119 |
-| `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` | 120 |
+| `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` | 119 |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` | 40 |
 | `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` | 104 |
-| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 274 |
+| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 292 |
 | `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` | 100 |
 | `Einheit_Versorgung` | `game/logic/kategorie_einheit/einheit_versorgung.gd` | 48 |
-| `Einheit_VersorgungsMaschine` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd` | 47 |
+| `Einheit_VersorgungsMaschine` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd` | 61 |
 | `Einheit_VitalStatus` | `game/logic/kategorie_einheit/einheit_vital_status.gd` | 120 |
 | `Einheit_WegPlanung` | `game/logic/kategorie_einheit/einheit_weg_planung.gd` | 109 |
 | `Einheit_ZielSuche` | `game/logic/kategorie_einheit/einheit_ziel_suche.gd` | 109 |
@@ -626,7 +627,7 @@ Prefix `Pop_`, 30 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
-| `Pop_Denkblase` | `population/logic/mood/pop_denkblase.gd` | 58 |
+| `Pop_Denkblase` | `population/logic/mood/pop_denkblase.gd` | 74 |
 | `Pop_Mood` | `population/logic/mood/pop_mood.gd` | 42 |
 | `Pop_MoodAbleitung` | `population/logic/mood/pop_mood_ableitung.gd` | 60 |
 | `Pop_MoodEskalation` | `population/logic/mood/pop_mood_eskalation.gd` | 68 |
@@ -648,7 +649,7 @@ Prefix `Pop_`, 30 Klassen.
 | `Pop_RassenZugriff` | `population/logic/needs/pop_rassen_zugriff.gd` | 29 |
 | `Soz_BeziehungsEngine` | `population/logic/sozial/logic/soz_beziehungs_engine.gd` | 57 |
 | `Soz_Datenpool` | `population/logic/sozial/logic/soz_datenpool.gd` | 24 |
-| `Soz_Denkblase` | `population/logic/sozial/logic/soz_denkblase.gd` | 58 |
+| `Soz_Denkblase` | `population/logic/sozial/logic/soz_denkblase.gd` | 72 |
 | `Soz_EthikLedger` | `population/logic/sozial/logic/soz_ethik_ledger.gd` | 26 |
 | `Soz_Geruecht` | `population/logic/sozial/logic/soz_geruecht.gd` | 38 |
 | `Soz_GeruechtMaschine` | `population/logic/sozial/logic/soz_geruecht_maschine.gd` | 78 |
@@ -693,7 +694,7 @@ Prefix `Lager_`, 7 Klassen.
 | `Lager_MutationEinlagern` | `economy/logic/storage/lager_mutation.gd` | 34 |
 | `Lager_MutationEntnehmen` | `economy/logic/storage/lager_entnahme.gd` | 32 |
 | `Lager_Registry` | `economy/logic/storage/lager_registry.gd` | 51 |
-| `Lager_StapelBauer` | `economy/logic/storage/lager_stapel_bauer.gd` | 95 |
+| `Lager_StapelBauer` | `economy/logic/storage/lager_stapel_bauer.gd` | 101 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -781,13 +782,14 @@ _keine typisierten Arrays in dieser Domaene_
 
 ### tools — Kuerzel `tools` — `tools/`
 
-Prefix `-`, 3 Klassen.
+Prefix `-`, 4 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
-| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` | 125 |
+| `Sonden_BildVergleich` | `tools/sonden/sonden_bild_vergleich.gd` | 100 |
+| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` | 538 |
 | `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` | 102 |
-| `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` | 53 |
+| `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` | 56 |
 
 #### Signale (Rolle in dieser Domaene)
 
@@ -806,11 +808,12 @@ Prefix `-`, 3 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 3 |
-| `Image` | 1 |
+| `String` | 2 |
+| `float` | 2 |
 | `Kern_ModifikatorBasis` | 1 |
 | `Pop_MoodMaschine` | 1 |
 | `Vector2i` | 1 |
+| `bool` | 1 |
 | `int` | 1 |
 
 ### rest — Kuerzel `rest` — `(kein Domaenen-Ordner)`
@@ -828,7 +831,7 @@ Prefix `-`, 33 Klassen.
 | `Welt_ComicOverlayer` | `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` | 120 |
 | `Welt_FeedbackManager` | `world/logic/kategorie_feedback/feedback_manager.gd` | 64 |
 | `Welt_FeedbackTexturCache` | `world/logic/kategorie_feedback/feedback_textur_cache.gd` | 28 |
-| `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 109 |
+| `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 113 |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` | 49 |
 | `Welt_PapierKornEbene` | `world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd` | 88 |
 | `Welt_PapierLicht` | `world/logic/kategorie_atmosphaere/welt_papier_licht.gd` | 69 |

@@ -62,7 +62,11 @@ func _auf_produktionsraum_entstanden(_raum_id: String, profil: String) -> void:
 	if _einheit_manager == null:
 		push_warning("Welt_FortschrittsMaschine: Einheit_Manager nicht gesetzt")
 		return
-	var spawn_position := Vector2(500, 300)
+	## Der Ankunftsort kommt aus dem Manager-Vertrag: Mit Blick der Welt-
+	## Szene landet der Orchestrator im Bild, ohne faellt der Ruf auf den
+	## Lager-Anker zurueck. Ein fester Punkt (500,300) wuerde den ersten
+	## Lenker ausserhalb jedes Blicks absetzen.
+	var spawn_position := _einheit_manager.ankunftsort()
 	if _spawn_cap_erreicht("mensch"):
 		push_warning("Spawn-Cap erreicht")
 		return

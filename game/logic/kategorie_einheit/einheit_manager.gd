@@ -1,9 +1,8 @@
 extends Einheit_Basis
 class_name Einheit_Manager
 ## Kompositions-Wurzel der Einheiten-Domäne: Sie hält die Maschinen, den Takt
-## und die Verdrahtung und reicht jeden Ruf an die Stelle, die ihn fachlich
-## besitzt. Eigenes Wissen bleibt hier klein; die Lesefragen trägt die Basis,
-## den Aufbau die Verdrahtung und die Regeln die Maschinen.
+## und die Verdrahtung; die Lesefragen trägt die Basis, den Aufbau die
+## Verdrahtung und die Regeln die Maschinen.
 
 var _job_registry := Job_Registry.new()
 var _need_registry := Pop_NeedRegistry.new()
@@ -72,7 +71,6 @@ func tageszyklus_setzen(zyklus: Welt_TageszyklusMaschine) -> void:
 func weg_planung_aktualisieren() -> void:
 	# Nach einer Gebäudeplatzierung kennt das Netz das Hindernis erst hier.
 	_verdrahtung.wegnetz_erneuern(self)
-
 func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager, welt_world: Welt_World = null) -> void:
 	# Kartenwechsel: keine Einheit darf auf der alten Karte weiterlaufen.
 	_verdrahtung.modell_uebernehmen(self, neues_modell, neue_tiere, welt_world)
@@ -122,15 +120,15 @@ func versuche_wachstum(haus_welt_position: Vector2) -> bool:
 	return _versorgung_neu.versuche_wachstum(haus_welt_position)
 
 func lager_anker_position() -> Vector2:
-	# Der erste Lagerpunkt ist der Anker der Einwanderung; ohne Lager der Ursprung.
 	if _lager != null and _lager.lager_zahl() > 0:
 		return _lager.lager_position(0)
 	return Vector2.ZERO
 
 func ankunftsort_setzen(ankunft: Callable) -> void:
-	## Die Welt-Szene reicht ihren Blick hereingereicht; die Verdrahtung
-	## trägt ihn zur Einwanderung und zur Versorgung.
 	_verdrahtung.ankunftsort_erneuern(self, ankunft)
+
+func ankunftsort() -> Vector2:
+	return _verdrahtung.ankunftsort(lager_anker_position())
 
 func schlag_ort_empfaenger_setzen(empfaenger: Callable) -> void:
 	_verdrahtung.schlag_ort_empfaenger_setzen(empfaenger)

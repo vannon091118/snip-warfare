@@ -1,8 +1,9 @@
-1. Der Kommandant befahl, die Tick-Timings mechanisch anzugleichen, damit die Leistung geschont wird, ohne dass ein Spieler etwas merkt, und die Simulation sich immer selbst stabilisiert.
-2. Die alte Weltuhr warf Ruckler-Rückstand weg und jagte danach mit vollem Rahmen-Budget, was der Spieler als Zeitsprung spürte; in kern_takt_glaetter.gd wohnt jetzt das Glätten.
-3. Der Glätter trägt den Akkumulator und ein rollendes Mittel über zweiunddreißig Rahmen, damit ein einzelner Ausreißer nie in einen Aufhol-Sprung kippt.
-4. Bleibt das geglättete Delta dauerhaft über dem Soll, kippt die Uhr selbsttätig in einen entlasteten Slow-Takt, und nach der Erholung kehrt sie von allein in den Normaltakt zurück; die Stabilisierung ist selbsttragend ohne Schalter von außen.
-5. In weltuhr.gd blieb die Uhr die einzige Tick-Quelle, sie reicht nur an den Glätter durch und meldet den Slow-Mode für Werkzeuge.
-6. In lauf_pruefung_welt.gd beweisen zwei Stationen das neue Verhalten: Kein Aufhol-Zeitsprung nach dem Riesen-Rahmen, und Überlast kippt in den Slow-Takt, Erholung kehrt zurück.
-7. Geprüft ist alles mit dem vollen Preflight ohne Befund und 132 grünen Proben, und der Laufbeweis steht mit einundfünfzig Stationen.
-8. Sichtbar im laufenden Spiel: Ruckler laufen als ruhigerer Takt weiter statt als Zeitsprung, und die Weltuhr fängt sich nach jeder Überlast von selbst wieder ein.
+1. Der Nutzer hat die Umsetzung des Blackboard-Migrationsplans freigegeben und Slice 0 beginnt mit dem Aufräumen des Werkstatt-Bestands.
+2. Der Nutzer hatte verlangt, dass der ausgearbeitete Plan als Dokument gespeichert wird und dass anschließend über das Shinon-Gate gepusht wird, und genau dieses Versprechen löst dieser Commit ein, bevor irgendeine Migration beginnt.
+3. Die Datei docs/plan_blackboard_migration.md hält den gesamten sechsteiligen Migrationsplan fest, inklusive der acht Korrekturen aus der Code-Verifikation, damit jede weitere Sitzung auf demselben Bild baut.
+4. In game/logic/kategorie_einheit/einheit_manager.gd wurde der Ankunftsort-Vertrag als Delegat zur Verdrahtung zurückgehangen, den die Parallel-Arbeit in der Welt-Fortschritts-Maschine benötigt, und drei überflüssige Kommentarzeilen wanderten, damit die Manager-Datei wieder unter der Zeilen-Grenze von 150 atmet.
+5. In game/logic/kategorie_einheit/einheit_verdrahtung.gd trägt die Datei den umgezogenen Ankunftsort-Vertrag, ohne ihre eigene Verantwortlichkeit zu verbreitern.
+6. In world/logic/kategorie_progression/welt_fortschritts_maschine.gd kam der Aufruf der Parallel-Arbeit hinzu, der den Delegat braucht; er bleibt unangetastet und funktioniert nun wieder.
+7. Die vier Index-Dateien, die Readme, die Roadmap, die Gitignore und die Shinon-Nachricht spiegeln den neuen Zustand, wie es die Preflight-Kategorien E043 und E044 für jeden Commit verlangen.
+8. Der gesamte Bestand war zuvor in neun Slices zu je höchstens fünfzehn Dateien committed und gepusht worden; dieser zehnte Slice schließt die Werkstatt-Ära ab.
+9. Als Nächstes startet Slice 1 mit den Kern-Klassen des Blackboards, dem Konsolidator und der neuen Preflight-Kategorie engine_bruecken, und erst danach kommen die Domänen einzeln mit je einem Beweislauf dran.
