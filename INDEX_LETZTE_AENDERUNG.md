@@ -14,23 +14,23 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 321 |
-| dateien | 355 |
+| klassen | 328 |
+| dateien | 363 |
 | signale | 68 |
-| array_typen | 34 |
-| pools | 31 |
+| array_typen | 35 |
+| pools | 33 |
 
 | Domaene | Klassen | Dateien | Fingerabdruck |
 | --- | --- | --- | --- |
-| core | 22 | 22 | 8f931bad47b5 |
+| core | 27 | 27 | a5bc0ef24352 |
 | economy | 7 | 7 | 0392fd9fd2ef |
 | game/einheit | 31 | 31 | 1d7323534691 |
 | game/job | 18 | 18 | 3f316a555feb |
 | game/ressourcen | 7 | 7 | 2b115f627e10 |
 | population | 30 | 31 | a890f98ef2ab |
-| rest | 34 | 39 | 2acb45a9bf77 |
+| rest | 36 | 41 | 4e09cbf56503 |
 | shinon | 0 | 0 | da39a3ee5e6b |
-| tools | 4 | 20 | 19f1df624f1a |
+| tools | 4 | 21 | 19f1df624f1a |
 | ui | 26 | 38 | 2d8d3fb005aa |
 | world/generator | 12 | 12 | 190186145ff4 |
 | world/objekt | 44 | 44 | 850d6524e744 |

@@ -71,18 +71,23 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 321 Klassen mit `class_name` im Projekt, davon 287 in den 14 Domaenen-Ordnern und 34 ohne Domaenen-Ordner, 68 Signale, 34 Array-Elementtypen und 31 JSON-Pools._
+_Stand: V0.01 — 328 Klassen mit `class_name` im Projekt, davon 292 in den 14 Domaenen-Ordnern und 36 ohne Domaenen-Ordner, 68 Signale, 35 Array-Elementtypen und 33 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
 _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 
-### core — Prefix `Kern_` — `core/` (22)
+### core — Prefix `Kern_` — `core/` (27)
 
 | Klasse | Datei |
 | --- | --- |
 | `Kern_AssetPruefer` | `core/logic/kern_asset_pruefer.gd` |
+| `Kern_Blackboard` | `core/logic/kategorie_blackboard/kern_blackboard.gd` |
+| `Kern_BlackboardView` | `core/logic/kategorie_blackboard/kern_blackboard_view.gd` |
+| `Kern_Engine` | `core/logic/kategorie_blackboard/kern_engine.gd` |
+| `Kern_EngineKoordinator` | `core/logic/kategorie_blackboard/kern_engine_koordinator.gd` |
 | `Kern_Hash` | `core/logic/kern_hash.gd` |
+| `Kern_Konsolidator` | `core/logic/kategorie_konsolidierung/kern_konsolidator.gd` |
 | `Kern_LogikBasis` | `core/logic/kern_logik_basis.gd` |
 | `Kern_LogikRegistry` | `core/logic/kern_logik_registry.gd` |
 | `Kern_ModifikatorBasis` | `core/logic/kern_modifikator_basis.gd` |
@@ -433,7 +438,7 @@ _keine `class_name`-Klassen_
 | `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` |
 | `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` |
 
-### rest — Prefix `-` — `(kein Domaenen-Ordner)` (34)
+### rest — Prefix `-` — `(kein Domaenen-Ordner)` (36)
 
 | Klasse | Datei |
 | --- | --- |
@@ -447,6 +452,8 @@ _keine `class_name`-Klassen_
 | `Welt_FeedbackManager` | `world/logic/kategorie_feedback/feedback_manager.gd` |
 | `Welt_FeedbackTexturCache` | `world/logic/kategorie_feedback/feedback_textur_cache.gd` |
 | `Welt_FortschrittHelfer` | `world/logic/kategorie_progression/welt_fortschritt_helfer.gd` |
+| `Welt_FortschrittPersistenz` | `world/logic/kategorie_progression/welt_fortschritt_persistenz.gd` |
+| `Welt_FortschrittVerdrahtung` | `world/logic/kategorie_progression/welt_fortschritt_verdrahtung.gd` |
 | `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` |
 | `Welt_PapierKornEbene` | `world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd` |

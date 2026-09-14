@@ -2,13 +2,13 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 321 Klassen, 355 Dateien, 68 Signale, 34 Array-Elementtypen; 34 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 328 Klassen, 363 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
 | Domaene | Kuerzel | Prefix | Ordner | Klassen | Dateien |
 | --- | --- | --- | --- | --- | --- |
-| `core` | `kern` | `Kern_` | `core/` | 22 | 22 |
+| `core` | `kern` | `Kern_` | `core/` | 27 | 27 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
 | `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 54 | 54 |
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 44 | 44 |
@@ -21,8 +21,8 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 321 Klassen, 355 Dateien, 68 Sign
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
 | `ui` | `ui` | `Ui_` | `ui/` | 26 | 38 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
-| `tools` | `tools` | `-` | `tools/` | 4 | 20 |
-| `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 34 | 39 |
+| `tools` | `tools` | `-` | `tools/` | 4 | 21 |
+| `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 36 | 41 |
 
 ## 2. Signal-Matrix (D Deklaration, S Senden, V Verbinden)
 
@@ -64,7 +64,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 321 Klassen, 355 Dateien, 68 Sign
 | `Kern_SignalBus.schaden_erhalten` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_SignalBus.timeline_eintrag` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
 | `Kern_Timeline.eintrag_neu` | DS | - | - | - | - | - | - | - | - | - | - | - | - | - | V |
-| `Kern_Weltuhr.tick` | DS | - | V | V | V | V | V | - | - | - | - | V | - | - | V |
+| `Kern_Weltuhr.tick` | DSV | - | V | V | V | V | V | - | - | - | - | V | - | - | V |
 | `Gebaeude_Manager.gebaeude_fertiggestellt` | - | - | - | DS | - | - | - | - | - | - | - | - | - | V | - |
 | `Gebaeude_Manager.gebaeude_meldung` | - | - | - | DS | - | - | - | - | - | - | - | - | - | - | V |
 | `Gebaeude_Manager.gebaeude_platziert` | - | - | - | DS | - | - | - | - | - | - | - | - | - | - | V |
@@ -117,7 +117,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 62 | 5 | 4 | 12 | 14 | - | - | 3 | 4 | - | 4 | 1 | 10 | - | 2 | 3 |
+| `String` | 63 | 6 | 4 | 12 | 14 | - | - | 3 | 4 | - | 4 | 1 | 10 | - | 2 | 3 |
 | `Dictionary` | 45 | 3 | 1 | 9 | 1 | 4 | 3 | 9 | - | - | 1 | 1 | 8 | - | - | 5 |
 | `int` | 15 | - | - | 4 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 10 | 1 | 4 | 4 | - | - | - | - | - | - | - | - | - | - | 1 | - |
@@ -126,6 +126,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | `Objekt_Basis` | 5 | - | - | 1 | 4 | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_ModifikatorBasis` | 4 | 2 | - | - | - | - | - | 1 | - | - | - | - | - | - | 1 | - |
 | `Welt_Karawane` | 3 | - | - | 3 | - | - | - | - | - | - | - | - | - | - | - | - |
+| `Kern_Mutation` | 2 | 2 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Orchestrator_Darsteller` | 2 | - | - | - | - | - | 1 | - | - | - | - | - | - | - | - | 1 |
 | `Ressource_Basis` | 2 | - | - | - | - | - | - | 2 | - | - | - | - | - | - | - | - |
 | `Sprite2D` | 2 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | 1 |
@@ -134,8 +135,8 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | `AnimatedSprite2D` | 1 | - | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - |
 | `Array` | 1 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | - |
 | `Gebaeude_Definition` | 1 | - | - | - | 1 | - | - | - | - | - | - | - | - | - | - | - |
+| `Kern_Engine` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_LogikBasis` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| `Kern_Mutation` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Kern_TimelineEintrag` | 1 | 1 | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Label` | 1 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | - |
 | `Lager_Basis` | 1 | - | - | - | - | - | - | - | - | - | - | 1 | - | - | - | - |
@@ -156,12 +157,17 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 
 ### core — Kuerzel `kern` — `core/`
 
-Prefix `Kern_`, 22 Klassen.
+Prefix `Kern_`, 27 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
 | `Kern_AssetPruefer` | `core/logic/kern_asset_pruefer.gd` | 71 |
+| `Kern_Blackboard` | `core/logic/kategorie_blackboard/kern_blackboard.gd` | 30 |
+| `Kern_BlackboardView` | `core/logic/kategorie_blackboard/kern_blackboard_view.gd` | 44 |
+| `Kern_Engine` | `core/logic/kategorie_blackboard/kern_engine.gd` | 22 |
+| `Kern_EngineKoordinator` | `core/logic/kategorie_blackboard/kern_engine_koordinator.gd` | 60 |
 | `Kern_Hash` | `core/logic/kern_hash.gd` | 53 |
+| `Kern_Konsolidator` | `core/logic/kategorie_konsolidierung/kern_konsolidator.gd` | 36 |
 | `Kern_LogikBasis` | `core/logic/kern_logik_basis.gd` | 24 |
 | `Kern_LogikRegistry` | `core/logic/kern_logik_registry.gd` | 68 |
 | `Kern_ModifikatorBasis` | `core/logic/kern_modifikator_basis.gd` | 76 |
@@ -205,17 +211,18 @@ Prefix `Kern_`, 22 Klassen.
 | `Kern_SignalBus.schaden_erhalten` | DS | kern, rest |
 | `Kern_SignalBus.timeline_eintrag` | DS | kern, rest |
 | `Kern_Timeline.eintrag_neu` | DS | kern, rest |
-| `Kern_Weltuhr.tick` | DS | ein, kern, obj, orch, rest, tier, ui, welt |
+| `Kern_Weltuhr.tick` | DSV | ein, kern, obj, orch, rest, tier, ui, welt |
 
 #### Arrays (`Array[Typ]`)
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 5 |
+| `String` | 6 |
 | `Dictionary` | 3 |
 | `Kern_ModifikatorBasis` | 2 |
+| `Kern_Mutation` | 2 |
+| `Kern_Engine` | 1 |
 | `Kern_LogikBasis` | 1 |
-| `Kern_Mutation` | 1 |
 | `Kern_TimelineEintrag` | 1 |
 | `Vector2` | 1 |
 | `Vector2i` | 1 |
@@ -841,7 +848,7 @@ Prefix `-`, 4 Klassen.
 
 ### rest — Kuerzel `rest` — `(kein Domaenen-Ordner)`
 
-Prefix `-`, 34 Klassen.
+Prefix `-`, 36 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -855,7 +862,9 @@ Prefix `-`, 34 Klassen.
 | `Welt_FeedbackManager` | `world/logic/kategorie_feedback/feedback_manager.gd` | 64 |
 | `Welt_FeedbackTexturCache` | `world/logic/kategorie_feedback/feedback_textur_cache.gd` | 28 |
 | `Welt_FortschrittHelfer` | `world/logic/kategorie_progression/welt_fortschritt_helfer.gd` | 100 |
-| `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 113 |
+| `Welt_FortschrittPersistenz` | `world/logic/kategorie_progression/welt_fortschritt_persistenz.gd` | 26 |
+| `Welt_FortschrittVerdrahtung` | `world/logic/kategorie_progression/welt_fortschritt_verdrahtung.gd` | 108 |
+| `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 116 |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` | 49 |
 | `Welt_PapierKornEbene` | `world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd` | 88 |
 | `Welt_PapierLicht` | `world/logic/kategorie_atmosphaere/welt_papier_licht.gd` | 69 |

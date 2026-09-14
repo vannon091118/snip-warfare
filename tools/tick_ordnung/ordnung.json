@@ -73,6 +73,11 @@
       "grund": "Die Fraktions-KI steht am Ende der Weltdomaenen. Sie entscheidet Expansion aus dem fertigen Weltzustand des Ticks."
     },
     {
+      "datei": "core/logic/kategorie_blackboard/kern_engine_koordinator.gd",
+      "domaene": "core/blackboard",
+      "grund": "Der Engine-Koordinator treibt den Blackboard-Zyklus nach den Fachdomaenen: Engines lesen den fertigen Zustand des Ticks, der konsolidierte Sektor steht allen Lesern im naechsten Takt bereit."
+    },
+    {
       "datei": "ui/logic/kategorie_ui/menue_story_regisseur.gd",
       "domaene": "ui/story",
       "grund": "Der Story-Regisseur laeuft zuletzt und liest nur. Er darf nie vor einer Fachdomaene stehen, sonst erzaehlt er den Zustand des vorigen Ticks."

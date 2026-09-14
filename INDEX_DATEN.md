@@ -2,14 +2,16 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbraucher.
+Stand: V0.01 — 33 JSON-Pools, davon 33 lesbar und 3 ohne namentlichen Verbraucher.
 
 ## 1. Pools in Besitz einer Domaene
 
 | Pool | Domaene | Eintraege | Oberste Schluessel | Verbraucher |
 | --- | --- | --- | --- | --- |
+| [`engine_register.json`](core/data/engine_register.json) | `core` | 2 | `_kommentar`, `engines` | `core/logic/kategorie_blackboard/kern_engine_koordinator.gd` |
 | [`kern_logik.json`](core/data/kern_logik.json) | `core` | 9 | `baer_verfolgen`, `hase_flucht`, `vogel_flucht`, `vogelgruppe_flucht`, `ressource_holz`, `ressource_stein` und 3 weitere | `core/logic/kern_logik_basis.gd`, `core/logic/kern_logik_registry.gd`, `world/logic/kategorie_objekt/objekt_basis.gd` |
 | [`kern_modifikatoren.json`](core/data/kern_modifikatoren.json) | `core` | 7 | `normal`, `aggressiv`, `langsam`, `schnell`, `verletzung_bein`, `verletzung_arm` und 1 weitere | `core/logic/kern_modifikator_maschine.gd`, `core/logic/kern_modifikator_registry.gd` |
+| [`konsolidierung.json`](core/data/konsolidierung.json) | `core` | 2 | `_kommentar`, `transformationen` | keiner |
 | [`modifikator_settings.json`](core/data/modifikator_settings.json) | `core` | 3 | `_kommentar`, `global`, `bereiche` | `core/logic/kern_modifikator_maschine.gd` |
 | [`lager.json`](economy/data/lager.json) | `economy` | 3 | `kleines_lager`, `grosses_lager`, `lagerflaeche` | `economy/logic/storage/lager_registry.gd` |
 | [`animationen.json`](game/data/animationen.json) | `game/data` | 8 | `laufen`, `idle`, `hacken`, `grind`, `raeuchern`, `flackern` und 2 weitere | `game/logic/kategorie_einheit/einheit_darsteller.gd`, `world/logic/kategorie_objekt/objekt_basis.gd`, `world/logic/kategorie_welt/welt_objekt_darsteller.gd` |
@@ -46,10 +48,17 @@ Ein Pool ohne Verbraucher ist ein Vertrag ohne Gegenstand: Entweder fehlt die ve
 
 | Pool | Domaene | Eintraege |
 | --- | --- | --- |
+| [`konsolidierung.json`](core/data/konsolidierung.json) | `core` | 2 |
 | [`bindung.json`](population/data/bindung.json) | `population` | 5 |
 | [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 |
 
 ## 3. Verbraucher im Einzelnen
+
+### engine_register.json
+
+Pfad `core/data/engine_register.json`, Domaene `core`, 2 Eintraege.
+
+* `core/logic/kategorie_blackboard/kern_engine_koordinator.gd`
 
 ### kern_logik.json
 

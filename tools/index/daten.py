@@ -43,7 +43,7 @@ def pools_sammeln(dateien=None):
     pools = []
     for pfad in sorted(PROJEKT_STAMM.rglob("*.json")):
         relativ = str(pfad.relative_to(PROJEKT_STAMM)).replace("\\", "/")
-        if "/data/" not in relativ or relativ.startswith((".godot/", ".git/")):
+        if "/data/" not in relativ or relativ.startswith((".godot/", ".git/", ".freebuff/")):
             continue
         try:
             daten = json.loads(pfad.read_text(encoding="utf-8"))
