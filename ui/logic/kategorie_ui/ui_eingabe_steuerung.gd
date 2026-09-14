@@ -36,6 +36,7 @@ var _debug_sichtbar: bool = false
 var _orchestrator_panel: Ui_OrchestratorPriorityPanel = null
 var _orchestrator_manager: Orchestrator_Manager = null
 var _bau: Ui_BauAuftragMaschine = null
+var _bau_panel: Ui_BauPanelSzene = null
 var _expansion: Ui_ExpansionMaschine = null
 var _jobs: Ui_JobVergabeMaschine = null
 
@@ -59,11 +60,20 @@ func einrichten(p: Dictionary) -> void:
 	_fortschritt = p.get("fortschritt")
 	_orchestrator_panel = p.get("orchestrator_panel")
 	_orchestrator_manager = p.get("orchestrator_manager")
+	_bau_panel = p.get("bau_panel")
+	if p.has("raum_und_lager"):
+		var _rul: Variant = p.get("raum_und_lager")
+		# Raum-und-Lager als Rückgrat für Lagerzonen-Werkzeug merken;
+		# die eigentliche Register-Verdrahtung macht die Welt-Szene nach
+		# dem Einrichten über bau_lagerzone_register_setzen.
+		pass
 	if p.has("schnellwahl"):
 		_schnellwahl = p["schnellwahl"]
 	# Die drei Ablauf-Maschinen tragen Bau, Expansion und Job-Vergabe.
 	_bau = Ui_BauAuftragMaschine.new()
 	_bau.einrichten(p.get("gebaeude"), _hud, p.get("moebel_platzierer"))
+	if p.has("definitionen") and p.get("definitionen") != null:
+		_bau.definitionen_setzen(p.get("definitionen"))
 	_expansion = Ui_ExpansionMaschine.new()
 	_expansion.einrichten(p.get("map_fabrik"), _hud, p.get("modell_ersetzen", Callable()))
 	_jobs = Ui_JobVergabeMaschine.new()
@@ -84,8 +94,25 @@ func modell_wechseln(neues_modell: Welt_Model, neue_tiere: Tier_Manager) -> void
 	_tiere = neue_tiere
 	_jobs.modell_wechseln(neues_modell)
 
+func bau_panel_setzen(panel: Ui_BauPanelSzene) -> void:
+	_bau_panel = panel
+
+func bau_lagerzone_register_setzen(register: Welt_LagerzoneRegister) -> void:
+	if _bau != null:
+		_bau.lagerzone_register_setzen(register)
+
+func bau_definitionen_setzen(registry: Gebaeude_DefinitionRegistry) -> void:
+	if _bau != null:
+		_bau.definitionen_setzen(registry)
+
 func bau_auftrag_setzen(gebaeude_id: String) -> void:
 	_bau.auftrag_setzen(gebaeude_id)
+
+func bau_panel_umschalten() -> void:
+	if _bau_panel != null and _bau_panel.has_method("sichtbar_umschalten"):
+		_bau_panel.sichtbar_umschalten()
+	elif _hud != null:
+		(_hud as Variant).meldung_setzen("Baufenster nicht bereit.")
 
 func debug_umschalten() -> void:
 	_debug_sichtbar = not _debug_sichtbar
@@ -133,6 +160,8 @@ func unhandled_input(ereignis: InputEvent, klick_ermitteln: Callable, rechteck_p
 		elif ereignis.keycode == KEY_ESCAPE:
 			if _bau != null:
 				_bau.auftrag_abbrechen()
+		elif ereignis.keycode == KEY_B:
+			bau_panel_umschalten()
 		else:
 			hotkey.call(ereignis)
 	elif ereignis.is_action_pressed("ui_cancel"):

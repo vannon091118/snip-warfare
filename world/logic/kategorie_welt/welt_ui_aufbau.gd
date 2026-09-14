@@ -7,6 +7,7 @@ class_name Welt_UiAufbau
 
 const _DebugPanelSkript := preload("res://ui/scenes/hud/hud_debug_panel.gd")
 const _BauPanelSzene := preload("res://ui/scenes/panels/bau_panel.tscn")
+const _FensterLeisteSkript := preload("res://ui/scenes/hud/fenster_leiste.gd")
 const _PopEinheitUebersetzerSkript := preload("res://ui/logic/kategorie_ui/ui_pop_einheit_uebersetzer.gd")
 const _PopEinheitPanelSzene := preload("res://ui/scenes/panels/pop_einheit_panel.tscn")
 const _LadeLeisteSkript := preload("res://ui/logic/kategorie_ui/ui_lade_leiste.gd")
@@ -17,6 +18,7 @@ var karten_viewer: Ui_KartenViewer = null
 var karten_info: Ui_WeltInfo = null
 var debug_panel: Control = null
 var bau_panel: Ui_BauPanelSzene = null
+var fenster_leiste: Ui_FensterLeiste = null
 var pop_einheit_panel: Control = null
 var pop_einheit_uebersetzer: Ui_PopEinheitUebersetzer = null
 ## Schmale Ladeleiste für den Chunk-Lader; die Szene speist sie je Frame.
@@ -92,11 +94,32 @@ func pop_einheit_panel_bauen(canvas: CanvasLayer, need_baum: Pop_NeedBaum, stock
 	pop_einheit_panel.einrichten(pop_einheit_uebersetzer)
 	canvas.add_child(pop_einheit_panel)
 
+func fenster_leiste_bauen(canvas: CanvasLayer, eintraege: Array[Dictionary]) -> void:
+	if canvas == null:
+		return
+	fenster_leiste = _FensterLeisteSkript.new()
+	fenster_leiste.name = "FensterLeiste"
+	# Eigene Zeile oberhalb des HUDs: zentriert, eigene Breite, kein Konflikt
+	# mit dem Ressourcenbalken. Anchors TOP_WIDE, aber nur 42 px hoch.
+	fenster_leiste.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	fenster_leiste.offset_left = 12.0
+	fenster_leiste.offset_right = -12.0
+	fenster_leiste.offset_top = 6.0
+	fenster_leiste.offset_bottom = 44.0
+	fenster_leiste.einrichten(eintraege)
+	canvas.add_child(fenster_leiste)
+
+func fenster_leiste_aktualisieren(_eintraege: Array[Dictionary] = []) -> void:
+	if fenster_leiste != null:
+		fenster_leiste.aktualisieren()
+
 func debug_panel_sichtbar_setzen(sichtbar: bool) -> void:
 	# Der einzige Sichtbarkeits-Weg des Debug-Fensters; die Szene reicht
 	# nur den Signal-Wert durch.
 	if debug_panel != null:
 		debug_panel.call("sichtbar_setzen", sichtbar)
+	if fenster_leiste != null:
+		fenster_leiste.aktualisieren()
 
 func lager_darsteller_einrichten(lager: Lager_Manager, ressourcen: Einheit_Ressourcen) -> void:
 	# Alte Darsteller entfernen

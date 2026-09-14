@@ -1,13 +1,13 @@
-1. Der Kommandant verlangte Kacheln statt Listen, und was die Hände bauten, waren fünf Bauobjekt-Klassen, die nur das tun, was die Daten vorgeben, ohne eine eigene Meinung über Kosten oder Freischaltung zu äußern.
-2. In world/logic/kategorie_objekt/objekt_boden_obj.gd steht die Boden-Klasse, die jede Kachel als begehbaren Grund markiert, ohne ein Gebäude zu sein, denn ein Boden, der nicht geht, trägt keine Last.
-3. In world/logic/kategorie_objekt/objekt_wand_holz.gd wurde die Holzwand geschliffen, die nach dem ersten gefällten Baum erscheint, damit der Spieler sehen kann, was Holz im standing training carrries.
-4. In world/logic/kategorie_objekt/objekt_wand_stein.gd liegt die Steinwand als spätere Stufe, damit nicht jede Wand aus demselben Holz geschnitzt ist.
-5. In world/logic/kategorie_objekt/objekt_tuer.gd steht die Tür, die den Raum schließt und öffnet, denn ein Raum ohne Tür ist ein Gefängnis ohne Ausgang.
-6. In world/logic/kategorie_objekt/objekt_rathaus.gd wurde die Rathaus-Klasse angelegt, die erst nach dem ersten Lager frei wird und den Vorarbeiter hervorbringt.
-7. In world/logic/kategorie_welt/welt_raum.gd wurde die Raum-Klasse definiert, die Innenfläche, Geschlossenheit und Tür-Status eines abgegrenzten Bereichs hält, damit die Erkennung nicht raten muss.
-8. In world/logic/kategorie_welt/welt_raum_analyser.gd steht der Algorithmus, der Kachel für Kachel prüft, ob ein Raum geschlossen ist, mindestens 4x4 innen misst und eine Tür hat.
-9. In world/logic/kategorie_welt/welt_raum_erkenner.gd wurde die Erkennungsmaschine gebaut, die den Außen-Flood startet und jeden nicht-abgedeckten Bereich als Himmel markiert, damit der Rest die Innenflächen finden kann.
-10. In world/logic/kategorie_welt/welt_raum_register.gd wird der gefundene Raum dem Weltzustand hinzugefügt und am SignalBus gemeldet, damit die Fortschrittsmaschine weiß, wenn der erste Raum steht.
-11. In world/logic/kategorie_welt/welt_lagerzone_register.gd wurde die Lagerzone eingeführt, die einen Raum als Lagerplatz markiert und ein Lager im Lager-Manager anlegt, deterministisch über den Welt-Seed statt über die Uhr.
-12. In world/logic/kategorie_welt/welt_raum_und_lager_tick.gd verbindet die Brücke alle 12 Ticks den Raum-Erkennungs-Status mit der Fortschrittsmaschine, damit kein Raum unbemerkt bleibt.
-13. Als Nächstes folgt Slice 3 mit der Fortschritts-Maschine und dem Baufenster, damit die Daten auch als interaktive Kacheln auf der Karte erscheinen.
+1. Der Kommandant verlangte ein Baufenster, das sich nicht für jeden Gegenstand neu erfinden muss, und was die Hände bauten, war eine Leiste, die alle Fenster sortiert und ohne一つの harten Knopf das gesamte Arsenal aus einem einzigen JSON liest.
+2. In world/logic/kategorie_progression/welt_fortschritts_maschine.gd wurde die Fortschritts-Maschine auf neunundzwanzig Zeilen gekürzt, die nur noch liest, prüft und fortschaltet, während Bus-Brücke und Vorarbeiter-Spawn in der Verdrahtung wohnen.
+3. In world/logic/kategorie_progression/welt_fortschritt_helfer.gd steht der Helfer, der die Einheit, den Orchestrator und den SignalBus kennt, damit die Maschine nicht selbst auto<fahrt>.
+4. In ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd wurde die Bau-Auftrag-Maschine geschliffen, die den Bautyp aus der Registry liest und die Platzierung je nach Kategorie an den richtigen Platzierer delegiert.
+5. In ui/logic/kategorie_ui/ui_bau_panel.gd steht das Baufenster, das aus der Gebaeude_DefinitionRegistry liest und nur die Gebäude zeigt, die die Fortschritts-Maschine freigeschaltet hat.
+6. In ui/logic/kategorie_ui/ui_baufenster_filter.gd wurde der Filter gebaut, der Suche und Kategorie-Filter kombiniert, damit der Spieler findet, was er sucht, ohne in einer langen Liste zu blättern.
+7. In ui/logic/kategorie_ui/ui_eingabe_steuerung.gd bekam die Eingabe die B-Taste für das Baufenster und die Verdrahtung für die Lagerzone, damit der Spieler das richtige Werkzeug zum richtigen Zeitpunkt in der Hand hält.
+8. In ui/scenes/hud/fenster_leiste.gd wurde die zentrale Leiste gebaut, die alle Fenster alphabetisch sortiert anbietet, mit Kurzbefehlen für Bau, Debug, Karte, Warum und Menü.
+9. In ui/scenes/hud/hud_leiste.gd und hud_status_anzeige.gd wurde die Verdrahtung für das Warum-Fenster ergänzt, damit die Leiste nicht nur zeigt, sondern auch öffnet.
+10. In ui/scenes/panels/bau_panel.gd und bau_panel.tscn wurde die Szene des Baufensters gebaut, mit ScrollContainer, Suchfeld und Kategorie-Filter, damit das Fenster nicht nur funktioniert, sondern auch aussieht.
+11. In world/logic/kategorie_welt/welt_ui_aufbau.gd wurde die Baustelle für die Leiste vorbereitet, damit die Szene nicht selbstständig baut, sondern die UI-Spitze das tut.
+12. In world/scenes/welt.gd und welt.tscn wurde die Verdrahtung komplett: Fenster-Leiste, Raum-Erkennung, Lagerzone, Fortschritts-Verdrahtung — alles hängt zusammen, ohne dass eine Datei die Verantwortung der anderen übernimmt.
+13. Als Nächstes folgt Slice 4 mit den Werkzeugen und der Doku, damit der Index, die Tick-Ordnung und die Roadmap den neuen Stand spiegeln.

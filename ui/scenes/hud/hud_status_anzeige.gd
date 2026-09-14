@@ -29,6 +29,9 @@ func warum_verdrahten(knopf: Button, fenster: AcceptDialog, text_label: Label) -
 	if _warum_fenster != null:
 		_warum_fenster.confirmed.connect(_auf_warum_geschlossen)
 
+func warum_oeffnen() -> void:
+	_auf_warum()
+
 func _auf_warum() -> void:
 	# Die Antwort auf warum: die letzten zehn Begründungen, ältester zuerst,
 	# menschenlesbar wie die Timeline selbst, keine Rekonstruktion im UI.
@@ -67,5 +70,14 @@ func timeline_anzeigen(begruendung: String) -> void:
 func biom_anzeigen(biom_id: String, biom_faktor: float) -> void:
 	meldung_setzen("Biom: %s Faktor %s" % [biom_id, str(biom_faktor)])
 
+func warum_knopf() -> Button:
+	return _warum_knopf
+
+func warum_fenster() -> AcceptDialog:
+	return _warum_fenster
+
 func this_text_setzen(neu: String) -> void:
 	text = neu
+
+func popup_warum() -> void:
+	warum_oeffnen()

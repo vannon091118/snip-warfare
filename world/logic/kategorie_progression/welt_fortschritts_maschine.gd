@@ -3,29 +3,33 @@ class_name Welt_FortschrittsMaschine
 signal stufe_erreicht(stufe: Dictionary)
 signal ziel_erreicht(stufe: Dictionary)
 signal orchestrator_gespawnt(position: Vector2)
+
 var stufe_index: int = 0
 var abgeschlossen: Dictionary = {}
-var _einheit_manager: Einheit_Manager = null
-var _orchestrator_manager: Orchestrator_Manager = null
-var _rassen_registry: Pop_RassenSchemaRegistry = null
+var _model: Welt_Model = null
+var _registry: Welt_FortschrittsRegistry = null
+var _helfer := Welt_FortschrittHelfer.new()
 
 func _init() -> void:
 	abgeschlossen = {}
+	_helfer.maschine_setzen(self)
 
 func registry_setzen(registry: Welt_FortschrittsRegistry) -> void:
 	_registry = registry
 
 func einheit_manager_setzen(manager: Einheit_Manager) -> void:
-	_einheit_manager = manager
-	var bus := Kern_SignalBus.bus()
-	if bus != null and bus.has_signal("produktionsraum_entstanden") and not bus.produktionsraum_entstanden.is_connected(_auf_produktionsraum_entstanden):
-		bus.produktionsraum_entstanden.connect(_auf_produktionsraum_entstanden)
+	_helfer.einheit_setzen(manager)
+	_helfer.bus_verbinden()
 
 func orchestrator_manager_setzen(manager: Orchestrator_Manager) -> void:
-	_orchestrator_manager = manager
+	_helfer.orchestrator_setzen(manager)
 
 func rassen_registry_setzen(registry: Pop_RassenSchemaRegistry) -> void:
-	_rassen_registry = registry
+	_helfer.rassen_setzen(registry)
+
+func model_setzen(model: Welt_Model) -> void:
+	_model = model
+	_fortschritt_laden()
 
 func aktive_stufe() -> Dictionary:
 	if _registry == null:
@@ -40,61 +44,33 @@ func ziel_zeile() -> String:
 
 func gebaeude_fertiggestellt(gebaeude_id: String) -> void:
 	var stufe := aktive_stufe()
-	if stufe.is_empty():
-		return
-	if str(stufe.get("ziel_typ", "")) != "gebaeude_bauen":
+	if stufe.is_empty() or str(stufe.get("ziel_typ", "")) != "gebaeude_bauen":
 		return
 	if str(stufe.get("gebaeude_id", "")) != gebaeude_id:
 		return
-	_fortschalten()
+	fortschalten()
 
 func einwanderer_angekommen() -> void:
 	var stufe := aktive_stufe()
-	if stufe.is_empty():
+	if stufe.is_empty() or str(stufe.get("ziel_typ", "")) != "einwanderung":
 		return
-	if str(stufe.get("ziel_typ", "")) != "einwanderung":
-		return
-	_fortschalten()
+	fortschalten()
 
-func _auf_produktionsraum_entstanden(_raum_id: String, profil: String) -> void:
-	if profil != "rathaus":
-		return
-	if _einheit_manager == null:
-		push_warning("Welt_FortschrittsMaschine: Einheit_Manager nicht gesetzt")
-		return
-	## Der Ankunftsort kommt aus dem Manager-Vertrag: Mit Blick der Welt-
-	## Szene landet der Orchestrator im Bild, ohne faellt der Ruf auf den
-	## Lager-Anker zurueck. Ein fester Punkt (500,300) wuerde den ersten
-	## Lenker ausserhalb jedes Blicks absetzen.
-	var spawn_position := _einheit_manager.ankunftsort()
-	if _spawn_cap_erreicht("mensch"):
-		push_warning("Spawn-Cap erreicht")
-		return
-	var einheit_index := _einheit_manager.einheit_hinzufuegen(spawn_position, "mensch")
-	# Registriere die Einheit als Orchestrator für die erste Zone (Index 0)
-	if _orchestrator_manager != null:
-		_orchestrator_manager.einheit_als_orchestrator_registrieren(einheit_index, 0)
-	orchestrator_gespawnt.emit(spawn_position)
-
-func _spawn_cap_erreicht(rasse_id: String) -> bool:
-	if _einheit_manager == null:
-		return false
-	if _rassen_registry == null:
-		return _einheit_manager.einheit_zahl() >= 20
-	var schema := _rassen_registry.schema_fuer(rasse_id)
-	if schema == null:
-		return false
-	return _einheit_manager.einheit_zahl() >= schema.max_einheiten
-
-func _fortschalten() -> void:
+func fortschalten() -> void:
 	var stufe := aktive_stufe()
 	if stufe.is_empty():
 		return
-	abgeschlossen[str(stufe.get("id", ""))] = true
+	var sid := str(stufe.get("id", ""))
+	abgeschlossen[sid] = true
 	ziel_erreicht.emit(stufe)
+	if sid == "rathaus_bauen":
+		var p := _helfer.spawn_vorarbeiter()
+		if p != Vector2.INF:
+			orchestrator_gespawnt.emit(p)
 	if stufe_index + 1 < _registry.stufen_zahl():
 		stufe_index += 1
 		stufe_erreicht.emit(aktive_stufe())
+	_fortschritt_speichern()
 
 func stufe_frei(gesperrt_ab_stufe: int) -> bool:
 	return stufe_index >= gesperrt_ab_stufe
@@ -103,10 +79,34 @@ func freigeschaltete_gebaeude() -> Array[String]:
 	var frei: Array[String] = []
 	if _registry == null:
 		return frei
-	for index in stufe_index + 1:
-		var stufe := _registry.stufe_an(index)
-		for gebaeude_id: Variant in (stufe.get("schaltet_frei", {}).get("gebaeude", []) as Array):
-			frei.append(str(gebaeude_id))
+	for i in stufe_index + 1:
+		for gid: Variant in (_registry.stufe_an(i).get("schaltet_frei", {}).get("gebaeude", []) as Array):
+			frei.append(str(gid))
 	return frei
 
-var _registry: Welt_FortschrittsRegistry = null
+func freigeschaltete_kategorien() -> Array[String]:
+	var frei: Array[String] = []
+	if _registry == null:
+		return frei
+	for i in stufe_index + 1:
+		for kat: Variant in (_registry.stufe_an(i).get("schaltet_frei", {}).get("kategorien", []) as Array):
+			var k := str(kat)
+			if not frei.has(k):
+				frei.append(k)
+	return frei
+
+func _fortschritt_speichern() -> void:
+	if _model == null:
+		return
+	_model.objekt_feld_setzen(0, "fortschritt_stufe", stufe_index)
+	_model.objekt_feld_setzen(0, "fortschritt_abgeschlossen", abgeschlossen.duplicate(true))
+
+func _fortschritt_laden() -> void:
+	if _model == null:
+		return
+	var gi: Variant = _model.objekt_feld(0, "fortschritt_stufe", null)
+	if typeof(gi) in [TYPE_INT, TYPE_FLOAT]:
+		stufe_index = int(gi)
+	var ga: Variant = _model.objekt_feld(0, "fortschritt_abgeschlossen", null)
+	if typeof(ga) == TYPE_DICTIONARY:
+		abgeschlossen = (ga as Dictionary).duplicate(true)
