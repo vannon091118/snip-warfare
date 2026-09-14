@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 144" width="160" height="144">
+  <ellipse cx="78" cy="136" rx="62" ry="8" fill="#7A9549"/>
+  <ellipse cx="79" cy="134.5" rx="59" ry="7" fill="#8FAB58"/>
+  <path fill="#C89B6C" d="M 24 132 L 24 64 Q 24 60 28 60 L 132 60 Q 136 60 136 64 L 136 132 Q 136 136 132 136 L 28 136 Q 24 136 24 132 Z"/>
+  <path fill="#D9B183" d="M 24 132 L 24 64 Q 24 60 28 60 L 56 60 Q 54 72 54 96 Q 54 114 56 132 Q 56 136 60 136 L 28 136 Q 24 136 24 132 Z"/>
+  <path fill="#5A3B20" d="M 18 68 L 78 18 L 142 68 Q 142 72 138 72 L 22 72 Q 18 72 18 68 Z"/>
+  <path fill="#A67033" d="M 22 68 L 78 24 L 138 68 L 134 70 L 78 28 L 26 70 Z"/>
+  <!-- Balkon / Vorarbeiter-Ecke -->
+  <rect x="56" y="72" width="48" height="6" rx="2" fill="#3E2A12"/>
+  <rect x="62" y="52" width="36" height="22" rx="2" fill="#E8D9A8" opacity="0.85"/>
+  <circle cx="80" cy="63" r="3.2" fill="#3E2A12"/>
+  <path fill="#6D4A31" d="M 36 104 L 36 84 Q 36 80 40 80 L 54 80 Q 58 80 58 84 L 58 104 Z"/>
+  <path fill="#F6F1E4" d="M 40 100 L 40 86 Q 40 84 42 84 L 52 84 L 52 100 Z"/>
+  <path fill="#8A6240" d="M 66 136 L 66 92 Q 66 88 70 88 L 90 88 Q 94 88 94 92 L 94 136 Z"/>
+  <circle cx="88" cy="112" r="2.4" fill="#3E2A12"/>
+</svg>
