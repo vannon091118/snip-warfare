@@ -17,7 +17,6 @@ func einrichten(kontext: Dictionary) -> void:
 
 
 func tick(nummer: int, delta: float) -> void:
-	# Ohne eingerichteten Kontext hat diese Maschine nichts zu führen.
 	if _kontext.is_empty() or not _aktive_karte():
 		return
 	var verhalten: Einheit_VerhaltensMaschine = _kontext["verhalten"]
@@ -26,14 +25,11 @@ func tick(nummer: int, delta: float) -> void:
 	var takt_ticks := Kern_Weltuhr.ticks_aus_minuten(need_registry.takt_minuten())
 	if takt_ticks > 0 and nummer % takt_ticks == 0 and nummer != 0:
 		nahrung_verteilen()
-		# Einwanderung: Der aktive Zieltyp liefert die Rate, der Spawn laeuft
-		# ueber denselben Schnitt wie jede andere Ankunft.
 		(_kontext["versorgung_neu"] as Einheit_VersorgungsMaschine).einwanderung_ticken()
 	var einheiten: Array[Dictionary] = _kontext["einheiten"]
 	for ei: int in einheiten.size():
 		_eine_einheit(einheiten[ei], ei, nummer, delta)
-	# Die Soz-Blasen lesen pro Takt den stärksten Gerücht-Stand; der Ruf ist
-	# optional, damit der Takt auch ohne Sozial-Domäne läuft.
+	# Die Soz-Blasen lesen je Takt den Gerücht-Stand; der Ruf ist optional.
 	var soz_bubble_tick: Callable = _kontext.get("sozial_bubble_tick", Callable())
 	if soz_bubble_tick.is_valid():
 		soz_bubble_tick.call(nummer)
@@ -53,7 +49,10 @@ func _eine_einheit(einheit: Dictionary, ei: int, nummer: int, delta: float) -> v
 
 
 func _ziel_verloren(status: Einheit_Status, ziel_suche: Einheit_ZielSuche) -> bool:
-	## Ein entferntes Ziel beendet die Arbeit sofort.
+	## Ein entferntes Ziel beendet die Arbeit; ein Marschbefehl ohne Job hat
+	## kein abbrechbares Ziel und darf nie im ersten Tick still stehen.
+	if status.job == null:
+		return false
 	var beschaeftigt := status.zustand == Einheit_Status.Zustand.ARBEITEN \
 		or status.zustand == Einheit_Status.Zustand.GEHEN
 	return beschaeftigt and not ziel_suche.ziel_existiert(status)

@@ -127,6 +127,11 @@ func lager_anker_position() -> Vector2:
 		return _lager.lager_position(0)
 	return Vector2.ZERO
 
+func ankunftsort_setzen(ankunft: Callable) -> void:
+	## Die Welt-Szene reicht ihren Blick hereingereicht; die Verdrahtung
+	## trägt ihn zur Einwanderung und zur Versorgung.
+	_verdrahtung.ankunftsort_erneuern(self, ankunft)
+
 func schlag_ort_empfaenger_setzen(empfaenger: Callable) -> void:
 	_verdrahtung.schlag_ort_empfaenger_setzen(empfaenger)
 
@@ -137,9 +142,6 @@ func schlag_empfaenger_setzen(empfaenger: Callable) -> void:
 func _auf_tick(nummer: int, delta: float) -> void:
 	# Der Manager reicht den Takt nur an seine Takt-Maschine weiter.
 	_takt.tick(nummer, delta)
-
-func _nahrung_verteilen() -> void:
-	_takt.nahrung_verteilen()
 
 func _auf_zustand_geaendert(neu: int, status: Einheit_Status, mood: Pop_MoodMaschine) -> void:
 	# Trupp merkt den Zustand, der Job-Fluss trägt die Stimmungs-Regel.

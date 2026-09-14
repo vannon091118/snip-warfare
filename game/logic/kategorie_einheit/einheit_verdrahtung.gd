@@ -14,6 +14,15 @@ var _sozial_blasen: Array = []
 var _sozial_lese_ruf: Callable = Callable()
 var _schlag_ort_empfaenger: Callable = Callable()
 var _schlag_empfaenger: Callable = Callable()
+## Kategorie logik: Der Ankunftsort-Vertrag; die Versorgung liest ihn je Takt.
+var _ankunftsort: Callable = Callable()
+
+
+func ankunftsort_erneuern(mgr: Einheit_Manager, ankunft: Callable) -> void:
+	## Die Welt-Szene reicht ihren Blick hereingereicht; ohne Vertrag greift
+	## die Versorgung auf den Lager-Anker zurück.
+	_ankunftsort = ankunft
+	versorgung_erneuern(mgr)
 
 
 ## Erster Aufbau: Modell-Referenzen des Managers setzen und die Kette bauen.
@@ -134,6 +143,7 @@ func versorgung_erneuern(mgr: Einheit_Manager) -> void:
 		"manager": mgr,
 		"ressourcen": mgr._ressourcen,
 		"fortschritt": mgr._fortschritt,
+		"ankunftsort": _ankunftsort,
 	})
 
 

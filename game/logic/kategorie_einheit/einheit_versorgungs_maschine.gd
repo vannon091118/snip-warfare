@@ -13,6 +13,8 @@ var _manager: Einheit_Manager = null
 var _ressourcen: Einheit_Ressourcen = null
 var _fortschritt: Welt_FortschrittsMaschine = null
 var _lager: Lager_Manager = null
+## Kategorie daten: Der Ankunftsort-Vertrag aus der Verdrahtung.
+var _ankunft: Callable = Callable()
 
 ## Kategorie logik: Wachstum und Einwanderung.
 
@@ -21,6 +23,7 @@ func einrichten(p: Dictionary) -> void:
 	_ressourcen = p.get("ressourcen")
 	_lager = p.get("lager")
 	_fortschritt = p.get("fortschritt")
+	_ankunft = p.get("ankunftsort", Callable())
 
 func versuche_wachstum(haus_welt_position: Vector2) -> bool:
 	if _ressourcen == null:
@@ -42,5 +45,16 @@ func einwanderung_ticken() -> void:
 		return
 	var je_tag := int(stufe.get("einwanderer_je_tag", 0))
 	for _i: int in je_tag:
-		_manager.einheit_hinzufuegen(_manager.lager_anker_position() + Vector2(24, 20))
+		# Der Ankunftsort kommt aus dem Manager-Vertrag: Mit Blick der
+		# Welt-Szene landet der Ankömmling im Bild, ohne fällt der Anker
+		# auf das Lager zurück.
+		_manager.einheit_hinzufuegen(_ankunftsort())
 		_fortschritt.einwanderer_angekommen()
+
+
+func _ankunftsort() -> Vector2:
+	## Mit Blick-Vertrag landet der Ankömmling im Bild; ohne Vertrag greift
+	## der Anker des Lagers, versetzt wie zuvor.
+	if _ankunft.is_valid():
+		return _ankunft.call()
+	return _manager.lager_anker_position() + Vector2(24, 20)
