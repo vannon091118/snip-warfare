@@ -1,10 +1,13 @@
-1. Der Kommandant verlangte ein config-driven Bausystem, und was die Hand schrieb, war die Datenbasis, auf der jedes künftige Gebäude steht, ohne dass eine einzelne Zeile UI-Code für einen konkreten Gegenstand geschrieben wird.
-2. In core/logic/events/kern_signal_bus.gd bekamen drei neue Signale ihren Platz: ressource_eingelagert, raum_entstanden und lagerzone_registriert, denn nur wer ruft, wird gehört, und nur wer gehört wird, darf weiterbestehen.
-3. In economy/data/lager.json wurde der Platzhalter für das Startlager angelegt, damit der erste Brennstoff, den ein Stockmann hereinträgt, nicht in den Wind schreibt.
-4. In economy/logic/storage/lager_manager.gd erhielt die Einlagerung das Signal ressource_eingelagert, damit die Fortschrittsmaschine weiß, wenn das erste Holz den Boden des Lagers berührt hat, und nicht nur dann, wenn jemand danach fragt.
-5. In game/data/progression.json wurde die gesamte Onboarding-Kette definiert: vom kostenlosen Lagerfeuer über das Sammeln von Holz bis zum Rathaus und Vorarbeiter, Schritt für Schritt, damit kein einziger Übergang von einem UI-Klick abhängt, sondern von einem echten Bestätigungsereignis.
-6. In world/data/element_katalog.json wurden die visuellen Referenzen für Boden, Wände, Türen und Rathaus eingetragen, damit jede Kachel weiß, welchen Baustein sie darstellt, wenn das Auge danach fragt.
-7. In world/data/gebaeude.json wurde die autoritative Quelle für jedes Bauprojekt angelegt: Name, Kategorie, Kosten, Freischaltungsbedingung, Bauwerkzeug und Platzierungsregeln leben in einem einzigen JSON, und kein System darf daneben eine eigene Definition pflegen.
-8. In world/logic/kategorie_objekt/gebaeude_definition.gd wurde die Klasse geschliffen, die aus diesem JSON die Wahrheit liest, denn ein Gebäude, das seine Daten nicht kennt, steht wie ein Turm ohne Fundament.
-9. Die fünf SVG-Dateien in world/assets/bauen und world/assets/terrain sind die blauen Drucke des Baumeisters: Türen, Wände, Boden und Rathaus, damit das Auge sieht, was die Hände bauen, und nicht nur graue Kästen raten muss.
-10. Als Nächstes folgt Slice 2 mit den eigentlichen Bauobjekt-Klassen und der Raumerkennung, damit das, was die Daten beschreiben, auch als Kachel auf der Karte erscheint.
+1. Der Kommandant verlangte Kacheln statt Listen, und was die Hände bauten, waren fünf Bauobjekt-Klassen, die nur das tun, was die Daten vorgeben, ohne eine eigene Meinung über Kosten oder Freischaltung zu äußern.
+2. In world/logic/kategorie_objekt/objekt_boden_obj.gd steht die Boden-Klasse, die jede Kachel als begehbaren Grund markiert, ohne ein Gebäude zu sein, denn ein Boden, der nicht geht, trägt keine Last.
+3. In world/logic/kategorie_objekt/objekt_wand_holz.gd wurde die Holzwand geschliffen, die nach dem ersten gefällten Baum erscheint, damit der Spieler sehen kann, was Holz im standing training carrries.
+4. In world/logic/kategorie_objekt/objekt_wand_stein.gd liegt die Steinwand als spätere Stufe, damit nicht jede Wand aus demselben Holz geschnitzt ist.
+5. In world/logic/kategorie_objekt/objekt_tuer.gd steht die Tür, die den Raum schließt und öffnet, denn ein Raum ohne Tür ist ein Gefängnis ohne Ausgang.
+6. In world/logic/kategorie_objekt/objekt_rathaus.gd wurde die Rathaus-Klasse angelegt, die erst nach dem ersten Lager frei wird und den Vorarbeiter hervorbringt.
+7. In world/logic/kategorie_welt/welt_raum.gd wurde die Raum-Klasse definiert, die Innenfläche, Geschlossenheit und Tür-Status eines abgegrenzten Bereichs hält, damit die Erkennung nicht raten muss.
+8. In world/logic/kategorie_welt/welt_raum_analyser.gd steht der Algorithmus, der Kachel für Kachel prüft, ob ein Raum geschlossen ist, mindestens 4x4 innen misst und eine Tür hat.
+9. In world/logic/kategorie_welt/welt_raum_erkenner.gd wurde die Erkennungsmaschine gebaut, die den Außen-Flood startet und jeden nicht-abgedeckten Bereich als Himmel markiert, damit der Rest die Innenflächen finden kann.
+10. In world/logic/kategorie_welt/welt_raum_register.gd wird der gefundene Raum dem Weltzustand hinzugefügt und am SignalBus gemeldet, damit die Fortschrittsmaschine weiß, wenn der erste Raum steht.
+11. In world/logic/kategorie_welt/welt_lagerzone_register.gd wurde die Lagerzone eingeführt, die einen Raum als Lagerplatz markiert und ein Lager im Lager-Manager anlegt, deterministisch über den Welt-Seed statt über die Uhr.
+12. In world/logic/kategorie_welt/welt_raum_und_lager_tick.gd verbindet die Brücke alle 12 Ticks den Raum-Erkennungs-Status mit der Fortschrittsmaschine, damit kein Raum unbemerkt bleibt.
+13. Als Nächstes folgt Slice 3 mit der Fortschritts-Maschine und dem Baufenster, damit die Daten auch als interaktive Kacheln auf der Karte erscheinen.
