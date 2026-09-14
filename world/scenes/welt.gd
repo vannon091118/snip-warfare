@@ -54,6 +54,7 @@ var _tier_platzierer := Welt_TierPlatzierer.new()
 var _waerme_sammler := Welt_WaermeSammler.new()
 var _need_baum := Pop_NeedBaum.new()
 var _fortschritt := Welt_FortschrittsMaschine.new()
+var _fortschritt_verdrahtung := Welt_FortschrittVerdrahtung.new()
 var _raum_und_lager := Welt_RaumUndLagerTick.new()
 var _karten_beobachter := Welt_KartenBeobachter.new()
 var _timeline := Kern_Timeline.new()
@@ -201,8 +202,16 @@ func _bereit_orchestrator_und_ui() -> void:
 	_orchestrator_priority_panel.name = "OrchestratorPriorityPanel"
 	_orchestrator_priority_panel.einrichten(_orchestrator_manager, _auswahl)
 	add_child(_orchestrator_priority_panel)
-	_fortschritt.einheit_manager_setzen(_stockmaenner)
-	_fortschritt.orchestrator_manager_setzen(_orchestrator_manager)
+
+	# Verbinde Fortschritts-Verdrahtung mit Einheiten und Orchestrator:
+	# Bus-Brücke und Vorarbeiter-Spawn wohnen in der Verdrahtung.
+	_fortschritt_verdrahtung.einrichten(_fortschritt)
+	_fortschritt_verdrahtung.einheit_manager_setzen(_stockmaenner)
+	_fortschritt_verdrahtung.orchestrator_manager_setzen(_orchestrator_manager)
+
+	## Fraktions-KI über die Domänen-Spitze: Die Szene reicht nur die
+	## Referenzen hinein; Config, Netzwerk, Keimlinge, Rassen und KI-Maschinen
+	## wohnen in der Verdrahtung.
 	_fraktions_ki.initialisieren({
 		"model": _model,
 		"biome": _biome,
@@ -256,6 +265,8 @@ func _bereit_orchestrator_und_ui() -> void:
 	_ui_aufbau.debug_panel_bauen(%UILayer as CanvasLayer, _auswahl, _stockmaenner, _tiere)
 	_ui_aufbau.bau_panel_bauen(%UILayer as CanvasLayer, _gebaeude_definitionen, _fortschritt, _steuerung, _auf_bau_gewaehlt, _registry)
 	_ui_aufbau.pop_einheit_panel_bauen(%UILayer as CanvasLayer, _need_baum, _stockmaenner, _ressourcen)
+	# Lagerzone-Register an BauAuftragMaschine durchreichen: Der B-Toggle
+	# greift ab hier auf echte Raumprüfung und Lager-Entscheid.
 	if _eingabe_steuerung != null and _raum_und_lager != null:
 		_eingabe_steuerung.bau_lagerzone_register_setzen(_raum_und_lager.lagerzone_register())
 		_eingabe_steuerung.bau_panel_setzen(_ui_aufbau.bau_panel)
@@ -263,56 +274,6 @@ func _bereit_orchestrator_und_ui() -> void:
 	_eingabe_steuerung.debug_umgeschaltet.connect(_auf_debug_umgeschaltet)
 	_hud.warum_verdrahten(%WarumKnopf, %WarumFenster, %WarumText)
 	_fenster_leiste_bauen()
-
-func _fenster_leiste_bauen() -> void:
-	var canvas := get_node_or_null("%UILayer") as CanvasLayer
-	if canvas == null:
-		canvas = get_node_or_null("UILayer") as CanvasLayer
-	if canvas == null:
-		return
-	var eintraege: Array[Dictionary] = [
-		{
-			"id": "bau",
-			"name": "Bau",
-			"shortcut": "B",
-			"tooltip": "Baufenster öffnen/schließen [B]",
-			"aktion": _eingabe_steuerung.bau_panel_umschalten,
-			"sichtbar": func() -> bool: return _ui_aufbau.bau_panel != null and _ui_aufbau.bau_panel.visible,
-		},
-		{
-			"id": "karte",
-			"name": "Karte",
-			"shortcut": "M",
-			"tooltip": "Weltkarte umschalten [M]",
-			"aktion": _eingabe_steuerung.karten_umschalten,
-			"sichtbar": func() -> bool: return _karten_ebene != null and _karten_ebene.visible,
-		},
-		{
-			"id": "debug",
-			"name": "Debug",
-			"shortcut": "F3",
-			"tooltip": "Debug-Overlay umschalten [F3]",
-			"aktion": _eingabe_steuerung.debug_umschalten,
-			"sichtbar": func() -> bool: return _ui_aufbau.debug_panel != null and _ui_aufbau.debug_panel.visible,
-		},
-		{
-			"id": "warum",
-			"name": "Warum?",
-			"shortcut": "",
-			"tooltip": "Begründungen der letzten Buchungen anzeigen",
-			"aktion": _hud.warum_oeffnen,
-			"sichtbar": func() -> bool: return false,
-		},
-		{
-			"id": "menu",
-			"name": "Menü",
-			"shortcut": "Esc",
-			"tooltip": "Ins Hauptmenü",
-			"aktion": _auf_zurueck,
-			"sichtbar": func() -> bool: return false,
-		},
-	]
-	_ui_aufbau.fenster_leiste_bauen(canvas, eintraege)
 
 func _ladevorgang_ausfuehren() -> void:
 	_ladevorgang.einrichten(_model, _generator)
@@ -513,3 +474,54 @@ func _auf_stufe_erreicht(stufe: Dictionary) -> void:
 
 func _auf_timeline_eintrag(eintrag: Kern_TimelineEintrag) -> void:
 	_rueckmeldung.timeline_anzeigen(eintrag.delta_text())
+
+
+func _fenster_leiste_bauen() -> void:
+	var canvas := get_node_or_null("%UILayer") as CanvasLayer
+	if canvas == null:
+		canvas = get_node_or_null("UILayer") as CanvasLayer
+	if canvas == null:
+		return
+	var eintraege: Array[Dictionary] = [
+		{
+			"id": "bau",
+			"name": "Bau",
+			"shortcut": "B",
+			"tooltip": "Baufenster öffnen/schließen [B]",
+			"aktion": _eingabe_steuerung.bau_panel_umschalten,
+			"sichtbar": func() -> bool: return _ui_aufbau.bau_panel != null and _ui_aufbau.bau_panel.visible,
+		},
+		{
+			"id": "karte",
+			"name": "Karte",
+			"shortcut": "M",
+			"tooltip": "Weltkarte umschalten [M]",
+			"aktion": _eingabe_steuerung.karten_umschalten,
+			"sichtbar": func() -> bool: return _karten_ebene != null and _karten_ebene.visible,
+		},
+		{
+			"id": "debug",
+			"name": "Debug",
+			"shortcut": "F3",
+			"tooltip": "Debug-Overlay umschalten [F3]",
+			"aktion": _eingabe_steuerung.debug_umschalten,
+			"sichtbar": func() -> bool: return _ui_aufbau.debug_panel != null and _ui_aufbau.debug_panel.visible,
+		},
+		{
+			"id": "warum",
+			"name": "Warum?",
+			"shortcut": "",
+			"tooltip": "Begründungen der letzten Buchungen anzeigen",
+			"aktion": _hud.warum_oeffnen,
+			"sichtbar": func() -> bool: return false,
+		},
+		{
+			"id": "menu",
+			"name": "Menü",
+			"shortcut": "Esc",
+			"tooltip": "Ins Hauptmenü",
+			"aktion": _auf_zurueck,
+			"sichtbar": func() -> bool: return false,
+		},
+	]
+	_ui_aufbau.fenster_leiste_bauen(canvas, eintraege)

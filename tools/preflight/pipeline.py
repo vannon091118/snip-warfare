@@ -27,6 +27,7 @@ PHASEN = [
             "E001", "E002", "E003", "E004", "E005", "E006", "E007", "E008", "E009", "E010",
             "E011", "E012", "E013", "E014", "E015", "E019", "E020", "E021", "E022",
             "E023", "E024", "E025", "E040", "E041", "E042", "E043", "E044", "E045",
+            "E047", "E048", "E049", "E050", "E051",
         ),
     ),
     ("lauf", ("E016", "E017", "E018", "E025")),
@@ -49,6 +50,7 @@ KATEGORIE_ZU_PHASE = {
     "warnungen": "statik",
     "locregel": "statik",
     "bau_kette": "statik",
+    "engine_bruecken": "statik",
     "whitespace": "statik",
     "version": "statik",
     "index": "statik",
@@ -60,7 +62,7 @@ KATEGORIE_ZU_PHASE = {
 
 PHASE_ZU_KATEGORIEN = {
     "selbsttest": [],
-    "statik": ["klassen", "trennung", "determinismus", "pfade", "registries", "warnungen", "pyramide", "daten", "datenparitaet", "locregel", "bau_kette", "whitespace", "version", "index", "assets", "biome", "einheitlich", "welt"],
+    "statik": ["klassen", "trennung", "determinismus", "pfade", "registries", "warnungen", "pyramide", "daten", "datenparitaet", "locregel", "bau_kette", "engine_bruecken", "whitespace", "version", "index", "assets", "biome", "einheitlich", "welt"],
     "lauf": ["godot"],
     "beweis": ["sonden"],
     "gate": ["shinon"],

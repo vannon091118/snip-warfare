@@ -16,6 +16,7 @@ IGNORIERTE_PRAEFIXE = (
     "__pycache__/",
     "node_modules/",
     "addons/",
+    ".freebuff/",
 )
 
 VERSIONIERTE_DOKUMENTE = (

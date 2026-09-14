@@ -2,6 +2,7 @@
 """Statik Laeufer. Eigene Zuständigkeit: Alle statik-Kategorien in Reihe."""
 
 from .pruef_bau_kette import pruefe_bau_kette
+from .pruef_engine_bruecken import pruefe_engine_bruecken
 from .pruef_daten import gib_dateninventar_aus
 from .pruef_datenparitaet import pruefe_datenparitaet
 from .pruef_determinismus import pruefe_determinismus
@@ -35,6 +36,8 @@ def statik_laufen(gewaehlt: set[str], dateien) -> None:
         pruefe_datenparitaet(dateien)
     if "bau_kette" in gewaehlt:
         pruefe_bau_kette(dateien)
+    if "engine_bruecken" in gewaehlt:
+        pruefe_engine_bruecken(dateien)
     if "locregel" in gewaehlt:
         pruefe_locregel(dateien)
     if "whitespace" in gewaehlt:

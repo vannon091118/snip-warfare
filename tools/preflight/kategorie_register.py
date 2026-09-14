@@ -22,4 +22,5 @@ PRUEFKATEGORIEN = {
     "whitespace": ("E042",),
     "version": ("E043",),
     "index": ("E044",),
+    "engine_bruecken": ("E047", "E048", "E049", "E050", "E051"),
 }
