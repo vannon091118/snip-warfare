@@ -1,0 +1,7 @@
+{
+  "_kommentar": "Registrier-Vertrag der Engines. Keine Engine meldet sich beim Koordinator ohne Eintrag; der Preflight-Kategorie engine_bruecken prueft die Verbindung. takt_teiler 1 heisst jeder Takt. Der Konsolidator ist kein Eintrag, er laeuft immer.",
+  "engines": {
+    "beweis_a": {"takt_teiler": 1, "quelle": "tools/lauf_pruefung_blackboard.gd"},
+    "beweis_b": {"takt_teiler": 2, "quelle": "tools/lauf_pruefung_blackboard.gd"}
+  }
+}

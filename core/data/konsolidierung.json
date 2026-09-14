@@ -1,0 +1,4 @@
+{
+  "_kommentar": "Metadaten der Konsolidierung: Wer liest welchen Sektor, wer schreibt welches konsolidierte Feld. Die Transformations-Logik selbst ist Code als Kern_Mutation-Unterklassen; dieses Feld dient dem Preflight und der Uebersicht.",
+  "transformationen": []
+}
