@@ -31,6 +31,11 @@ GRENZEN_NAME_ERGAENZUNG = {
 
 GEPRUEFTE_ORDNER = ("game/", "world/", "core/", "economy/", "population/", "military/")
 
+WERKSTATT_ORDNER = ("tools/preflight/", "tools/sonden/", "tools/warteschlange/")
+WERKSTATT_GRENZE_PY = 120
+WERKSTATT_EINZELDATEIEN = ("tools/preflight.py",)
+IGNORIERTE_WERKSTATT_DATEIEN = ("tools/preflight/selbsttest.py",)
+
 
 def _grenze_fuer(datei_name: str):
     name = datei_name.lower()
@@ -44,12 +49,44 @@ def _grenze_fuer(datei_name: str):
     return None, None
 
 
+def _pruefe_werkstatt_py() -> None:
+    """Eigene Teilzuständigkeit: Python-Werkstatt unter 120 Zeilen halten."""
+    kandidaten: list[str] = []
+    for ordner in WERKSTATT_ORDNER:
+        stamm = PROJEKT_STAMM / ordner
+        if not stamm.is_dir():
+            continue
+        for pfad in stamm.rglob("*.py"):
+            rel = str(pfad.relative_to(PROJEKT_STAMM)).replace("\\", "/")
+            if rel in IGNORIERTE_WERKSTATT_DATEIEN:
+                continue
+            kandidaten.append(rel)
+    for rel in WERKSTATT_EINZELDATEIEN:
+        kandidaten.append(rel)
+    for rel in sorted(set(kandidaten)):
+        pfad = PROJEKT_STAMM / rel
+        if not pfad.is_file():
+            continue
+        try:
+            code = pfad.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        zeilen = code.count("\n") + 1 if code else 0
+        if zeilen > WERKSTATT_GRENZE_PY:
+            fehler("E041", rel, 1,
+                   "Werkstatt-Grenze verletzt: %d Zeilen in %s, erlaubt sind %d; "
+                   "verantworte in eigene Module teilen" %
+                   (zeilen, rel, WERKSTATT_GRENZE_PY))
+
+
 def pruefe_locregel(dateien) -> None:
     """E041: Zeilen-Grenze je Suffix, ohne Ausnahme und ohne Nachlass."""
+    _pruefe_werkstatt_py()
     for pfad, code in dateien:
         rel = str(pfad.relative_to(PROJEKT_STAMM)).replace("\\", "/")
         normalisiert = rel.lower()
         # Ausnahmen: Werkzeuge, Lauf-Prüfungen, Tests, Shinon, Szenen.
+        # Fach-Ordner prüft Suffix-Grenzen; Werkstatt prüft oben py-Grenze.
         if rel.startswith("tools/"):
             continue
         if normalisiert.startswith("lauf_pruefung_"):

@@ -1,198 +1,58 @@
 # -*- coding: utf-8 -*-
-"""E000 Selbsttest: Die Kernprüfungen werden gegen bekannte Beispiele
-ausgeführt; weicht ein Ergebnis ab, ist der Preflight selbst unbrauchbar."""
+"""E000 Selbsttest: Fassade über echte Teil-Domänen."""
 
-import importlib.util
-import sys
-
-from .kern import (PROJEKT_STAMM, ERLAUBTE_ZUFALLS_KLASSEN, ZUFALLS_MUSTER,
-                   ZEIT_SEED_MUSTER, ERLAUBTE_HASH_KLASSEN, BUILTIN_HASH_MUSTER)
-from .pruef_determinismus import (_sammle_zufallsfundstellen,
-                                  _sammle_hash_fundstellen,
-                                  _matrix_zuordnung_aus_code)
-
-
-def _lade_shinon_klasse(rel_pfad, modul_name, klassen_name):
-    pfad = PROJEKT_STAMM / rel_pfad
-    spez = importlib.util.spec_from_file_location(modul_name, str(pfad))
-    modul = importlib.util.module_from_spec(spez)
-    sys.modules[spez.name] = modul
-    spez.loader.exec_module(modul)
-    return getattr(modul, klassen_name)
+from .kern import ERLAUBTE_ZUFALLS_KLASSEN, ZUFALLS_MUSTER, ZEIT_SEED_MUSTER, ERLAUBTE_HASH_KLASSEN, BUILTIN_HASH_MUSTER
+from .pruef_determinismus import _sammle_zufallsfundstellen, _sammle_hash_fundstellen, _matrix_zuordnung_aus_code
 
 
 def selbsttest():
-    probleme = []
-    probe_quelle = "extends RefCounted\nclass_name E000_Probe\nvar wert := randi()\n"
-    if len(_sammle_zufallsfundstellen(probe_quelle, "E000_Probe")) != 1:
-        probleme.append("Zufallsdetektor fand randi() in einer Fremdklasse nicht")
-    kern_quelle = "extends RefCounted\nclass_name Kern_Zufall\nvar wert := randi()\n"
-    if len(_sammle_zufallsfundstellen(kern_quelle, "Kern_Zufall")) != 0:
-        probleme.append("Zufallsdetektor meldet erlaubte Aufrufe in Kern_Zufall")
-    matrix_quelle = ('match str(eintrag.get("name", "")):\n'
-                     '\t"TestA":\n'
-                     '\t\treturn Probe_MutationA.new()\n'
-                     '\t"TestB":\n'
-                     '\t\treturn Probe_MutationB.new()\n')
-    zuordnung = _matrix_zuordnung_aus_code(matrix_quelle)
-    if zuordnung != {"TestA": "Probe_MutationA", "TestB": "Probe_MutationB"}:
-        probleme.append("Matrix-Zuordnung wurde falsch ausgelesen: %r" % zuordnung)
-    # Zufallsmuster aus dem Kern muss mit den Fundstellen übereinstimmen.
-    if ZUFALLS_MUSTER.search(probe_quelle) is None:
-        probleme.append("Zufallsmuster aus dem Kern findet randi() nicht")
+    probleme: list[str] = []
+    probe = "extends RefCounted\nclass_name E000_Probe\nvar wert := randi()\n"
+    if len(_sammle_zufallsfundstellen(probe, "E000_Probe")) != 1:
+        probleme.append("Zufallsdetektor randi() nicht gefunden")
+    kern = "extends RefCounted\nclass_name Kern_Zufall\nvar wert := randi()\n"
+    if len(_sammle_zufallsfundstellen(kern, "Kern_Zufall")) != 0:
+        probleme.append("Zufallsdetektor meldet erlaubte Kern_Zufall")
+    mq = 'match str(eintrag.get("name", "")):\n\t"TestA":\n\t\treturn Probe_MutationA.new()\n\t"TestB":\n\t\treturn Probe_MutationB.new()\n'
+    if _matrix_zuordnung_aus_code(mq) != {"TestA": "Probe_MutationA", "TestB": "Probe_MutationB"}:
+        probleme.append("Matrix-Zuordnung falsch")
+    if ZUFALLS_MUSTER.search(probe) is None:
+        probleme.append("Zufallsmuster findet randi() nicht")
     if "Kern_Zufall" not in ERLAUBTE_ZUFALLS_KLASSEN:
-        probleme.append("Kern_Zufall fehlt in der Erlaubnisliste")
-    # Hash-Zaun Selbsttest: Der Builtin hash() muss außerhalb von Kern_Hash
-    # gefunden, in Kern_Hash aber durchgelassen werden.
-    hash_probe = "extends RefCounted\nclass_name E000_HashProbe\nvar wert := hash(\"x\")\n"
+        probleme.append("Kern_Zufall fehlt")
+    hash_probe = 'extends RefCounted\nclass_name E000_HashProbe\nvar wert := hash("x")\n'
     if len(_sammle_hash_fundstellen(hash_probe, "E000_HashProbe")) != 1:
-        probleme.append("Hash-Detektor fand Builtin hash() in einer Fremdklasse nicht")
-    hash_kern = "extends RefCounted\nclass_name Kern_Hash\nvar wert := hash(\"x\")\n"
+        probleme.append("Hash randi() nicht gefunden")
+    hash_kern = 'extends RefCounted\nclass_name Kern_Hash\nvar wert := hash("x")\n'
     if len(_sammle_hash_fundstellen(hash_kern, "Kern_Hash")) != 0:
-        probleme.append("Hash-Detektor meldet hash() in der erlaubten Kern_Hash-Klasse")
-    methode_probe = "extends RefCounted\nclass_name E000_HashProbe2\nvar wert := irgendein_objekt.hash(\"x\")\n"
-    if len(_sammle_hash_fundstellen(methode_probe, "E000_HashProbe2")) != 0:
-        probleme.append("Hash-Detektor meldet fälschlich einen Methodenaufruf objekt.hash()")
-    if BUILTIN_HASH_MUSTER.search("Kern_Hash.wort_gesalzen(\"x\", \"y\")") is not None:
-        probleme.append("Hash-Detektor meldet fälschlich Kern_Hash.wort_gesalzen()")
+        probleme.append("Hash meldet erlaubte Kern_Hash")
+    meth_probe = 'extends RefCounted\nclass_name E000_HashProbe2\nvar wert := irgendein_objekt.hash("x")\n'
+    if len(_sammle_hash_fundstellen(meth_probe, "E000_HashProbe2")) != 0:
+        probleme.append("Hash meldet objekt.hash() faelschlich")
+    if BUILTIN_HASH_MUSTER.search('Kern_Hash.wort_gesalzen("x", "y")') is not None:
+        probleme.append("Hash meldet Kern_Hash.wort_gesalzen faelschlich")
     if "Kern_Hash" not in ERLAUBTE_HASH_KLASSEN:
-        probleme.append("Kern_Hash fehlt in der Hash-Erlaubnisliste")
-    # Zeit-Zaun Selbsttest: Jede Uhr der Godot-4-Familie muss gemeldet werden,
-    # reine Konvertierungen ohne Uhr duerfen nicht gemeldet werden.
-    uhr_ausdruecke = [
-        "Time.get_unix_time_from_system()",
-        "Time.get_datetime_string_from_system()",
-        "Time.get_datetime_dict_from_system()",
-        "Time.get_time_dict_from_system()",
-        "Time.get_time_string_from_system()",
-        "Time.get_ticks_msec()",
-        "Time.get_ticks_usec()",
-        "Time.get_ticks_nsec()",
-        "OS.get_unix_time()",
-        "OS.get_ticks_msec()",
-        "OS.get_ticks_usec()",
-        "OS.get_system_time_msecs()",
-        "OS.get_datetime()",
-    ]
-    for uhr in uhr_ausdruecke:
-        if ZEIT_SEED_MUSTER.search(uhr) is None:
-            probleme.append("Zeit-Detektor ueberliest die Uhrquelle %s" % uhr)
-    unschuldige_zeilen = [
-        "var sekunden := Time.get_unix_time_from_datetime_dict(aufzeichnung)",
-        "var iso := Time.get_datetime_string_from_datetime_dict(aufzeichnung, false)",
-        "var ticks := Kern_Weltuhr.ticks_aus_faktor(faktor)",
-    ]
-    for zeile in unschuldige_zeilen:
-        if ZEIT_SEED_MUSTER.search(zeile) is not None:
-            probleme.append("Zeit-Detektor meldet faelschlich die reine Konvertierung %s" % zeile.strip())
-    # Versionswaechter Selbsttest: Bump, Auslesen und Abweichung muessen stimmen.
+        probleme.append("Kern_Hash fehlt")
+    uhr = ["Time.get_unix_time_from_system()", "Time.get_datetime_string_from_system()", "Time.get_datetime_dict_from_system()", "Time.get_time_dict_from_system()", "Time.get_time_string_from_system()", "Time.get_ticks_msec()", "Time.get_ticks_usec()", "Time.get_ticks_nsec()", "OS.get_unix_time()", "OS.get_ticks_msec()", "OS.get_ticks_usec()", "OS.get_system_time_msecs()", "OS.get_datetime()"]
+    for u in uhr:
+        if ZEIT_SEED_MUSTER.search(u) is None:
+            probleme.append(f"Zeit ueberliest {u}")
+    for z in ["var s := Time.get_unix_time_from_datetime_dict(a)", "var iso := Time.get_datetime_string_from_datetime_dict(a, false)", "var t := Kern_Weltuhr.ticks_aus_faktor(f)"]:
+        if ZEIT_SEED_MUSTER.search(z) is not None:
+            probleme.append(f"Zeit meldet Konvertierung faelschlich: {z[:30]}")
+    from .selbsttest_version import pruefe as pruefe_version
+    pruefe_version(probleme)
     try:
-        from .pruef_version import (badge_nachziehen, dokument_version,
-                                    paarformen_aufloesen, statuszahlen_nachziehen,
-                                    statuszahlen_verletzungen, version_erhoehen)
-        if version_erhoehen("V0.01") != "V0.02":
-            probleme.append("Versionswaechter erhoeht V0.01 nicht auf V0.02")
-        if version_erhoehen("V0.99") != "V1.00":
-            probleme.append("Versionswaechter traegt den Uebertrag V0.99 -> V1.00 nicht")
-        if dokument_version("Kopf\nVersion: V0.07\nRest\n") != "V0.07":
-            probleme.append("Versionswaechter liest die Versionszeile eines Dokuments nicht")
-        if dokument_version("ohne Zeile\n") is not None:
-            probleme.append("Versionswaechter meldet bei fehlender Zeile faelschlich eine Version")
-        # Statuszahlen: Der Nachzug tauscht nur die Zahl und nie das Substantiv.
-        probe_stand = "Fundament mit 227 Klassen, 11 Szenen, 251 GDScript-Dateien.\n"
-        stand = {"klassen": 300, "dateien": 400, "szenen": 12, "tests": 97, "kategorien": 19}
-        nachgezogen = statuszahlen_nachziehen(probe_stand, stand)
-        if nachgezogen != "Fundament mit 300 Klassen, 12 Szenen, 400 GDScript-Dateien.\n":
-            probleme.append("Statuszahl-Nachzug frisst das Substantiv neben der Zahl: %r" % nachgezogen)
-        if not statuszahlen_verletzungen("Fundament mit 1 Klassen.\n", stand):
-            probleme.append("Versionswaechter meldet eine falsche Statuszahl nicht")
-        if statuszahlen_verletzungen("Fundament mit 300 Klassen.\n", stand):
-            probleme.append("Versionswaechter meldet eine korrekte Statuszahl als Fehler")
-        # Paarform, Badge sowie Tests und Kategorien: Auch sie gehoeren zum Zwang.
-        paar = paarformen_aufloesen("85/85 Pytest-Fälle grün.\n")
-        if paar != "85 Pytest-Fälle grün.\n":
-            probleme.append("Paarform-Aufloesung formt 85/85 Pytest-Faelle nicht um: %r" % paar)
-        badge_probe = badge_nachziehen("pytest-85%2F85%20Passed\n", {"tests": 97})
-        if badge_probe != "pytest-97%2F97%20Passed\n":
-            probleme.append("Badge-Nachzug zieht die Test-Badge-Zahl nicht nach: %r" % badge_probe)
-        voll = {"klassen": 300, "dateien": 400, "szenen": 12, "tests": 97, "kategorien": 19}
-        probe_neu = statuszahlen_nachziehen("alle 85 Unittests, 20 Prüfkategorien.\n", voll)
-        if probe_neu != "alle 97 Unittests, 19 Prüfkategorien.\n":
-            probleme.append("Statuszahl-Nachzug zieht Tests und Kategorien nicht nach: %r" % probe_neu)
-        if not statuszahlen_verletzungen("alle 85 Unittests.\n", voll):
-            probleme.append("Versionswaechter meldet eine falsche Testanzahl nicht")
-        if statuszahlen_verletzungen("alle 97 Unittests.\n", voll):
-            probleme.append("Versionswaechter meldet eine korrekte Testanzahl als Fehler")
-    except ImportError:
-        probleme.append("Versionswaechter ist nicht importierbar")
-    # Index-Waechter Selbsttest: Abweichung muss gefunden, Gleichheit nicht gemeldet.
-    try:
-        from .pruef_index import pruefe_index  # noqa: F401
+        from .pruef_index import pruefe_index  # noqa
         from index.kern import erste_abweichung
         if erste_abweichung("a\nb\n", "a\nc\n") != (2, "b", "c"):
-            probleme.append("Index-Waechter findet die abweichende Zeile nicht")
+            probleme.append("Index Abweichung nicht gefunden")
         if erste_abweichung("gleich\n", "gleich\n") is not None:
-            probleme.append("Index-Waechter meldet bei gleichem Text faelschlich einen Befund")
+            probleme.append("Index meldet Gleichheit faelschlich")
     except ImportError:
-        probleme.append("Index-Waechter ist nicht importierbar")
-    # Shinon Gate Selbsttest: Banner, Bullet, Nummerierung und Bildsprache muessen sicher greifen.
-    try:
-        gate = _lade_shinon_klasse("shinon/shinon_gate.py", "_shinon_gate_selbsttest", "ShinonGate")()
-        if not any(b.code == "E030" for b in gate.pruefe_text("1. Hallo Welt mit fuenf Woertern im Satz.\n===========\n")):
-            probleme.append("Shinon Banner Pruefer meldet Banner nicht")
-        if not any(b.code == "E031" for b in gate.pruefe_text("- Bullet mit genug Woertern im ganzen Satz.\n")):
-            probleme.append("Shinon Bullet Pruefer meldet Bullet nicht")
-        if not any(b.code == "E032" for b in gate.pruefe_text("Ohne Nummer aber mit genug Woertern im Satz.\n")):
-            probleme.append("Shinon Nummerierung Pruefer meldet fehlende Nummer nicht")
-        if not any(b.code == "E033" for b in gate.pruefe_text("1. Kurz.\n")):
-            probleme.append("Shinon Bildsprache Pruefer meldet zu kurzen Satz nicht")
-        if not any(b.code == "E037" for b in gate.pruefe_text("1. Fertige Arbeit und nun der Fuss.\n\U0001F916 Generated with Codebuff\nCo-Authored-By: Codebuff <noreply@codebuff.com>\n")):
-            probleme.append("Shinon Footer Pruefer meldet den Agent-Footer nicht")
-        endlos_text = "1. Der Nutzer wollte X und dann hat Shinon Y gemacht und dann wurde Z gebaut und dann kam noch W dazu und dann fehlte noch V und dann musste auch U her und dann war immer noch nicht Schluss und dann wurde alles noch einmal geprueft und dann war der Tag vorbei."
-        if not any(b.code == "E039" for b in gate.pruefe_text(endlos_text + "\n")):
-            probleme.append("Shinon Stil Pruefer meldet die Endlos-Aufzaehlung nicht")
-        ReadmePruefer = _lade_shinon_klasse("shinon/shinon_readme_pruefer.py", "_shinon_readme_selbsttest", "ShinonReadmePruefer")
-        if not ReadmePruefer().pruefen(PROJEKT_STAMM / "__shinon_probe_nicht_existent_readme__.md"):
-            probleme.append("Shinon Readme Pruefer meldet fehlende Readme nicht")
-        SteuerungPruefer = _lade_shinon_klasse("shinon/shinon_steuerung_pruefer.py", "_shinon_steuerung_selbsttest", "ShinonSteuerungPruefer")
-        if not SteuerungPruefer().pruefen(PROJEKT_STAMM / "__shinon_probe_nicht_existent_steuerung__.json"):
-            probleme.append("Shinon Steuerung Pruefer meldet fehlende Steuerung nicht")
-        # Whitespace-Waechter Selbsttest: CRLF und trailing muessen sicher greifen.
-        import importlib.util as _ilu_ws
-        import pathlib as _pl_ws
-        _ws_pfad = PROJEKT_STAMM / "tools" / "preflight" / "pruef_whitespace.py"
-        _ws_spez = _ilu_ws.spec_from_file_location("_ws_mod", str(_ws_pfad))
-        _ws_mod = _ilu_ws.module_from_spec(_ws_spez)
-        _ws_spez.loader.exec_module(_ws_mod)
-        _probe_crlf, _zeile_crlf = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1\r\n", "a = 1\r\n")
-        if not any("CRLF" in u for u in _probe_crlf):
-            probleme.append("Whitespace Pruefer meldet CRLF nicht")
-        if _zeile_crlf != 1:
-            probleme.append(f"Whitespace Pruefer meldet CRLF nicht in Zeile 1 sondern { _zeile_crlf }")
-        _probe_trail, _zeile_trail = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1   \n", "a = 1   \n")
-        if not any("trailing" in u for u in _probe_trail):
-            probleme.append("Whitespace Pruefer meldet trailing Leerzeichen nicht")
-        if _zeile_trail != 1:
-            probleme.append(f"Whitespace trailing Zeile falsch: { _zeile_trail }")
-        _probe_trail2, _zeile_trail2 = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a\n" + b"b   \n", "a\n" + "b   \n")
-        if _zeile_trail2 != 2:
-            probleme.append(f"Whitespace trailing Zeile 2 erwartet, got { _zeile_trail2 }")
-        _probe_final, _zeile_final = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1", "a = 1")
-        if not any("finales" in u for u in _probe_final):
-            probleme.append("Whitespace Pruefer meldet fehlendes finales Newline nicht")
-        if _zeile_final != 1:
-            probleme.append(f"Whitespace finales Newline Zeile falsch: { _zeile_final }")
-        _probe_tab, _zeile_tab = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a\t= 1\n", "a\t= 1\n")
-        if not any("Tab" in u for u in _probe_tab):
-            probleme.append("Whitespace Pruefer meldet Tab in py nicht")
-        if _zeile_tab != 1:
-            probleme.append(f"Whitespace Tab Zeile falsch: { _zeile_tab }")
-        _probe_tab2, _zeile_tab2 = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.py"), b"a = 1\n" + b"b\t\n", "a = 1\n" + "b\t\n")
-        if _zeile_tab2 != 2:
-            probleme.append(f"Whitespace Tab Zeile 2 erwartet, got { _zeile_tab2 }")
-        _probe_gd_tab, _ = _ws_mod._ursachen_fuer(_pl_ws.Path("probe.gd"), b"\ta = 1\n", "\ta = 1\n")
-        if any("Tab" in u for u in _probe_gd_tab):
-            probleme.append("Whitespace Pruefer darf Tabs in .gd nicht melden")
-    except Exception as lauf_fehler:
-        probleme.append(f"Shinon Gate Selbsttest wirft Ausnahme: {lauf_fehler}")
+        probleme.append("Index nicht importierbar")
+    from .selbsttest_shinon import pruefe as pruefe_shinon
+    pruefe_shinon(probleme)
+    from .selbsttest_whitespace import pruefe as pruefe_ws
+    pruefe_ws(probleme)
     return probleme

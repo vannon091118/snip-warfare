@@ -46,6 +46,13 @@ def pruefe_determinismus(dateien):
                    "Eingebauter hash() Aufruf '%s' in '%s'; der Builtin ist nur "
                    "pro Engine-Version stabil, Hashwerte für Ableitung kommen "
                    "nur aus Kern_Hash" % (treffer.group(0).strip(), name or rel_pfad))
+        # Wachhund-Ausnahme: Sonden unter tools/sonden/ messen ihr Zeitbudget
+        # mit der Wanduhr, damit ein haengender Lauf den Laeufer rechtzeitig
+        # meldet und kein Fenster stillsteht. Ein Seed entsteht daraus nie;
+        # das Simulations-Verbot bleibt unangetastet, nur die Sonden duerfen
+        # die Uhr zum Messen lesen.
+        if normalisiert.startswith("tools/sonden/"):
+            continue
         for treffer in ZEIT_SEED_MUSTER.finditer(code):
             fehler("E012", rel_pfad, zeile_bei(code, treffer.start()),
                    "Zeitbasierte Seedquelle '%s' in '%s'; Seed kommt ausschließlich aus Weltzustand und Kern_Zufall, keine Zeitquelle" %
