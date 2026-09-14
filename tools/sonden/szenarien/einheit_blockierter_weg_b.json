@@ -1,0 +1,23 @@
+{
+    "id": "einheit_blockierter_weg_b",
+    "seed": 12345,
+    "deckt": [
+        "res://game/logic/kategorie_einheit/einheit_status.gd",
+        "res://world/scenes/welt.tscn"
+    ],
+    "modus": "fenster",
+    "erwartetes_delta": false,
+    "beschreibung": "A/B Vergleich: Weg frei, Klick-Feedback und Cursor sichtbar.",
+    "schritte": [
+        {
+            "art": "klick_links",
+            "pos": [640, 400],
+            "frame": 3
+        },
+        {
+            "art": "maus_bewegen",
+            "pos": [700, 400],
+            "frame": 60
+        }
+    ]
+}

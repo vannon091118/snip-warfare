@@ -1,0 +1,49 @@
+{
+    "id": "einheit_sichtbar_fenster",
+    "seed": 20260914,
+    "modus": "fenster",
+    "erwartetes_delta": true,
+    "blick": true,
+    "blick_objekt": true,
+    "blick_halb": 130,
+    "sichtprobe": true,
+    "beschreibung": "Stickman-Beweis: Marke 0 zeigt die leere Bildmitte, Marke 30 setzt eine echte Einheit genau in die Bildmitte, Marke 60 gibt ihr einen Marschbefehl, Marke 120 zeigt, ob sie wirklich gegangen ist. Je Marke wird zusaetzlich der Bildmittelpunkt als eigenes PNG gesichert.",
+    "deckt": [
+        "game/logic/kategorie_einheit/einheit_manager.gd",
+        "game/logic/kategorie_einheit/einheit_trupp_maschine.gd",
+        "game/logic/kategorie_einheit/einheit_takt_maschine.gd"
+    ],
+    "erwartet": {
+        "bewegung": true
+    },
+    "marken": [
+        0,
+        30,
+        60,
+        120
+    ],
+    "schritte": [
+        {
+            "art": "einheit_im_blick",
+            "frame": 30
+        },
+        {
+            "art": "einheit_marsch_delta",
+            "frame": 60,
+            "delta": [
+                70,
+                0
+            ]
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 40,
+            "frame": 60
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 40,
+            "frame": 120
+        }
+    ]
+}

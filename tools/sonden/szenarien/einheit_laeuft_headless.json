@@ -1,0 +1,11 @@
+{
+    "id": "einheit_laeuft",
+    "seed": 12345,
+    "deckt": [
+        "game/logic/kategorie_einheit/einheit_status.gd",
+        "game/logic/kategorie_einheit/einheit_bewegung.gd"
+    ],
+    "modus": "headless",
+    "erwartetes_delta": false,
+    "beschreibung": "Proof-of-life der Sonden: Einheit geht, Widerspruchs-Checks laufen headless."
+}

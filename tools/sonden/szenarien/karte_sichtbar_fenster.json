@@ -1,0 +1,11 @@
+{
+    "id": "karte_sichtbar",
+    "seed": 4242,
+    "deckt": [
+        "res://world/scenes/welt.tscn",
+        "res://world/logic/kategorie_welt/welt_renderer.gd"
+    ],
+    "modus": "fenster",
+    "erwartetes_delta": false,
+    "beschreibung": "Karte rendert sichtbar — Weissanteil unter 80 %, verankert an Renderer."
+}

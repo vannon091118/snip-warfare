@@ -1,0 +1,127 @@
+{
+    "id": "bau_kette_fenster",
+    "seed": 20260914,
+    "modus": "fenster",
+    "erwartetes_delta": true,
+    "beschreibung": "Echte Bau-Kette sichtbar: Lager liefern, Lagerfeuer bauen und fertig ticken, Moebel setzen, Haus bauen und die Bauphasen bis fertig durchlaufen. Je Frame-Marke ein eigenes Bild, je Marke der Bauzustand und je Paar das gemessene Bilddelta.",
+    "deckt": [
+        "world/logic/kategorie_objekt/gebaeude_moebel_bedarf.gd",
+        "world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd",
+        "world/logic/kategorie_objekt/gebaeude_bauplatz_pruefer.gd",
+        "world/logic/kategorie_objekt/gebaeude_laufzeit.gd"
+    ],
+    "erwartet": {
+        "bewegung": true,
+        "bau_ok_folge": [
+            true,
+            true
+        ]
+    },
+    "marken": [
+        0,
+        30,
+        60,
+        90,
+        120,
+        150,
+        180
+    ],
+    "schritte": [
+        {
+            "art": "lager_fuellen",
+            "ressource": "holz",
+            "menge": 60,
+            "frame": 0,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "lager_fuellen",
+            "ressource": "stein",
+            "menge": 30,
+            "frame": 0,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "bauen_anfordern",
+            "gebaeude_id": "lagerfeuer",
+            "frame": 0,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 90,
+            "frame": 30
+        },
+        {
+            "art": "ding_platzieren",
+            "element_id": "betten",
+            "frame": 60,
+            "pos": [
+                552,
+                512
+            ]
+        },
+        {
+            "art": "ding_platzieren",
+            "element_id": "stuhl",
+            "frame": 60,
+            "pos": [
+                600,
+                512
+            ]
+        },
+        {
+            "art": "lager_fuellen",
+            "ressource": "holz",
+            "menge": 40,
+            "frame": 90,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "lager_fuellen",
+            "ressource": "stein",
+            "menge": 30,
+            "frame": 90,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "bauen_anfordern",
+            "gebaeude_id": "haus",
+            "frame": 90,
+            "pos": [
+                648,
+                512
+            ]
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 200,
+            "frame": 120
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 200,
+            "frame": 150
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 60,
+            "frame": 180
+        }
+    ]
+}

@@ -1,0 +1,116 @@
+{
+    "id": "bau_moebel_fehlt_fenster",
+    "seed": 20260914,
+    "modus": "fenster",
+    "erwartetes_delta": true,
+    "beschreibung": "Sichtbarer Randfall des Datenvertrags benoetigt_tags: Ein Haus ohne Bett und Stuhl wird abgelehnt, mit Moebeln wird derselbe Bau erlaubt. Das Bau-Gate muss dreimal antworten und jede Antwort ist eine Vertragszeile.",
+    "deckt": [
+        "world/logic/kategorie_objekt/gebaeude_moebel_bedarf.gd",
+        "world/logic/kategorie_objekt/gebaeude_bau_auftrag.gd"
+    ],
+    "erwartet": {
+        "bau_ok_folge": [
+            true,
+            false,
+            true
+        ]
+    },
+    "marken": [
+        0,
+        60,
+        120,
+        180
+    ],
+    "schritte": [
+        {
+            "art": "lager_fuellen",
+            "ressource": "holz",
+            "menge": 80,
+            "frame": 0,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "lager_fuellen",
+            "ressource": "stein",
+            "menge": 40,
+            "frame": 0,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "bauen_anfordern",
+            "gebaeude_id": "lagerfeuer",
+            "frame": 0,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 90,
+            "frame": 60
+        },
+        {
+            "art": "lager_fuellen",
+            "ressource": "holz",
+            "menge": 60,
+            "frame": 120,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "lager_fuellen",
+            "ressource": "stein",
+            "menge": 30,
+            "frame": 120,
+            "pos": [
+                512,
+                512
+            ]
+        },
+        {
+            "art": "bauen_anfordern",
+            "gebaeude_id": "haus",
+            "frame": 120,
+            "pos": [
+                672,
+                512
+            ]
+        },
+        {
+            "art": "ding_platzieren",
+            "element_id": "betten",
+            "frame": 180,
+            "pos": [
+                640,
+                512
+            ]
+        },
+        {
+            "art": "ding_platzieren",
+            "element_id": "stuhl",
+            "frame": 180,
+            "pos": [
+                700,
+                512
+            ]
+        },
+        {
+            "art": "bauen_anfordern",
+            "gebaeude_id": "haus",
+            "frame": 180,
+            "pos": [
+                672,
+                512
+            ]
+        }
+    ]
+}

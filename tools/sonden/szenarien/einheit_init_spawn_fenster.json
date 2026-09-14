@@ -1,0 +1,70 @@
+{
+    "id": "einheit_init_spawn_fenster",
+    "seed": 20260914,
+    "modus": "fenster",
+    "erwartetes_delta": true,
+    "blick": true,
+    "blick_objekt": true,
+    "blick_halb": 130,
+    "beschreibung": "Init-Spawn des Spiels, unbestaetigt durch Cheats: Das Lagerfeuer wird ueber das echte Bau-Gate dort gebaut, wo der Spieler hinsieht, die Einstiegs-Progression muss die Stufe abschliessen und die erste Einheit selbst hervorbringen. Diese Sonde setzt keine Einheit, sie zaehlt nur und prueft, ob sie im Sichtfeld liegt.",
+    "deckt": [
+        "world/logic/kategorie_objekt/gebaeude_laufzeit.gd",
+        "world/logic/kategorie_progression/welt_fortschritts_maschine.gd",
+        "world/scenes/welt.gd"
+    ],
+    "erwartet": {
+        "einheiten_min": 1,
+        "einheit_im_bild": true,
+        "einheit_bewegt": true
+    },
+    "sichtprobe": true,
+    "frist_ms": 120000,
+    "marken": [
+        0,
+        30,
+        60,
+        120
+    ],
+    "schritte": [
+        {
+            "art": "lager_fuellen",
+            "ressource": "holz",
+            "menge": 40,
+            "frame": 0
+        },
+        {
+            "art": "lager_fuellen",
+            "ressource": "stein",
+            "menge": 20,
+            "frame": 0
+        },
+        {
+            "art": "bauen_anfordern",
+            "gebaeude_id": "lagerfeuer",
+            "frame": 0
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 90,
+            "frame": 30
+        },
+        {
+            "art": "einheit_marsch_delta",
+            "frame": 60,
+            "delta": [
+                70,
+                0
+            ]
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 120,
+            "frame": 60
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 120,
+            "frame": 120
+        }
+    ]
+}

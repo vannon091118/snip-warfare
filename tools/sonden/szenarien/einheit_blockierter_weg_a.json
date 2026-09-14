@@ -1,0 +1,24 @@
+{
+    "id": "einheit_blockierter_weg_a",
+    "seed": 12345,
+    "deckt": [
+        "res://game/logic/kategorie_einheit/einheit_status.gd",
+        "res://world/scenes/welt.tscn"
+    ],
+    "modus": "fenster",
+    "erwartetes_delta": false,
+    "beschreibung": "A/B Vergleich: Weg blockiert durch Cheat — Heizbild gegen Variante B.",
+    "schritte": [
+        {
+            "art": "ding_platzieren",
+            "element_id": "felswand",
+            "pos": [700, 512],
+            "wann": "vor_grab"
+        },
+        {
+            "art": "ticks_pumpen",
+            "n": 24,
+            "frame": 60
+        }
+    ]
+}
