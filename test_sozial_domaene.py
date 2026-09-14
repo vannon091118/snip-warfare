@@ -23,8 +23,9 @@ def _regeln() -> dict:
 
 def test_der_praefix_soz_ist_in_der_preflight_tabelle():
     """Ohne Tabellen-Eintrag wirft E001 beim ersten Soz_-File."""
-    kern = _lies("tools/preflight/kern.py")
-    assert '"Soz_": "population/logic/sozial"' in kern
+    # Die Praefix-Tabelle wohnt seit der Werkstatt-Zerlegung in kategorien.py.
+    tabelle = _lies("tools/preflight/kategorien.py")
+    assert '"Soz_": "population/logic/sozial"' in tabelle
 
 
 def test_die_tat_quelle_meldet_am_bus_ohne_fremdlogik():

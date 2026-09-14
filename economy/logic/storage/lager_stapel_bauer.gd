@@ -29,7 +29,13 @@ func anzeigen_aktualisieren(ressource_id: String, menge: int, icon_pfad: String)
 		textur = load(icon_pfad)
 	if textur == null:
 		return
-	var sprites: Array[Sprite2D] = _sprites.get(ressource_id, []) as Array[Sprite2D]
+	# Ein ungetypter Array laesst sich nicht auf Array[Sprite2D] umtypen; die
+	# Stapel-Liste wird deshalb elementweise uebernommen. Vorher brach hier
+	# jeder Lager-Aufbau mit einem Laufzeitfehler ab.
+	var sprites: Array[Sprite2D] = []
+	for eintrag: Variant in (_sprites.get(ressource_id, []) as Array):
+		if eintrag is Sprite2D:
+			sprites.append(eintrag)
 	var ziel := mini(menge, MAX_ICONS)
 	while sprites.size() < ziel:
 		var sprite := Sprite2D.new()

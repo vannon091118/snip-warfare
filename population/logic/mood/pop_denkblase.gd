@@ -6,6 +6,12 @@ class_name Pop_Denkblase
 ## den Emojis der erreichten Eskalationsstufe aus dem Datenpool.
 ## Kette: Pop_MoodMaschine -> mood_geaendert -> Denkblase zeigt Blase.
 
+## Der Sprite des Strichmaennchens ist 64 Pixel hoch und steht auf der
+## Fusslinie; darueber darf nur Luft sein. Die Blase waechst deshalb nach
+## oben und kann den Koerper nicht mehr verdecken.
+const SPRITE_HOEHE := 64.0
+const KOPF_ABSTAND := 10.0
+
 var _maschine: Pop_MoodMaschine = null
 var _blase: PanelContainer = null
 var _label: Label = null
@@ -33,7 +39,6 @@ func _ready() -> void:
 	stil.content_margin_top = 3
 	stil.content_margin_bottom = 3
 	_blase.add_theme_stylebox_override("panel", stil)
-	_blase.position = Vector2(-28, -74)
 	_blase.visible = false
 	add_child(_blase)
 	_label = Label.new()
@@ -54,4 +59,15 @@ func _auf_mood(mood: Pop_Mood) -> void:
 		_blase.visible = false
 		return
 	_label.text = mood.erzaehlung()
+	_blase_ueber_kopf_setzen()
 	_blase.visible = true
+
+func _blase_ueber_kopf_setzen() -> void:
+	## Mittig ueber dem Kopf, mit der Unterkante oberhalb des Sprites. Die
+	## Groesse kommt aus der Mindestgroesse des Inhalts, ist also schon vor
+	## dem ersten Layout bekannt.
+	if _blase == null:
+		return
+	var groesse := _blase.get_combined_minimum_size()
+	_blase.size = groesse
+	_blase.position = Vector2(-groesse.x * 0.5, -(SPRITE_HOEHE + KOPF_ABSTAND) - groesse.y)
