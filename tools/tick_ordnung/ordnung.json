@@ -53,9 +53,14 @@
       "grund": "Gebaeude ticken in Phase 4 und lesen Lager und Einheitenstand. Sie stehen nach den Einheiten, damit ein Tick nie auf halb verrechneten Einheiten baut."
     },
     {
+      "datei": "world/logic/kategorie_welt/welt_raum_und_lager_tick.gd",
+      "domaene": "world/welt",
+      "grund": "Raum- und Lagerzone-Erkennung laeuft in Phase 4 direkt nach Gebaeuden: Sie lesen den fertigen Gebaeudezustand und melden neue Raeume als Welt-Ereignisse, aus denen die Fortschrittsmaschine im selben Tick stuft."
+    },
+    {
       "datei": "world/logic/kategorie_orchestrator/orchestrator_manager.gd",
       "domaene": "world/orchestrator",
-      "grund": "Der Orchestrator verteilt Jobs in Phase 5. Er sieht Einheiten-, Gebaeude- und Fortschrittsstand desselben Ticks vollstaendig."
+      "grund": "Der Orchestrator verteilt Jobs in Phase 5. Er sieht Einheiten-, Gebaeude- und Raum-/Lagerzone-Stand desselben Ticks vollstaendig."
     },
     {
       "datei": "world/logic/kategorie_welt/welt_karawanen_manager.gd",

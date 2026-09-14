@@ -83,14 +83,18 @@ def gd_dateien():
     """Alle GDScript-Dateien des Projekts als (relativer Pfad, Text)."""
     dateien = []
     for pfad in sorted(PROJEKT_STAMM.rglob("*.gd")):
-        teile = set(pfad.parts)
+        try:
+            relativ_pf = pfad.relative_to(PROJEKT_STAMM)
+        except ValueError:
+            continue
+        teile = set(relativ_pf.parts)
         if teile & {".godot", "addons", "__pycache__", ".freebuff"}:
             continue
         try:
             text = pfad.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             continue
-        relativ = str(pfad.relative_to(PROJEKT_STAMM)).replace("\\", "/")
+        relativ = str(relativ_pf).replace("\\", "/")
         dateien.append((relativ, text))
     return dateien
 

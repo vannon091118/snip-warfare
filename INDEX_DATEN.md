@@ -11,7 +11,7 @@ Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbrauc
 | [`kern_logik.json`](core/data/kern_logik.json) | `core` | 9 | `baer_verfolgen`, `hase_flucht`, `vogel_flucht`, `vogelgruppe_flucht`, `ressource_holz`, `ressource_stein` und 3 weitere | `core/logic/kern_logik_basis.gd`, `core/logic/kern_logik_registry.gd`, `world/logic/kategorie_objekt/objekt_basis.gd` |
 | [`kern_modifikatoren.json`](core/data/kern_modifikatoren.json) | `core` | 7 | `normal`, `aggressiv`, `langsam`, `schnell`, `verletzung_bein`, `verletzung_arm` und 1 weitere | `core/logic/kern_modifikator_maschine.gd`, `core/logic/kern_modifikator_registry.gd` |
 | [`modifikator_settings.json`](core/data/modifikator_settings.json) | `core` | 3 | `_kommentar`, `global`, `bereiche` | `core/logic/kern_modifikator_maschine.gd` |
-| [`lager.json`](economy/data/lager.json) | `economy` | 2 | `kleines_lager`, `grosses_lager` | `economy/logic/storage/lager_registry.gd` |
+| [`lager.json`](economy/data/lager.json) | `economy` | 3 | `kleines_lager`, `grosses_lager`, `lagerflaeche` | `economy/logic/storage/lager_registry.gd` |
 | [`animationen.json`](game/data/animationen.json) | `game/data` | 8 | `laufen`, `idle`, `hacken`, `grind`, `raeuchern`, `flackern` und 2 weitere | `game/logic/kategorie_einheit/einheit_darsteller.gd`, `world/logic/kategorie_objekt/objekt_basis.gd`, `world/logic/kategorie_welt/welt_objekt_darsteller.gd` |
 | [`job_config.json`](game/data/job_config.json) | `game/data` | 12 | `holzfaeller`, `steinmetz`, `jaeger`, `holzfaeller_stumpf`, `jaeger_kadaver`, `heiler` und 6 weitere | `game/logic/kategorie_job/job_beeren_sammler.gd`, `game/logic/kategorie_job/job_graben.gd`, `game/logic/kategorie_job/job_heiler.gd` und 7 weitere |
 | [`mutationen_inventar.json`](game/data/mutationen_inventar.json) | `game/data` | 3 | `schema_name`, `start_zustaende`, `mutationen` | `game/logic/kategorie_einheit/einheit_inventar.gd`, `game/logic/kategorie_einheit/einheit_inventar_schema.gd` |
@@ -22,16 +22,16 @@ Stand: V0.01 — 31 JSON-Pools, davon 31 lesbar und 2 ohne namentlichen Verbrauc
 | [`steuerung.json`](game/data/steuerung.json) | `game/data` | 8 | `version`, `_kommentar`, `kamera`, `auswahl`, `kontextmenue`, `pathfinding` und 2 weitere | `core/logic/kategorie_pathfinding/path_registry.gd`, `core/logic/kern_steuerung_basis.gd`, `core/logic/kern_steuerung_registry.gd` und 6 weitere |
 | [`bindung.json`](population/data/bindung.json) | `population` | 5 | `_kommentar`, `regeln`, `stufen`, `ereignisse`, `verlust` | keiner |
 | [`mood_modifikatoren.json`](population/data/mood_modifikatoren.json) | `population` | 5 | `_kommentar`, `kaelte`, `hitze`, `hunger`, `kannibalismus` | `game/logic/kategorie_einheit/einheit_vital_status.gd`, `population/logic/mood/pop_mood_eskalation_stufe.gd`, `population/logic/mood/pop_mood_modifikator_registry.gd` und 1 weitere |
-| [`needs.json`](population/data/needs.json) | `population` | 3 | `weltrhythmus`, `nahrung`, `waerme` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd`, `game/logic/kategorie_einheit/einheit_versorgung.gd`, `population/logic/needs/pop_need_basis.gd` und 5 weitere |
+| [`needs.json`](population/data/needs.json) | `population` | 3 | `weltrhythmus`, `nahrung`, `waerme` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd`, `game/logic/kategorie_einheit/einheit_versorgung.gd`, `population/logic/needs/pop_need_basis.gd` und 4 weitere |
 | [`rassen_schemata.json`](population/data/rassen_schemata.json) | `population` | 3 | `mensch`, `elf`, `ork` | `population/logic/needs/pop_rassen_schema.gd`, `population/logic/needs/pop_rassen_schema_registry.gd`, `population/logic/needs/pop_rassen_zugriff.gd` und 2 weitere |
 | [`rassen_vorlagen.json`](population/data/rassen_vorlagen.json) | `population` | 6 | `_kommentar`, `wald`, `berg`, `wasser`, `steppe`, `tundra` | `population/logic/needs/pop_rassen_generator.gd` |
 | [`sozial_regeln.json`](population/logic/sozial/data/sozial_regeln.json) | `population` | 6 | `_kommentar`, `zeugen`, `taten`, `geruechte`, `traits`, `beziehungen` | `population/logic/sozial/logic/soz_beziehungs_engine.gd`, `population/logic/sozial/logic/soz_datenpool.gd`, `population/logic/sozial/logic/soz_geruecht.gd` und 3 weitere |
 | [`menue_story.json`](ui/data/menue_story.json) | `ui` | 4 | `hinweis`, `schritte_pro_sekunde`, `untertitel_dauer`, `events` | `ui/logic/kategorie_ui/menue_story_daten.gd` |
 | [`atmosphaere.json`](world/data/atmosphaere.json) | `world/data` | 9 | `_dokumentation_atmosphaere`, `wind`, `partikel`, `sonne`, `papier`, `papier_licht` und 3 weitere | `world/logic/kategorie_atmosphaere/welt_atmosphaere_konfig.gd`, `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` |
 | [`biome.json`](world/data/biome.json) | `world/data` | 3 | `_kommentar`, `thresholds`, `biome` | `world/logic/kategorie_biom/biom_basis.gd`, `world/logic/kategorie_biom/biom_registry.gd`, `world/logic/kategorie_generator/welt_biom_analyser.gd` und 1 weitere |
-| [`element_katalog.json`](world/data/element_katalog.json) | `world/data` | 37 | `[Liste]` | `ui/scenes/panels/kontext_menue.gd`, `world/logic/kategorie_objekt/moebel_registry.gd`, `world/logic/kategorie_objekt/objekt_registry_basis.gd` und 1 weitere |
+| [`element_katalog.json`](world/data/element_katalog.json) | `world/data` | 42 | `[Liste]` | `ui/scenes/panels/kontext_menue.gd`, `world/logic/kategorie_objekt/moebel_registry.gd`, `world/logic/kategorie_objekt/objekt_registry_basis.gd` und 1 weitere |
 | [`fraktions_ki_config.json`](world/data/fraktions_ki_config.json) | `world/data` | 9 | `_kommentar`, `expansion`, `handel`, `konflikt`, `aggressions_basis`, `keimling_schwellenwert` und 3 weitere | `world/logic/kategorie_generator/fraktions_keimling_analysator.gd`, `world/logic/kategorie_generator/welt_generator.gd`, `world/logic/kategorie_welt/fraktions_ki_maschine.gd` und 2 weitere |
-| [`gebaeude.json`](world/data/gebaeude.json) | `world/data` | 4 | `[Liste]` | `tools/lauf_pruefung_welt.gd`, `world/logic/kategorie_objekt/gebaeude_definition.gd`, `world/logic/kategorie_objekt/gebaeude_definition_registry.gd` und 1 weitere |
+| [`gebaeude.json`](world/data/gebaeude.json) | `world/data` | 13 | `[Liste]` | `tools/lauf_pruefung_welt.gd`, `ui/logic/kategorie_ui/ui_bau_panel.gd`, `ui/scenes/panels/bau_panel.gd` und 3 weitere |
 | [`generator_gewichte.json`](world/data/generator_gewichte.json) | `world/data` | 9 | `_kommentar`, `domain_warp_amplitude`, `objekte`, `tiere`, `biome`, `gebaeude` und 3 weitere | `world/logic/kategorie_generator/generator_registry.gd`, `world/logic/kategorie_generator/welt_feld_analyser.gd`, `world/logic/kategorie_generator/welt_fraktions_generator.gd` und 2 weitere |
 | [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 | `_kommentar`, `grundsaetze`, `ersatzhandlungen`, `wirkung_je_rasse`, `verzweigung` | keiner |
 | [`ressourcen_progression.json`](world/data/ressourcen_progression.json) | `world/data` | 5 | `_kommentar`, `stufen`, `stufen_blatt`, `waerme`, `seed_spawn` | `world/logic/kategorie_progression/welt_progressions_registry.gd`, `world/logic/kategorie_progression/welt_stufen_bilder.gd` |
@@ -74,7 +74,7 @@ Pfad `core/data/modifikator_settings.json`, Domaene `core`, 3 Eintraege.
 
 ### lager.json
 
-Pfad `economy/data/lager.json`, Domaene `economy`, 2 Eintraege.
+Pfad `economy/data/lager.json`, Domaene `economy`, 3 Eintraege.
 
 * `economy/logic/storage/lager_registry.gd`
 
@@ -177,7 +177,6 @@ Pfad `population/data/needs.json`, Domaene `population`, 3 Eintraege.
 * `population/logic/needs/pop_need_registry.gd`
 * `tools/lauf_pruefung_welt.gd`
 * `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd`
-* `world/scenes/welt.gd`
 
 ### rassen_schemata.json
 
@@ -230,7 +229,7 @@ Pfad `world/data/biome.json`, Domaene `world/data`, 3 Eintraege.
 
 ### element_katalog.json
 
-Pfad `world/data/element_katalog.json`, Domaene `world/data`, 37 Eintraege.
+Pfad `world/data/element_katalog.json`, Domaene `world/data`, 42 Eintraege.
 
 * `ui/scenes/panels/kontext_menue.gd`
 * `world/logic/kategorie_objekt/moebel_registry.gd`
@@ -249,9 +248,11 @@ Pfad `world/data/fraktions_ki_config.json`, Domaene `world/data`, 9 Eintraege.
 
 ### gebaeude.json
 
-Pfad `world/data/gebaeude.json`, Domaene `world/data`, 4 Eintraege.
+Pfad `world/data/gebaeude.json`, Domaene `world/data`, 13 Eintraege.
 
 * `tools/lauf_pruefung_welt.gd`
+* `ui/logic/kategorie_ui/ui_bau_panel.gd`
+* `ui/scenes/panels/bau_panel.gd`
 * `world/logic/kategorie_objekt/gebaeude_definition.gd`
 * `world/logic/kategorie_objekt/gebaeude_definition_registry.gd`
 * `world/logic/kategorie_objekt/gebaeude_moebel_bedarf.gd`

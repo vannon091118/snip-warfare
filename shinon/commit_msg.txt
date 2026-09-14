@@ -1,13 +1,7 @@
-1. Der Kommandant verlangte ein Baufenster, das sich nicht für jeden Gegenstand neu erfinden muss, und was die Hände bauten, war eine Leiste, die alle Fenster sortiert und ohne一つの harten Knopf das gesamte Arsenal aus einem einzigen JSON liest.
-2. In world/logic/kategorie_progression/welt_fortschritts_maschine.gd wurde die Fortschritts-Maschine auf neunundzwanzig Zeilen gekürzt, die nur noch liest, prüft und fortschaltet, während Bus-Brücke und Vorarbeiter-Spawn in der Verdrahtung wohnen.
-3. In world/logic/kategorie_progression/welt_fortschritt_helfer.gd steht der Helfer, der die Einheit, den Orchestrator und den SignalBus kennt, damit die Maschine nicht selbst auto<fahrt>.
-4. In ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd wurde die Bau-Auftrag-Maschine geschliffen, die den Bautyp aus der Registry liest und die Platzierung je nach Kategorie an den richtigen Platzierer delegiert.
-5. In ui/logic/kategorie_ui/ui_bau_panel.gd steht das Baufenster, das aus der Gebaeude_DefinitionRegistry liest und nur die Gebäude zeigt, die die Fortschritts-Maschine freigeschaltet hat.
-6. In ui/logic/kategorie_ui/ui_baufenster_filter.gd wurde der Filter gebaut, der Suche und Kategorie-Filter kombiniert, damit der Spieler findet, was er sucht, ohne in einer langen Liste zu blättern.
-7. In ui/logic/kategorie_ui/ui_eingabe_steuerung.gd bekam die Eingabe die B-Taste für das Baufenster und die Verdrahtung für die Lagerzone, damit der Spieler das richtige Werkzeug zum richtigen Zeitpunkt in der Hand hält.
-8. In ui/scenes/hud/fenster_leiste.gd wurde die zentrale Leiste gebaut, die alle Fenster alphabetisch sortiert anbietet, mit Kurzbefehlen für Bau, Debug, Karte, Warum und Menü.
-9. In ui/scenes/hud/hud_leiste.gd und hud_status_anzeige.gd wurde die Verdrahtung für das Warum-Fenster ergänzt, damit die Leiste nicht nur zeigt, sondern auch öffnet.
-10. In ui/scenes/panels/bau_panel.gd und bau_panel.tscn wurde die Szene des Baufensters gebaut, mit ScrollContainer, Suchfeld und Kategorie-Filter, damit das Fenster nicht nur funktioniert, sondern auch aussieht.
-11. In world/logic/kategorie_welt/welt_ui_aufbau.gd wurde die Baustelle für die Leiste vorbereitet, damit die Szene nicht selbstständig baut, sondern die UI-Spitze das tut.
-12. In world/scenes/welt.gd und welt.tscn wurde die Verdrahtung komplett: Fenster-Leiste, Raum-Erkennung, Lagerzone, Fortschritts-Verdrahtung — alles hängt zusammen, ohne dass eine Datei die Verantwortung der anderen übernimmt.
-13. Als Nächstes folgt Slice 4 mit den Werkzeugen und der Doku, damit der Index, die Tick-Ordnung und die Roadmap den neuen Stand spiegeln.
+1. Der Kommandant verlangte Ordnung im Vertrag, und was die Hände taten, war der Index, die Tick-Ordnung und die Dokumentation auf den neuen Stand zu bringen, damit jeder, der nach den Klassen sucht, sie auch findet.
+2. In tools/index/kern.py wurde der Filter für den Worktree gefixt, damit die Klassenzählung nicht mehr durch absolute Pfade mit .freebuff im Namen getäuscht wird.
+3. In tools/tick_ordnung/ordnung.json wurde der neue Teilnehmer Welt_RaumUndLagerTick an Position vier nach den Gebäuden eingetragen, denn die Raum- und Lagerzone-Erkennung liest den fertigen Gebäudezustand und muss danach laufen.
+4. In tools/tick_ordnung/pruefer.py wurde die Worktree-Kompatibilität hergestellt, damit der Prüfer relative Pfade prüft statt auf absolute zu bauen, die im Worktree versagen.
+5. In INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md und INDEX_LETZTE_AENDERUNG.md wurden die Klassenzahlen, Dateizahlen und Szenen nachgezogen, damit der Index den wahren Bestand spiegelt.
+6. In README.md und ROADMAP.md wurden der aktuelle Stand und die offenen Punkte aktualisiert, damit niemand nach einer Landkarte sucht, die nicht mehr zum Terrain passt.
+7. Als Nächstes steht die sichtbare Ingame-Verifikation an: Das Spielfeld muss zeigen, was die vier Slices gebaut haben, und erst dann gilt der Auftrag als erfüllt.
