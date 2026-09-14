@@ -10,6 +10,7 @@ sys.path.insert(0, str(PROJEKT_STAMM))
 from tools.warteschlange.watcher_kern import belege, freigeben  # noqa: E402
 from .commit_gate import preflight_fuer_slice, shinon_gruen
 from .git_dateien import geaenderte_dateien, lauf
+from .push_waechter import PushWaechter
 from .slice_bauer import bilde_slices
 
 
@@ -58,6 +59,10 @@ def committe_slices(dry_run: bool = False) -> int:
                 lauf(["git", "reset", "HEAD", "--"] + slice_dateien)
                 return 1
             print(text)
+            waechter = PushWaechter()
+            if not waechter.pruefen():
+                print(f"Slice {idx}: Push Wächter rot — stoppe, ohne zu schieben")
+                return 1
             code, out, err = lauf(["git", "push"])
             if code != 0:
                 print(f"git push fehlgeschlagen: {err or out}")
