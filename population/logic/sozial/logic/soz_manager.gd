@@ -23,6 +23,9 @@ func _ready() -> void:
 	_zeugen.einrichten(_datenpool)
 	_geruechte.einrichten(_datenpool)
 	_beziehungen.einrichten(_datenpool)
+	_beziehungen.ethik_von = func(id: int) -> float: return _zeugen.ethik_von(id)
+	_beziehungen.glaube_von = func(a: int, z: int) -> Soz_ImageGlaube: return _zeugen.glaube_von(a, z)
+	_beziehungen.trait_wirkung = func(id: int) -> float: return float(_traits.wirkung(id).get("beziehung", 0.0))
 	_bus_verbinden()
 
 func _bus_verbinden() -> void:
@@ -43,23 +46,28 @@ func einheit_anmelden(einheit_id: int, position: Vector2, trait_namen: Array = [
 	if not _bekannte.has(einheit_id):
 		_bekannte.append(einheit_id)
 	_zeugen.registrieren(einheit_id)
-	_zeugen.position_fuer = func(id: int) -> Vector2: return _positionen.get(id, Vector2.ZERO)
 	_traits.traits_setzen(einheit_id, trait_namen)
 	_positionen[einheit_id] = position
+	_kabel_neu()
 
-## Kategorie daten: Positions-Gedächtnis der Fassade (vom Verdrahter gefüllt).
+## Kategorie daten: Positions-Gedaechtnis der Fassade (vom Takt gefuellt).
 var _positionen: Dictionary = {}
 
-func position_melden(einheit_id: int, position: Vector2) -> void:
-	_positionen[einheit_id] = position
+func positionen_uebernehmen(neue_positionen: Dictionary) -> void:
+	_positionen = neue_positionen.duplicate()
+	_kabel_neu()
 
-func auf_tick(_nummer: int, _delta: float) -> void:
-	_geruechte.position_fuer = func(id: int) -> Vector2: return _positionen.get(id, Vector2.ZERO)
-	_geruechte.gerede_takt(float(_nummer), _bekannte)
-	_beziehungen.ethik_von = func(id: int) -> float: return _zeugen.ethik_von(id)
-	_beziehungen.glaube_von = func(a: int, z: int) -> Soz_ImageGlaube: return _zeugen.glaube_von(a, z)
-	_beziehungen.trait_wirkung = func(id: int) -> float: return float(_traits.wirkung(id).get("beziehung", 0.0))
+func auf_tick_intern(nummer: int) -> void:
+	_geruechte.gerede_takt(float(nummer), _bekannte)
 	_beziehungen.tick(_bekannte)
+
+func auf_tick(nummer: int, _delta: float) -> void:
+	auf_tick_intern(nummer)
+
+func _kabel_neu() -> void:
+	# Positionsruf faechert die eine Quelle auf die beiden Maschinen auf.
+	_zeugen.position_fuer = func(id: int) -> Vector2: return _positionen.get(id, Vector2.ZERO)
+	_geruechte.position_fuer = func(id: int) -> Vector2: return _positionen.get(id, Vector2.ZERO)
 
 ## Kategorie logik: Taten kommen als Todes-Fälle vom Bus; die Zeugen buchen.
 
@@ -71,6 +79,14 @@ func _auf_gestorben(tod_position: Vector2, _typ: String, war_einheit: bool) -> v
 		return
 	_zeugen.tat_buchen(taeter, -1, "kannibalismus")
 	_geruechte.urheur_buchen(taeter, -1, "grauen", 1.0)
+
+func positionen() -> Dictionary:
+	return _positionen.duplicate()
+
+func bekannte_ids() -> Array[int]:
+	var kopie: Array[int] = []
+	kopie.assign(_bekannte.duplicate())
+	return kopie
 
 func _naechster_bei(position: Vector2) -> int:
 	var bester := -1

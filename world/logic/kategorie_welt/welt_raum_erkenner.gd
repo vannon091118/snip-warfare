@@ -125,9 +125,9 @@ func _aussen_flood(model: Welt_Model, wand_kacheln: Dictionary, _kante: int) -> 
 				besucht[schluessel2] = true
 	var kopf := 0
 	while kopf < schlange.size():
-		var kachel := schlange[kopf]
+		var kachel: Vector2i = schlange[kopf]
 		kopf += 1
-		for versatz in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		for versatz: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			var nachbar := kachel + versatz
 			if nachbar.x < 0 or nachbar.y < 0 or nachbar.x >= model.raster_breite or nachbar.y >= model.raster_hoehe:
 				continue
@@ -146,9 +146,9 @@ func _flood_innen(start: Vector2i, model: Welt_Model, wand_kacheln: Dictionary) 
 	besucht["%d:%d" % [start.x, start.y]] = true
 	var kopf := 0
 	while kopf < schlange.size():
-		var kachel := schlange[kopf]
+		var kachel: Vector2i = schlange[kopf]
 		kopf += 1
-		for versatz in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		for versatz: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			var nachbar := kachel + versatz
 			if nachbar.x < 0 or nachbar.y < 0 or nachbar.x >= model.raster_breite or nachbar.y >= model.raster_hoehe:
 				continue
@@ -203,8 +203,7 @@ func _raum_aus_innen(innen_kacheln: Array[Vector2i], tuer_kacheln: Dictionary, _
 	# Hat eine Tür den Raum am Rand berührt? Türen liegen auf den Wandkacheln;
 	# sie zählen als Wand, öffnen aber den Durchgang. Ein Raum, der eine Tür
 	# an seiner Hülle trägt, gilt als betretbar.
-	for versatz in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
-		for innen in innen_kacheln:
+	for versatz: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:			for innen: Vector2i in innen_kacheln:
 			var rand := innen + versatz
 			var schluessel := "%d:%d" % [rand.x, rand.y]
 			if tuer_kacheln.has(schluessel):

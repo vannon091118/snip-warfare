@@ -136,13 +136,27 @@ func modell_erneuern(mgr: Einheit_Manager) -> void:
 	takt_erneuern(mgr)
 
 
-## Stimmungs-Kette aller Einheiten: Need-Registry, Lager und Umfeld neu setzen.
+## Stimmungs-Kette aller Einheiten: Need-Registry, Lager-Snapshot und Umfeld neu setzen.
 func stimmung_erneuern(mgr: Einheit_Manager) -> void:
+	var bestaende: Dictionary = _snapshot_bestaende(mgr)
 	for einheit: Dictionary in mgr._einheiten:
 		var mood: Pop_MoodMaschine = einheit["mood"]
-		mood.einrichten(mgr._need_registry, mgr._lager)
+		mood.einrichten(mgr._need_registry, bestaende)
 		mood.waerme_und_zyklus_setzen(mgr._waerme_feld, mgr._tageszyklus,
 			mgr._mood_mod_registry)
+
+func _snapshot_bestaende(mgr: Einheit_Manager) -> Dictionary:
+	if mgr._lager != null:
+		return mgr._lager.gesamt_bestand_alle()
+	if mgr._need_baum != null:
+		return {}
+	return {}
+
+func bestaende_auffrischen(mgr: Einheit_Manager) -> void:
+	if mgr._need_baum == null:
+		return
+	var bestaende: Dictionary = _snapshot_bestaende(mgr)
+	mgr._need_baum.bestaende_verteilen(bestaende)
 
 
 ## Wachstum und Einwanderung: der Kontext der Versorgungs-Maschine.
@@ -253,7 +267,7 @@ func einwanderung_erneuern(mgr: Einheit_Manager) -> void:
 		"einheiten": mgr._einheiten,
 		"need_baum": mgr._need_baum,
 		"need_registry": mgr._need_registry,
-		"lager": mgr._lager,
+		"lager_bestaende": _snapshot_bestaende(mgr),
 		"waerme_feld": mgr._waerme_feld,
 		"tageszyklus": mgr._tageszyklus,
 		"mood_mod_registry": mgr._mood_mod_registry,

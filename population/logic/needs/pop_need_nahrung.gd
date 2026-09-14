@@ -20,12 +20,12 @@ func aus_konfig_eintrag(eintrag: Dictionary) -> void:
 
 ## Summe aller Nahrungsressourcen im Lager: Primärressource plus Zusatzquellen.
 ## Aufrufer (Pop_MoodMaschine) prüft hat_verfuegbar_override() zuerst.
-func verfuegbar_summe(lager: Lager_Manager) -> int:
-	if lager == null:
+func verfuegbar_summe(bestaende: Dictionary) -> int:
+	if bestaende.is_empty():
 		return 0
-	var summe := lager.gesamt_bestand(ressource)
+	var summe := int(bestaende.get(ressource, 0))
 	for zusatz_ressource: String in ressource_zusatz:
-		summe += lager.gesamt_bestand(zusatz_ressource)
+		summe += int(bestaende.get(zusatz_ressource, 0))
 	return summe
 
 func hat_verfuegbar_override() -> bool:

@@ -1,6 +1,5 @@
-1. Der Kommandant verlangte einen Wächter am Tor des Pushens, und was die Hände bauten, war eine eigene Klasse, die vor jedem Schieben den Fern-Stand vergleicht und bei fremden Commits selbstständig gerebt, statt blind zu stoßen.
-2. In tools/warteschlange/push_waechter.py wohnt der neue Push-Wächter: Er holt origin, zählt die fremden Commits zwischen der lokalen Reihe und der Fern-Spitze, prüft, ob die Arbeitskopie leer ist, und rebasiert nur dann, wenn nichts halbfertig auf der Werkbank liegt.
-3. Schlägt der Rebase fehl, bricht der Wächter ab und lässt die Reihe stehen, statt einen veralteten Stand zu erzwingen, denn ein erzwungener Push ist kein Fortschritt, sondern eine Ersatzhandlung für Mut.
-4. In tools/warteschlange/commit_reihe.py sitzt der Wächter genau zwischen dem Commit und dem Push jedes Slice, damit kein Slice mehr auf eine zwischenzeitlich fremde Fern-Spitze trifft, ohne dass jemand davon erfahren hätte.
-5. Der Wächter hat seinen ersten Dienst angetreten: Die Reihe lief gegen einen leeren Fern-Vergleich und lies den Push passieren, und die 139 Pytest-Proben laufen grün durch.
-6. Sichtbar im laufenden Spiel: Nichts Sichtbares, doch ab heute kann ein paralleler Agent mitten in der Reihe pushen, ohne dass der nächste Slice ihm den Stand zerschießt.
+1. Der Kommandant rief viermal das Wort Deutsch, weil die Diener es viermal verlernt hatten.
+2. In AGENTS.md wurde der zerbrochene Sprachblock am Anfang durch eine klare Vorrangregel ersetzt, die alles Reden und Denken auf Deutsch zwingt.
+3. In Regel 1 derselben Datei stand noch ein fremdsprachiger Splitter, der in ganze deutsche Sätze gegossen und verschärft wurde.
+4. Sichtbar im Spiel: Künftige Agenten lesen die Vorrangregel zuerst und verlernen das Falschsprechen.
+5. Offen bleibt, ob ferne Agenten dieselbe Verfassung tragen oder ihre Sprachdämonen weiter tanzen.

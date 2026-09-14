@@ -77,12 +77,13 @@ func _rasse_fuer(rasse_id: String) -> String:
 func _mood_fuer(rasse: String, welt_position: Vector2) -> Pop_MoodMaschine:
 	## Mit Need-Baum gehoert die Stimmung in den Baum, ohne ihn steht sie allein.
 	var baum: Pop_NeedBaum = _kontext["need_baum"]
+	var bestaende: Dictionary = _kontext.get("lager_bestaende", {}) as Dictionary
 	var mood: Pop_MoodMaschine = null
 	if baum != null:
-		mood = baum.einheit_need_anlegen(rasse, welt_position)
+		mood = baum.einheit_need_anlegen(rasse, welt_position, bestaende)
 	else:
 		mood = Pop_MoodMaschine.new()
-		mood.einrichten(_kontext["need_registry"], _kontext["lager"])
+		mood.einrichten(_kontext["need_registry"], bestaende)
 		mood.welt_position_setzen(welt_position)
 	mood.waerme_und_zyklus_setzen(_kontext["waerme_feld"], _kontext["tageszyklus"],
 		_kontext["mood_mod_registry"])

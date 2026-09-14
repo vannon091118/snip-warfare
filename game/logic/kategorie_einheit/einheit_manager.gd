@@ -138,7 +138,8 @@ func schlag_empfaenger_setzen(empfaenger: Callable) -> void:
 	_verdrahtung.schlag_empfaenger_setzen(empfaenger)
 
 func _auf_tick(nummer: int, delta: float) -> void:
-	# Der Manager reicht den Takt nur an seine Takt-Maschine weiter.
+	# Vor dem Einheiten-Tick wird der Lager-Snapshot an die Mood-Kette gereicht.
+	_verdrahtung.bestaende_auffrischen(self)
 	_takt.tick(nummer, delta)
 
 func _auf_zustand_geaendert(neu: int, status: Einheit_Status, mood: Pop_MoodMaschine) -> void:

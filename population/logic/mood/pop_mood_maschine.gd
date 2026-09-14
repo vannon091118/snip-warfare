@@ -12,7 +12,7 @@ signal mood_geaendert(mood: Pop_Mood)
 
 ## Kategorie daten: Need-Stand je Einheit und aktuelle Mood.
 var _need_registry: Pop_NeedRegistry = null
-var _lager: Lager_Manager = null
+var _lager_bestaende: Dictionary = {}
 var _rassen_schema: Pop_RassenSchema = null
 var _mood_mods: Pop_MoodModifikatorRegistry = null
 var _werte: Dictionary = {}
@@ -22,10 +22,13 @@ var _raten := Pop_MoodRaten.new()
 var _waerme := Pop_MoodWaermeGate.new()
 var _ableitung := Pop_MoodAbleitung.new()
 
-func einrichten(need_registry: Pop_NeedRegistry, lager: Lager_Manager) -> void:
+func einrichten(need_registry: Pop_NeedRegistry, bestaende: Dictionary = {}) -> void:
 	_need_registry = need_registry
-	_lager = lager
+	_lager_bestaende = bestaende.duplicate()
 	_ableitung.einrichten(_waerme, _mood_mods, need_registry)
+
+func bestand_setzen(bestaende: Dictionary) -> void:
+	_lager_bestaende = bestaende.duplicate()
 
 func rassen_schema_setzen(schema: Pop_RassenSchema) -> void:
 	_rassen_schema = schema
@@ -90,11 +93,11 @@ func bereich_hervorheben(mod_id: String, stufe: Pop_MoodEskalationStufe) -> void
 	_uebernehmen(Pop_MoodEskalation.aus_stufe(_mod_fuer(mod_id), stufe))
 
 func _verfuegbar_fuer(typ: Pop_NeedBasis) -> int:
-	if _lager != null and not typ.ressource.is_empty():
+	if not _lager_bestaende.is_empty() and not typ.ressource.is_empty():
 		# Override-Pfad: Need-Klassen mit mehreren Nahrungsquellen summieren selbst.
 		if typ.has_method("hat_verfuegbar_override") and typ.hat_verfuegbar_override():
-			return typ.verfuegbar_summe(_lager)
-		return _lager.gesamt_bestand(typ.ressource)
+			return typ.verfuegbar_summe(_lager_bestaende)
+		return int(_lager_bestaende.get(typ.ressource, 0))
 	return 0
 
 func _ableiten() -> void:
