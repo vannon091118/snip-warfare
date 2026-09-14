@@ -8,8 +8,15 @@ class_name Tier_SichtWaechter
 
 ## Deckel für Aufweckungen je Takt, damit ein Ruck nie den ganzen Takt frisst.
 const MAX_AUFWECKUNGEN_PRO_TICK := 32
+## Deckel für Aufweckungen je Bild: Die Weltuhr kann mehrere Ticks in einem
+## Rahmen nachholen, und FPS ist ein Bild-Phänomen. Ohne diesen Deckel
+## würden fünf nachgeholte Ticks das Fünffache in dem einen Bild wecken,
+## das der Spieler gerade sieht — genau das Bild, das nicht kippen darf.
+const MAX_AUFWECKUNGEN_PRO_BILD := 48
 
 var _sammler := Welt_SichtbereichSammler.new()
+var _letzter_rahmen: int = -1
+var _aufweckungen_je_rahmen: int = 0
 
 func bereich_setzen(rechteck: Rect2) -> void:
 	## Die Szene reicht das Kamera-Rechteck herein; der Abgleich läuft
@@ -39,6 +46,12 @@ func wachen_und_schlafen(tiere: Array[Dictionary], darsteller_erzeugen: Callable
 	## Ernte-Ausblendung enden logisch und liefern ihre Indizes zum Austragen.
 	var entfernte: Array[int] = []
 	var aufgeweckt := 0
+	# Bild-Wechsel: Der Deckel zählt neu, weil ein neues Bild neue Rechenzeit
+	# bringt. Mehrere Ticks im selben Bild teilen sich dasselbe Budget.
+	var rahmen := Engine.get_process_frames()
+	if rahmen != _letzter_rahmen:
+		_letzter_rahmen = rahmen
+		_aufweckungen_je_rahmen = 0
 	for index in tiere.size():
 		var tier: Dictionary = tiere[index]
 		var status: Tier_Status = tier["status"]
@@ -52,9 +65,10 @@ func wachen_und_schlafen(tiere: Array[Dictionary], darsteller_erzeugen: Callable
 			# Schlafend: Der Eintrag lebt als Logik ohne Node weiter.
 			if _vogel_abflug_fertig(status):
 				entfernte.append(index)
-			elif aufgeweckt < MAX_AUFWECKUNGEN_PRO_TICK and enthaelt(tier["position"]):
+			elif aufgeweckt < MAX_AUFWECKUNGEN_PRO_TICK and _aufweckungen_je_rahmen < MAX_AUFWECKUNGEN_PRO_BILD and enthaelt(tier["position"]):
 				tier["darsteller"] = darsteller_erzeugen.call(str(tier["tier_id"]), status, tier["position"])
 				aufgeweckt += 1
+				_aufweckungen_je_rahmen += 1
 			continue
 		# Wach: Wandert das Tier aus dem Blick, schläft es ein. Der Knoten
 		# verlässt den Baum vollständig, nur der Logik-Eintrag bleibt stehen.

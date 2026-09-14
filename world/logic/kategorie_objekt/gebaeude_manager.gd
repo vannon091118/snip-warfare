@@ -66,7 +66,7 @@ func einrichten(model: Welt_Model, registry: Welt_Registry, ressourcen: Einheit_
 	_lager = lager
 	_fortschritt = fortschritt
 	_welt_world = welt_world
-	_bauplatz.einrichten(model, _definitionen)
+	_bauplatz.einrichten(model, _definitionen, registry)
 	_status_leser.einrichten(model, _definitionen, _bau_maschine, _produktions_maschine)
 	_bau_auftrag.einrichten(model, ressourcen, lager, _definitionen, _bau_maschine, _produktions_maschine, fortschritt, _bauplatz, _meldung_text, _status_zeilen_melden)
 	_laufzeit.einrichten(model, ressourcen, lager, _definitionen, _bau_maschine, _produktions_maschine, fortschritt, _meldung_text, _gebaeude_fertig_call)

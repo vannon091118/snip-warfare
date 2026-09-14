@@ -255,6 +255,9 @@ func _bereit_orchestrator_und_ui() -> void:
 	# ein, sobald die Einstiegs-Kette das Lagerfeuer meldet. Vorher ist die
 	# Karte leer und das Ziel sichtbar.
 	_fortschritt.stufe_erreicht.connect(_auf_erste_einheit)
+	# Ankunfts-Vertrag: Die Einwanderung setzt jeden Ankömmling genau dort
+	# ab, wo der Spieler hinsieht. Ohne diesen Ruf landet niemand im Bild.
+	_stockmaenner.ankunftsort_setzen(_ankunftsort)
 	_hud.job_anzeigen("")
 	_biom_anzeigen()
 	_eingabe_steuerung.einrichten({
@@ -471,6 +474,18 @@ func _biom_anzeigen() -> void:
 func model_liefern() -> Welt_Model:
 	return _model
 
+func lager_liefern() -> Lager_Manager:
+	return _lager
+
+func gebaeude_liefern() -> Gebaeude_Manager:
+	return _gebaeude
+
+func ressourcen_liefern() -> Einheit_Ressourcen:
+	return _ressourcen
+
+func einheiten_liefern() -> Einheit_Manager:
+	return _stockmaenner
+
 func _auf_zurueck() -> void:
 	# Auch der Rückweg läuft über die Übergangs-Verbindung, damit jede
 	# Szene denselben Weg nimmt und Events/Cutscenes dort andocken können.
@@ -497,9 +512,54 @@ func _auf_erste_einheit(_stufe: Dictionary) -> void:
 		_landeplatz = null
 	_lager_fabrik.anlegen_aus_welt(_model, _lager, _kamera_steuerung.kamera_position)
 	_waerme_sammler.sammeln(_model, _stockmaenner, _waerme_overlay)
-	_stockmaenner.einheit_hinzufuegen(_stockmaenner.lager_anker_position() + Vector2(0, 48))
-	_sozial.einheit_anmelden(_stockmaenner.einheit_zahl() - 1, _stockmaenner.lager_anker_position() + Vector2(0, 48), ["tratscht_gerne"])
+	## Ankunftsort: Der erste Siedler erscheint dort, wo der Spieler
+	## hinsieht. Ein Siedler im Modell, den niemand auf der Karte findet,
+	## ist kein Fortschritt, sondern ein unsichtbarer Zustand.
+	var ankunft := _ankunftsort()
+	_stockmaenner.einheit_hinzufuegen(ankunft)
+	_sozial.einheit_anmelden(_stockmaenner.einheit_zahl() - 1, ankunft, ["tratscht_gerne"])
 	_hud.meldung_setzen("Der erste Siedler ist am Lagerfeuer angekommen.")
+
+func _ankunftsort() -> Vector2:
+	## Das Lagerfeuer dieser Stufe ist der Ankunftsort: Der Spieler hat es
+	## gerade selbst gebaut und schaut hin. Stehen mehrere Feuer in der Welt,
+	## zaehlt das naechste an der Kamera — ein weit entferntes Feuer wuerde
+	## den Siedler ausserhalb des Bildes absetzen. Ohne Fundort bleibt der
+	## Anker des Lagers, damit die Ankunft nie am Kartenursprung landet.
+	## Massgeblich ist der Bildmittelpunkt, nie die Knoten-Position der
+	## Kamera: Eine begrenzte Kamera zeigt nicht dorthin, wo ihr Knoten
+	## rechnerisch steht, und ein Spawn am Knoten landet ausserhalb des
+	## Sichtfelds.
+	var blick := _kamera.get_screen_center_position()
+	var naechstes := Vector2.INF
+	var beste_distanz := INF
+	for index in _model.objekt_anzahl():
+		if str(_model.objekt_feld(index, "gebaeude_id", "")) != "lagerfeuer":
+			continue
+		var position := _model.objekt_position(index)
+		var distanz := position.distance_to(blick)
+		if distanz < beste_distanz:
+			beste_distanz = distanz
+			naechstes = position
+	if naechstes != Vector2.INF:
+		return naechstes + Vector2(0, 48)
+	## Ohne Feuer zaehlt der Lageranker nur, wenn er im Blick liegt: Eine
+	## Ankunft ausserhalb des Bildes ist keine Ankunft. Sonst kommt der
+	## Siedler dort an, wo der Spieler hinsieht.
+	var anker := _stockmaenner.lager_anker_position() + Vector2(0, 48)
+	if _im_blick(anker):
+		return anker
+	return blick + Vector2(0, 48)
+
+func _im_blick(welt_position: Vector2) -> bool:
+	## Sichtfeld der Kamera in Weltkoordinaten: halbe Viewportgroesse je Zoom,
+	## gerechnet ab dem gezeichneten Bildmittelpunkt. Der Knoten der Kamera
+	## kann bei Karten-Grenzen von der gezeichneten Mitte abweichen; nur die
+	## Mitte ist das, was ein Spieler wirklich sieht.
+	var mitte := _kamera.get_screen_center_position()
+	var halb := _kamera.get_viewport_rect().size * 0.5 / _kamera.zoom
+	var abweichung := (welt_position - mitte).abs()
+	return abweichung.x <= halb.x and abweichung.y <= halb.y
 
 func _auf_stufe_erreicht(stufe: Dictionary) -> void:
 	# Neue Stufe: Das HUD nennt die freigeschaltete Stufe und das nächste

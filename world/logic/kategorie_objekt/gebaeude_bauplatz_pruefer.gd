@@ -8,14 +8,27 @@ class_name Gebaeude_BauplatzPruefer
 ## Kategorie daten: Modell und Definitionsquelle.
 var _model: Welt_Model = null
 var _definitionen := Gebaeude_DefinitionRegistry.new()
+## Möbel-Bedarf: eigener Leser des Datenvertrags benötigt_tags.
+var _moebelbedarf := Gebaeude_MoebelBedarf.new()
 
-func einrichten(model: Welt_Model, definitionen: Gebaeude_DefinitionRegistry) -> void:
+func einrichten(model: Welt_Model, definitionen: Gebaeude_DefinitionRegistry, registry: Welt_Registry = null) -> void:
 	_model = model
 	_definitionen = definitionen
+	_moebelbedarf.einrichten(model, registry)
 
 func model_setzen(model: Welt_Model) -> void:
 	## Kartenwechsel-Handshake: Das Modell wird atomar ausgetauscht.
 	_model = model
+	_moebelbedarf.model_setzen(model)
+
+func moebelbedarf_erfuellt(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
+	## Zweite Freigabe-Frage des Bau-Gates: Stehen die verlangten Möbel-Tags
+	## im Umkreis. Die Antwort kommt aus dem eigenen Leser, nie aus dieser
+	## Prüfstelle selbst.
+	var definition := _definitionen.definition_fuer(gebaeude_id)
+	if definition == null:
+		return {"ok": false, "grund": "unbekanntes Gebaeude"}
+	return _moebelbedarf.erfuellt(definition, welt_position)
 
 func voraussetzung_erfuellt(gebaeude_id: String) -> Dictionary:
 	## Freigabe-Voraussetzungen aus der Definition: Jedes Gebäude kann andere

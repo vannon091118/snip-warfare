@@ -2,10 +2,10 @@ extends RefCounted
 class_name Tier_Takt
 ## Ein Takt der Tiere: Er ordnet zuerst das Wach-Sein über den Sicht-Wächter,
 ## tickt dann jeden Eintrag — schlafend als reine Logik, wach mit Darsteller —
-## und trägt zum Schluss die erloschenen Einträge aus. Inaktive Karten ticken
-## nur jedes sechste Frame.
-
-const KARTEN_GATE := 6
+## und trägt zum Schluss die erloschenen Einträge aus. Auf inaktiven Karten
+## ist die Tier-Logik komplett pausiert: kein Wecken, kein Schlafen, kein
+## Zug, kein Austrag. Die Einträge warten als Zahlen, bis die Karte wieder
+## vor der Kamera steht; eine Wiese hinter der Wand kann kein Tier verlieren.
 
 var _mgr: Tier_Manager = null
 
@@ -13,10 +13,12 @@ func _init(mgr: Tier_Manager) -> void:
 	_mgr = mgr
 
 func tick(_nummer: int, delta: float) -> void:
-	## 1/6 Tick-Gate: Inaktive Karten ticken nur jedes 6. Frame.
+	## Komplette Pause: Auf einer inaktiven Karte tickt die Tier-Logik gar
+	## nicht. Tiere bleiben unverändert stehen, schlafende bleiben schlafend,
+	## wache behalten ihren Darsteller, und nichts wird geboren oder erloschen.
 	if not _eigene_karte_aktiv():
 		return
-	# Der Wächter ordnet das Wach-Sein: Wecken im Blick mit Budget,
+	# Der Wächter ordnet das Wach-Sein: Wecken im Blick mit Bild-Budget,
 	# Einschlafen außerhalb, Geister und Ernte-Ausblendungen zum Austrag.
 	var entfernte := _mgr._waechter.wachen_und_schlafen(_mgr._tiere, _mgr._darsteller_erzeugen)
 	for tier: Dictionary in _mgr._tiere:
@@ -45,5 +47,5 @@ func _eigene_karte_aktiv() -> bool:
 		return true
 	var aktive_map_id := _mgr._welt_world.aktive_map_id()
 	if aktive_map_id != "" and aktive_map_id != _mgr._model.map_id:
-		return Engine.get_process_frames() % KARTEN_GATE == 0
+		return false
 	return true

@@ -49,6 +49,11 @@ func bauen_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionary:
 	if not _definitionen.hat_gebaeude(gebaeude_id):
 		return {"ok": false, "grund": "unbekanntes Gebaeude"}
 	var definition := _definitionen.definition_fuer(gebaeude_id)
+	# Möbel-Gate: Der Datenvertrag benötigt_tags wird hier zum ersten Mal
+	# wirklich befragt. Ohne diese Zeile waeren Möbel schmucklos.
+	var moebel := _bauplatz.moebelbedarf_erfuellt(gebaeude_id, welt_position)
+	if not moebel.get("ok", false):
+		return moebel
 	if not _bauplatz.bauplatz_frei(welt_position, definition):
 		return {"ok": false, "grund": "Kachel bereits bebaut"}
 	var lager_index := _lager.naechstes_lager_fuer(welt_position)
@@ -77,6 +82,10 @@ func bauplan_anfordern(gebaeude_id: String, welt_position: Vector2) -> Dictionar
 	if not _definitionen.hat_gebaeude(gebaeude_id):
 		return {"ok": false, "grund": "unbekanntes Gebaeude"}
 	var definition := _definitionen.definition_fuer(gebaeude_id)
+	# Auch der Bauplan kennt das Möbel-Gate: derselbe Vertrag, dieselbe Stelle.
+	var moebel := _bauplatz.moebelbedarf_erfuellt(gebaeude_id, welt_position)
+	if not moebel.get("ok", false):
+		return moebel
 	if not _bauplatz.bauplatz_frei(welt_position, definition):
 		return {"ok": false, "grund": "Kachel bereits bebaut"}
 	var lager_index := _lager.naechstes_lager_fuer(welt_position)

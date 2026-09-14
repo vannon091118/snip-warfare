@@ -23,6 +23,10 @@ var startbestand: Dictionary = {}
 ## weitere Gebäude. Die Bauverbindung fragt nur, kein UI erfindet die Regel.
 var belegt_kachel: bool = true
 var voraussetzungen: Array[String] = []
+## Möbel-Bedarf: Welche Objekt-Tags müssen in der Nähe stehen, bevor der
+## Bau freigegeben wird. Der Vertrag steht in gebaeude.json als benötigt_tags
+## und wird von Gebaeude_MoebelBedarf gelesen; ohne Leser bliebe er tot.
+var benoetigt_tags: Array[String] = []
 var inputs: Array[Dictionary] = []
 var outputs: Array[Dictionary] = []
 var dauer_ticks: int = 0
@@ -47,6 +51,9 @@ func aus_konfig_eintrag(eintrag: Dictionary) -> void:
 	voraussetzungen.clear()
 	for voraussetzung: Variant in (eintrag.get("voraussetzungen", []) as Array):
 		voraussetzungen.append(str(voraussetzung))
+	benoetigt_tags.clear()
+	for tag: Variant in (eintrag.get("benötigt_tags", []) as Array):
+		benoetigt_tags.append(str(tag))
 	var produktion: Dictionary = eintrag.get("produktion", {})
 	inputs.clear()
 	for input: Variant in (produktion.get("inputs", []) as Array):
