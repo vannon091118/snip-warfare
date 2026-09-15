@@ -23,6 +23,17 @@ static func _vektor(paar: Variant, notwert: Vector2) -> Vector2:
 
 
 var _letzte_einheit: int = -1
+## Kategorie daten: Reihen-Analyse. Ein Szenario kann verlangen, dass je
+## Weltuhr-Tick ein Bild gegriffen wird: animationen und Ketten werden
+## damit Frame für Frame festgehalten und als Prüfreferenz abgelegt.
+var _reihen_zaehler: int = 0
+var _reihen_achtung: Array = []
+## Kategorie logik: Performance-Messung. Je Weltuhr-Tick wird die echte
+## Frame-Zeit (Engine-Zeit zwischen zwei process_frame) gesammelt; daraus
+## entstehen p50/p95/max je Sonde und je Reihenschritt als PER-Zeile und
+## Signatur-Feld. Kein Spielcode schreibt hier hinein.
+var _perf_zeiten_ms: Array[float] = []
+var _perf_letzte_ms: int = -1
 ## Kategorie logik: Zeitbudget. Ein Sonden-Lauf darf nie stillstehen — er
 ## meldet sich rechtzeitig, bevor der Laeufer ihn hart abschneidet.
 var _start_ms: int = 0
@@ -31,6 +42,24 @@ var _frist_ms: int = 75000
 
 func _ueber_budget() -> bool:
 	return Time.get_ticks_msec() - _start_ms > _frist_ms
+
+
+func _perf_probe() -> void:
+	## Misst die echte Frame-Zeit seit dem letzten Griff und sammelt sie.
+	var jetzt := Time.get_ticks_msec()
+	if _perf_letzte_ms >= 0:
+		_perf_zeiten_ms.append(float(jetzt - _perf_letzte_ms))
+	_perf_letzte_ms = jetzt
+
+
+func _perf_perzentil(anteil: float) -> float:
+	## p-Wert der gesammelten Frame-Zeiten; leer liefert 0.0.
+	if _perf_zeiten_ms.is_empty():
+		return 0.0
+	var sortiert := _perf_zeiten_ms.duplicate()
+	sortiert.sort()
+	var index := clampi(int(float(sortiert.size()) * anteil), 0, sortiert.size() - 1)
+	return float(sortiert[index])
 
 
 func _ausschnitt(bild: Image, halb: int, versatz: Vector2 = Vector2.ZERO) -> Image:
@@ -45,7 +74,7 @@ func _ausschnitt(bild: Image, halb: int, versatz: Vector2 = Vector2.ZERO) -> Ima
 	return bild.get_region(Rect2i(links, oben, h * 2, h * 2))
 
 
-func _cheat_schritt(cheat: RefCounted, d: Dictionary, stepper: RefCounted, eingabe: RefCounted) -> Dictionary:
+func _cheat_schritt(cheat: RefCounted, d: Dictionary, stepper: RefCounted, eingabe: RefCounted, sid: String = "", ordner: String = "") -> Dictionary:
 	## Fuehrt einen Schritt aus und gibt das Ergebnis zurueck, wenn der Schritt
 	## eines hat. Nur das Bau-Gate hat eines: ok oder Ablehnung mit Grund.
 	var ergebnis: Dictionary = {}
@@ -56,6 +85,20 @@ func _cheat_schritt(cheat: RefCounted, d: Dictionary, stepper: RefCounted, einga
 	elif art == "ding_entfernen_bei":
 		if cheat != null:
 			cheat.call("ding_entfernen_bei", _vektor(d.get("pos", null), Vector2(512, 512)), float(d.get("radius", 32.0)))
+	elif art == "job_vergeben":
+		## Der echte Spieler-Weg: Objekt suchen (oder Index nehmen), den
+		## passenden Job aus der Registry vergeben. Das Ergebnis geht in die
+		## Bau-Ergebnisse, damit erwartet.bau_ok_folge es beweisen kann.
+		if cheat != null:
+			var baum: Dictionary = {}
+			if d.has("objekt_index"):
+				baum = {"ok": true, "index": int(d.get("objekt_index")), "position": _vektor(d.get("pos", null), Vector2.INF)}
+			else:
+				baum = cheat.call("objekt_bei", _vektor(d.get("pos", null), _kamera_mitte_fallback()))
+			if bool(baum.get("ok", false)):
+				ergebnis = cheat.call("job_vergeben", int(baum["index"]), baum["position"])
+			else:
+				ergebnis = {"ok": false, "grund": "kein Baum gefunden", "job_id": ""}
 	elif art == "bauen_anfordern":
 		if cheat != null:
 			ergebnis = cheat.call("bauen_anfordern", str(d.get("gebaeude_id", "lagerfeuer")), _vektor(d.get("pos", null), Vector2.INF))
@@ -71,6 +114,53 @@ func _cheat_schritt(cheat: RefCounted, d: Dictionary, stepper: RefCounted, einga
 	elif art == "einheit_marsch_delta":
 		if cheat != null:
 			cheat.call("einheit_marsch_delta", int(d.get("index", _letzte_einheit)), _vektor(d.get("delta", null), Vector2(160, 0)))
+	elif art == "anim_frame":
+		## Frame-für-Frame: n Ticks pumpen und je Tick ein Bild greifen.
+		## Die Bilder landen als Prüfreferenz in einem eigenen Ordner und
+		## werden als Reihen-Zeile gemeldet, damit die Python-Seite daraus
+		## Bewegungs-Kurven und Animations-Abstände lesen kann.
+		var n := int(d.get("n", 8))
+		var jede := maxi(int(d.get("jede", 1)), 1)
+		var reihe := str(d.get("reihe", sid if sid != "" else "reihe"))
+		var ziel_ordner := (ordner if ordner != "" else "res://tools/logs/sonden_bilder/reihen") + "/%s" % reihe
+		var gegriffen := 0
+		for i in n:
+			stepper.call("ticks_pumpen", 1)
+			if i % jede == 0:
+				await RenderingServer.frame_post_draw
+				var rbild: Image = root.get_texture().get_image()
+				var rname := "%s_f%03d_t%03d" % [sid, int(stepper.call("frame_nr")), i]
+				_bild_speichern(rbild, ziel_ordner, rname)
+				_reihen_achtung.append(ziel_ordner + "/" + rname + ".png")
+				gegriffen += 1
+			if _ueber_budget():
+				printerr("SONDE-FEHLER: %s Reihen-Greif Budget erschöpft bei t=%d" % [sid, i])
+				quit(1)
+				return {}
+		_reihen_zaehler += gegriffen
+		print("SONDE-ZEILE: reihe=%s gegriffen=%d von=%d ordner=%s" % [reihe, gegriffen, n, ziel_ordner])
+		print("SONDE-PERF: reihe=%s p50=%.1f p95=%.1f max=%.1f proben=%d" % [reihe, _perf_perzentil(0.5), _perf_perzentil(0.95), _perf_perzentil(1.0), _perf_zeiten_ms.size()])
+	elif art == "kette_frame":
+		## Ketten-Ausführung: eine Liste von Schritten wird je Takt ausgeführt
+		## und je Takt ein Bild gegriffen — die Bau-Kette als Filmstreifen.
+		var kette: Array = d.get("kette", [])
+		var reihe_k := str(d.get("reihe", (sid if sid != "" else "sonde") + "_kette"))
+		var ziel_k := (ordner if ordner != "" else "res://tools/logs/sonden_bilder/reihen") + "/%s" % reihe_k
+		var gegriffen_k := 0
+		for schritt_i in kette.size():
+			var schritt: Variant = kette[schritt_i]
+			if typeof(schritt) == TYPE_DICTIONARY:
+				await _cheat_schritt(cheat, schritt as Dictionary, stepper, eingabe, sid, ordner)
+			stepper.call("ticks_pumpen", maxi(int((schritt as Dictionary).get("pump", 1)) if typeof(schritt) == TYPE_DICTIONARY else 1, 1))
+			await RenderingServer.frame_post_draw
+			var kbild: Image = root.get_texture().get_image()
+			var kname := "%s_k%02d_f%03d" % [sid, schritt_i, int(stepper.call("frame_nr"))]
+			_bild_speichern(kbild, ziel_k, kname)
+			_reihen_achtung.append(ziel_k + "/" + kname + ".png")
+			gegriffen_k += 1
+		_reihen_zaehler += gegriffen_k
+		print("SONDE-ZEILE: kette=%s schritte=%d gegriffen=%d ordner=%s" % [reihe_k, kette.size(), gegriffen_k, ziel_k])
+		print("SONDE-PERF: kette=%s p50=%.1f p95=%.1f max=%.1f proben=%d" % [reihe_k, _perf_perzentil(0.5), _perf_perzentil(0.95), _perf_perzentil(1.0), _perf_zeiten_ms.size()])
 	elif art == "snapshot_speichern":
 		if cheat != null:
 			cheat.call("speicherstand_speichern", str(d.get("slot", "ab")))
@@ -93,6 +183,10 @@ func _cheat_schritt(cheat: RefCounted, d: Dictionary, stepper: RefCounted, einga
 		if stepper != null:
 			stepper.call("ticks_pumpen", int(d.get("n", 24)))
 	return ergebnis
+
+
+func _kamera_mitte_fallback() -> Vector2:
+	return Vector2(500, 300)
 
 
 func _argumente() -> Dictionary:
@@ -186,7 +280,7 @@ func _initialize() -> void:
 	# Setup-Schritte: nur ausdruecklich markierte, nie ein Schritt mit frame.
 	for s in schritte:
 		if typeof(s) == TYPE_DICTIONARY and _ist_setup(s as Dictionary):
-			_cheat_schritt(cheat, s as Dictionary, stepper, eingabe)
+			await _cheat_schritt(cheat, s as Dictionary, stepper, eingabe, sid, ordner)
 	if cheat != null:
 		# Nach dem Setup wird der Zustand gemeldet: Das Szenario belegt seine
 		# eigene Ausgangslage, statt sie zu behaupten.
@@ -199,9 +293,16 @@ func _initialize() -> void:
 	var vorher_blick: Image = null
 	for marke in marken:
 		var ziel := int(marke)
+		# Kamera-Folge: Wenn das Szenario es verlangt, zentriert die Kamera je
+		# Marke auf die beobachtete Einheit — der Spieler sieht jeden Schritt.
+		if bool(szenario.get("kamera_folgt", false)) and cheat != null:
+			cheat.call("kamera_folgen", true)
 		print("SONDE-ZEILE: marke=%d betreten frame=%d t=%dms" % [
 			ziel, int(stepper.call("frame_nr")), Time.get_ticks_msec() - _start_ms])
 		while int(stepper.call("frame_nr")) < ziel:
+			_perf_probe()
+			if bool(szenario.get("kamera_folgt", false)) and cheat != null and int(stepper.call("frame_nr")) % 6 == 0:
+				cheat.call("kamera_folgen", true)
 			if _ueber_budget():
 				printerr("SONDE-FEHLER: %s Zeitbudget %d ms erschöpft beim Warten auf Marke %d" % [sid, _frist_ms, ziel])
 				quit(1)
@@ -217,7 +318,7 @@ func _initialize() -> void:
 			return
 		for s in schritte:
 			if typeof(s) == TYPE_DICTIONARY and _ist_bei_marke(s as Dictionary, ziel):
-				var teil := _cheat_schritt(cheat, s as Dictionary, stepper, eingabe)
+				var teil := await _cheat_schritt(cheat, s as Dictionary, stepper, eingabe, sid, ordner)
 				if not teil.is_empty():
 					bau_ergebnisse.append(bool(teil.get("ok", false)))
 		# Erst den gezeichneten Frame abwarten: Sonst zeigt das Bild den Stand
@@ -275,10 +376,16 @@ func _initialize() -> void:
 	var weiss_anteil: float = float(vergleich.call("weiss_anteil", letztes))
 	print("SONDE-ZEILE: cursor=%d frame=%d" % [DisplayServer.cursor_get_shape(), int(stepper.call("frame_nr"))])
 	print("SONDE-ZEILE: frames=%d marken=%s deltas=%s" % [deltas.size() + 1, str(marken), str(deltas)])
+	var perf_p50 := _perf_perzentil(0.5)
+	var perf_p95 := _perf_perzentil(0.95)
+	var perf_max := _perf_perzentil(1.0)
+	print("SONDE-PERF: gesamt p50=%.1f p95=%.1f max=%.1f proben=%d" % [perf_p50, perf_p95, perf_max, _perf_zeiten_ms.size()])
 	var letzte_sig := {
 		"id": sid, "deckt_hash": _deckungs_hash(deckt), "kacheln": kacheln_zahl, "mit_textur": mit_textur,
 		"weiss_anteil": weiss_anteil, "breite": letztes.get_width(), "hoehe": letztes.get_height(),
 		"agent": agent, "frames": deltas.size() + 1, "bewegung": bewegung, "marken": marken,
+		"reihen_bilder": _reihen_zaehler, "reihen_pfade": _reihen_achtung,
+		"perf_p50_ms": perf_p50, "perf_p95_ms": perf_p95, "perf_max_ms": perf_max, "perf_proben": _perf_zeiten_ms.size(),
 	}
 	var vorher: Variant = null
 	var sig_pfad := str(args["signatur"])

@@ -19,8 +19,11 @@ ERLAUBTE_SCHRITT_ARTEN = {
     "einheit_marsch",
     "einheit_marsch_delta",
     "klick_links",
+    "job_vergeben",
     "klick_rechts",
     "drag",
     "maus_bewegen",
     "ticks_pumpen",
+    "anim_frame",
+    "kette_frame",
 }

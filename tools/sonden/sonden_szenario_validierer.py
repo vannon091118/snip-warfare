@@ -18,6 +18,16 @@ def validiere_szenario(pfad: Path) -> list[str]:
     for s in data.get("schritte", []):
         if not isinstance(s, dict) or str(s.get("art", "")) not in ERLAUBTE_SCHRITT_ARTEN:
             probs.append(f"schritt art ungueltig: {s}")
+            continue
+        art = str(s.get("art", ""))
+        if art == "kette_frame":
+            kette = s.get("kette", [])
+            if not isinstance(kette, list) or not kette:
+                probs.append(f"kette_frame ohne kette-Liste: {s.get('reihe', '')}")
+            else:
+                for k in kette:
+                    if not isinstance(k, dict) or str(k.get("art", "")) not in ERLAUBTE_SCHRITT_ARTEN:
+                        probs.append(f"kette_frame enthaelt ungueltigen Schritt: {k}")
     if "id" not in data or not str(data["id"]).strip():
         probs.append("Feld 'id' fehlt oder leer")
     if "seed" not in data:
@@ -36,6 +46,8 @@ def validiere_szenario(pfad: Path) -> list[str]:
                 probs.append(f"deckt verweist auf fehlenden Pfad: {eintrag}")
     if "modus" in data and str(data["modus"]) not in ERLAUBTE_MODI:
         probs.append(f"modus muss {ERLAUBTE_MODI} sein, war {data['modus']!r}")
+    if "visuell" in data and str(data["visuell"]) not in {"", "grau", "kacheln", "layout", "keine"}:
+        probs.append(f"visuell muss einer von (leer, grau, kacheln, layout, keine) sein, war {data['visuell']!r}")
     if "schritte" in data and not isinstance(data["schritte"], list):
         probs.append("schritte muss Liste sein")
     return probs

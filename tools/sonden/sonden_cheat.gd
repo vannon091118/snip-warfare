@@ -58,6 +58,15 @@ func ding_platzieren(element_id: String, position: Vector2) -> int:
 		return -1
 	var ort := _stelle(position)
 	var idx := m.objekt_hinzufuegen(element_id, ort)
+	# Sichtbar statt nur im Datenmodell: Derselbe Weg wie _auf_gebaeude_platziert
+	# in welt.gd — Knoten anhaengen, Sichtbereich nachziehen. Ohne diese zwei
+	# Rufe bleibt der Baum Daten, aber der Spieler sieht ihn nie.
+	var w := _welt()
+	if w != null:
+		var karte: Node = w.find_child("Karte", true, false)
+		if karte != null and karte.has_method("objekt_knoten_anhaengen"):
+			karte.call("objekt_knoten_anhaengen", idx)
+			karte.call("sichtgebiet_aktualisieren")
 	print("SONDE-ZEILE: cheat=ding_platzieren id=%s idx=%d pos=%.0f,%.0f frame=%d" % [element_id, idx, ort.x, ort.y, _frame_zahl])
 	return idx
 
@@ -435,6 +444,69 @@ func einheit_marsch(index: int, ziel: Vector2) -> bool:
 	print("SONDE-ZEILE: cheat=einheit_marsch idx=%d ziel=%.0f,%.0f ok=%s frame=%d" % [
 		auftrag, ziel.x, ziel.y, str(ok), _frame_zahl])
 	return ok
+
+func job_vergeben(objekt_index: int, ziel_position: Vector2) -> Dictionary:
+	## Der echte Spieler-Weg: Baum anklicken, Kontextmenue Sammeln/Abbauen,
+	## Einheit bekommt den Holzfaeller-Job. Derselbe Weg wie
+	## Ui_JobVergabeMaschine.job_fuer_objekt_vergeben — die Sonde richtet
+	## nichts Eigenes ein, sie ruft nur die bestehenden Flaeche.
+	if not _bewacht("job_vergeben"):
+		return {}
+	var ergebnis := {"ok": false, "grund": "", "job_id": ""}
+	var w := _welt()
+	if w == null:
+		ergebnis["grund"] = "keine Welt"
+		return ergebnis
+	var mgr: Variant = _einheiten()
+	if mgr == null:
+		ergebnis["grund"] = "kein Einheiten-Manager"
+		return ergebnis
+	var ziel_typ := Job_Basis.ZielTyp.OBJEKT
+	var vergabe: bool = bool(mgr.call("job_vergeben", 0, "holzfaeller", ziel_typ, objekt_index, ziel_position))
+	if not vergabe:
+		ergebnis["grund"] = "vergabe abgelehnt"
+		return ergebnis
+	ergebnis["ok"] = true
+	ergebnis["job_id"] = "holzfaeller"
+	print("SONDE-ZEILE: cheat=job_vergeben objekt=%d pos=%.0f,%.0f job=holzfaeller frame=%d" % [
+		objekt_index, ziel_position.x, ziel_position.y, _frame_zahl])
+	return ergebnis
+
+func objekt_bei(position: Vector2) -> Dictionary:
+	## Findet ein Baum-Objekt nahe einer Position: Index und Element-Id.
+	## Ohne Treffer liegt ok=false bei.
+	if not _bewacht("objekt_bei"):
+		return {}
+	var m := _welt_modell()
+	if m == null:
+		return {}
+	for index in m.objekt_anzahl():
+		if str(m.objekt_feld(index, "element_id", "")) == "baum":
+			var pos: Vector2 = m.objekt_position(index)
+			return {"ok": true, "index": index, "position": pos, "abstand": pos.distance_to(position)}
+	return {"ok": false}
+
+func kamera_folgen(_aktiv: bool) -> bool:
+	## Kamera-Folge: Die Kamera zentriert je Ruf auf die beobachtete Einheit.
+	## Fuer Szenarien, in denen der Spieler dem Stickman ueber die Karte
+	## folgt — Hacken, Transport, Abgabe — sonst sieht man nur leere Kacheln.
+	if not _bewacht("kamera_folgen"):
+		return false
+	var w := _welt()
+	if w == null:
+		return false
+	var kamera := w.find_child("Kamera", true, false) as Camera2D
+	if kamera == null:
+		return false
+	var mgr: Variant = _einheiten()
+	if mgr == null:
+		return false
+	var idx: int = _einheit_index
+	if idx < 0 or idx >= int(mgr.call("einheit_zahl")):
+		return false
+	var ziel: Vector2 = mgr.call("einheit_position", idx)
+	kamera.global_position = ziel
+	return true
 
 func darstellung_zeile() -> String:
 	## Was der Einheiten-Baum wirklich zeichnet: Knoten, Sichtbarkeit,
