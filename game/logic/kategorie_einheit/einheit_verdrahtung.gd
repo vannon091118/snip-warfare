@@ -62,6 +62,20 @@ func need_baum_erneuern(mgr: Einheit_Manager, baum: Pop_NeedBaum) -> void:
 	einwanderung_erneuern(mgr)
 
 
+## Moral-Fenster: Lesen und Setzen der Kolonie-Grundsaetze; die Moral-Instanz
+## bleibt Besitzerin der Daten, die Verdrahtung reicht nur den Griff durch.
+func moral_grundsatz(schalter_id: String) -> bool:
+	return _moral.darf_wert(schalter_id)
+
+
+func moral_grundsatz_aendern(mgr: Einheit_Manager, schalter_id: String, erlaubt: bool) -> void:
+	_moral.grundsatz_setzen(schalter_id, erlaubt)
+	# Die Stimmungs-Kette kennt keine Moral, aber die Mood-Modifikatoren
+	# lesen den Grundsatz je Tick; ein Auffrischen der Bestaende reicht,
+	# damit die naechste Eskalations-Pruefung den neuen Schalter sieht.
+	stimmung_erneuern(mgr)
+
+
 func sozial_ruf_erneuern(mgr: Einheit_Manager, ruf: Callable) -> void:
 	_sozial_lese_ruf = ruf
 	einwanderung_erneuern(mgr)

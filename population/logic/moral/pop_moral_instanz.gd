@@ -12,7 +12,27 @@ const QUELLE := "res://world/data/moral_regeln.json"
 var _grundsaetze: Dictionary = {}
 var _ersatzhandlungen: Array[Dictionary] = []
 
-## Kategorie logik: Laden, Fragen beantworten, Grundsaetze setzen.
+## Kategorie logik: Laden, Fragen beantworten, Grundsaetze setzen,
+## Schalter-Metadaten fuer das Grundsatz-Fenster liefern.
+
+const SCHALTER_TEXTE := {
+	"kannibalismus_erlaubt": {
+		"label": "Kannibalismus erlauben",
+		"tooltip": "Sobald die Hunger-Kette den Verzweiflungsschritt erreicht, darf eine Einheit den schwaechsten Nachbarn jagen. Verboten bleibt die Umleitung zur Ersatzhandlung.",
+	},
+	"tiere_bevorzugt": {
+		"label": "Tiere als Nahrung bevorzugen",
+		"tooltip": "Die Beute-Auswahl greift zuerst zu jagdbaren Tieren, bevor Artgenossen in Betracht kommen.",
+	},
+	"bindungsobjekt_geschuetzt": {
+		"label": "Gebundene Tiere schuetzen",
+		"tooltip": "Tiere mit Bindung an die Kolonie fallen aus der Beute-Auswahl, das naechste ungebundene Tier rueckt nach.",
+	},
+	"verhungern_erlaubt": {
+		"label": "Verhungern als letztes Mittel",
+		"tooltip": "Bleibt keine legale Ersatzhandlung, darf die Einheit verhungern, statt die Verzweiflungstat zu tragen.",
+	},
+}
 
 func _init() -> void:
 	laden()
@@ -33,6 +53,10 @@ func laden() -> void:
 	for eintrag: Variant in pool.get("ersatzhandlungen", []):
 		if eintrag is Dictionary:
 			_ersatzhandlungen.append((eintrag as Dictionary).duplicate(true))
+
+func darf_wert(schalter_id: String) -> bool:
+	## Der reine Schalter-Wert, den das Fenster liest und schreibt.
+	return bool(_grundsaetze.get(schalter_id, false))
 
 func darf_verhalten(verhalten_id: String) -> bool:
 	## Die Frage der Verhaltens-Maschine: Traegt die Kolonie diesen Schritt?
@@ -59,6 +83,11 @@ func ersatz_regel(aktion_id: String) -> Dictionary:
 			return regel
 	return {}
 
+func grundsaetz_setzen(schalter_id: String, erlaubt: bool) -> void:
+	## Der Einzel-Griff des Fensters: Nur bekannte Schalter wandern hinein.
+	if _grundsaetze.has(schalter_id):
+		_grundsaetze[schalter_id] = erlaubt
+
 func grundsaetze_setzen(neu: Dictionary) -> void:
 	# Der Spieler-Griff: Nur bekannte Schalter wandern hinein, alles andere ruht.
 	for schluessel: String in neu.keys():
@@ -67,3 +96,29 @@ func grundsaetze_setzen(neu: Dictionary) -> void:
 
 func grundsaetze() -> Dictionary:
 	return _grundsaetze.duplicate(true)
+
+func schalter_ids() -> Array[String]:
+	## Die reinen Schluessel des Schalter-Regals, ohne die Beschreibungs-Zeile.
+	var ids: Array[String] = []
+	for schluessel: String in _grundsaetze.keys():
+		if schluessel == "beschreibung":
+			continue
+		ids.append(schluessel)
+	ids.sort()
+	return ids
+
+func schalter_text(schalter_id: String) -> Dictionary:
+	## Label und Tooltip eines Schalters fuer das Fenster; ohne Eintrag ruht der
+	## Schalter unbeschriftet und das Fenster zeigt nur den Schluessel.
+	return (SCHALTER_TEXTE.get(schalter_id, {}) as Dictionary).duplicate(true)
+
+
+static func schalter_ids_fuer(_manager: Einheit_Manager) -> Array[String]:
+	## Die statische Bruecke der UI: Die Schluessel stehen in den Daten der
+	## Domäne, eine Instanz wird dafuer nicht angefasst.
+	var instanz := Pop_MoralInstanz.new()
+	return instanz.schalter_ids()
+
+
+static func schalter_text_statisch(schalter_id: String) -> Dictionary:
+	return (SCHALTER_TEXTE.get(schalter_id, {}) as Dictionary).duplicate(true)

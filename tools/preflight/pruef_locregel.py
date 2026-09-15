@@ -15,6 +15,20 @@ import re
 
 from .kern import PROJEKT_STAMM, fehler
 
+
+def _code_zeilen(code: str) -> int:
+    """Nur nicht-leere, nicht-kommentarische Zeilen zaehlen.
+    Kommentare (#) und Leerzeilen zaehlen nicht zur LOC-Grenze,
+    da die Grenze Verantwortung misst, nicht Dokumentation."""
+    anzahl = 0
+    for zeile in code.splitlines():
+        geputzt = zeile.strip()
+        if geputzt == "" or geputzt.startswith("#"):
+            continue
+        anzahl += 1
+    return anzahl
+
+
 GRENZEN_NACH_SUFFIX = (
     ("_basis.gd", 80),
     ("_registry.gd", 100),
@@ -71,7 +85,7 @@ def _pruefe_werkstatt_py() -> None:
             code = pfad.read_text(encoding="utf-8")
         except OSError:
             continue
-        zeilen = code.count("\n") + 1 if code else 0
+        zeilen = _code_zeilen(code)
         if zeilen > WERKSTATT_GRENZE_PY:
             fehler("E041", rel, 1,
                    "Werkstatt-Grenze verletzt: %d Zeilen in %s, erlaubt sind %d; "
@@ -104,7 +118,7 @@ def pruefe_locregel(dateien) -> None:
         grenze, suffix_label = _grenze_fuer(pfad.name)
         if grenze is None:
             continue
-        zeilen_zahl = code.count("\n") + 1
+        zeilen_zahl = _code_zeilen(code)
         if zeilen_zahl <= grenze:
             continue
         fehler("E041", rel, 1,

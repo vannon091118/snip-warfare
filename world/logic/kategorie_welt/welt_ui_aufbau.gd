@@ -11,6 +11,7 @@ const _FensterLeisteSkript := preload("res://ui/scenes/hud/fenster_leiste.gd")
 const _PopEinheitUebersetzerSkript := preload("res://ui/logic/kategorie_ui/ui_pop_einheit_uebersetzer.gd")
 const _PopEinheitPanelSzene := preload("res://ui/scenes/panels/pop_einheit_panel.tscn")
 const _LadeLeisteSkript := preload("res://ui/logic/kategorie_ui/ui_lade_leiste.gd")
+const _GrundsatzFensterSkript := preload("res://ui/logic/kategorie_ui/ui_grundsatz_fenster.gd")
 
 ## Kategorie daten: Gebaute Referenzen und Darsteller-Verwaltung.
 var karten_ebene: CanvasLayer = null
@@ -21,6 +22,7 @@ var bau_panel: Ui_BauPanelSzene = null
 var fenster_leiste: Ui_FensterLeiste = null
 var pop_einheit_panel: Control = null
 var pop_einheit_uebersetzer: Ui_PopEinheitUebersetzer = null
+var grundsatz_fenster: Ui_GrundsatzFenster = null
 ## Schmale Ladeleiste für den Chunk-Lader; die Szene speist sie je Frame.
 var lade_leiste: Ui_LadeLeiste = null
 var _lager_darsteller_eltern: Node = null
@@ -93,6 +95,25 @@ func pop_einheit_panel_bauen(canvas: CanvasLayer, need_baum: Pop_NeedBaum, stock
 	pop_einheit_panel.name = "PopEinheitPanel"
 	pop_einheit_panel.einrichten(pop_einheit_uebersetzer)
 	canvas.add_child(pop_einheit_panel)
+
+func grundsatz_fenster_bauen(canvas: CanvasLayer, stockmaenner: Einheit_Manager) -> void:
+	## Der Moral-Dialog als eigener Knoten unter der UI-Ebene; er startet
+	## unsichtbar, das Fenster-Leiste-Knopf offen und schließt ihn.
+	if canvas == null:
+		return
+	grundsatz_fenster = _GrundsatzFensterSkript.new()
+	grundsatz_fenster.name = "GrundsatzFenster"
+	grundsatz_fenster.einrichten(stockmaenner)
+	grundsatz_fenster.visible = false
+	canvas.add_child(grundsatz_fenster)
+
+func grundsatz_fenster_umschalten() -> void:
+	if grundsatz_fenster == null:
+		return
+	if grundsatz_fenster.visible:
+		grundsatz_fenster.visible = false
+	else:
+		grundsatz_fenster.popup_centered()
 
 func fenster_leiste_bauen(canvas: CanvasLayer, eintraege: Array[Dictionary]) -> void:
 	if canvas == null:

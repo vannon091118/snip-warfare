@@ -265,6 +265,7 @@ func _bereit_orchestrator_und_ui() -> void:
 	_ui_aufbau.debug_panel_bauen(%UILayer as CanvasLayer, _auswahl, _stockmaenner, _tiere)
 	_ui_aufbau.bau_panel_bauen(%UILayer as CanvasLayer, _gebaeude_definitionen, _fortschritt, _steuerung, _auf_bau_gewaehlt, _registry)
 	_ui_aufbau.pop_einheit_panel_bauen(%UILayer as CanvasLayer, _need_baum, _stockmaenner, _ressourcen)
+	_ui_aufbau.grundsatz_fenster_bauen(%UILayer as CanvasLayer, _stockmaenner)
 	# Lagerzone-Register an BauAuftragMaschine durchreichen: Der B-Toggle
 	# greift ab hier auf echte Raumprüfung und Lager-Entscheid.
 	if _eingabe_steuerung != null and _raum_und_lager != null:
@@ -514,6 +515,14 @@ func _fenster_leiste_bauen() -> void:
 			"tooltip": "Begründungen der letzten Buchungen anzeigen",
 			"aktion": _hud.warum_oeffnen,
 			"sichtbar": func() -> bool: return false,
+		},
+		{
+			"id": "grundsatz",
+			"name": "Grundsätze",
+			"shortcut": "",
+			"tooltip": "Moral der Kolonie: Kannibalismus, Tierschutz, Verhungern einstellbar",
+			"aktion": _ui_aufbau.grundsatz_fenster_umschalten,
+			"sichtbar": func() -> bool: return _ui_aufbau.grundsatz_fenster != null and _ui_aufbau.grundsatz_fenster.visible,
 		},
 		{
 			"id": "menu",
