@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from preflight.cli_argumente import baue_parser, normalisiere_kategorien
+from preflight.cli_argumente import baue_parser, mit_pflicht, normalisiere_kategorien
 from preflight.kategorie_register import PRUEFKATEGORIEN
 from preflight.kern import FEHLER, klassen_name_lesen, lies_dateien
 from preflight.lauf_beweis import lauf_beweis_mit_retry
@@ -39,7 +39,7 @@ def hauptprogramm() -> int:
     if unbekannt:
         print("E000: unbekannt: %s; erlaubt: %s" % (", ".join(unbekannt), ", ".join(sorted(PRUEFKATEGORIEN))))
         return 2
-    gewaehlt = {k.lower() for k in argumente.kategorie} or set(PRUEFKATEGORIEN)
+    gewaehlt = mit_pflicht(argumente) or set(PRUEFKATEGORIEN)
     aktive = {c for k in gewaehlt for c in PRUEFKATEGORIEN[k]}
     phasen = phasen_fuer_gewaehlt(gewaehlt)
     print(f"Prüfkategorien: {', '.join(sorted(gewaehlt))} | Phasen: {' -> '.join(phasen)}")

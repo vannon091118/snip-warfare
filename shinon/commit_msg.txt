@@ -1,5 +1,7 @@
-1. Der Kommandant rief viermal das Wort Deutsch, weil die Diener es viermal verlernt hatten.
-2. In AGENTS.md wurde der zerbrochene Sprachblock am Anfang durch eine klare Vorrangregel ersetzt, die alles Reden und Denken auf Deutsch zwingt.
-3. In Regel 1 derselben Datei stand noch ein fremdsprachiger Splitter, der in ganze deutsche Sätze gegossen und verschärft wurde.
-4. Sichtbar im Spiel: Künftige Agenten lesen die Vorrangregel zuerst und verlernen das Falschsprechen.
-5. Offen bleibt, ob ferne Agenten dieselbe Verfassung tragen oder ihre Sprachdämonen weiter tanzen.
+1. Der Kommandant wollte die Arbeit des Vortags verankern sehen, gepusht und grün, bevor die Auseinandernahme der Performance beginnt.
+2. In tools/sonden/lauf_sonde_fenster.gd trug die Reihen-Analyse ein Daten-Array ohne Kategorie-Marke, die Marke wurde auf Kategorie daten gesetzt, damit die Trennung still bleibt.
+3. In tools/preflight/pruef_sonden.py und der neuen tools/preflight/sonden_auswertung.py wanderte die gesamte Lauf-Auswertung in ein eigenes Werkstatt-Modul, die Aufrufer-Datei sank unter die Werkstatt-Grenze.
+4. In tools/sonden/sonden_reihen_analyse.py und der neuen tools/sonden/sonden_perf_analyse.py zog die Performance-Messung in ihr eigenes Zuhause, die Bewegungs-Analyse blieb allein zurück und beide halten die Grenze.
+5. In README.md und ROADMAP.md zog die Statuszahl der Prüfkategorien von 22 auf 23 nach, weil visual dazugekommen ist.
+6. Sichtbar im laufenden Spiel: Nichts Neues, doch alle 139 Pytest-Proben laufen grün und der Preflight trägt die Werkstatt-Grenzen wieder ohne Befund.
+7. Offen bleibt die eigentliche Auseinandernahme der Performance, die mit diesem Fundament nun sauber angepackt werden kann.

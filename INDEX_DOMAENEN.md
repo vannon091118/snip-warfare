@@ -817,7 +817,7 @@ Prefix `-`, 4 Klassen.
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
 | `Sonden_BildVergleich` | `tools/sonden/sonden_bild_vergleich.gd` | 100 |
-| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` | 538 |
+| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` | 610 |
 | `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` | 102 |
 | `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` | 56 |
 

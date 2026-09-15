@@ -181,7 +181,7 @@ Bevor irgendein Commit ins Repo wandert, muss er durch mein mechanisches Schafot
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 22 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus — `python tools/preflight.py --kategorie whitespace --fix` repariert Leerzeichen idempotent.
+* **Vollprüfung:** Führt alle 23 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus — `python tools/preflight.py --kategorie whitespace --fix` repariert Leerzeichen idempotent.
 * **Unittests:** `python -m pytest` führt alle 139 Unittests aus.
 * **LLM-Übersicht:** `python tools/index_generieren.py` frischt die ganze Index-Familie auf: `INDEX.md`, `INDEX_DOMAENEN.md`, `INDEX_DATEN.md` und die eine Last-Datei `INDEX_LETZTE_AENDERUNG.md`.
 

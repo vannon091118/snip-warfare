@@ -199,7 +199,7 @@ Alle Qualitäts-, Status- und Testprüfungen des Projekts lassen sich mit einem 
 python tools/preflight.py
 ```
 
-* **Vollprüfung:** Führt alle 22 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus.
+* **Vollprüfung:** Führt alle 23 Prüfkategorien (Naming, Trennung, Determinismus, Registries, Godot-Headless, Warnungs-Scan, Shinon Gate, Whitespace E042, Version E043, Index E044) aus.
 * **Scope-Gezielt:**
   * `python tools/preflight.py --kategorie warnungen` (GDScript-Warnungs-Scan nach Regel 6)
   * `python tools/preflight.py --kategorie shinon` (Shinon Gate Prüfung E030–E039)

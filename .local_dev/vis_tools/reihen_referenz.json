@@ -1,0 +1,56 @@
+{
+ "perf": {
+  "c249b179_vannon091118/bau_kette_reihe": [
+   {
+    "reihe": "bau_kette",
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0,
+    "proben": 0
+   },
+   {
+    "reihe": "gesamt",
+    "p50": 44.0,
+    "p95": 70.0,
+    "max": 552.0,
+    "proben": 115
+   }
+  ],
+  "c249b179_vannon091118/bau_moebel_fehlt_fenster": [
+   {
+    "reihe": "gesamt",
+    "p50": 38.0,
+    "p95": 51.0,
+    "max": 13871.0,
+    "proben": 178
+   }
+  ],
+  "c249b179_vannon091118/einheit_blockierter_weg_a": [
+   {
+    "reihe": "gesamt",
+    "p50": 32.0,
+    "p95": 45.0,
+    "max": 7041.0,
+    "proben": 118
+   }
+  ],
+  "c249b179_vannon091118/einheit_sichtbar_fenster": [
+   {
+    "reihe": "gesamt",
+    "p50": 33.0,
+    "p95": 50.0,
+    "max": 9550.0,
+    "proben": 118
+   }
+  ],
+  "c249b179_vannon091118/karte_sichtbar": [
+   {
+    "reihe": "gesamt",
+    "p50": 35.0,
+    "p95": 48.0,
+    "max": 488.0,
+    "proben": 119
+   }
+  ]
+ }
+}
