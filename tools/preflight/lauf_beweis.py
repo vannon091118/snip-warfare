@@ -11,6 +11,9 @@ def lauf_beweis_mit_retry(argumente, gewaehlt, phasen) -> None:
     wieder = max(1, min(int(getattr(argumente, "wiederholungen", 1)), 3))
     if godot_aktiv and "lauf" in phasen:
         _godot_mit_retry(wieder)
+    if "visual" in gewaehlt and not argumente.ohne_godot and "lauf" in phasen:
+        from .pruef_visual import pruefe_visual
+        pruefe_visual(argumente.godot_befehl)
     if sonden_aktiv and "beweis" in phasen:
         _sonden_mit_retry(argumente, wieder)
 

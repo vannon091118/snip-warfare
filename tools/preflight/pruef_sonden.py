@@ -64,8 +64,8 @@ def pruefe_sonden(godot_befehl: str = "godot", *, schnelldurchlauf: bool = False
     if _pruefe_selbstbeweise(zu_pruefen):
         return
     from .lauf_log_bruecke import lade_lauf_log
+    from .sonden_auswertung import szenario_auswerten
     from tools.sonden.sonden_laeufer import laufe_szenario
-    from tools.sonden.sonden_ocr_bruecke import ocr_fuer_bild
     gesammelt: list[str] = [f"Sonden-Lauf Agent={agent} Modus={'schnell' if schnelldurchlauf else 'scope' if scope_dateien else 'voll'} Szenarien={len(zu_pruefen)}"]
     for pfad in zu_pruefen:
         data = json.loads(pfad.read_text(encoding="utf-8"))
@@ -73,14 +73,7 @@ def pruefe_sonden(godot_befehl: str = "godot", *, schnelldurchlauf: bool = False
         ok, tail = laufe_szenario(pfad, godot_befehl, agent, schnelldurchlauf)
         gesammelt.append(f"--- {sid} ok={ok} ---")
         gesammelt.extend(tail)
-        for z in tail:
-            if "sonden_bilder" in z and z.strip().endswith(".png"):
-                png = Path(z.strip().split()[-1]) if " " in z else None
-                if png is None:
-                    continue
-                ocr_zeile = ocr_fuer_bild(png, sid)
-                if ocr_zeile:
-                    gesammelt.append(ocr_zeile)
+        szenario_auswerten(pfad, data, tail, agent, gesammelt)
         try:
             paar_a = [p for p in zu_pruefen if p.stem.endswith("_a")]
             for pa in paar_a:

@@ -1,0 +1,74 @@
+{
+    "id": "holz_transport",
+    "seed": 4242,
+    "deckt": [
+        "res://game/logic/kategorie_job/job_holzfaeller.gd",
+        "res://game/logic/kategorie_job/job_transport.gd",
+        "res://game/logic/kategorie_einheit/einheit_ernte_maschine.gd"
+    ],
+    "modus": "fenster",
+    "kamera_folgt": true,
+    "erwartetes_delta": true,
+    "erwartet": {
+        "einheiten_min": 1,
+        "bau_ok_folge": [true],
+        "einheit_bewegt": true
+    },
+    "visuell": "",
+    "perf_p95_max_ms": 120,
+    "beschreibung": "End-to-End: Baum in Bildmitte, Holzfaeller-Job vergeben, Einheit hackt bis das Inventar voll ist (50 Kapazitaet, 10 je Schlag), dann startet der Transport-Job automatisch, die Einheit traegt zum naechsten Lager und der Bestand steigt. Vorher und nachher wird der Lager-Bestand als Vertragszeile gemeldet, der Anstieg ist der Beweis.",
+    "frist_ms": 170000,
+    "marken": [0, 60, 240, 480, 780],
+    "schritte": [
+        {
+            "art": "ding_platzieren",
+            "wann": "setup",
+            "element_id": "baum",
+            "pos": [640, 360]
+        },
+        {
+            "art": "einheit_im_blick",
+            "wann": "frame",
+            "frame": 0,
+            "rasse_id": ""
+        },
+        {
+            "art": "job_vergeben",
+            "wann": "frame",
+            "frame": 0,
+            "pos": [640, 360]
+        },
+        {
+            "art": "anim_frame",
+            "wann": "frame",
+            "frame": 60,
+            "n": 6,
+            "jede": 2,
+            "reihe": "transport_hacken"
+        },
+        {
+            "art": "anim_frame",
+            "wann": "frame",
+            "frame": 240,
+            "n": 6,
+            "jede": 3,
+            "reihe": "transport_volllauf"
+        },
+        {
+            "art": "anim_frame",
+            "wann": "frame",
+            "frame": 480,
+            "n": 6,
+            "jede": 3,
+            "reihe": "transport_marsch"
+        },
+        {
+            "art": "anim_frame",
+            "wann": "frame",
+            "frame": 780,
+            "n": 6,
+            "jede": 3,
+            "reihe": "transport_abgabe"
+        }
+    ]
+}

@@ -30,7 +30,7 @@ PHASEN = [
             "E047", "E048", "E049", "E050", "E051",
         ),
     ),
-    ("lauf", ("E016", "E017", "E018", "E025")),
+    ("lauf", ("E016", "E017", "E018", "E025", "E052", "E053", "E054")),
     ("beweis", ("E026", "E027", "E028", "E029")),
     ("gate", ("E030", "E031", "E032", "E033", "E034", "E035", "E036", "E037", "E038", "E039")),
 ]
@@ -56,6 +56,7 @@ KATEGORIE_ZU_PHASE = {
     "index": "statik",
     "assets": "statik",
     "godot": "lauf",
+    "visual": "lauf",
     "sonden": "beweis",
     "shinon": "gate",
 }
@@ -63,7 +64,7 @@ KATEGORIE_ZU_PHASE = {
 PHASE_ZU_KATEGORIEN = {
     "selbsttest": [],
     "statik": ["klassen", "trennung", "determinismus", "pfade", "registries", "warnungen", "pyramide", "daten", "datenparitaet", "locregel", "bau_kette", "engine_bruecken", "whitespace", "version", "index", "assets", "biome", "einheitlich", "welt"],
-    "lauf": ["godot"],
+    "lauf": ["godot", "visual"],
     "beweis": ["sonden"],
     "gate": ["shinon"],
 }

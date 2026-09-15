@@ -6,7 +6,7 @@ import argparse
 
 def baue_parser(kategorien: set[str]) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Preflight des Projekts")
-    parser.add_argument("--kategorie", action="append", default=[], help="nur diese Prüfkategorie (%s)" % ", ".join(sorted(kategorien)))
+    parser.add_argument("--kategorie", action="append", default=[], help="zusaetzliche Pruefkategorie (%s)" % ", ".join(sorted(kategorien)))
     parser.add_argument("--ohne-godot", action="store_true", help="Godot-Lauf überspringen")
     parser.add_argument("--godot-befehl", default="godot", help="Befehl oder Pfad der Godot-Engine")
     parser.add_argument("--fix", action="store_true", help="Whitespace-Maengel (E042) nur mit --kategorie whitespace")
@@ -20,3 +20,17 @@ def baue_parser(kategorien: set[str]) -> argparse.ArgumentParser:
 
 def normalisiere_kategorien(argumente) -> None:
     argumente.kategorie = [n.strip() for e in argumente.kategorie for n in e.split(",") if n.strip()]
+
+
+VERPFLICHTLICH = {"visual"}
+
+
+def mit_pflicht(argumente) -> set[str]:
+    """Die Pflichtkategorien sind in jedem Lauf dabei. Nur ausdrueckliche
+    Pflicht-freie Läufe (--ohne-godot) lassen visual entfallen, weil sie
+    ohnehin kein Fenster fotografieren können."""
+    gewaehlt = {k.lower() for k in argumente.kategorie}
+    if not gewaehlt:
+        return set()
+    pflicht = {p for p in VERPFLICHTLICH if not getattr(argumente, "ohne_godot", False)}
+    return gewaehlt | pflicht

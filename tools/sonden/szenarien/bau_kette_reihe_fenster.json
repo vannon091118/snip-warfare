@@ -1,0 +1,24 @@
+{
+    "id": "bau_kette_reihe",
+    "seed": 777,
+    "deckt": [
+        "res://world/scenes/welt.tscn"
+    ],
+    "modus": "fenster",
+    "erwartetes_delta": true,
+    "beschreibung": "Bau-Kette Frame für Frame: Lager füllen, Lagerfeuer bauen, ticken — je Schritt ein Bild, aus der Bildreihe entsteht die Bewegungs-Kurve als Prüfreferenz."
+    ,
+    "schritte": [
+        {
+            "art": "kette_frame",
+            "wann": "frame",
+            "frame": 0,
+            "reihe": "bau_kette",
+            "kette": [
+                {"art": "lager_fuellen", "ressource": "holz", "menge": 40, "pump": 1},
+                {"art": "bauen_anfordern", "gebaeude_id": "lagerfeuer", "pump": 2},
+                {"art": "ticks_pumpen", "n": 6, "pump": 2}
+            ]
+        }
+    ]
+}
