@@ -113,11 +113,16 @@ func schalter_text(schalter_id: String) -> Dictionary:
 	return (SCHALTER_TEXTE.get(schalter_id, {}) as Dictionary).duplicate(true)
 
 
-static func schalter_ids_fuer(_manager: Einheit_Manager) -> Array[String]:
+static func schalter_ids_fuer() -> Array[String]:
 	## Die statische Bruecke der UI: Die Schluessel stehen in den Daten der
-	## Domäne, eine Instanz wird dafuer nicht angefasst.
-	var instanz := Pop_MoralInstanz.new()
-	return instanz.schalter_ids()
+	## Domaene, eine Instanz wird dafuer nicht angefasst.
+	var instanz := RefCounted.new()
+	# Die Schalter-Ids leben in den Konstanten des Datei-Scope.
+	var ids: Array[String] = []
+	for schluessel: String in SCHALTER_TEXTE.keys():
+		ids.append(schluessel)
+	ids.sort()
+	return ids
 
 
 static func schalter_text_statisch(schalter_id: String) -> Dictionary:

@@ -14,7 +14,25 @@ class_name Welt_ObjektKnoten
 var _objekt_daten: Dictionary = {}
 var _standbild: Sprite2D = null
 var _bewegtbild: AnimatedSprite2D = null
-var _schatten_lage: LightOccluder2D = null
+var _schatten_lage: Sprite2D = null
+
+## Die geteilte Ellipsen-Textur aller Bodenschatten: einmal erzeugt, von
+## jedem Knoten nur skaliert. Kein Licht, kein Okkluder, kein Vollbild-Schleier.
+static var _schatten_textur: GradientTexture2D = null
+
+static func _schatten_ellipse() -> GradientTexture2D:
+	if _schatten_textur == null:
+		var farbverlauf := Gradient.new()
+		farbverlauf.colors = PackedColorArray([Color(0.05, 0.04, 0.08, 0.38), Color(0.05, 0.04, 0.08, 0.0)])
+		farbverlauf.offsets = PackedFloat32Array([0.4, 1.0])
+		_schatten_textur = GradientTexture2D.new()
+		_schatten_textur.gradient = farbverlauf
+		_schatten_textur.fill = GradientTexture2D.FILL_RADIAL
+		_schatten_textur.fill_from = Vector2(0.5, 0.5)
+		_schatten_textur.fill_to = Vector2(1.0, 0.5)
+		_schatten_textur.width = 64
+		_schatten_textur.height = 64
+	return _schatten_textur
 
 ## Kategorie logik: Fußpunkt, Standbild und Bewegtbild setzen und lesen.
 
@@ -46,22 +64,22 @@ func standbild_setzen(textur: Texture2D) -> Sprite2D:
 	_standbild.offset = Vector2(0.0, -_hoehe_von(textur) * 0.5)
 	return _standbild
 
-## Die Schatten-Lage des Objekts: Ein simples Rechteck-Okkluder über der
-## unteren Bildhälfte wirft im Papierlicht die weiche Boden-Schattenlage.
-## Die Szene schaltet sie nur für Katalog-Einträge mit schatten_wurf an.
+## Der Bodenschatten des Objekts: Eine flache, weiche Ellipse liegt am
+## Fußpunkt und skaliert exakt mit der Objektgröße. Größere Objekte werfen
+## größere Schatten, kleine kaum einen; kein Schleier über die Karte.
 func schatten_wurf_setzen(aktiv: bool, breite: float, hoehe: float) -> void:
 	if aktiv:
 		if _schatten_lage == null:
-			_schatten_lage = LightOccluder2D.new()
+			_schatten_lage = Sprite2D.new()
 			_schatten_lage.name = "SchattenLage"
-			var umriss := OccluderPolygon2D.new()
-			var halb_b := maxf(breite * 0.35, 8.0)
-			var halb_h := maxf(hoehe * 0.3, 8.0)
-			umriss.polygon = PackedVector2Array([
-				Vector2(-halb_b, 0.0), Vector2(halb_b, 0.0),
-				Vector2(halb_b, -halb_h), Vector2(-halb_b, -halb_h),
-			])
-			_schatten_lage.occluder = umriss
+			_schatten_lage.texture = _schatten_ellipse()
+			# Flache Ellipse: Breite folgt dem Objekt, Tiefe bleibt gedrückt.
+			var halb_b := maxf(breite * 0.65, 10.0)
+			var halb_h := maxf(hoehe * 0.22, 5.0)
+			_schatten_lage.scale = Vector2(halb_b * 2.0 / 64.0, halb_h * 2.0 / 64.0)
+			_schatten_lage.position = Vector2(0.0, -3.0)
+			_schatten_lage.z_index = -1
+			_schatten_lage.show_behind_parent = true
 			add_child(_schatten_lage)
 		return
 	if _schatten_lage != null:

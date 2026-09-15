@@ -297,7 +297,7 @@ Prefix `Welt_`, 54 Klassen.
 | `Welt_NetzwerkPlaner` | `world/logic/kategorie_welt/welt_netzwerk_planer.gd` | 296 |
 | `Welt_ObjektDarsteller` | `world/logic/kategorie_welt/welt_objekt_darsteller.gd` | 90 |
 | `Welt_ObjektGitter` | `world/logic/kategorie_welt/welt_objekt_gitter.gd` | 68 |
-| `Welt_ObjektKnoten` | `world/logic/kategorie_welt/welt_objekt_knoten.gd` | 95 |
+| `Welt_ObjektKnoten` | `world/logic/kategorie_welt/welt_objekt_knoten.gd` | 113 |
 | `Welt_PauseMenue` | `world/logic/kategorie_welt/welt_pause_menue.gd` | 130 |
 | `Welt_Raum` | `world/logic/kategorie_welt/welt_raum.gd` | 47 |
 | `Welt_RaumAnalyser` | `world/logic/kategorie_welt/welt_raum_analyser.gd` | 56 |
@@ -667,7 +667,7 @@ Prefix `Pop_`, 31 Klassen.
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` | 57 |
 | `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` | 37 |
 | `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` | 85 |
-| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` | 125 |
+| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` | 130 |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` | 128 |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` | 30 |
 | `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` | 73 |
@@ -764,8 +764,8 @@ Prefix `Ui_`, 28 Klassen.
 | `Ui_EingabeSteuerung` | `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd` | 398 |
 | `Ui_EinheitPanel` | `ui/logic/kategorie_ui/ui_einheit_panel.gd` | 39 |
 | `Ui_ExpansionMaschine` | `ui/logic/kategorie_ui/ui_expansion_maschine.gd` | 38 |
-| `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` | 116 |
-| `Ui_GrundsatzFenster` | `ui/logic/kategorie_ui/ui_grundsatz_fenster.gd` | 63 |
+| `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` | 121 |
+| `Ui_GrundsatzFenster` | `ui/logic/kategorie_ui/ui_grundsatz_fenster.gd` | 64 |
 | `Ui_GrundsatzPanel` | `ui/logic/kategorie_ui/ui_grundsatz_panel.gd` | 46 |
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` | 105 |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` | 54 |
@@ -873,7 +873,7 @@ Prefix `-`, 36 Klassen.
 | `Welt_FortschrittsMaschine` | `world/logic/kategorie_progression/welt_fortschritts_maschine.gd` | 116 |
 | `Welt_FortschrittsRegistry` | `world/logic/kategorie_progression/welt_fortschritts_registry.gd` | 49 |
 | `Welt_PapierKornEbene` | `world/logic/kategorie_atmosphaere/welt_papier_korn_ebene.gd` | 88 |
-| `Welt_PapierLicht` | `world/logic/kategorie_atmosphaere/welt_papier_licht.gd` | 69 |
+| `Welt_PapierLicht` | `world/logic/kategorie_atmosphaere/welt_papier_licht.gd` | 70 |
 | `Welt_PlusAnzeige` | `world/logic/kategorie_feedback/feedback_plus_anzeige.gd` | 70 |
 | `Welt_ProgressionsMaschine` | `world/logic/kategorie_progression/welt_progressions_maschine.gd` | 99 |
 | `Welt_ProgressionsRegistry` | `world/logic/kategorie_progression/welt_progressions_registry.gd` | 80 |

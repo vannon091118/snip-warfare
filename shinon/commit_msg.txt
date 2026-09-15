@@ -1,10 +1,10 @@
-1. Der Kommandant verlangte den zweiten Slice der den Rest des lokalen Bestands aufräumt und die Versionsnummer global auf V0.02 hebt.
-2. In der VERSION-Datei wanderte der Stand von V0.01 nach V0.02 und das version_bump.py Skript zog 19 Dokumente im selben Schwung nach damit kein Papier hinterherhinkt.
-3. In README.md, ROADMAP.md, AGENTS.md, AGENTEN_INDEX.md, Architektur.md und den vier INDEX-Dateien steht jetzt V0.02 als gültiger Stand und die Statuszahlen spiegeln den aktuellen Klassenzstand.
-4. In tools/preflight/pruef_visual.py und tools/preflight/sonden_auswertung.py zogen Korrekturen ein die die Paket-Abhaengigkeiten und die Auswertung der Sonden-Ergebnisse betreffen.
-5. In tools/sonden/ fanden sechs Dateien ihre Pflege: lauf_sonde_fenster.gd, sonden_cheat.gd, sonden_perf_analyse.py, sonden_reihen_analyse.py, sonden_reihen_referenz.py und sonden_visuelle_bruecke.py wurden bereinigt, dazu sonden_pfade_vis.py als neuer Pfad-Visualisierer hinzugefuegt.
-6. In test_moral_autonomie_und_warum.py zog die Versionsanpassung nach und die Proben laufen weiterhin gruen.
-7. In docs/ fanden vier Plan-Dateien ihre Aktualisierung: architektur_bestandsaufnahme_plan.md, domaenen_gap_register.md, plan_blackboard_migration.md und plan_loc_cap_global.md tragen jetzt V0.02.
-8. In findings.md, progress.md, task_plan.md, tools/godot/README.md und world/assets/README.md steht ebenfalls V0.02 als neuer Stand.
-9. Sichtbar im laufenden Spiel: Nichts ändert sich am Spiel, die Versionsnummern sind ein Verwaltungsdetail.
-10. Offen bleibt die Behebung von E052 durch Installation der cv2 und PIL Pakete und die sichtbare Ingame-Pruefung des Grundsaetze-Fensters aus dem ersten Slice.
+1. Der Kommandant sah das graue Spielfeld und die stumme Leiste und verlangte Instandheit, denn ein Spiel das man nicht sieht und nicht bedienen kann ist kein Spiel sondern ein Foto von Verzweiflung.
+2. In ui/scenes/hud/fenster_leiste.gd wurde der stille Fehler entlarvt, der die Knöpfe verschlang: einrichten lief vor dem Baumeintritt und der Aufbau lief nie, jetzt baut der _ready nach und die Leiste trägt ihre Knöpfe garantiert.
+3. In world/logic/kategorie_welt/welt_ui_aufbau.gd zog die Leiste vom oberen Rand an den unteren Bildrand, auf 70 Pixel Breite gewachsen mit grösseren Knöpfen, damit Beschriftung und Kurzbefehl nicht mehr gekürzt werden.
+4. In world/logic/kategorie_welt/welt_objekt_knoten.gd wechselte der Schatten vom Okkluder-System zum Blob-System, jede Objekt-Lage trägt nun eine weiche Ellipse am Fußpunkt deren Grösse mit dem Objekt wächst, von der geteilten radialen Textur gespeist.
+5. In world/logic/kategorie_atmosphaere/welt_papier_licht.gd legte das Papierlicht seine Schattenpflicht ab, denn tausend Okkluder unter einer gerichteten Sonne malten einen grauen Schleier über die ganze Karte, jetzt bleibt reines Stimmungslicht.
+6. In population/logic/moral/pop_moral_instanz.gd verlor die statische Brücke ihren Manager-Parameter und ihre Selbst-Referenz, der Zirkel der das Klassenbuch blockierte ist damit geschlossen.
+7. In ui/logic/kategorie_ui/ui_grundsatz_panel.gd griff der Übersetzer auf die echte statische Brücke zu, vorher rief er eine Funktion die nie existiert hatte und das Fenster blieb leer.
+8. In Architektur.md fanden Schatten-System und Fensterleiste ihre Pflichtdokumentation, denn Code ohne Beschreibung ist ein Versprechen das niemand einfordern kann.
+9. Sichtbar im laufenden Spiel: Die Knopfleiste sitzt unten mit Bau, Karte, Debug und Grundsätzen, das Baufenster öffnet wieder, und die Objekte werfen kleine weiche Schatten statt den ganzen Bildschirm zu verdunkeln.
+10. Offen bleibt der Onboarding-Leitfaden für neue Kommandanten und das Hauptmenü das noch im alten Kleid kommt, beides verlangt einen eigenen Zug.

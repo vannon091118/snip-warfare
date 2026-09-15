@@ -31,9 +31,10 @@ func _ready() -> void:
 	# Der Winkel dreht die Lichtrichtung: 135 Grad fällt von oben links
 	# nach unten rechts, die Bilderbuch-Beleuchtung des Banners.
 	_licht.rotation = deg_to_rad(grad)
-	_licht.shadow_enabled = schatten_an
-	_licht.shadow_filter = DirectionalLight2D.SHADOW_FILTER_PCF5
-	_licht.shadow_filter_smooth = 2.0
+	# Objektschatten tragen seit dem Blob-System die Ellipsen am Fußpunkt;
+	# das Licht selbst wirft keine Okkluder-Schatten mehr, sonst liegt ein
+	# grauer Schleier über der ganzen Karte.
+	_licht.shadow_enabled = false
 	var schatten_farbe := Color("#1C1A2659")
 	if _konfig != null:
 		schatten_farbe = _konfig.papier_licht_farbe("schatten_farbe", schatten_farbe)

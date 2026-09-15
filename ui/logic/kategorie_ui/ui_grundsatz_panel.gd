@@ -24,7 +24,7 @@ func eintraege_ermitteln(manager: Einheit_Manager) -> Array[Dictionary]:
 	if manager == null:
 		letzte_eintraege = ergebnis
 		return ergebnis
-	for schalter_id: String in _schalter_ids(manager):
+	for schalter_id: String in Pop_MoralInstanz.schalter_ids_fuer():
 		var text: Dictionary = _schalter_text(manager, schalter_id)
 		ergebnis.append({
 			"id": schalter_id,

@@ -120,13 +120,13 @@ func fenster_leiste_bauen(canvas: CanvasLayer, eintraege: Array[Dictionary]) -> 
 		return
 	fenster_leiste = _FensterLeisteSkript.new()
 	fenster_leiste.name = "FensterLeiste"
-	# Eigene Zeile oberhalb des HUDs: zentriert, eigene Breite, kein Konflikt
-	# mit dem Ressourcenbalken. Anchors TOP_WIDE, aber nur 42 px hoch.
-	fenster_leiste.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	# Untere Leiste: Anchors BOTTOM_WIDE, 64 px hoch, damit Beschriftung und
+	# Shortcut Platz haben und die Knöpfe nicht am Bildschirmrand kleben.
+	fenster_leiste.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	fenster_leiste.offset_left = 12.0
 	fenster_leiste.offset_right = -12.0
-	fenster_leiste.offset_top = 6.0
-	fenster_leiste.offset_bottom = 44.0
+	fenster_leiste.offset_top = -70.0
+	fenster_leiste.offset_bottom = -6.0
 	fenster_leiste.einrichten(eintraege)
 	canvas.add_child(fenster_leiste)
 

@@ -16,17 +16,21 @@ func _init() -> void:
 	_reihe = HBoxContainer.new()
 	_reihe.name = "Reihe"
 	_reihe.alignment = BoxContainer.ALIGNMENT_CENTER
-	_reihe.add_theme_constant_override("separation", 6)
+	_reihe.add_theme_constant_override("separation", 8)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	custom_minimum_size = Vector2(0, 36)
+	custom_minimum_size = Vector2(0, 52)
 	add_theme_stylebox_override("panel", _standard_panel())
 
 func _ready() -> void:
 	if _reihe.get_parent() == null:
 		add_child(_reihe)
-	if _eintraege.is_empty() and _reihe.get_child_count() == 0:
+	if _eintraege.is_empty():
 		visible = false
+	else:
+		# Der Aufbau folgt im _ready erneut, falls einrichten vor dem
+		# Baumeintritt nur die Eintraege vorab lagerte.
+		_aufbauen()
 
 func einrichten(eintraege: Array[Dictionary]) -> void:
 	_eintraege = eintraege.duplicate(true)
@@ -66,8 +70,9 @@ func _aufbauen() -> void:
 		btn.name = "Knopf_%s" % id
 		btn.text = label_text
 		btn.tooltip_text = str(eintrag.get("tooltip", label_text))
-		# Einheitliche Breite, damit die Leiste nicht springt
-		btn.custom_minimum_size = Vector2(116, 28)
+		# Groessere Knöpfe: Die untere Leiste bietet Platz fuer Beschriftung
+		# und Shortcut ohne Gequetsche.
+		btn.custom_minimum_size = Vector2(132, 40)
 		btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		btn.focus_mode = Control.FOCUS_NONE
 		var aktion: Variant = eintrag.get("aktion", null)
@@ -104,12 +109,12 @@ func _standard_panel() -> StyleBoxFlat:
 	box.border_width_right = 1
 	box.border_width_bottom = 1
 	box.border_color = Color(1, 1, 1, 0.18)
-	box.corner_radius_top_left = 8
-	box.corner_radius_top_right = 8
-	box.corner_radius_bottom_right = 8
-	box.corner_radius_bottom_left = 8
-	box.content_margin_left = 10.0
-	box.content_margin_top = 4.0
-	box.content_margin_right = 10.0
-	box.content_margin_bottom = 4.0
+	box.corner_radius_top_left = 10
+	box.corner_radius_top_right = 10
+	box.corner_radius_bottom_right = 10
+	box.corner_radius_bottom_left = 10
+	box.content_margin_left = 14.0
+	box.content_margin_top = 6.0
+	box.content_margin_right = 14.0
+	box.content_margin_bottom = 6.0
 	return box
