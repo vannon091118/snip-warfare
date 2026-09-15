@@ -10,6 +10,15 @@ PFAD_ZIEL_ENDUNGEN = (".svg", ".png", ".json", ".tscn", ".gd", ".ogg",
                       ".wav", ".mp3", ".ttf", ".otf", ".tres")
 
 
+def _versteckter_ordner(pfad) -> bool:
+    """Versteckte Ordner (Punkt-Ordner) sind Lauf-Artefakte der Werkstatt, kein
+    res://-Inhalt: Godot adressiert sie im Projekt-Raum nicht, also pruefen
+    wir ihre Pfade auch nicht. Ohne diese Schranke meldet der Pfad-Pruefer
+    Bilder in .sonden und .local_dev, die bewusst aus dem Bestand getragen
+    wurden."""
+    return any(teil.startswith(".") for teil in pfad.relative_to(PROJEKT_STAMM).parts)
+
+
 def pruefe_pfade(dateien):
     for pfad, code in dateien:
         rel_pfad = pfad.relative_to(PROJEKT_STAMM)
@@ -25,7 +34,7 @@ def pruefe_pfade(dateien):
         if "%s" in treffer.group(1) or "%d" in treffer.group(1):
             continue
         _pruefe_res_pfad(treffer.group(1), rel_pfad, code, treffer.start())
-    for tscn_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.tscn") if not _verzeichnis_ignoriert(p)):
+    for tscn_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.tscn") if not _verzeichnis_ignoriert(p) and not _versteckter_ordner(p)):
         rel_pfad = tscn_pfad.relative_to(PROJEKT_STAMM)
         try:
             inhalt = tscn_pfad.read_text(encoding="utf-8")
@@ -34,7 +43,7 @@ def pruefe_pfade(dateien):
             continue
         for treffer in re.finditer(r'path="(res://[^"]+)"', inhalt):
             _pruefe_res_pfad(treffer.group(1), rel_pfad, inhalt, treffer.start())
-    for json_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.json") if not _verzeichnis_ignoriert(p)):
+    for json_pfad in sorted(p for p in PROJEKT_STAMM.rglob("*.json") if not _verzeichnis_ignoriert(p) and not _versteckter_ordner(p)):
         if ".godot" in json_pfad.parts:
             continue
         rel_pfad = json_pfad.relative_to(PROJEKT_STAMM)

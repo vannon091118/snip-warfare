@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 328 Klassen, 364 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.01 — 14 Domaenen plus Auffangkorb, 331 Klassen, 367 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -14,10 +14,10 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 328 Klassen, 364 Dateien, 68 Sign
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 44 | 44 |
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 21 | 21 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 11 | 11 |
-| `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 31 | 31 |
+| `game/einheit` | `ein` | `Einheit_` | `game/logic/kategorie_einheit/` | 33 | 33 |
 | `game/job` | `job` | `Job_` | `game/logic/kategorie_job/` | 18 | 18 |
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
-| `population` | `pop` | `Pop_` | `population/` | 30 | 31 |
+| `population` | `pop` | `Pop_` | `population/` | 31 | 32 |
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
 | `ui` | `ui` | `Ui_` | `ui/` | 26 | 38 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
@@ -118,7 +118,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `String` | 63 | 6 | 4 | 12 | 14 | - | - | 3 | 4 | - | 4 | 1 | 10 | - | 2 | 3 |
-| `Dictionary` | 45 | 3 | 1 | 9 | 1 | 4 | 3 | 9 | - | - | 1 | 1 | 8 | - | - | 5 |
+| `Dictionary` | 47 | 3 | 1 | 9 | 1 | 4 | 3 | 10 | - | - | 2 | 1 | 8 | - | - | 5 |
 | `int` | 15 | - | - | 4 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 10 | 1 | 4 | 4 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `float` | 7 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | 2 | - |
@@ -510,10 +510,11 @@ Prefix `Orchestrator_`, 11 Klassen.
 
 ### game/einheit — Kuerzel `ein` — `game/logic/kategorie_einheit/`
 
-Prefix `Einheit_`, 31 Klassen.
+Prefix `Einheit_`, 33 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
+| `Einheit_AutonomieMaschine` | `game/logic/kategorie_einheit/einheit_autonomie_maschine.gd` | 87 |
 | `Einheit_Basis` | `game/logic/kategorie_einheit/einheit_basis.gd` | 52 |
 | `Einheit_Bewegung` | `game/logic/kategorie_einheit/einheit_bewegung.gd` | 82 |
 | `Einheit_Darsteller` | `game/logic/kategorie_einheit/einheit_darsteller.gd` | 83 |
@@ -532,14 +533,15 @@ Prefix `Einheit_`, 31 Klassen.
 | `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` | 149 |
 | `Einheit_MutationErnte` | `game/logic/kategorie_einheit/einheit_mutation_ernte.gd` | 42 |
 | `Einheit_MutationStartBestaende` | `game/logic/kategorie_einheit/einheit_mutation_ressourcen.gd` | 22 |
+| `Einheit_NotJagdMaschine` | `game/logic/kategorie_einheit/einheit_not_jagd_maschine.gd` | 77 |
 | `Einheit_Ressourcen` | `game/logic/kategorie_einheit/einheit_ressourcen.gd` | 264 |
 | `Einheit_RessourcenSchema` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` | 51 |
 | `Einheit_Status` | `game/logic/kategorie_einheit/einheit_status.gd` | 119 |
 | `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` | 119 |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` | 40 |
 | `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` | 104 |
-| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 306 |
-| `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` | 100 |
+| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 315 |
+| `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` | 87 |
 | `Einheit_Versorgung` | `game/logic/kategorie_einheit/einheit_versorgung.gd` | 48 |
 | `Einheit_VersorgungsMaschine` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd` | 61 |
 | `Einheit_VitalStatus` | `game/logic/kategorie_einheit/einheit_vital_status.gd` | 120 |
@@ -580,7 +582,7 @@ Prefix `Einheit_`, 31 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `Dictionary` | 9 |
+| `Dictionary` | 10 |
 | `int` | 4 |
 | `String` | 3 |
 | `Vector2` | 3 |
@@ -650,7 +652,7 @@ _keine typisierten Arrays in dieser Domaene_
 
 ### population — Kuerzel `pop` — `population/`
 
-Prefix `Pop_`, 30 Klassen.
+Prefix `Pop_`, 31 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -664,6 +666,7 @@ Prefix `Pop_`, 30 Klassen.
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` | 57 |
 | `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` | 37 |
 | `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` | 85 |
+| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` | 70 |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` | 128 |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` | 30 |
 | `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` | 73 |
@@ -700,7 +703,7 @@ Prefix `Pop_`, 30 Klassen.
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
 | `String` | 4 |
-| `Dictionary` | 1 |
+| `Dictionary` | 2 |
 | `Pop_MoodEskalationStufe` | 1 |
 | `Pop_MoodModifikator` | 1 |
 | `Pop_NeedBasis` | 1 |
@@ -753,8 +756,8 @@ Prefix `Ui_`, 26 Klassen.
 | `Ui_AuswahlManager` | `ui/scenes/selection/auswahl_manager.gd` | 50 |
 | `Ui_AuswahlMarkierung` | `ui/logic/kategorie_ui/ui_auswahl_markierung.gd` | 60 |
 | `Ui_BauAuftragMaschine` | `ui/logic/kategorie_ui/ui_bau_auftrag_maschine.gd` | 105 |
-| `Ui_BauPanel` | `ui/logic/kategorie_ui/ui_bau_panel.gd` | 88 |
-| `Ui_BauPanelSzene` | `ui/scenes/panels/bau_panel.gd` | 132 |
+| `Ui_BauPanel` | `ui/logic/kategorie_ui/ui_bau_panel.gd` | 91 |
+| `Ui_BauPanelSzene` | `ui/scenes/panels/bau_panel.gd` | 140 |
 | `Ui_BaufensterFilter` | `ui/logic/kategorie_ui/ui_baufenster_filter.gd` | 36 |
 | `Ui_DebugPanelSzene` | `ui/scenes/hud/hud_debug_panel.gd` | 46 |
 | `Ui_EingabeSteuerung` | `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd` | 398 |
@@ -817,7 +820,7 @@ Prefix `-`, 4 Klassen.
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
 | `Sonden_BildVergleich` | `tools/sonden/sonden_bild_vergleich.gd` | 100 |
-| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` | 610 |
+| `Sonden_Cheat` | `tools/sonden/sonden_cheat.gd` | 637 |
 | `Sonden_Eingabe` | `tools/sonden/sonden_eingabe.gd` | 102 |
 | `Sonden_FrameStepper` | `tools/sonden/sonden_frame_stepper.gd` | 56 |
 

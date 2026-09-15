@@ -150,7 +150,7 @@ func _bereit_domaenen_und_einheiten() -> void:
 	add_child(_need_baum)
 	_raum_und_lager.einrichten(_model, _lager)
 	add_child(_raum_und_lager)
-	_stockmaenner.einrichten(_model, _tiere, _ressourcen)
+	_stockmaenner.einrichten(_model, _tiere, _ressourcen, null, _timeline)
 	_stockmaenner.schlag_empfaenger_setzen(_progression.schlag)
 	_stockmaenner.schlag_ort_empfaenger_setzen(_atmosphaere.staub_zeigen)
 	_progression.einrichten(_model, _biome, _tageszyklus)

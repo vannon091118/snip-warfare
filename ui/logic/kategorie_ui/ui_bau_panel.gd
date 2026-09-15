@@ -9,6 +9,9 @@ class_name Ui_BauPanel
 ##
 ## Verantwortlichkeit: Bauobjekte aus Registry + Gating-Maschine in
 ## UI-Einträge übersetzen. Kategorien und Suche filtert die Baufenster-Szene.
+## Gesperrte Einträge wandern nicht ins Versteck: Sie tragen gesperrt=true,
+## die Sperrstufe und einen Freigabe-Hinweis im Tooltip, die Szene zeigt
+## sie ausgegraut und nicht wählbar (CP-7.1).
 ##
 ## Erweiterung ohne UI-Code: Ein neuer Eintrag in gebaeude.json trägt
 ## Kategorie, Kosten und gesperrt_ab_stufe; diese Klasse und die Szene
@@ -26,10 +29,10 @@ func eintraege_ermitteln(definitionen: Gebaeude_DefinitionRegistry, fortschritt:
 		var gesperrt := false
 		if fortschritt != null:
 			gesperrt = not fortschritt.stufe_frei(definition.gesperrt_ab_stufe)
-		if gesperrt:
-			continue
 		var kosten_text := _kosten_text_fuer(definition)
 		var tooltip_str := _tooltip_fuer(definition, fortschritt)
+		if gesperrt:
+			tooltip_str += "\nGesperrt bis Stufe %d" % definition.gesperrt_ab_stufe
 		ergebnis.append({
 			"id": definition.id,
 			"name": definition.angezeigter_name,
@@ -49,13 +52,13 @@ func eintraege_alle(definitionen: Gebaeude_DefinitionRegistry, fortschritt: Welt
 	## Verwendet, wenn die Szene eingemachte Filter zusätzlich nutzen will.
 	return eintraege_ermitteln(definitionen, fortschritt, null, null)
 
-func kategorien(definitionen: Gebaeude_DefinitionRegistry, fortschritt: Welt_FortschrittsMaschine = null) -> Array[String]:
+func kategorien(definitionen: Gebaeude_DefinitionRegistry, _fortschritt: Welt_FortschrittsMaschine = null) -> Array[String]:
+	## Kategorien aller Eintraege, gesperrte mit dabei: Das Bau-Ordnungsfenster
+	## filtert nicht mehr nach Fortschritt, die Szene zeigt den Weg als Ausgrau.
 	var verfuegbar: Array[String] = []
 	if definitionen == null:
 		return verfuegbar
 	for definition: Gebaeude_Definition in definitionen.alle_definitionen():
-		if fortschritt != null and not fortschritt.stufe_frei(definition.gesperrt_ab_stufe):
-			continue
 		var kategorie := str(definition.kategorie)
 		if kategorie != "" and not verfuegbar.has(kategorie):
 			verfuegbar.append(kategorie)

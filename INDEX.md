@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 328 Klassen mit `class_name` im Projekt, davon 292 in den 14 Domaenen-Ordnern und 36 ohne Domaenen-Ordner, 68 Signale, 35 Array-Elementtypen und 33 JSON-Pools._
+_Stand: V0.01 — 331 Klassen mit `class_name` im Projekt, davon 295 in den 14 Domaenen-Ordnern und 36 ohne Domaenen-Ordner, 68 Signale, 35 Array-Elementtypen und 34 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -276,10 +276,11 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Orchestrator_Verteiler` | `world/logic/kategorie_orchestrator/orchestrator_verteiler.gd` |
 | `Orchestrator_ZielSuche` | `world/logic/kategorie_orchestrator/orchestrator_ziel_suche.gd` |
 
-### game/einheit — Prefix `Einheit_` — `game/logic/kategorie_einheit/` (31)
+### game/einheit — Prefix `Einheit_` — `game/logic/kategorie_einheit/` (33)
 
 | Klasse | Datei |
 | --- | --- |
+| `Einheit_AutonomieMaschine` | `game/logic/kategorie_einheit/einheit_autonomie_maschine.gd` |
 | `Einheit_Basis` | `game/logic/kategorie_einheit/einheit_basis.gd` |
 | `Einheit_Bewegung` | `game/logic/kategorie_einheit/einheit_bewegung.gd` |
 | `Einheit_Darsteller` | `game/logic/kategorie_einheit/einheit_darsteller.gd` |
@@ -298,6 +299,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` |
 | `Einheit_MutationErnte` | `game/logic/kategorie_einheit/einheit_mutation_ernte.gd` |
 | `Einheit_MutationStartBestaende` | `game/logic/kategorie_einheit/einheit_mutation_ressourcen.gd` |
+| `Einheit_NotJagdMaschine` | `game/logic/kategorie_einheit/einheit_not_jagd_maschine.gd` |
 | `Einheit_Ressourcen` | `game/logic/kategorie_einheit/einheit_ressourcen.gd` |
 | `Einheit_RessourcenSchema` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` |
 | `Einheit_Status` | `game/logic/kategorie_einheit/einheit_status.gd` |
@@ -347,7 +349,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Ressource_Stein` | `game/logic/kategorie_ressourcen/ressource_stein.gd` |
 | `Ressource_Werkzeug` | `game/logic/kategorie_ressourcen/ressource_werkzeug.gd` |
 
-### population — Prefix `Pop_` — `population/` (30)
+### population — Prefix `Pop_` — `population/` (31)
 
 | Klasse | Datei |
 | --- | --- |
@@ -361,6 +363,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` |
 | `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` |
 | `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` |
+| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` |
 | `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` |

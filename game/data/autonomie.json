@@ -1,0 +1,33 @@
+{
+  "_kommentar": "Autonomie der Idle-Einheiten als reine Daten: Reihenfolge und Suchradius stehen hier, nicht im Code. Jeder Schritt traegt den Job aus job_config.json; Ziele kommen ueber ziel_objekte (Katalog-Ids aus element_katalog.json) oder baustellen_phasen (Bau-Phase im Modell, 1 ist Bauplan, 2 ist angefordert). Die Maschine vergibt den ersten erfuellten Schritt. Der Suchradius gilt in Kacheln ab dem Ankunftsort.",
+  "schritte": [
+    {
+      "name": "baustellen_versorgen",
+      "prioritaet": 1,
+      "job_id": "baustelle_beliefern",
+      "baustellen_phasen": [1, 2],
+      "suchradius": 12
+    },
+    {
+      "name": "holz_hacken",
+      "prioritaet": 2,
+      "job_id": "holzfaeller",
+      "ziel_objekte": ["baum"],
+      "suchradius": 10
+    },
+    {
+      "name": "beeren_sammeln",
+      "prioritaet": 3,
+      "job_id": "beeren_sammler",
+      "ziel_objekte": ["busch"],
+      "suchradius": 8
+    },
+    {
+      "name": "stein_abbauen",
+      "prioritaet": 4,
+      "job_id": "steinmetz",
+      "ziel_objekte": ["stein"],
+      "suchradius": 8
+    }
+  ]
+}

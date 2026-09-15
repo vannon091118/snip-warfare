@@ -52,3 +52,5 @@ plan_katzen_bindung_eskalaion.md
 # Visuelle QA: Rahmen und Kontaktboegen sind Lauf-Artefakte, keine Quellen.
 # Werkzeuge und Referenz-Dateien bleiben im Bestand.
 .local_dev/vis_tools/frames/
+
+.local_dev/bin/

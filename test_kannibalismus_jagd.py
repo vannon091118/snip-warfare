@@ -26,14 +26,15 @@ def test_job_basis_hat_einen_eigenen_ziel_knoten_fuer_einheiten():
 
 
 def test_der_manager_jagt_den_schwaechsten_nachbarn_beim_kannibalismus():
-    """Beim Kannibalismus-Verhalten wählt die Verhaltens-Maschine das schwächste Ziel."""
+    """Die Verhaltens-Maschine löst aus, die Not-Jagd-Maschine wählt das schwächste Opfer."""
     verhalten = _lies("game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd")
+    not_jagd = _lies("game/logic/kategorie_einheit/einheit_not_jagd_maschine.gd")
     manager = _lies("game/logic/kategorie_einheit/einheit_manager.gd")
     takt = _lies("game/logic/kategorie_einheit/einheit_takt_maschine.gd")
     assert "kannibalis" in verhalten.lower(), "Verhaltens-Maschine kennt das Verhalten nicht"
-    assert "schwäch" in verhalten.lower(), "Verhaltens-Maschine wählt nicht den Schwächsten"
-    assert "func _jagd_nachbarn" in verhalten, "Verhaltens-Maschine hat keinen Nachbar-Zielsucher"
-    assert "einheit_hp" in verhalten, "Verhaltens-Maschine liest die Lebenspunkte nicht"
+    assert "func opfer_fuer" in not_jagd, "Not-Jagd-Maschine hat keinen Opfer-Wähler"
+    assert "schwaechst" in not_jagd.lower(), "Not-Jagd-Maschine wählt nicht den Schwächsten"
+    assert "einheit_hp" in not_jagd, "Not-Jagd-Maschine liest die Lebenspunkte nicht"
     # Der Takt liegt seit dem Zerlegungs-Slice in der Takt-Maschine; der Manager
     # reicht ihn nur noch durch.
     assert "pruefe_verhalten" in takt, "Die Takt-Maschine erreicht die Verhaltens-Maschine nicht"

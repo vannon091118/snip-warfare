@@ -1,39 +1,37 @@
 extends RefCounted
 class_name Einheit_VerhaltensMaschine
 ## Autonomes Verhalten der Einheiten: Der hungergetriebene Kannibalismus ist
-## die erste Verbraucherin der Eskalationsketten. Der Verzweifelte jagt den
-## schwächsten Nachbarn, wenn weder ein jagdbares Tier in Reichweite noch
-## Fleisch im Lager ist. Der Auslöser sitzt am eigenen Idle, der Job läuft
-## wie jede Jagd über dieselben Maschinen. Der teure Tier- und Nachbarschafts-
-## Scan trägt seinen eigenen Performance-Cache.
+## die erste Verbraucherin der Eskalationsketten, die Moral (Pop_MoralInstanz)
+## entscheidet, ob die Kolonie die Tat traegt, und die Autonomie-Maschine
+## vergibt Idle-Einheiten den ersten erfuellten Prioritaetsschritt. Diese
+## Maschine waehlt nur; Opfer-Wahl sitzt in der Not-Jagd-Maschine, die
+## Ausfuehrung bleibt in der Ernte-Maschine und der Job-Architektur.
+## Jede Moral-Blockade meldet sich an die Zustands-Timeline, damit das
+## Warum-Fenster die Eskalations-Entscheidung beantworten kann (CP-8.1).
 
-## Kategorie daten: Referenzen und der Reichweiten-Cache.
+## Kategorie daten: Referenzen und die drei Untermaschinen.
 var _manager: Einheit_Manager = null
 var _mood_mod_registry: Pop_MoodModifikatorRegistry = null
-var _job_registry: Job_Registry = null
-var _ressourcen: Einheit_Ressourcen = null
-var _tiere: Tier_Manager = null
-var _tier_reichweite_cache: Dictionary = {}
-var _tier_cache_tick: int = -1
+var _moral: Pop_MoralInstanz = null
+var _autonomie: Einheit_AutonomieMaschine = null
+var _timeline: Kern_Timeline = null
+var _not_jagd := Einheit_NotJagdMaschine.new()
 
-## Kategorie logik: Idle-Verhalten prüfen und Job vergeben.
+## Kategorie logik: Idle-Verhalten pruefen und Job vergeben.
 
 func einrichten(p: Dictionary) -> void:
 	_manager = p.get("manager")
 	_mood_mod_registry = p.get("mood_mod_registry")
-	_job_registry = p.get("job_registry")
-	_ressourcen = p.get("ressourcen")
-	_tiere = p.get("tiere")
+	_not_jagd.einrichten(p)
+	_moral = p.get("moral")
+	_autonomie = p.get("autonomie")
+	_timeline = p.get("timeline")
 
 func tiere_setzen(neue_tiere: Tier_Manager) -> void:
-	_tiere = neue_tiere
+	_not_jagd.tiere_setzen(neue_tiere)
 
 func cache_erneuern(nummer: int) -> void:
-	## Der Tier-Reichweiten-Cache lebt genau einen Takt; der Manager ruft
-	## dies einmal pro Tick auf, bevor die verstreuten Prüfungen starten.
-	if _tier_cache_tick != nummer:
-		_tier_cache_tick = nummer
-		_tier_reichweite_cache.clear()
+	_not_jagd.cache_erneuern(nummer)
 
 func pruefe_verhalten(einheit: Dictionary, index: int) -> void:
 	var status: Einheit_Status = einheit["status"]
@@ -46,54 +44,43 @@ func pruefe_verhalten(einheit: Dictionary, index: int) -> void:
 	var not_aktuell := mood.need_wert(hunger_mod.need_id)
 	var stufe := hunger_mod.stufe_fuer(not_aktuell)
 	if stufe == null or stufe.verhalten != "kannibalismus":
+		_autonomie_fuer(index)
 		return
-	var opfer := _jagd_nachbarn(index)
+	var opfer := _not_jagd.opfer_fuer(index)
 	if opfer < 0:
+		_autonomie_fuer(index)
+		return
+	if _moral != null and not _moral.darf_verhalten("kannibalismus"):
+		# Ersatzhandlung statt Verzweiflungstat: Die Autonomie nimmt den
+		# naechsten legalen Auftrag; bleibt sie leer, verhungert die Einheit
+		# bewusst, statt den Nachbarn zu jagen.
+		_blockade_melden(index, "kannibalismus_verboten")
+		_autonomie_fuer(index)
 		return
 	_manager.job_vergeben(index, "kannibale", Job_Basis.ZielTyp.OWN, opfer, _manager.einheit_position(opfer))
 	# Die Hervorhebung nach der Vergabe: Der Jobwechsel denkt sonst seine
-	# Zeile über die Erzählung der Tat.
+	# Zeile ueber die Erzaehlung der Tat.
 	mood.bereich_hervorheben(hunger_mod.mod_id, stufe)
 
-func _jagd_nachbarn(jaeger_index: int) -> int:
-	# Schwächster Nachbar in Reichweite: Reichweite und Mindest-HP stehen
-	# im kannibale-Eintrag der Job-Konfiguration; niemand jagt sich selbst.
-	if _ressourcen != null and _ressourcen.bestand("fleisch") > 0:
-		return -1
-	if _tiere != null and _tier_in_reichweite(jaeger_index):
-		return -1
-	var konfig: Dictionary = _job_registry.job_konfigurationen.get("kannibale", {})
-	var reichweite := float(konfig.get("reichweite", 60.0))
-	var mindest_hp := int(konfig.get("opfer_mindest_hp", 20))
-	var eigene := _manager.einheit_position(jaeger_index)
-	var bester := -1
-	var beste_hp := 0
-	for index in _manager.einheit_zahl():
-		if index == jaeger_index:
-			continue
-		if _manager.einheit_status(index).vital.hp <= 0:
-			continue
-		if _manager.einheit_position(index).distance_to(eigene) > reichweite:
-			continue
-		var hp := _manager.einheit_hp(index)
-		if hp < mindest_hp:
-			continue
-		if bester == -1 or hp < beste_hp:
-			bester = index
-			beste_hp = hp
-	return bester
+func _autonomie_fuer(index: int) -> void:
+	if _autonomie == null:
+		return
+	_autonomie.autonom_fuer(index)
 
-func _tier_in_reichweite(jaeger_index: int) -> bool:
-	if _tiere == null:
-		return false
-	if _tier_reichweite_cache.has(jaeger_index):
-		return bool(_tier_reichweite_cache[jaeger_index])
-	var eigene := _manager.einheit_position(jaeger_index)
-	var treffer := false
-	for tier_index in _tiere.tier_zahl():
-		var tier_pos := _tiere.tier_position(tier_index)
-		if tier_pos != Vector2.INF and tier_pos.distance_to(eigene) <= 160.0:
-			treffer = true
-			break
-	_tier_reichweite_cache[jaeger_index] = treffer
-	return treffer
+func _blockade_melden(index: int, blockade_id: String) -> void:
+	## Die Buchung der Verweigerung: Warum keine Jagd auf den Nachbarn.
+	if _timeline == null:
+		return
+	var aktion := _moral.ersatzhandlung_fuer(blockade_id)
+	_timeline.eintrag_anhaengen(_tick_nummer(), "einheit_%d" % index, "moral",
+		"Eskalation blockiert (%s), Ersatzhandlung: %s" % [blockade_id, aktion if aktion != "" else "keine"],
+		{"verhalten": "kannibalismus"}, {"verhalten": "autonomie"}, "moral", 1.0)
+
+func _tick_nummer() -> int:
+	var baum := Engine.get_main_loop() as SceneTree
+	if baum == null:
+		return 0
+	var weltuhr := baum.root.get_node_or_null("/root/Weltuhr")
+	if weltuhr != null and weltuhr.has_method("tick_nummer"):
+		return int(weltuhr.tick_nummer())
+	return 0

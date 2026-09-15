@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 33 JSON-Pools, davon 33 lesbar und 3 ohne namentlichen Verbraucher.
+Stand: V0.01 — 34 JSON-Pools, davon 34 lesbar und 2 ohne namentlichen Verbraucher.
 
 ## 1. Pools in Besitz einer Domaene
 
@@ -15,6 +15,7 @@ Stand: V0.01 — 33 JSON-Pools, davon 33 lesbar und 3 ohne namentlichen Verbrauc
 | [`modifikator_settings.json`](core/data/modifikator_settings.json) | `core` | 3 | `_kommentar`, `global`, `bereiche` | `core/logic/kern_modifikator_maschine.gd` |
 | [`lager.json`](economy/data/lager.json) | `economy` | 3 | `kleines_lager`, `grosses_lager`, `lagerflaeche` | `economy/logic/storage/lager_registry.gd` |
 | [`animationen.json`](game/data/animationen.json) | `game/data` | 8 | `laufen`, `idle`, `hacken`, `grind`, `raeuchern`, `flackern` und 2 weitere | `game/logic/kategorie_einheit/einheit_darsteller.gd`, `world/logic/kategorie_objekt/objekt_basis.gd`, `world/logic/kategorie_welt/welt_objekt_darsteller.gd` |
+| [`autonomie.json`](game/data/autonomie.json) | `game/data` | 2 | `_kommentar`, `schritte` | `game/logic/kategorie_einheit/einheit_autonomie_maschine.gd` |
 | [`job_config.json`](game/data/job_config.json) | `game/data` | 12 | `holzfaeller`, `steinmetz`, `jaeger`, `holzfaeller_stumpf`, `jaeger_kadaver`, `heiler` und 6 weitere | `game/logic/kategorie_job/job_beeren_sammler.gd`, `game/logic/kategorie_job/job_graben.gd`, `game/logic/kategorie_job/job_heiler.gd` und 7 weitere |
 | [`mutationen_inventar.json`](game/data/mutationen_inventar.json) | `game/data` | 3 | `schema_name`, `start_zustaende`, `mutationen` | `game/logic/kategorie_einheit/einheit_inventar.gd`, `game/logic/kategorie_einheit/einheit_inventar_schema.gd` |
 | [`mutationen_ressourcen.json`](game/data/mutationen_ressourcen.json) | `game/data` | 3 | `schema_name`, `start_zustaende`, `mutationen` | `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` |
@@ -23,7 +24,7 @@ Stand: V0.01 — 33 JSON-Pools, davon 33 lesbar und 3 ohne namentlichen Verbrauc
 | [`ressourcen.json`](game/data/ressourcen.json) | `game/data` | 6 | `holz`, `stein`, `fleisch`, `werkzeug`, `raeuchelfleisch`, `beeren` | `game/logic/kategorie_einheit/einheit_inventar.gd`, `game/logic/kategorie_einheit/einheit_ressourcen.gd`, `game/logic/kategorie_einheit/einheit_ressourcen_schema.gd` und 2 weitere |
 | [`steuerung.json`](game/data/steuerung.json) | `game/data` | 8 | `version`, `_kommentar`, `kamera`, `auswahl`, `kontextmenue`, `pathfinding` und 2 weitere | `core/logic/kategorie_pathfinding/path_registry.gd`, `core/logic/kern_steuerung_basis.gd`, `core/logic/kern_steuerung_registry.gd` und 6 weitere |
 | [`bindung.json`](population/data/bindung.json) | `population` | 5 | `_kommentar`, `regeln`, `stufen`, `ereignisse`, `verlust` | keiner |
-| [`mood_modifikatoren.json`](population/data/mood_modifikatoren.json) | `population` | 5 | `_kommentar`, `kaelte`, `hitze`, `hunger`, `kannibalismus` | `game/logic/kategorie_einheit/einheit_vital_status.gd`, `population/logic/mood/pop_mood_eskalation_stufe.gd`, `population/logic/mood/pop_mood_modifikator_registry.gd` und 1 weitere |
+| [`mood_modifikatoren.json`](population/data/mood_modifikatoren.json) | `population` | 5 | `_kommentar`, `kaelte`, `hitze`, `hunger`, `kannibalismus` | `game/logic/kategorie_einheit/einheit_vital_status.gd`, `population/logic/mood/pop_mood_eskalation_stufe.gd`, `population/logic/mood/pop_mood_modifikator_registry.gd` und 2 weitere |
 | [`needs.json`](population/data/needs.json) | `population` | 3 | `weltrhythmus`, `nahrung`, `waerme` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd`, `game/logic/kategorie_einheit/einheit_versorgung.gd`, `population/logic/needs/pop_need_basis.gd` und 4 weitere |
 | [`rassen_schemata.json`](population/data/rassen_schemata.json) | `population` | 3 | `mensch`, `elf`, `ork` | `population/logic/needs/pop_rassen_schema.gd`, `population/logic/needs/pop_rassen_schema_registry.gd`, `population/logic/needs/pop_rassen_zugriff.gd` und 2 weitere |
 | [`rassen_vorlagen.json`](population/data/rassen_vorlagen.json) | `population` | 6 | `_kommentar`, `wald`, `berg`, `wasser`, `steppe`, `tundra` | `population/logic/needs/pop_rassen_generator.gd` |
@@ -35,7 +36,7 @@ Stand: V0.01 — 33 JSON-Pools, davon 33 lesbar und 3 ohne namentlichen Verbrauc
 | [`fraktions_ki_config.json`](world/data/fraktions_ki_config.json) | `world/data` | 9 | `_kommentar`, `expansion`, `handel`, `konflikt`, `aggressions_basis`, `keimling_schwellenwert` und 3 weitere | `world/logic/kategorie_generator/fraktions_keimling_analysator.gd`, `world/logic/kategorie_generator/welt_generator.gd`, `world/logic/kategorie_welt/fraktions_ki_maschine.gd` und 2 weitere |
 | [`gebaeude.json`](world/data/gebaeude.json) | `world/data` | 13 | `[Liste]` | `tools/lauf_pruefung_welt.gd`, `ui/logic/kategorie_ui/ui_bau_panel.gd`, `ui/scenes/panels/bau_panel.gd` und 3 weitere |
 | [`generator_gewichte.json`](world/data/generator_gewichte.json) | `world/data` | 9 | `_kommentar`, `domain_warp_amplitude`, `objekte`, `tiere`, `biome`, `gebaeude` und 3 weitere | `world/logic/kategorie_generator/generator_registry.gd`, `world/logic/kategorie_generator/welt_feld_analyser.gd`, `world/logic/kategorie_generator/welt_fraktions_generator.gd` und 2 weitere |
-| [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 | `_kommentar`, `grundsaetze`, `ersatzhandlungen`, `wirkung_je_rasse`, `verzweigung` | keiner |
+| [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 | `_kommentar`, `grundsaetze`, `ersatzhandlungen`, `wirkung_je_rasse`, `verzweigung` | `population/logic/moral/pop_moral_instanz.gd` |
 | [`ressourcen_progression.json`](world/data/ressourcen_progression.json) | `world/data` | 5 | `_kommentar`, `stufen`, `stufen_blatt`, `waerme`, `seed_spawn` | `world/logic/kategorie_progression/welt_progressions_registry.gd`, `world/logic/kategorie_progression/welt_stufen_bilder.gd` |
 | [`standard_welt.json`](world/data/standard_welt.json) | `world/data` | 6 | `version`, `kachel_groesse`, `raster_breite`, `raster_hoehe`, `raster`, `objekte` | `world/scenes/karten_editor.gd` |
 | [`tier_verhalten.json`](world/data/tier_verhalten.json) | `world/data` | 5 | `hase`, `vogel`, `vogelgruppe`, `baer`, `eisbaer` | `game/logic/kategorie_job/job_jaeger.gd`, `world/logic/kategorie_tier/tier_baer.gd`, `world/logic/kategorie_tier/tier_basis.gd` und 4 weitere |
@@ -50,7 +51,6 @@ Ein Pool ohne Verbraucher ist ein Vertrag ohne Gegenstand: Entweder fehlt die ve
 | --- | --- | --- |
 | [`konsolidierung.json`](core/data/konsolidierung.json) | `core` | 2 |
 | [`bindung.json`](population/data/bindung.json) | `population` | 5 |
-| [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 |
 
 ## 3. Verbraucher im Einzelnen
 
@@ -94,6 +94,12 @@ Pfad `game/data/animationen.json`, Domaene `game/data`, 8 Eintraege.
 * `game/logic/kategorie_einheit/einheit_darsteller.gd`
 * `world/logic/kategorie_objekt/objekt_basis.gd`
 * `world/logic/kategorie_welt/welt_objekt_darsteller.gd`
+
+### autonomie.json
+
+Pfad `game/data/autonomie.json`, Domaene `game/data`, 2 Eintraege.
+
+* `game/logic/kategorie_einheit/einheit_autonomie_maschine.gd`
 
 ### job_config.json
 
@@ -173,6 +179,7 @@ Pfad `population/data/mood_modifikatoren.json`, Domaene `population`, 5 Eintraeg
 * `game/logic/kategorie_einheit/einheit_vital_status.gd`
 * `population/logic/mood/pop_mood_eskalation_stufe.gd`
 * `population/logic/mood/pop_mood_modifikator_registry.gd`
+* `population/logic/moral/pop_moral_instanz.gd`
 * `ui/logic/kategorie_ui/ui_pop_einheit_uebersetzer.gd`
 
 ### needs.json
@@ -275,6 +282,12 @@ Pfad `world/data/generator_gewichte.json`, Domaene `world/data`, 9 Eintraege.
 * `world/logic/kategorie_generator/welt_fraktions_generator.gd`
 * `world/logic/kategorie_generator/welt_generator.gd`
 * `world/logic/kategorie_welt/welt_fraktion.gd`
+
+### moral_regeln.json
+
+Pfad `world/data/moral_regeln.json`, Domaene `world/data`, 5 Eintraege.
+
+* `population/logic/moral/pop_moral_instanz.gd`
 
 ### ressourcen_progression.json
 

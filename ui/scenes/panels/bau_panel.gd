@@ -5,8 +5,9 @@ class_name Ui_BauPanelSzene
 ## Baufenster: Toggelbares, scrollbares Fenster mit Suche und Kategorie-Filter.
 ## Liest über Ui_BauPanel Daten aus Gebaeude_DefinitionRegistry + Fortschritt.
 ## Neue Einträge in world/data/gebaeude.json erscheinen automatisch – ohne
-## dass hier Code geändert werden muss. Gesperrte Objekte sind nicht
-## auswählbar und werden nicht angezeigt.
+## dass hier Code geändert werden muss. Gesperrte Objekte werden angezeigt,
+## aber ausgegraut, deaktiviert und mit Sperrstufe im Tooltip markiert
+## (CP-7.1): Der Spieler sieht den Weg statt einer leeren Liste.
 
 signal bau_gewaehlt(gebaeude_id: String)
 
@@ -81,16 +82,23 @@ func aktualisieren() -> void:
 		var kategorie := str(eintrag.get("kategorie", ""))
 		var kosten_text := str(eintrag.get("kosten_text", ""))
 		var tooltip_text := str(eintrag.get("tooltip", ""))
+		var gesperrt := bool(eintrag.get("gesperrt", false))
+		var stufe := int(eintrag.get("stufe", 0))
 		btn.text = "%s [%s]\n%s" % [label_text, kategorie, kosten_text]
+		if gesperrt:
+			btn.text += "\nStufe %d" % stufe
 		btn.tooltip_text = tooltip_text
 		btn.custom_minimum_size = Vector2(152, 56)
+		btn.disabled = gesperrt
+		btn.modulate = Color(1, 1, 1, 0.45) if gesperrt else Color.WHITE
 		var icon_pfad := str(eintrag.get("icon_pfad", ""))
 		if icon_pfad != "" and ResourceLoader.exists(icon_pfad):
 			btn.icon = load(icon_pfad)
 			btn.expand_icon = true
-		btn.pressed.connect(func() -> void:
-			bau_gewaehlt.emit(geb_id)
-		)
+		if not gesperrt:
+			btn.pressed.connect(func() -> void:
+				bau_gewaehlt.emit(geb_id)
+			)
 		_button_container.add_child(btn)
 	if _scroll != null:
 		_scroll.scroll_vertical = 0

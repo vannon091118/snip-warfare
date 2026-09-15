@@ -44,8 +44,8 @@ func _exit_tree() -> void:
 	if weltuhr != null and weltuhr.has_signal("tick") and weltuhr.tick.is_connected(_auf_tick):
 		weltuhr.tick.disconnect(_auf_tick)
 
-func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ressourcen, welt_world: Welt_World = null) -> void:
-	_verdrahtung.einrichten(self, model, tiere, ressourcen, welt_world)
+func einrichten(model: Welt_Model, tiere: Tier_Manager, ressourcen: Einheit_Ressourcen, welt_world: Welt_World = null, timeline: Kern_Timeline = null) -> void:
+	_verdrahtung.einrichten(self, model, tiere, ressourcen, welt_world, timeline)
 
 func lager_setzen(lager: Lager_Manager) -> void:
 	_verdrahtung.lager_erneuern(self, lager)

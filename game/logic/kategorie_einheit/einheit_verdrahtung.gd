@@ -6,7 +6,10 @@ class_name Einheit_Verdrahtung
 ## Verantwortung: Verdrahten, verbinden und Kontexte bauen. Kein Tick, keine
 ## Regel; der Manager bleibt die Kompositions-Wurzel und ruft nur noch hier auf.
 
-## Kategorie daten: Wegnetz, Kontext-Bündel und die Anschluss-Empfänger.
+## Kategorie daten: Wegnetz, Timeline-Buch, Kontext-Bündel und die Anschluss-Empfänger.
+var _moral := Pop_MoralInstanz.new()
+var _autonomie := Einheit_AutonomieMaschine.new()
+var _timeline: Kern_Timeline = null
 var _weg_planung: Einheit_WegPlanung = null
 var _einwanderungs_buendel: Dictionary = {}
 var _takt_buendel: Dictionary = {}
@@ -35,11 +38,12 @@ func ankunftsort(anker: Vector2) -> Vector2:
 
 ## Erster Aufbau: Modell-Referenzen des Managers setzen und die Kette bauen.
 func einrichten(mgr: Einheit_Manager, model: Welt_Model, tiere: Tier_Manager,
-		ressourcen: Einheit_Ressourcen, welt_world: Welt_World) -> void:
+		ressourcen: Einheit_Ressourcen, welt_world: Welt_World, timeline: Kern_Timeline = null) -> void:
 	mgr._model = model
 	mgr._tiere = tiere
 	mgr._ressourcen = ressourcen
 	mgr._welt_world = welt_world
+	_timeline = timeline
 	aufbauen(mgr)
 
 
@@ -115,12 +119,16 @@ func aufbauen(mgr: Einheit_Manager) -> void:
 	mgr._vergabe.einrichten(mgr._einheiten, mgr._job_registry, mgr._ziel_suche,
 		planner_ruf())
 	_versorgung_verbinden(mgr)
+	_autonomie.einrichten({"manager": mgr, "model": mgr._model})
 	mgr._verhalten.einrichten({
 		"manager": mgr,
 		"mood_mod_registry": mgr._mood_mod_registry,
 		"job_registry": mgr._job_registry,
 		"ressourcen": mgr._ressourcen,
 		"tiere": mgr._tiere,
+		"moral": _moral,
+		"autonomie": _autonomie,
+		"timeline": _timeline,
 	})
 	einwanderung_erneuern(mgr)
 	takt_erneuern(mgr)
@@ -132,6 +140,7 @@ func modell_erneuern(mgr: Einheit_Manager) -> void:
 	_ziel_suche_verbinden(mgr)
 	if mgr._ernte != null:
 		mgr._ernte.einrichten(null, mgr._ressourcen, mgr._model, mgr._tiere)
+	_autonomie.modell_setzen(mgr._model)
 	einwanderung_erneuern(mgr)
 	takt_erneuern(mgr)
 

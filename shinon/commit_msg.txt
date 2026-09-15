@@ -1,7 +1,12 @@
-1. Der Kommandant sah, dass die Werkbank von Dreck der letzten Läufe übersät war und verlangte einen gründlichen Aufbau vor der Performance-Auseinandernahme.
-2. In .gitignore zog die Regel ein, dass Rahmen und Kontaktbögen unter .local_dev/vis_tools/frames Lauf-Artefakte sind und nicht mehr in den Bestand gehören, denn jeder Sichtlauf erzeugte neuen Dreck.
-3. Aus dem Bestand wurden die sechs festgehaltenen Rahmen-Bilder getragen, die Werkzeuge und die Reihen-Referenz bleiben als Quellen erhalten.
-4. Auf der Werkbank fielen 81 Megabyte alter Sonden-Bilder, die per-Szenario-Protokolle und die Nutzerdaten-Schnappschüsse unter den Tisch, denn sie waren Beweise erledigter Läufe und kein lebender Bestand.
-5. Im Zweig-Garten wurden der alte buffer-Zweig und drei verwaiste freebuff-Zweige gefällt, alle waren längst in main aufgegangen, dazu der freie Zweig auf dem fernsten Lager und der veraltete Fern-Verweis.
-6. Der Speicher des Bestands wurde mit der Schere getrimmt und das Lager auf dreißig Megabyte gehoben.
-7. Sichtbar im laufenden Spiel: Nichts ändert sich am Spiel, doch künftige Sichtläufe hinterlassen keinen Schmutz mehr im Bestand.
+1. Der Kommandant verlangte den spielbaren Kern der Erschaffung, deshalb trat die Kolonie ihren ersten Schritt ins eigenständige Leben an und die Moral zog als Zeremonienmeisterin in die Zielwahl ein.
+2. In world/data/moral_regeln.json wohnten bereits die Grundsaetze, und die neue pop_moral_instanz.gd trägt sie als reine Daten, beantwortet die Frage darf die Kolonie die Tat und nennt fuer jede Blockade die Umleitung.
+3. In der einheit_verhaltens_maschine.gd steht vor jedem Schlag auf den Nachbarn jetzt das Moral-Tor, und jede verweigerte Eskalation wandert als Buchung in die Timeline, damit das Warum-Fenster sie wie ein Gerichtsprotokoll vorliest.
+4. In der einheit_not_jagd_maschine.gd fand der Schwaechsten-Waehler sein eigenes Haus, fortan lebt der Opfer-Blick getrennt vom Entschluss, wie eine Meute, die nur wittert, waehrend der Vaeter Wille allein entscheidet.
+5. In der neuen einheit_autonomie_maschine.gd liest die Maschine ihre Auftragsliste aus dem autonomie.json-Datenpool und vergibt jeden Auftrag ueber denselben Griff wie die Hand des Spielers.
+6. In der einheit_verdrahtung.gd und im einheit_manager.gd zog das Gespann aus Moral, Autonomie und Timeline-Buch in den Kontext der Takt-Werkstatt ein, die welt.gd reicht ihr Zeit-Buch als Vertrag durch die Tür.
+7. Im ui_bau_panel.gd und in der bau_panel-Szene warf das Bau-Fenster seine Versteckspiel-Maske ab, gesperrte Gebaeude stehen ausgegraut im Regal, mit Sperrstufe und Hinweis im Tooltip, damit der Spieler den Weg sieht statt einer leeren Wand.
+8. In der test_moral_autonomie_und_warum.py zogen zehn neue Vertrags-Proben ein, und der alte Test in test_kannibalismus_jagd.py hing sein Schild auf die neue Adresse des Opfer-Blicks, alle 149 Proben laufen gruen.
+9. Im pruef_pfade.py wurde die Lupe gegen Schmutz abgedichtet, versteckte Punkt-Ordner gelten als Werkstatt-Artefakte und werden nicht mehr als fehlende res://-Wege angeprangert.
+10. In INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md, INDEX_LETZTE_AENDERUNG.md, README.md und ROADMAP.md zogen die Statuszahlen nach, 331 Klassen und 149 Proben sind der neue Stand der Wahrheit.
+11. Sichtbar im laufenden Spiel: Idle-Einheiten brechen zur naechsten Baustelle auf und sammeln dann Holz, Beeren und Stein, gesperrte Gebaeude warten grau und beschriftet im Bau-Fenster, und das Warum-Fenster liest die Verweigerung samt Ersatzweg vor.
+12. Offen bleibt die sichtbare Ingame-Pruefung der Moral-Verweigerung am laufenden Hunger und der zweite Slice, der die Sonden-Werkstatt-Pflege aus der Vorab-Sitzung traegt.
