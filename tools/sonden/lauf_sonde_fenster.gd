@@ -277,6 +277,12 @@ func _initialize() -> void:
 	# fertig. Ein Setup davor wuerde durch das Laden ueberschrieben.
 	for i in warte:
 		await process_frame
+	# Mess-Grenze: Alles vor diesem Punkt ist Boot und Laden, nicht Spielzeit.
+	# Der Warmup-Start wird als eigene Zeile gemeldet, die Python-Seite
+	# trennt danach Ladestop von Spielzeit und bewertet nur Letztere.
+	_perf_zeiten_ms.clear()
+	_perf_letzte_ms = -1
+	print("SONDE-PERF: phase=ladung fertig frame=%d" % int(stepper.call("frame_nr")))
 	# Setup-Schritte: nur ausdruecklich markierte, nie ein Schritt mit frame.
 	for s in schritte:
 		if typeof(s) == TYPE_DICTIONARY and _ist_setup(s as Dictionary):

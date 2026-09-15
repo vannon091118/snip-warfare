@@ -1,6 +1,6 @@
 # Plan: Social-Unterdomäne — Ethik und Image je Bewohner
 
-Version: V0.01
+Version: V0.02
 
 ## Ziel
 Eine modulare, datengetriebene Sozial-Unterdomäne, die je Bewohner zwei Wahrheiten misst: die **Ethik** (der echte Charakter, aus eigenen Taten gewachsen) und das **Image** (das Außenbild aus eigener Beobachtung plus Gehörtem, je Beobachter verschieden). Beide speisen das Mood-System über schmale Lese-Schnittstellen, ohne es umzubauen. Config-driven, ein globaler Tick, Performance durch Erinnerungs-Limit und getaktetes Gerede.

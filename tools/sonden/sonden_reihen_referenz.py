@@ -7,10 +7,7 @@ import json
 import hashlib
 from pathlib import Path
 
-from tools.preflight.kern import PROJEKT_STAMM
-
-VIS_STAMM = PROJEKT_STAMM / ".local_dev" / "vis_tools"
-REIHEN_REFERENZ = VIS_STAMM / "reihen_referenz.json"
+from tools.sonden.sonden_pfade_vis import REIHEN_REFERENZ
 BEWEGUNG_SCHWELLE = 0.001
 
 

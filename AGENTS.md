@@ -124,4 +124,4 @@ Die Agenten bauen so, dass jede Arbeit im Spiel beobachtbar endet, und weisen de
 - Annahme getrennter Zeitsysteme vermeiden; es existiert nur ein globaler Tick.
 - Beim Commit von Nicht-GDScript-Dateien mit nachgestelltem Whitespace (E042) — Verwendung von --fix.
 
-Version: V0.01
+Version: V0.02

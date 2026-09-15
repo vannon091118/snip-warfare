@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 14 Domaenen plus Auffangkorb, 331 Klassen, 367 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.02 — 14 Domaenen plus Auffangkorb, 333 Klassen, 369 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -19,7 +19,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 331 Klassen, 367 Dateien, 68 Sign
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
 | `population` | `pop` | `Pop_` | `population/` | 31 | 32 |
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
-| `ui` | `ui` | `Ui_` | `ui/` | 26 | 38 |
+| `ui` | `ui` | `Ui_` | `ui/` | 28 | 40 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
 | `tools` | `tools` | `-` | `tools/` | 4 | 22 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 36 | 41 |
@@ -97,7 +97,7 @@ Stand: V0.01 — 14 Domaenen plus Auffangkorb, 331 Klassen, 367 Dateien, 68 Sign
 | `Welt_KarawanenManager.karawane_gestartet` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | - |
 | `Welt_PauseMenue.menue_gewuenscht` | - | - | DS | - | - | - | - | - | - | - | - | - | - | - | V |
 
-_Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt: 14._
+_Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt: 15._
 * `_progressions_maschine` wird in welt gerufen, aber im Projekt nicht deklariert.
 * `about_to_popup` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `close_requested` wird in pop gerufen, aber im Projekt nicht deklariert.
@@ -111,14 +111,15 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 * `process_frame` wird in tools gerufen, aber im Projekt nicht deklariert.
 * `text_changed` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `timeout` wird in ui gerufen, aber im Projekt nicht deklariert.
+* `toggled` wird in ui gerufen, aber im Projekt nicht deklariert.
 * `value_changed` wird in pop gerufen, aber im Projekt nicht deklariert.
 
 ## 3. Array-Matrix (`Array[Typ]` je Domaene)
 
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `String` | 63 | 6 | 4 | 12 | 14 | - | - | 3 | 4 | - | 4 | 1 | 10 | - | 2 | 3 |
-| `Dictionary` | 47 | 3 | 1 | 9 | 1 | 4 | 3 | 10 | - | - | 2 | 1 | 8 | - | - | 5 |
+| `String` | 64 | 6 | 4 | 12 | 14 | - | - | 3 | 4 | - | 5 | 1 | 10 | - | 2 | 3 |
+| `Dictionary` | 48 | 3 | 1 | 9 | 1 | 4 | 3 | 10 | - | - | 2 | 1 | 9 | - | - | 5 |
 | `int` | 15 | - | - | 4 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 10 | 1 | 4 | 4 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `float` | 7 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | 2 | - |
@@ -314,7 +315,7 @@ Prefix `Welt_`, 54 Klassen.
 | `Welt_StadiumGeste` | `world/logic/kategorie_welt/welt_stadium_geste.gd` | 25 |
 | `Welt_TerrainBlatt` | `world/logic/kategorie_welt/welt_terrain_blatt.gd` | 39 |
 | `Welt_TierPlatzierer` | `world/logic/kategorie_welt/welt_tier_platzierer.gd` | 20 |
-| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 141 |
+| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 162 |
 | `Welt_UmsturzGeste` | `world/logic/kategorie_welt/welt_umsturz_geste.gd` | 39 |
 | `Welt_WaermeSammler` | `world/logic/kategorie_welt/welt_waerme_sammler.gd` | 32 |
 | `Welt_WasserAutomat` | `world/logic/kategorie_welt/welt_wasser_automat.gd` | 206 |
@@ -530,7 +531,7 @@ Prefix `Einheit_`, 33 Klassen.
 | `Einheit_JobRegie` | `game/logic/kategorie_einheit/einheit_job_regie.gd` | 98 |
 | `Einheit_JobVergabeMaschine` | `game/logic/kategorie_einheit/einheit_job_vergabe_maschine.gd` | 51 |
 | `Einheit_LeseSchnittstelle` | `game/logic/kategorie_einheit/einheit_lese_schnittstelle.gd` | 82 |
-| `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` | 149 |
+| `Einheit_Manager` | `game/logic/kategorie_einheit/einheit_manager.gd` | 151 |
 | `Einheit_MutationErnte` | `game/logic/kategorie_einheit/einheit_mutation_ernte.gd` | 42 |
 | `Einheit_MutationStartBestaende` | `game/logic/kategorie_einheit/einheit_mutation_ressourcen.gd` | 22 |
 | `Einheit_NotJagdMaschine` | `game/logic/kategorie_einheit/einheit_not_jagd_maschine.gd` | 77 |
@@ -540,7 +541,7 @@ Prefix `Einheit_`, 33 Klassen.
 | `Einheit_TaktMaschine` | `game/logic/kategorie_einheit/einheit_takt_maschine.gd` | 119 |
 | `Einheit_TransportMaschine` | `game/logic/kategorie_einheit/einheit_transport_maschine.gd` | 40 |
 | `Einheit_TruppMaschine` | `game/logic/kategorie_einheit/einheit_trupp_maschine.gd` | 104 |
-| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 315 |
+| `Einheit_Verdrahtung` | `game/logic/kategorie_einheit/einheit_verdrahtung.gd` | 329 |
 | `Einheit_VerhaltensMaschine` | `game/logic/kategorie_einheit/einheit_verhaltens_maschine.gd` | 87 |
 | `Einheit_Versorgung` | `game/logic/kategorie_einheit/einheit_versorgung.gd` | 48 |
 | `Einheit_VersorgungsMaschine` | `game/logic/kategorie_einheit/einheit_versorgungs_maschine.gd` | 61 |
@@ -666,7 +667,7 @@ Prefix `Pop_`, 31 Klassen.
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` | 57 |
 | `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` | 37 |
 | `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` | 85 |
-| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` | 70 |
+| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` | 125 |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` | 128 |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` | 30 |
 | `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` | 73 |
@@ -702,7 +703,7 @@ Prefix `Pop_`, 31 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
-| `String` | 4 |
+| `String` | 5 |
 | `Dictionary` | 2 |
 | `Pop_MoodEskalationStufe` | 1 |
 | `Pop_MoodModifikator` | 1 |
@@ -745,7 +746,7 @@ Prefix `Lager_`, 7 Klassen.
 
 ### ui — Kuerzel `ui` — `ui/`
 
-Prefix `Ui_`, 26 Klassen.
+Prefix `Ui_`, 28 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -764,6 +765,8 @@ Prefix `Ui_`, 26 Klassen.
 | `Ui_EinheitPanel` | `ui/logic/kategorie_ui/ui_einheit_panel.gd` | 39 |
 | `Ui_ExpansionMaschine` | `ui/logic/kategorie_ui/ui_expansion_maschine.gd` | 38 |
 | `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` | 116 |
+| `Ui_GrundsatzFenster` | `ui/logic/kategorie_ui/ui_grundsatz_fenster.gd` | 63 |
+| `Ui_GrundsatzPanel` | `ui/logic/kategorie_ui/ui_grundsatz_panel.gd` | 46 |
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` | 105 |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` | 54 |
 | `Ui_KartenViewer` | `ui/logic/kategorie_ui/ui_karten_viewer.gd` | 139 |
@@ -797,7 +800,7 @@ Prefix `Ui_`, 26 Klassen.
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
 | `String` | 10 |
-| `Dictionary` | 8 |
+| `Dictionary` | 9 |
 | `int` | 3 |
 | `AnimatedSprite2D` | 1 |
 
@@ -939,5 +942,5 @@ Prefix `-`, 36 Klassen.
 
 ---
 
-Version: V0.01
+Version: V0.02
 

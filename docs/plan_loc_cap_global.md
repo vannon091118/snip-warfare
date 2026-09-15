@@ -1,6 +1,6 @@
 # Plan: Globaler LOC-Cap für alle Spiel-Inhalte
 
-Version: V0.01
+Version: V0.02
 
 Der Code ist die Quelle der Wahrheit; dieser Plan ist der momentane Schnappschuss des Vorhabens
 und wird je Slice mit einer Status-Zeile nachgezogen. Stand: Slice L0 offen.

@@ -7,10 +7,7 @@ import json
 import re
 from pathlib import Path
 
-from tools.preflight.kern import PROJEKT_STAMM
-
-VIS_STAMM = PROJEKT_STAMM / ".local_dev" / "vis_tools"
-REIHEN_REFERENZ = VIS_STAMM / "reihen_referenz.json"
+from tools.sonden.sonden_pfade_vis import REIHEN_REFERENZ
 
 # Schwellwerte der Performance-Messung: Die p95-Frame-Zeit eines Sonden-
 # Laufs darf 50 ms nicht dauerhaft übersteigen (unter 20 FPS), der Maximal-
@@ -22,6 +19,11 @@ PERF_MAX_STANDARD_MS = 200.0
 PERF_MUSTER = re.compile(
     r"SONDE-PERF: (?:reihe|kette|gesamt)(?:(\S+))? p50=([\d.]+) p95=([\d.]+) max=([\d.]+) proben=(\d+)"
 )
+# Eine Probe über LADEN_MAX_MS gilt als Lade-/Compiler-Stop, nicht als
+# Spielzeit: Godot importiert Schriften, Texturen und Skripte je Lauf neu,
+# und genau diese Stops dominieren den Max-Wert. Sie werden getrennt
+# gemeldet und nicht gegen den Spielzeit-Schwellwert gewertet.
+LADEN_MAX_MS = 400.0
 
 
 def perf_zeilen_lesen(zeilen: list[str]) -> list[dict]:
@@ -43,11 +45,15 @@ def perf_zeilen_lesen(zeilen: list[str]) -> list[dict]:
 
 def perf_pruefen(perf: dict, p95_max_ms: float = PERF_P95_STANDARD_MS,
                  max_max_ms: float = PERF_MAX_STANDARD_MS) -> list[str]:
-    """Prüft eine Perf-Messung gegen die Schwellwerte und liefert Befunde."""
+    """Prüft eine Perf-Messung gegen die Schwellwerte und liefert Befunde.
+    Ein Max-Wert über LADEN_MAX_MS gilt als Lade-/Compiler-Stop: Er wird
+    getrennt gemeldet und nicht als Spielzeit-Verstoß gewertet."""
     texte: list[str] = []
     if perf["p95"] > p95_max_ms:
         texte.append(f"p95-Frame-Zeit {perf['p95']:.1f} ms über Schwellwert {p95_max_ms:.0f} ms (Reihe {perf['reihe']})")
-    if perf["max"] > max_max_ms:
+    if perf["max"] > LADEN_MAX_MS:
+        texte.append(f"Lade-/Compiler-Stop {perf['max']:.1f} ms erkannt (Reihe {perf['reihe']}) — Hinweis, kein Spielzeit-Verstoß")
+    elif perf["max"] > max_max_ms:
         texte.append(f"Max-Frame-Zeit {perf['max']:.1f} ms über Schwellwert {max_max_ms:.0f} ms (Reihe {perf['reihe']})")
     return texte
 

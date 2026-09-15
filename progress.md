@@ -1,6 +1,6 @@
 # Progress — Social-Unterdomäne
 
-Version: V0.01
+Version: V0.02
 
 ## Sitzung 2026-09-13
 

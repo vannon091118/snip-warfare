@@ -1,6 +1,6 @@
 # Plan: Blackboard-Migration mit Engine-Registrar und Konsolidator
 
-Version: V0.01
+Version: V0.02
 
 Dieses Dokument ist die Arbeitsgrundlage der Migration. Der Code bleibt die Quelle der Wahrheit;
 dieser Plan ist der momentane Schnappschuss des Vorhabens und wird je Slice mit einer Status-Zeile

@@ -1,6 +1,6 @@
 # Domänen-Gap-Register: Funktionsprüfung und Schließungsplan
 
-Version: V0.01, Stand 13.09.2026. Dieses Register ist die Bestandsaufnahme der Systemfunktionalität je Domäne, gemessen mit Pytest, Preflight und headless Godot-Laufbeweisen. Jeder Gap trägt eine ID, eine Beweisstelle und einen Schließungsweg. Gemessen wurde im aktuellen Arbeitsstand inklusive der lokalen Vorab-Änderungen (welt_ui_aufbau.gd, ui_lade_leiste.gd neu).
+Version: V0.02
 
 ## 1. Funktionsurteil je Domäne
 
@@ -53,4 +53,4 @@ Schließung: Die halbe Slice (G2) zuerst vollenden, dann alle Beteiligten als ei
 
 Der Register-Stand gilt für den Arbeitsstand vom 13.09.2026; nach jedem Schließungs-Slice wird die betroffene Zeile mit neuem Beweis aktualisiert.
 
-Version: V0.01
+Version: V0.02

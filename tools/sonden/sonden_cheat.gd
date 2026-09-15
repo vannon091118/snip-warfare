@@ -9,6 +9,12 @@ class_name Sonden_Cheat
 
 var _sonde_aktiv: bool = false
 var _frame_zahl: int = 0
+## Kategorie daten: Knoten-Cache. Welt, Modell und Kamera werden je Lauf
+## einmal gesucht, nicht je Ruf — find_child über den ganzen Baum ist der
+## teuerste Ruf im Messpfad und verfälscht sonst die Perf-Zahlen selbst.
+var _welt_cache: Node = null
+var _kamera_cache: Camera2D = null
+var _karte_cache: Node = null
 ## Kategorie daten: Die zuletzt gesetzte Einheit und ihr Startpunkt.
 var _einheit_index: int = -1
 var _einheit_start: Vector2 = Vector2.ZERO
@@ -32,14 +38,17 @@ func _bewacht(quelle: String) -> bool:
 	return true
 
 func _welt() -> Node:
+	if is_instance_valid(_welt_cache):
+		return _welt_cache
 	var baum := Engine.get_main_loop() as SceneTree
 	if baum == null or baum.root == null:
 		return null
 	for kind in baum.root.get_children():
 		if kind.has_method("model_liefern"):
-			return kind
-	var found: Node = baum.root.find_child("Welt", true, false) if baum.root.has_method("find_child") else null
-	return found
+			_welt_cache = kind
+			return _welt_cache
+	_welt_cache = baum.root.find_child("Welt", true, false) if baum.root.has_method("find_child") else null
+	return _welt_cache
 
 func _welt_modell() -> Welt_Model:
 	var w := _welt()
@@ -63,7 +72,7 @@ func ding_platzieren(element_id: String, position: Vector2) -> int:
 	# Rufe bleibt der Baum Daten, aber der Spieler sieht ihn nie.
 	var w := _welt()
 	if w != null:
-		var karte: Node = w.find_child("Karte", true, false)
+		var karte: Node = _karte()
 		if karte != null and karte.has_method("objekt_knoten_anhaengen"):
 			karte.call("objekt_knoten_anhaengen", idx)
 			karte.call("sichtgebiet_aktualisieren")
@@ -213,13 +222,37 @@ func _stelle(position: Vector2) -> Vector2:
 	return position
 
 
+func _karte() -> Node:
+	## Der Karten-Knoten ebenfalls nur einmal gesucht — ding_platzieren ist
+	## der zweitdichteste Ruf im Messpfad.
+	if is_instance_valid(_karte_cache):
+		return _karte_cache
+	var w := _welt()
+	if w == null:
+		return null
+	_karte_cache = w.find_child("Karte", true, false)
+	return _karte_cache
+
+
+func _kamera() -> Camera2D:
+	## Die Kamera einmal finden, dann halten. Ungültig gewordene Caches
+	## (Szenenwechsel) werden über is_instance_valid erkannt und neu gesucht.
+	if is_instance_valid(_kamera_cache):
+		return _kamera_cache
+	var w := _welt()
+	if w == null:
+		return null
+	_kamera_cache = w.find_child("Kamera", true, false) as Camera2D
+	return _kamera_cache
+
+
 func _kamera_mitte() -> Vector2:
 	## Weltposition der Bildmitte: Die Kamera ist die einzige Wahrheit der
 	## Sicht, deshalb wird hier kein Bildschirmpunkt umgerechnet.
 	var w := _welt()
 	if w == null:
 		return Vector2.ZERO
-	var kamera := w.find_child("Kamera", true, false) as Camera2D
+	var kamera := _kamera()
 	if kamera == null:
 		return Vector2.ZERO
 	return kamera.get_screen_center_position()
@@ -378,10 +411,7 @@ func _landmarken() -> Array:
 	return liste
 
 func _kamera_knoten_position() -> Vector2:
-	var w := _welt()
-	if w == null:
-		return Vector2.INF
-	var kamera := w.find_child("Kamera", true, false) as Camera2D
+	var kamera := _kamera()
 	if kamera == null:
 		return Vector2.INF
 	return kamera.position
@@ -492,10 +522,7 @@ func kamera_folgen(_aktiv: bool) -> bool:
 	## folgt — Hacken, Transport, Abgabe — sonst sieht man nur leere Kacheln.
 	if not _bewacht("kamera_folgen"):
 		return false
-	var w := _welt()
-	if w == null:
-		return false
-	var kamera := w.find_child("Kamera", true, false) as Camera2D
+	var kamera := _kamera()
 	if kamera == null:
 		return false
 	var mgr: Variant = _einheiten()

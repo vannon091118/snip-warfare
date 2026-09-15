@@ -1,12 +1,10 @@
-1. Der Kommandant verlangte den spielbaren Kern der Erschaffung, deshalb trat die Kolonie ihren ersten Schritt ins eigenständige Leben an und die Moral zog als Zeremonienmeisterin in die Zielwahl ein.
-2. In world/data/moral_regeln.json wohnten bereits die Grundsaetze, und die neue pop_moral_instanz.gd trägt sie als reine Daten, beantwortet die Frage darf die Kolonie die Tat und nennt fuer jede Blockade die Umleitung.
-3. In der einheit_verhaltens_maschine.gd steht vor jedem Schlag auf den Nachbarn jetzt das Moral-Tor, und jede verweigerte Eskalation wandert als Buchung in die Timeline, damit das Warum-Fenster sie wie ein Gerichtsprotokoll vorliest.
-4. In der einheit_not_jagd_maschine.gd fand der Schwaechsten-Waehler sein eigenes Haus, fortan lebt der Opfer-Blick getrennt vom Entschluss, wie eine Meute, die nur wittert, waehrend der Vaeter Wille allein entscheidet.
-5. In der neuen einheit_autonomie_maschine.gd liest die Maschine ihre Auftragsliste aus dem autonomie.json-Datenpool und vergibt jeden Auftrag ueber denselben Griff wie die Hand des Spielers.
-6. In der einheit_verdrahtung.gd und im einheit_manager.gd zog das Gespann aus Moral, Autonomie und Timeline-Buch in den Kontext der Takt-Werkstatt ein, die welt.gd reicht ihr Zeit-Buch als Vertrag durch die Tür.
-7. Im ui_bau_panel.gd und in der bau_panel-Szene warf das Bau-Fenster seine Versteckspiel-Maske ab, gesperrte Gebaeude stehen ausgegraut im Regal, mit Sperrstufe und Hinweis im Tooltip, damit der Spieler den Weg sieht statt einer leeren Wand.
-8. In der test_moral_autonomie_und_warum.py zogen zehn neue Vertrags-Proben ein, und der alte Test in test_kannibalismus_jagd.py hing sein Schild auf die neue Adresse des Opfer-Blicks, alle 149 Proben laufen gruen.
-9. Im pruef_pfade.py wurde die Lupe gegen Schmutz abgedichtet, versteckte Punkt-Ordner gelten als Werkstatt-Artefakte und werden nicht mehr als fehlende res://-Wege angeprangert.
-10. In INDEX.md, INDEX_DATEN.md, INDEX_DOMAENEN.md, INDEX_LETZTE_AENDERUNG.md, README.md und ROADMAP.md zogen die Statuszahlen nach, 331 Klassen und 149 Proben sind der neue Stand der Wahrheit.
-11. Sichtbar im laufenden Spiel: Idle-Einheiten brechen zur naechsten Baustelle auf und sammeln dann Holz, Beeren und Stein, gesperrte Gebaeude warten grau und beschriftet im Bau-Fenster, und das Warum-Fenster liest die Verweigerung samt Ersatzweg vor.
-12. Offen bleibt die sichtbare Ingame-Pruefung der Moral-Verweigerung am laufenden Hunger und der zweite Slice, der die Sonden-Werkstatt-Pflege aus der Vorab-Sitzung traegt.
+1. Der Kommandant verlangte den zweiten Slice der den Rest des lokalen Bestands aufräumt und die Versionsnummer global auf V0.02 hebt.
+2. In der VERSION-Datei wanderte der Stand von V0.01 nach V0.02 und das version_bump.py Skript zog 19 Dokumente im selben Schwung nach damit kein Papier hinterherhinkt.
+3. In README.md, ROADMAP.md, AGENTS.md, AGENTEN_INDEX.md, Architektur.md und den vier INDEX-Dateien steht jetzt V0.02 als gültiger Stand und die Statuszahlen spiegeln den aktuellen Klassenzstand.
+4. In tools/preflight/pruef_visual.py und tools/preflight/sonden_auswertung.py zogen Korrekturen ein die die Paket-Abhaengigkeiten und die Auswertung der Sonden-Ergebnisse betreffen.
+5. In tools/sonden/ fanden sechs Dateien ihre Pflege: lauf_sonde_fenster.gd, sonden_cheat.gd, sonden_perf_analyse.py, sonden_reihen_analyse.py, sonden_reihen_referenz.py und sonden_visuelle_bruecke.py wurden bereinigt, dazu sonden_pfade_vis.py als neuer Pfad-Visualisierer hinzugefuegt.
+6. In test_moral_autonomie_und_warum.py zog die Versionsanpassung nach und die Proben laufen weiterhin gruen.
+7. In docs/ fanden vier Plan-Dateien ihre Aktualisierung: architektur_bestandsaufnahme_plan.md, domaenen_gap_register.md, plan_blackboard_migration.md und plan_loc_cap_global.md tragen jetzt V0.02.
+8. In findings.md, progress.md, task_plan.md, tools/godot/README.md und world/assets/README.md steht ebenfalls V0.02 als neuer Stand.
+9. Sichtbar im laufenden Spiel: Nichts ändert sich am Spiel, die Versionsnummern sind ein Verwaltungsdetail.
+10. Offen bleibt die Behebung von E052 durch Installation der cv2 und PIL Pakete und die sichtbare Ingame-Pruefung des Grundsaetze-Fensters aus dem ersten Slice.

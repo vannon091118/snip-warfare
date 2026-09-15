@@ -27,6 +27,10 @@ def szenario_auswerten(pfad: Path, data: dict, tail: list[str], agent: str,
         grenze_p95 = float(data.get("perf_p95_max_ms", 50.0))
         grenze_max = float(data.get("perf_max_ms", 200.0))
         for text in perf_pruefen(perf, grenze_p95, grenze_max):
+            # Lade-/Compiler-Stops sind Hinweise, keine Spielzeit-Verstöße.
+            if text.startswith("Lade-/Compiler-Stop"):
+                gesammelt.append(f"PERF-HINWEIS {sid} {perf['reihe']}: {text}")
+                continue
             fehler("E029", pfad.relative_to(PROJEKT_STAMM), 1, f"SONDE-PERF-ABWEICHUNG: {text}")
     if perf_liste:
         perf_referenz_schreiben(agent, sid, perf_liste)

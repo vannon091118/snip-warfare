@@ -18,10 +18,7 @@ import sys
 from pathlib import Path
 
 from .kern import PROJEKT_STAMM, fehler
-
-VIS_STAMM = PROJEKT_STAMM / ".local_dev" / "vis_tools"
-KONTAKTBOGEN = VIS_STAMM / "frames" / "kontaktbogen.png"
-REFERENZ_LAYOUT = VIS_STAMM / "referenz_layout.png"
+from tools.sonden.sonden_pfade_vis import KONTAKTBOGEN, REFERENZ_LAYOUT, VIS_STAMM
 
 
 def _lade_werkzeug(name: str):

@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — es gibt genau eine Datei dieser Art._
 
-Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, der obere Block die letzte Aenderung.
+Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, der obere Block die letzte Aenderung.
 
 ## 1. Letzte Aenderung
 
@@ -14,8 +14,8 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 331 |
-| dateien | 367 |
+| klassen | 333 |
+| dateien | 369 |
 | signale | 68 |
 | array_typen | 35 |
 | pools | 34 |
@@ -31,7 +31,7 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | rest | 36 | 41 | 4e09cbf56503 |
 | shinon | 0 | 0 | da39a3ee5e6b |
 | tools | 4 | 22 | 19f1df624f1a |
-| ui | 26 | 38 | 2d8d3fb005aa |
+| ui | 28 | 40 | 4c9e9ee69f85 |
 | world/generator | 12 | 12 | 190186145ff4 |
 | world/objekt | 44 | 44 | 850d6524e744 |
 | world/orchestrator | 11 | 11 | 683626f6950f |
@@ -42,5 +42,5 @@ Stand: V0.01 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 ---
 
-Version: V0.01
+Version: V0.02
 

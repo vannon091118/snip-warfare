@@ -121,3 +121,46 @@ def test_warum_fenster_liest_aus_der_timeline():
     assert "_begruendungen" in hud, "Warum-Fenster hat keinen Begründungs-Speicher"
     welt = _lies("world/scenes/welt.gd")
     assert "_timeline.eintrag_neu.connect" in welt, "Timeline-Einträge erreichen das HUD nicht"
+
+
+def test_moral_instanz_traegt_schalter_metadaten():
+    """Die Moral-Domäne besitzt Label und Tooltip; der JSON-Pool nennt keine UI-Texte."""
+    moral = _lies("population/logic/moral/pop_moral_instanz.gd")
+    assert "SCHALTER_TEXTE" in moral, "Keine Schalter-Metadaten in der Moral-Domäne"
+    assert "kannibalismus_erlaubt" in moral, "Kannibalismus-Schalter trägt keinen Text"
+    assert "func schalter_ids" in moral, "Keine Schalter-Liste für das Fenster"
+    pool = _json("world/data/moral_regeln.json")
+    for schalter_id in ("kannibalismus_erlaubt", "tiere_bevorzugt", "bindungsobjekt_geschuetzt", "verhungern_erlaubt"):
+        assert schalter_id in pool["grundsaetze"], f"Schalter {schalter_id} fehlt im Datenpool"
+
+
+def test_manager_reicht_den_moral_griff_durch():
+    """Der geschlossene Schnittpunkt: lesen und setzen über den Einheit_Manager."""
+    manager = _lies("game/logic/kategorie_einheit/einheit_manager.gd")
+    assert "func moral_grundsatz_lesen" in manager, "Kein Lese-Griff am Manager"
+    assert "func moral_grundsatz_setzen" in manager, "Kein Setz-Griff am Manager"
+    verdrahtung = _lies("game/logic/kategorie_einheit/einheit_verdrahtung.gd")
+    assert "func moral_grundsatz" in verdrahtung, "Verdrahtung reicht den Lese-Ruf nicht"
+    assert "func moral_grundsatz_aendern" in verdrahtung, "Verdrahtung reicht den Setz-Ruf nicht"
+
+
+def test_grundsatz_fenster_hat_uebersetzer_und_szene():
+    """UI-Logik und Dialog existieren getrennt nach dem Übersetzer-Muster."""
+    logik = _lies("ui/logic/kategorie_ui/ui_grundsatz_panel.gd")
+    szene = _lies("ui/logic/kategorie_ui/ui_grundsatz_fenster.gd")
+    assert "class_name Ui_GrundsatzPanel" in logik, "Keine UI-Logik des Fensters"
+    assert "func eintraege_ermitteln" in logik, "Übersetzer liefert keine Einträge"
+    assert "moral_grundsatz_lesen" in logik, "Logik umgeht den Manager-Schnittpunkt"
+    assert "class_name Ui_GrundsatzFenster" in szene, "Keine Dialog-Szene"
+    assert "CheckButton" in szene, "Fenster baut keine Schalter"
+    assert "about_to_popup.connect" in szene, "Fenster liest den Stand nicht beim Öffnen"
+
+
+def test_welt_szene_verdrahtet_grundsatz_fenster_in_die_leiste():
+    """Das Fenster hängt an der UI-Ebene und die Fenster-Leiste trägt seinen Knopf."""
+    welt = _lies("world/scenes/welt.gd")
+    aufbau = _lies("world/logic/kategorie_welt/welt_ui_aufbau.gd")
+    assert "grundsatz_fenster_bauen" in aufbau, "Kein Bau-Schritt in der UI-Spitze"
+    assert "_ui_aufbau.grundsatz_fenster_bauen" in welt, "Die Szene hängt das Fenster nicht an"
+    assert '"id": "grundsatz"' in welt, "Fenster-Leiste kennt keinen Grundsatz-Knopf"
+    assert "grundsatz_fenster_umschalten" in aufbau, "Kein Toggle-Weg für das Fenster"

@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.01 — 34 JSON-Pools, davon 34 lesbar und 2 ohne namentlichen Verbraucher.
+Stand: V0.02 — 34 JSON-Pools, davon 34 lesbar und 2 ohne namentlichen Verbraucher.
 
 ## 1. Pools in Besitz einer Domaene
 
@@ -36,7 +36,7 @@ Stand: V0.01 — 34 JSON-Pools, davon 34 lesbar und 2 ohne namentlichen Verbrauc
 | [`fraktions_ki_config.json`](world/data/fraktions_ki_config.json) | `world/data` | 9 | `_kommentar`, `expansion`, `handel`, `konflikt`, `aggressions_basis`, `keimling_schwellenwert` und 3 weitere | `world/logic/kategorie_generator/fraktions_keimling_analysator.gd`, `world/logic/kategorie_generator/welt_generator.gd`, `world/logic/kategorie_welt/fraktions_ki_maschine.gd` und 2 weitere |
 | [`gebaeude.json`](world/data/gebaeude.json) | `world/data` | 13 | `[Liste]` | `tools/lauf_pruefung_welt.gd`, `ui/logic/kategorie_ui/ui_bau_panel.gd`, `ui/scenes/panels/bau_panel.gd` und 3 weitere |
 | [`generator_gewichte.json`](world/data/generator_gewichte.json) | `world/data` | 9 | `_kommentar`, `domain_warp_amplitude`, `objekte`, `tiere`, `biome`, `gebaeude` und 3 weitere | `world/logic/kategorie_generator/generator_registry.gd`, `world/logic/kategorie_generator/welt_feld_analyser.gd`, `world/logic/kategorie_generator/welt_fraktions_generator.gd` und 2 weitere |
-| [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 | `_kommentar`, `grundsaetze`, `ersatzhandlungen`, `wirkung_je_rasse`, `verzweigung` | `population/logic/moral/pop_moral_instanz.gd` |
+| [`moral_regeln.json`](world/data/moral_regeln.json) | `world/data` | 5 | `_kommentar`, `grundsaetze`, `ersatzhandlungen`, `wirkung_je_rasse`, `verzweigung` | `population/logic/moral/pop_moral_instanz.gd`, `ui/logic/kategorie_ui/ui_grundsatz_panel.gd` |
 | [`ressourcen_progression.json`](world/data/ressourcen_progression.json) | `world/data` | 5 | `_kommentar`, `stufen`, `stufen_blatt`, `waerme`, `seed_spawn` | `world/logic/kategorie_progression/welt_progressions_registry.gd`, `world/logic/kategorie_progression/welt_stufen_bilder.gd` |
 | [`standard_welt.json`](world/data/standard_welt.json) | `world/data` | 6 | `version`, `kachel_groesse`, `raster_breite`, `raster_hoehe`, `raster`, `objekte` | `world/scenes/karten_editor.gd` |
 | [`tier_verhalten.json`](world/data/tier_verhalten.json) | `world/data` | 5 | `hase`, `vogel`, `vogelgruppe`, `baer`, `eisbaer` | `game/logic/kategorie_job/job_jaeger.gd`, `world/logic/kategorie_tier/tier_baer.gd`, `world/logic/kategorie_tier/tier_basis.gd` und 4 weitere |
@@ -288,6 +288,7 @@ Pfad `world/data/generator_gewichte.json`, Domaene `world/data`, 9 Eintraege.
 Pfad `world/data/moral_regeln.json`, Domaene `world/data`, 5 Eintraege.
 
 * `population/logic/moral/pop_moral_instanz.gd`
+* `ui/logic/kategorie_ui/ui_grundsatz_panel.gd`
 
 ### ressourcen_progression.json
 
@@ -334,5 +335,5 @@ Pfad `world/data/weltkarte_definition.json`, Domaene `world/data`, 4 Eintraege.
 
 ---
 
-Version: V0.01
+Version: V0.02
 

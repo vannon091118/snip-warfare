@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.01 — 331 Klassen mit `class_name` im Projekt, davon 295 in den 14 Domaenen-Ordnern und 36 ohne Domaenen-Ordner, 68 Signale, 35 Array-Elementtypen und 34 JSON-Pools._
+_Stand: V0.02 — 333 Klassen mit `class_name` im Projekt, davon 297 in den 14 Domaenen-Ordnern und 36 ohne Domaenen-Ordner, 68 Signale, 35 Array-Elementtypen und 34 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -397,7 +397,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Lager_Registry` | `economy/logic/storage/lager_registry.gd` |
 | `Lager_StapelBauer` | `economy/logic/storage/lager_stapel_bauer.gd` |
 
-### ui — Prefix `Ui_` — `ui/` (26)
+### ui — Prefix `Ui_` — `ui/` (28)
 
 | Klasse | Datei |
 | --- | --- |
@@ -416,6 +416,8 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Ui_EinheitPanel` | `ui/logic/kategorie_ui/ui_einheit_panel.gd` |
 | `Ui_ExpansionMaschine` | `ui/logic/kategorie_ui/ui_expansion_maschine.gd` |
 | `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` |
+| `Ui_GrundsatzFenster` | `ui/logic/kategorie_ui/ui_grundsatz_fenster.gd` |
+| `Ui_GrundsatzPanel` | `ui/logic/kategorie_ui/ui_grundsatz_panel.gd` |
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` |
 | `Ui_KartenViewer` | `ui/logic/kategorie_ui/ui_karten_viewer.gd` |
@@ -484,4 +486,4 @@ _keine `class_name`-Klassen_
 
 <!-- INVENTAR:ENDE -->
 
-Version: V0.01
+Version: V0.02

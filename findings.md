@@ -1,6 +1,6 @@
 # Findings — Social-Unterdomäne
 
-Version: V0.01
+Version: V0.02
 
 ## Bestandsaufnahme (aus dem Code gelesen, nicht geraten)
 - **Mood-Architektur:** Pop_MoodMaschine (population/logic/mood/pop_mood_maschine.gd, 284 Zeilen, LOC-Nachlass 285) ist eine Node-State-Maschine im Need-Baum, leitet Mood aus Bedürfnissen ab, hängt als Kind im Pop_NeedBaum, trägt ein Rassen-Schema und eine eigene Kern_ModifikatorMaschine (Bereich need). Signal mood_geaendert existiert.

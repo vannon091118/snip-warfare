@@ -96,4 +96,4 @@ Die Streich-Liste entsteht erst aus den Befunden; Kandidaten heute, jeder mit St
 
 Die Bestandsaufnahme selbst endet mit dem Bericht. Kein Code wird im ersten Durchgang geändert; wo der Plan Umbauten nennt, steht das Wort Entschärfung als Zielbild, nicht als erledigte Arbeit.
 
-Version: V0.01
+Version: V0.02

@@ -20,9 +20,7 @@ SONDE-WIDERSPRUCH-Zeilen zurückgegeben und landen so als E026 im Preflight.
 from pathlib import Path
 
 from tools.preflight.kern import PROJEKT_STAMM
-
-VIS_STAMM = PROJEKT_STAMM / ".local_dev" / "vis_tools"
-REFERENZ_LAYOUT = VIS_STAMM / "referenz_layout.png"
+from tools.sonden.sonden_pfade_vis import REFERENZ_LAYOUT, VIS_STAMM
 
 
 def _lade_werkzeug(name: str):
