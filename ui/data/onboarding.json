@@ -1,0 +1,46 @@
+{
+  "_kommentar": "Onboarding-Leitplanke der ersten Schritte: Jeder Schritt traegt einen Ausloeser, der sagt wann er abgehakt ist, und einen Tipp der den naechsten Handgriff zeigt. Die Reihenfolge hier ist die Reihenfolge der Lehrstunde; die Progression in game/data/progression.json bleibt die einzige Stufen-Wahrheit fuer Freischalten, dieses Fenster erzaehlt sie nur vor.",
+  "titel": "Erste Schritte",
+  "schritte": [
+    {
+      "id": "kamera_lernen",
+      "ausloeser": "sofort",
+      "tipp": "Bewege die Kamera mit WASD oder den Pfeiltasten. Die Welt dreht sich nicht, du gehst durch sie wie der Wind über den Tisch."
+    },
+    {
+      "id": "feuer_setzen",
+      "ausloeser": "progression_stufe",
+      "stufe_id": "lagerfeuer_setzen",
+      "tipp": "Druecke B oder klicke den Bau-Knopf unten und setze das kostenlose Lagerfeuer. Es ist Lager, Waermequelle und Ankunftsort zugleich."
+    },
+    {
+      "id": "holz_sammeln",
+      "ausloeser": "progression_stufe",
+      "stufe_id": "holz_sammeln",
+      "tipp": "Klicke einen Baum an und gib den Sammel-Befehl. Der Stickmann schlaegt, traegt und lagert am Feuer ein."
+    },
+    {
+      "id": "erste_waende",
+      "ausloeser": "progression_stufe",
+      "stufe_id": "erster_raum",
+      "tipp": "Baue Holzwaende und eine Tuer zu einem geschlossenen Raum mit mindestens 16 Kacheln Innenflaeche. Die Kolonie braucht ein Dach ueber dem Kopf."
+    },
+    {
+      "id": "lagerzone_ziehen",
+      "ausloeser": "progression_stufe",
+      "stufe_id": "lager_bauen",
+      "tipp": "Ziehe mit Links-Halten eine Lagerzone, damit gesammeltes Holz einen Ort zum Ruhen hat."
+    },
+    {
+      "id": "einwanderer_begruessen",
+      "ausloeser": "progression_stufe",
+      "stufe_id": "einwanderung_laeuft",
+      "tipp": "Ein Einwanderer folgt dem Ruf des Feuers. Begruess ihn, denn aus ihm wird deine Kolonie."
+    },
+    {
+      "id": "aus_wollen",
+      "ausloeser": "alle_erreicht",
+      "tipp": "Die erste Stunde sitzt. Ab hier entscheidest du, wohin die Siedlung waechst. Das Grundsatz-Fenster wartet, wenn die Verzweiflung naht."
+    }
+  ]
+}

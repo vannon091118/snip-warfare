@@ -14,11 +14,11 @@ Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 333 |
-| dateien | 369 |
+| klassen | 336 |
+| dateien | 372 |
 | signale | 68 |
 | array_typen | 35 |
-| pools | 34 |
+| pools | 35 |
 
 | Domaene | Klassen | Dateien | Fingerabdruck |
 | --- | --- | --- | --- |
@@ -31,7 +31,7 @@ Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | rest | 36 | 41 | 4e09cbf56503 |
 | shinon | 0 | 0 | da39a3ee5e6b |
 | tools | 4 | 22 | 19f1df624f1a |
-| ui | 28 | 40 | 4c9e9ee69f85 |
+| ui | 31 | 43 | 1708202c799c |
 | world/generator | 12 | 12 | 190186145ff4 |
 | world/objekt | 44 | 44 | 850d6524e744 |
 | world/orchestrator | 11 | 11 | 683626f6950f |

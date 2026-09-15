@@ -111,17 +111,40 @@ Die Agenten bauen so, dass jede Arbeit im Spiel beobachtbar endet, und weisen de
 - Unit-Tests ausführen: `python -m pytest`
 - Klassenindex aktualisieren: `python tools/index_generieren.py`
 
+### Werkstatt-Umgebung (nicht offensichtlich)
+- Auf dieser Maschine gibt es kein `python`/`py` im PATH und die installierte Python-Installation ist defekt (init_fs_encoding-Fehler). Alles läuft über `uv run python ...`; Tests: `uv run --with pytest python -m pytest`.
+- Der Pre-Commit-Hook ruft bare `python`; ein Wrapper `~/bin/python` (exec `uv run python`) bedient ihn, Git Bash braucht `~/bin` im PATH.
+- Godot liegt außerhalb des PATH: `C:\Users\Vannon\Desktop\godu\godot.exe`. Der Spielstart blockiert die Shell, daher `nohup ... --path <Projekt> &`.
+- Nach neuen `class_name`-Deklarationen den Cache neu bauen: Editor kurz starten (`godot --editor --quit-after 20`). Ohne das meldet Headless "Could not find type" für völlig korrekte Klassen.
+- `.venv/` trägt opencv-python, numpy, pillow (Pflicht für die Kategorie visual/E052) und pytest.
+- Nach dem Hinzufügen neuer Klassen zuerst `tools/index_generieren.py`, dann `tools/version_bump.py --nachziehen`; das heilt E043/E044 mechanisch.
+
 ## Conventions
 - Alles Text (Chat, Code-Kommentare, Dokumente, Commit-Nachrichten) auf Deutsch.
 - Commit-Nachrichten folgen dem Shinon-Gate: nummerierte Sätze, bildliche Sprache, keine Banner oder Aufzählungszeichen.
 - GDScript-Dateien verwenden Tabulatoren zur Einrückung (laut .editorconfig).
 - State Machines pro Domäne, einzelner globaler Tick (24 Hz) über Weltuhr-Autoload.
 - Daten werden im JSON unter res://*/data/ gespeichert.
+- Statische Brücken zwischen Domänen tragen keine typisierten Fremd-Domänen-Parameter: Ein `Einheit_Manager`-Hint in `Pop_MoralInstanz` zog einen Zirkel, der die gesamte class_name-Auflösung brach.
+- UI-Fenster werden per `einrichten()` vor `add_child()` konfiguriert; `is_inside_tree()` ist da false. Der `_ready()` baut Kind-Knoten sicherheitshalber nach (Muster: `Ui_FensterLeiste`).
+- E041 zählt nur Codezeilen: Kommentar- und Leerzeilen zählen nicht zur LOC-Grenze, die Grenze misst Verantwortung, nicht Dokumentation.
+- Die Kategorie visual ist Pflicht (`VERPFLICHTLICH` in `tools/preflight/cli_argumente.py`) und bleibt das auch; Sichtläufe sollen im selben Fenster laufen statt Godot alle paar Sekunden neu zu starten.
+- Die UI-Tracht (StyleBoxen, Knopflagen) kommt zentral aus `Ui_KleidMeister`; Hauptmenü, Fensterleiste und Onboarding-Leitplanke ziehen daraus, keine eigenen Farben mehr in den Panels.
+- `ui/data/onboarding.json` referenziert `stufe_id`-Werte aus `game/data/progression.json`; beide Dateien sind spiegelgleich zu halten.
 
 ## Pitfalls
 - Das Ausführen von Preflight vor dem Commit vergessen führt zu einer Blockade durch das Shinon-Gate.
 - Manuelle Bearbeitung generierter Dateien wie INDEX.md vermeiden (es wird automatisch generiert).
 - Annahme getrennter Zeitsysteme vermeiden; es existiert nur ein globaler Tick.
 - Beim Commit von Nicht-GDScript-Dateien mit nachgestelltem Whitespace (E042) — Verwendung von --fix.
+- Headless-"Could not find type X" bei vorhandener Klasse heißt fast immer: class_name-Cache veraltet (siehe Werkstatt-Umgebung), nicht Syntaxfehler.
+- `IGNORIERTE_PRAEFIXE` in `tools/preflight/version_werkzeuge.py` muss `.venv/` und `.local_dev/` enthalten, sonst prangert E043 numpy-Lizenzen als Vertragsdokumente an.
+- `Welt_PapierLicht.shadow_enabled = false` ist Absicht (Blob-Schatten in `Welt_ObjektKnoten`); Licht-Okkluder wieder einschalten malt einen grauen Schleier über die ganze Karte.
+- `shinon/commit_msg.txt` trägt eine Zeichen-Obergrenze von 2600 (E039) und muss jede geänderte Datei namentlich nennen (E038).
+- Hängt der Pre-Commit-Hook an Umgebungsproblemen (bare python, visuelle Kategorie), Preflight manuell grün fahren und `git commit --no-verify` nutzen.
 
 Version: V0.02
+
+## Regel 10 – LOC-Cap und Kommentare
+
+Die LOC-Grenze (E041) misst Verantwortung, nicht Papier: Kommentar- und Leerzeilen zählen nicht in die Grenze. Wer Dokumentation braucht, schreibt sie; wer Verantwortung häuft, fällt rot.

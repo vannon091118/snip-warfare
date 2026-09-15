@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.02 — 14 Domaenen plus Auffangkorb, 333 Klassen, 369 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.02 — 14 Domaenen plus Auffangkorb, 336 Klassen, 372 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -19,7 +19,7 @@ Stand: V0.02 — 14 Domaenen plus Auffangkorb, 333 Klassen, 369 Dateien, 68 Sign
 | `game/ressourcen` | `res` | `Resource_` | `game/logic/kategorie_ressourcen/` | 7 | 7 |
 | `population` | `pop` | `Pop_` | `population/` | 31 | 32 |
 | `economy` | `lager` | `Lager_` | `economy/` | 7 | 7 |
-| `ui` | `ui` | `Ui_` | `ui/` | 28 | 40 |
+| `ui` | `ui` | `Ui_` | `ui/` | 31 | 43 |
 | `shinon` | `shinon` | `Shinon_` | `shinon/` | 0 | 0 |
 | `tools` | `tools` | `-` | `tools/` | 4 | 22 |
 | `rest` | `rest` | `-` | `(kein Domaenen-Ordner)` | 36 | 41 |
@@ -119,7 +119,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `String` | 64 | 6 | 4 | 12 | 14 | - | - | 3 | 4 | - | 5 | 1 | 10 | - | 2 | 3 |
-| `Dictionary` | 48 | 3 | 1 | 9 | 1 | 4 | 3 | 10 | - | - | 2 | 1 | 9 | - | - | 5 |
+| `Dictionary` | 49 | 3 | 1 | 9 | 1 | 4 | 3 | 10 | - | - | 2 | 1 | 10 | - | - | 5 |
 | `int` | 15 | - | - | 4 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 10 | 1 | 4 | 4 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `float` | 7 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | 2 | - |
@@ -315,7 +315,7 @@ Prefix `Welt_`, 54 Klassen.
 | `Welt_StadiumGeste` | `world/logic/kategorie_welt/welt_stadium_geste.gd` | 25 |
 | `Welt_TerrainBlatt` | `world/logic/kategorie_welt/welt_terrain_blatt.gd` | 39 |
 | `Welt_TierPlatzierer` | `world/logic/kategorie_welt/welt_tier_platzierer.gd` | 20 |
-| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 162 |
+| `Welt_UiAufbau` | `world/logic/kategorie_welt/welt_ui_aufbau.gd` | 186 |
 | `Welt_UmsturzGeste` | `world/logic/kategorie_welt/welt_umsturz_geste.gd` | 39 |
 | `Welt_WaermeSammler` | `world/logic/kategorie_welt/welt_waerme_sammler.gd` | 32 |
 | `Welt_WasserAutomat` | `world/logic/kategorie_welt/welt_wasser_automat.gd` | 206 |
@@ -667,7 +667,7 @@ Prefix `Pop_`, 31 Klassen.
 | `Pop_MoodModifikatorRegistry` | `population/logic/mood/pop_mood_modifikator_registry.gd` | 57 |
 | `Pop_MoodRaten` | `population/logic/mood/pop_mood_raten.gd` | 37 |
 | `Pop_MoodWaermeGate` | `population/logic/mood/pop_mood_waerme_gate.gd` | 85 |
-| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` | 130 |
+| `Pop_MoralInstanz` | `population/logic/moral/pop_moral_instanz.gd` | 128 |
 | `Pop_NamensGenerator` | `population/logic/pop_namens_generator.gd` | 128 |
 | `Pop_NeedBasis` | `population/logic/needs/pop_need_basis.gd` | 30 |
 | `Pop_NeedBaum` | `population/logic/mood/pop_need_baum.gd` | 73 |
@@ -746,7 +746,7 @@ Prefix `Lager_`, 7 Klassen.
 
 ### ui — Kuerzel `ui` — `ui/`
 
-Prefix `Ui_`, 28 Klassen.
+Prefix `Ui_`, 31 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -764,14 +764,17 @@ Prefix `Ui_`, 28 Klassen.
 | `Ui_EingabeSteuerung` | `ui/logic/kategorie_ui/ui_eingabe_steuerung.gd` | 398 |
 | `Ui_EinheitPanel` | `ui/logic/kategorie_ui/ui_einheit_panel.gd` | 39 |
 | `Ui_ExpansionMaschine` | `ui/logic/kategorie_ui/ui_expansion_maschine.gd` | 38 |
-| `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` | 121 |
+| `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` | 109 |
 | `Ui_GrundsatzFenster` | `ui/logic/kategorie_ui/ui_grundsatz_fenster.gd` | 64 |
 | `Ui_GrundsatzPanel` | `ui/logic/kategorie_ui/ui_grundsatz_panel.gd` | 46 |
+| `Ui_HudOnboarding` | `ui/scenes/hud/hud_onboarding.gd` | 80 |
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` | 105 |
 | `Ui_KameraSteuerung` | `ui/logic/kategorie_ui/ui_kamera_steuerung.gd` | 54 |
 | `Ui_KartenViewer` | `ui/logic/kategorie_ui/ui_karten_viewer.gd` | 139 |
+| `Ui_KleidMeister` | `ui/logic/kategorie_ui/ui_kleid_meister.gd` | 69 |
 | `Ui_LadeLeiste` | `ui/logic/kategorie_ui/ui_lade_leiste.gd` | 69 |
 | `Ui_MenueZustaende` | `ui/logic/kategorie_ui/ui_menue_zustaende.gd` | 23 |
+| `Ui_OnboardingUebersetzer` | `ui/logic/kategorie_ui/ui_onboarding_uebersetzer.gd` | 82 |
 | `Ui_OrchestratorPriorityPanel` | `ui/logic/kategorie_ui/ui_orchestrator_priority_panel.gd` | 208 |
 | `Ui_PopEinheitUebersetzer` | `ui/logic/kategorie_ui/ui_pop_einheit_uebersetzer.gd` | 112 |
 | `Ui_TierPanel` | `ui/logic/kategorie_ui/ui_tier_panel.gd` | 36 |
@@ -799,8 +802,8 @@ Prefix `Ui_`, 28 Klassen.
 
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
+| `Dictionary` | 10 |
 | `String` | 10 |
-| `Dictionary` | 9 |
 | `int` | 3 |
 | `AnimatedSprite2D` | 1 |
 

@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.02 — 34 JSON-Pools, davon 34 lesbar und 2 ohne namentlichen Verbraucher.
+Stand: V0.02 — 35 JSON-Pools, davon 35 lesbar und 2 ohne namentlichen Verbraucher.
 
 ## 1. Pools in Besitz einer Domaene
 
@@ -30,6 +30,7 @@ Stand: V0.02 — 34 JSON-Pools, davon 34 lesbar und 2 ohne namentlichen Verbrauc
 | [`rassen_vorlagen.json`](population/data/rassen_vorlagen.json) | `population` | 6 | `_kommentar`, `wald`, `berg`, `wasser`, `steppe`, `tundra` | `population/logic/needs/pop_rassen_generator.gd` |
 | [`sozial_regeln.json`](population/logic/sozial/data/sozial_regeln.json) | `population` | 6 | `_kommentar`, `zeugen`, `taten`, `geruechte`, `traits`, `beziehungen` | `population/logic/sozial/logic/soz_beziehungs_engine.gd`, `population/logic/sozial/logic/soz_datenpool.gd`, `population/logic/sozial/logic/soz_geruecht.gd` und 3 weitere |
 | [`menue_story.json`](ui/data/menue_story.json) | `ui` | 4 | `hinweis`, `schritte_pro_sekunde`, `untertitel_dauer`, `events` | `ui/logic/kategorie_ui/menue_story_daten.gd` |
+| [`onboarding.json`](ui/data/onboarding.json) | `ui` | 3 | `_kommentar`, `titel`, `schritte` | `ui/logic/kategorie_ui/ui_onboarding_uebersetzer.gd` |
 | [`atmosphaere.json`](world/data/atmosphaere.json) | `world/data` | 9 | `_dokumentation_atmosphaere`, `wind`, `partikel`, `sonne`, `papier`, `papier_licht` und 3 weitere | `world/logic/kategorie_atmosphaere/welt_atmosphaere_konfig.gd`, `world/logic/kategorie_atmosphaere/welt_comic_overlayer.gd` |
 | [`biome.json`](world/data/biome.json) | `world/data` | 3 | `_kommentar`, `thresholds`, `biome` | `world/logic/kategorie_biom/biom_basis.gd`, `world/logic/kategorie_biom/biom_registry.gd`, `world/logic/kategorie_generator/welt_biom_analyser.gd` und 1 weitere |
 | [`element_katalog.json`](world/data/element_katalog.json) | `world/data` | 42 | `[Liste]` | `ui/scenes/panels/kontext_menue.gd`, `world/logic/kategorie_objekt/moebel_registry.gd`, `world/logic/kategorie_objekt/objekt_registry_basis.gd` und 1 weitere |
@@ -226,6 +227,12 @@ Pfad `population/logic/sozial/data/sozial_regeln.json`, Domaene `population`, 6 
 Pfad `ui/data/menue_story.json`, Domaene `ui`, 4 Eintraege.
 
 * `ui/logic/kategorie_ui/menue_story_daten.gd`
+
+### onboarding.json
+
+Pfad `ui/data/onboarding.json`, Domaene `ui`, 3 Eintraege.
+
+* `ui/logic/kategorie_ui/ui_onboarding_uebersetzer.gd`
 
 ### atmosphaere.json
 

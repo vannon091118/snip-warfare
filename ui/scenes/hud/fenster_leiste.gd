@@ -75,6 +75,7 @@ func _aufbauen() -> void:
 		btn.custom_minimum_size = Vector2(132, 40)
 		btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 		btn.focus_mode = Control.FOCUS_NONE
+		Ui_KleidMeister.knopf_ankleiden(btn, bool(eintrag.get("sprechend", false)))
 		var aktion: Variant = eintrag.get("aktion", null)
 		if aktion is Callable and (aktion as Callable).is_valid():
 			var aktion_call: Callable = aktion as Callable
@@ -102,19 +103,6 @@ func _nach_name(a: Dictionary, b: Dictionary) -> bool:
 	return str(a.get("name", "")) < str(b.get("name", ""))
 
 func _standard_panel() -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(0.06, 0.08, 0.1, 0.82)
-	box.border_width_left = 1
-	box.border_width_top = 1
-	box.border_width_right = 1
-	box.border_width_bottom = 1
-	box.border_color = Color(1, 1, 1, 0.18)
-	box.corner_radius_top_left = 10
-	box.corner_radius_top_right = 10
-	box.corner_radius_bottom_right = 10
-	box.corner_radius_bottom_left = 10
-	box.content_margin_left = 14.0
-	box.content_margin_top = 6.0
-	box.content_margin_right = 14.0
-	box.content_margin_bottom = 6.0
-	return box
+	# Die Tracht kommt vom gemeinsamen Schneider, damit Hauptmenü und
+	# Spielfenster dasselbe Kleid tragen.
+	return Ui_KleidMeister.panel_stil(10, 1)

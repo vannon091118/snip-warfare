@@ -17,6 +17,8 @@ IGNORIERTE_PRAEFIXE = (
     "node_modules/",
     "addons/",
     ".freebuff/",
+    ".venv/",
+    ".local_dev/",
 )
 
 VERSIONIERTE_DOKUMENTE = (

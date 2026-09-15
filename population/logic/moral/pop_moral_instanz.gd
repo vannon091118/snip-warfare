@@ -114,10 +114,8 @@ func schalter_text(schalter_id: String) -> Dictionary:
 
 
 static func schalter_ids_fuer() -> Array[String]:
-	## Die statische Bruecke der UI: Die Schluessel stehen in den Daten der
-	## Domaene, eine Instanz wird dafuer nicht angefasst.
-	var instanz := RefCounted.new()
-	# Die Schalter-Ids leben in den Konstanten des Datei-Scope.
+	## Die statische Bruecke der UI: Die Schluessel stehen in den Konstanten
+	## des Datei-Scope, eine Instanz wird dafuer nicht angefasst.
 	var ids: Array[String] = []
 	for schluessel: String in SCHALTER_TEXTE.keys():
 		ids.append(schluessel)

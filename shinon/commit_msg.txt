@@ -1,10 +1,13 @@
-1. Der Kommandant sah das graue Spielfeld und die stumme Leiste und verlangte Instandheit, denn ein Spiel das man nicht sieht und nicht bedienen kann ist kein Spiel sondern ein Foto von Verzweiflung.
-2. In ui/scenes/hud/fenster_leiste.gd wurde der stille Fehler entlarvt, der die Knöpfe verschlang: einrichten lief vor dem Baumeintritt und der Aufbau lief nie, jetzt baut der _ready nach und die Leiste trägt ihre Knöpfe garantiert.
-3. In world/logic/kategorie_welt/welt_ui_aufbau.gd zog die Leiste vom oberen Rand an den unteren Bildrand, auf 70 Pixel Breite gewachsen mit grösseren Knöpfen, damit Beschriftung und Kurzbefehl nicht mehr gekürzt werden.
-4. In world/logic/kategorie_welt/welt_objekt_knoten.gd wechselte der Schatten vom Okkluder-System zum Blob-System, jede Objekt-Lage trägt nun eine weiche Ellipse am Fußpunkt deren Grösse mit dem Objekt wächst, von der geteilten radialen Textur gespeist.
-5. In world/logic/kategorie_atmosphaere/welt_papier_licht.gd legte das Papierlicht seine Schattenpflicht ab, denn tausend Okkluder unter einer gerichteten Sonne malten einen grauen Schleier über die ganze Karte, jetzt bleibt reines Stimmungslicht.
-6. In population/logic/moral/pop_moral_instanz.gd verlor die statische Brücke ihren Manager-Parameter und ihre Selbst-Referenz, der Zirkel der das Klassenbuch blockierte ist damit geschlossen.
-7. In ui/logic/kategorie_ui/ui_grundsatz_panel.gd griff der Übersetzer auf die echte statische Brücke zu, vorher rief er eine Funktion die nie existiert hatte und das Fenster blieb leer.
-8. In Architektur.md fanden Schatten-System und Fensterleiste ihre Pflichtdokumentation, denn Code ohne Beschreibung ist ein Versprechen das niemand einfordern kann.
-9. Sichtbar im laufenden Spiel: Die Knopfleiste sitzt unten mit Bau, Karte, Debug und Grundsätzen, das Baufenster öffnet wieder, und die Objekte werfen kleine weiche Schatten statt den ganzen Bildschirm zu verdunkeln.
-10. Offen bleibt der Onboarding-Leitfaden für neue Kommandanten und das Hauptmenü das noch im alten Kleid kommt, beides verlangt einen eigenen Zug.
+1. Der Kommandant verlangte einen Onboarding-Leitfaden der neuen Kommandanten die ersten Schritte sichtbar führt und ein Hauptmenü das aus dem Legacy-Kleid in die neue Tracht gehoben wird, config getrieben und ohne akzeptierte Ausnahmen.
+2. In ui/data/onboarding.json entstand der Lehrplan als reiner Datenpool mit sieben Schritten von der Kamera bis zur Einwanderung, jeder trägt Auslöser und Tipp und zeigt auf die Stufen-ids der Progression.
+3. In ui/logic/kategorie_ui/ui_onboarding_uebersetzer.gd liest der Übersetzer den Pool, entscheidet welcher Schritt gerade spricht und liefert nur Snapshots; er rechnet nichts und kennt kein Fenster.
+4. In ui/scenes/hud/hud_onboarding.gd zeichnet die Leitplanke Häkchen Sprechmarke und Ruhe, trägt einen Auf-Zu-Knopf und öffnet mit stufe_melden genau eine Tür, damit kein Aufrufer ihr Inneres anfasst.
+5. In world/logic/kategorie_welt/welt_ui_aufbau.gd baut die Werkstatt die Leitplanke unten links und reicht Stufen-ids durch; der Griff auf das private Übersetzer-Mitglied wurde zur öffentlichen Tür umgebaut, denn Zuständigkeitsgrenzen haben keine Ausnahmen.
+6. In world/scenes/welt.gd hängt die Szene den Bau-Aufruf in die Orchestrator-Reihe und füttert die Leitplanke aus dem Stufe-erreicht-Signal der Fortschritts-Maschine.
+7. In ui/logic/kategorie_ui/ui_kleid_meister.gd entstand der Schneider der geteilten UI-Tracht, eine reine Fabrik für Panel- und Knopf-StyleBoxen mit warmem Gold-Akzent; wer hier das Kleid ändert, ändert es überall.
+8. In ui/scenes/hauptmenue.gd traten Start Laden und Editor in die neue Tracht, der Titel trägt Gold mit Schattenwurf und ein Nachtdunst hebt die Schrift vom Boden-Tile ab.
+9. In ui/scenes/hud/fenster_leiste.gd kommt die Panel-Tracht jetzt vom Schneider statt aus eigener Farbe, damit Leiste und Hauptmenü aus einer Hand tragen.
+10. In tools/preflight/version_werkzeuge.py zogen .venv und .local_dev in die ignorierten Präfixe, damit E043 die Lizenzpapiere der Pakete nicht mehr als Vertragsdokumente anklagt.
+11. In AGENTS.md fand die Werkstatt-Umgebung ihre Pflichtdokumentation von uv-Läufen über Godot-Pfad bis zum Cache-Rebuild, in population/logic/moral/pop_moral_instanz.gd verlor die Brücke ihren toten Instanz-Wurf der E025 geholt hatte.
+12. Sichtbar im laufenden Spiel: Nach dem Start steht unten links die Leitplanke Erste Schritte mit gelb sprechendem Kamera-Tipp, das Hauptmenü trägt dunkle Knöpfe mit Gold-Akzent und die untere Leiste gleicht ihm.
+13. Offen bleibt der Beweis im Spiel dass neue Stufen die Leitplanke weiterschalten, und die Simulationstiefe die auf diesem Fundament wachsen soll.

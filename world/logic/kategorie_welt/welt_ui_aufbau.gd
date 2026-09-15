@@ -12,6 +12,7 @@ const _PopEinheitUebersetzerSkript := preload("res://ui/logic/kategorie_ui/ui_po
 const _PopEinheitPanelSzene := preload("res://ui/scenes/panels/pop_einheit_panel.tscn")
 const _LadeLeisteSkript := preload("res://ui/logic/kategorie_ui/ui_lade_leiste.gd")
 const _GrundsatzFensterSkript := preload("res://ui/logic/kategorie_ui/ui_grundsatz_fenster.gd")
+const _OnboardingSkript := preload("res://ui/scenes/hud/hud_onboarding.gd")
 
 ## Kategorie daten: Gebaute Referenzen und Darsteller-Verwaltung.
 var karten_ebene: CanvasLayer = null
@@ -23,6 +24,8 @@ var fenster_leiste: Ui_FensterLeiste = null
 var pop_einheit_panel: Control = null
 var pop_einheit_uebersetzer: Ui_PopEinheitUebersetzer = null
 var grundsatz_fenster: Ui_GrundsatzFenster = null
+## Die Leitplanke der ersten Stunde; die Szene reicht Fortschritts-Signale durch.
+var onboarding: Ui_HudOnboarding = null
 ## Schmale Ladeleiste für den Chunk-Lader; die Szene speist sie je Frame.
 var lade_leiste: Ui_LadeLeiste = null
 var _lager_darsteller_eltern: Node = null
@@ -106,6 +109,27 @@ func grundsatz_fenster_bauen(canvas: CanvasLayer, stockmaenner: Einheit_Manager)
 	grundsatz_fenster.einrichten(stockmaenner)
 	grundsatz_fenster.visible = false
 	canvas.add_child(grundsatz_fenster)
+
+func onboarding_bauen(canvas: CanvasLayer, fortschritt: Welt_FortschrittsMaschine) -> void:
+	## Die Lehrplanke hängt unten links unter der UI-Ebene; sie startet
+	## aufgeklappt und traget sich selbst vor, wer gerade spricht.
+	if canvas == null:
+		return
+	onboarding = _OnboardingSkript.new()
+	onboarding.name = "OnboardingLeitplanke"
+	onboarding.einrichten(fortschritt)
+	onboarding.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	onboarding.offset_left = 12.0
+	onboarding.offset_top = -230.0
+	onboarding.offset_right = 340.0
+	onboarding.offset_bottom = -80.0
+	canvas.add_child(onboarding)
+
+func onboarding_stufe_melden(stufe_id: String) -> void:
+	if onboarding == null:
+		return
+	# Die öffentliche Tür des Fensters; das Innere bleibt innen.
+	onboarding.stufe_melden(stufe_id)
 
 func grundsatz_fenster_umschalten() -> void:
 	if grundsatz_fenster == null:

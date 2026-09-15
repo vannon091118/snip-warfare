@@ -266,6 +266,7 @@ func _bereit_orchestrator_und_ui() -> void:
 	_ui_aufbau.bau_panel_bauen(%UILayer as CanvasLayer, _gebaeude_definitionen, _fortschritt, _steuerung, _auf_bau_gewaehlt, _registry)
 	_ui_aufbau.pop_einheit_panel_bauen(%UILayer as CanvasLayer, _need_baum, _stockmaenner, _ressourcen)
 	_ui_aufbau.grundsatz_fenster_bauen(%UILayer as CanvasLayer, _stockmaenner)
+	_ui_aufbau.onboarding_bauen(%UILayer as CanvasLayer, _fortschritt)
 	# Lagerzone-Register an BauAuftragMaschine durchreichen: Der B-Toggle
 	# greift ab hier auf echte Raumprüfung und Lager-Entscheid.
 	if _eingabe_steuerung != null and _raum_und_lager != null:
@@ -461,6 +462,9 @@ func _im_blick(welt_position: Vector2) -> bool:
 	return abweichung.x <= halb.x and abweichung.y <= halb.y
 
 func _auf_stufe_erreicht(stufe: Dictionary) -> void:
+	# Die Lehrplanke hakt die abgeschlossene Stufe ab und zeigt den
+	# naechsten Handgriff; reine Anzeige, die Kette bleibt im Fortschritt.
+	_ui_aufbau.onboarding_stufe_melden(str(stufe.get("id", "")))
 	var freigaben: Array[String] = []
 	for gebaeude_id: Variant in (stufe.get("schaltet_frei", {}).get("gebaeude", []) as Array):
 		freigaben.append(str(gebaeude_id))

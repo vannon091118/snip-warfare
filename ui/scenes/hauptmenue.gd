@@ -30,9 +30,35 @@ func _ready() -> void:
 	_editor_knopf.pressed.connect(_auf_editor)
 	_dialog_laden.welt_gewaehlt.connect(_auf_welt_geladen)
 	_dialog_editor.welt_gewaehlt.connect(_auf_editor_welt_gewaehlt)
+	_kleid_ankleiden()
 	_erzeuge_laeufer()
 	_story_einrichten()
 	_menue_gegenpruefung()
+
+func _kleid_ankleiden() -> void:
+	## Das alte Legacy-Kleid wird vom gemeinsamen Schneider ersetzt: Knöpfe
+	## und Titel tragen dieselbe Tracht wie die untere Fensterleiste im Spiel.
+	Ui_KleidMeister.reihe_ankleiden([_start_knopf, _laden_knopf, _editor_knopf])
+	for knopf: Button in [_start_knopf, _laden_knopf, _editor_knopf]:
+		knopf.custom_minimum_size = Vector2(280, 56)
+		knopf.add_theme_font_size_override("font_size", 22)
+	var titel := get_node_or_null("Titel") as Label
+	if titel != null:
+		titel.add_theme_color_override("font_color", Ui_KleidMeister.AKZENT_FARBE)
+		titel.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.6))
+		titel.add_theme_constant_override("shadow_offset_x", 2)
+		titel.add_theme_constant_override("shadow_offset_y", 2)
+	var hintergrund := get_node_or_null("Hintergrund") as TextureRect
+	if hintergrund != null:
+		# Etwas Nachtdunst ueber dem Boden-Tiles, damit Titel und Knöpfe
+		# sich vom Muster abheben, wie die abgedunkelte Karte im Spiel.
+		var dunst := ColorRect.new()
+		dunst.name = "Nachtdunst"
+		dunst.color = Color(0.02, 0.03, 0.05, 0.45)
+		dunst.set_anchors_preset(Control.PRESET_FULL_RECT)
+		dunst.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hintergrund.get_parent().add_child(dunst)
+		hintergrund.get_parent().move_child(dunst, hintergrund.get_index() + 1)
 
 func _story_einrichten() -> void:
 	# Die Story lebt hinter den Knöpfen: Die Bühne liegt unter der Knopfleiste,
