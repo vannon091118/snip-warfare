@@ -14,8 +14,8 @@ Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 336 |
-| dateien | 372 |
+| klassen | 344 |
+| dateien | 380 |
 | signale | 68 |
 | array_typen | 35 |
 | pools | 35 |
@@ -36,7 +36,7 @@ Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | world/objekt | 44 | 44 | 850d6524e744 |
 | world/orchestrator | 11 | 11 | 683626f6950f |
 | world/tier | 21 | 21 | cfebd1d0bcd0 |
-| world/welt | 54 | 54 | 299918dbcfbe |
+| world/welt | 62 | 62 | 59320a518863 |
 
 <!-- STAND:ENDE -->
 
