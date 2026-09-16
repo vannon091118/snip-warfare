@@ -329,7 +329,7 @@ Pfad `world/data/welt_definition.json`, Domaene `world/data`, 7 Eintraege.
 * `tools/lauf_pruefung_wasser.gd`
 * `world/logic/kategorie_generator/welt_generator.gd`
 * `world/logic/kategorie_welt/welt_definition_registry.gd`
-* `world/logic/kategorie_welt/welt_model.gd`
+* `world/logic/kategorie_welt/welt_modell_basis.gd`
 * `world/logic/kategorie_welt/welt_wasser_automat.gd`
 * `world/scenes/welt.gd`
 

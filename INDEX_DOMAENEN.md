@@ -2,7 +2,7 @@
 
 _Quelle: `python tools/index_generieren.py` — erzeugt aus dem Code, nie von Hand gepflegt._
 
-Stand: V0.02 — 14 Domaenen plus Auffangkorb, 336 Klassen, 372 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
+Stand: V0.02 — 14 Domaenen plus Auffangkorb, 344 Klassen, 380 Dateien, 68 Signale, 35 Array-Elementtypen; 36 Klassen liegen ausserhalb der Domaenen-Ordner.
 
 ## 1. Domaenen-Uebersicht
 
@@ -10,7 +10,7 @@ Stand: V0.02 — 14 Domaenen plus Auffangkorb, 336 Klassen, 372 Dateien, 68 Sign
 | --- | --- | --- | --- | --- | --- |
 | `core` | `kern` | `Kern_` | `core/` | 27 | 27 |
 | `world/generator` | `gen` | `Welt_` | `world/logic/kategorie_generator/` | 12 | 12 |
-| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 54 | 54 |
+| `world/welt` | `welt` | `Welt_` | `world/logic/kategorie_welt/` | 62 | 62 |
 | `world/objekt` | `obj` | `Objekt_/Gebaeude_` | `world/logic/kategorie_objekt/` | 44 | 44 |
 | `world/tier` | `tier` | `Tier_` | `world/logic/kategorie_tier/` | 21 | 21 |
 | `world/orchestrator` | `orch` | `Orchestrator_` | `world/logic/kategorie_orchestrator/` | 11 | 11 |
@@ -119,7 +119,7 @@ _Zusaetzlich gesendete oder verbundene Namen ohne eigene Deklaration im Projekt:
 | Array-Elementtyp | Gesamt | kern | gen | welt | obj | tier | orch | ein | job | res | pop | lager | ui | shinon | tools | rest |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `String` | 64 | 6 | 4 | 12 | 14 | - | - | 3 | 4 | - | 5 | 1 | 10 | - | 2 | 3 |
-| `Dictionary` | 49 | 3 | 1 | 9 | 1 | 4 | 3 | 10 | - | - | 2 | 1 | 10 | - | - | 5 |
+| `Dictionary` | 50 | 3 | 1 | 10 | 1 | 4 | 3 | 10 | - | - | 2 | 1 | 10 | - | - | 5 |
 | `int` | 15 | - | - | 4 | - | 1 | - | 4 | - | - | 1 | - | 3 | - | 1 | 1 |
 | `Vector2i` | 10 | 1 | 4 | 4 | - | - | - | - | - | - | - | - | - | - | 1 | - |
 | `float` | 7 | - | 2 | 2 | - | - | - | - | - | - | 1 | - | - | - | 2 | - |
@@ -263,7 +263,7 @@ _keine Signal-Deklaration in dieser Domaene_
 
 ### world/welt — Kuerzel `welt` — `world/logic/kategorie_welt/`
 
-Prefix `Welt_`, 54 Klassen.
+Prefix `Welt_`, 62 Klassen.
 
 | Klasse | Datei | Zeilen |
 | --- | --- | --- |
@@ -293,7 +293,15 @@ Prefix `Welt_`, 54 Klassen.
 | `Welt_LandeplatzAnzeige` | `world/logic/kategorie_welt/welt_landeplatz_anzeige.gd` | 93 |
 | `Welt_MakroGenerator` | `world/logic/kategorie_welt/welt_makro_generator.gd` | 81 |
 | `Welt_MapFabrik` | `world/logic/kategorie_welt/welt_map_fabrik.gd` | 102 |
-| `Welt_Model` | `world/logic/kategorie_welt/welt_model.gd` | 529 |
+| `Welt_Model` | `world/logic/kategorie_welt/welt_model.gd` | 85 |
+| `Welt_ModelNeu` | `world/logic/kategorie_welt/welt_model_neu.gd` | 30 |
+| `Welt_ModellBasis` | `world/logic/kategorie_welt/welt_modell_basis.gd` | 115 |
+| `Welt_ModellBiom` | `world/logic/kategorie_welt/welt_modell_biom.gd` | 53 |
+| `Welt_ModellLeben` | `world/logic/kategorie_welt/welt_modell_leben.gd` | 42 |
+| `Welt_ModellMigration` | `world/logic/kategorie_welt/welt_modell_migration.gd` | 66 |
+| `Welt_ModellObjekte` | `world/logic/kategorie_welt/welt_modell_objekte.gd` | 76 |
+| `Welt_ModellRegionen` | `world/logic/kategorie_welt/welt_modell_regionen.gd` | 59 |
+| `Welt_ModellSpeicher` | `world/logic/kategorie_welt/welt_modell_speicher.gd` | 99 |
 | `Welt_NetzwerkPlaner` | `world/logic/kategorie_welt/welt_netzwerk_planer.gd` | 296 |
 | `Welt_ObjektDarsteller` | `world/logic/kategorie_welt/welt_objekt_darsteller.gd` | 90 |
 | `Welt_ObjektGitter` | `world/logic/kategorie_welt/welt_objekt_gitter.gd` | 68 |
@@ -343,7 +351,7 @@ Prefix `Welt_`, 54 Klassen.
 | Array-Elementtyp | Vorkommen |
 | --- | --- |
 | `String` | 12 |
-| `Dictionary` | 9 |
+| `Dictionary` | 10 |
 | `Vector2i` | 4 |
 | `int` | 4 |
 | `Welt_Karawane` | 3 |
@@ -765,7 +773,7 @@ Prefix `Ui_`, 31 Klassen.
 | `Ui_EinheitPanel` | `ui/logic/kategorie_ui/ui_einheit_panel.gd` | 39 |
 | `Ui_ExpansionMaschine` | `ui/logic/kategorie_ui/ui_expansion_maschine.gd` | 38 |
 | `Ui_FensterLeiste` | `ui/scenes/hud/fenster_leiste.gd` | 109 |
-| `Ui_GrundsatzFenster` | `ui/logic/kategorie_ui/ui_grundsatz_fenster.gd` | 64 |
+| `Ui_GrundsatzFenster` | `ui/logic/kategorie_ui/ui_grundsatz_fenster.gd` | 63 |
 | `Ui_GrundsatzPanel` | `ui/logic/kategorie_ui/ui_grundsatz_panel.gd` | 46 |
 | `Ui_HudOnboarding` | `ui/scenes/hud/hud_onboarding.gd` | 80 |
 | `Ui_JobVergabeMaschine` | `ui/logic/kategorie_ui/ui_job_vergabe_maschine.gd` | 105 |
