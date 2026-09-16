@@ -69,7 +69,7 @@ func moral_grundsatz(schalter_id: String) -> bool:
 
 
 func moral_grundsatz_aendern(mgr: Einheit_Manager, schalter_id: String, erlaubt: bool) -> void:
-	_moral.grundsatz_setzen(schalter_id, erlaubt)
+	_moral.grundsaetz_setzen(schalter_id, erlaubt)
 	# Die Stimmungs-Kette kennt keine Moral, aber die Mood-Modifikatoren
 	# lesen den Grundsatz je Tick; ein Auffrischen der Bestaende reicht,
 	# damit die naechste Eskalations-Pruefung den neuen Schalter sieht.

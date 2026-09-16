@@ -889,8 +889,21 @@ func _init() -> void:
 		prog_manager._auf_tick(0, 0.0)
 	var prog_lagerfeuer_fertig := prog_fertig_meldungen.has("lagerfeuer")
 	var prog_haus_frei := prog_maschine.stufe_frei(1)
-	# Zweite Stufe: Haus bauen; die Kachelkante ist 512 breit, das Haus braucht
-	# deshalb eine eigene Kachel neben dem Lagerfeuer.
+	# Zwischenstufen des gewachsenen Lehrplans: Holz einlagern, Raum und
+	# Lagerzone entstehen lassen; die Maschine nimmt genau diese Ereignisse.
+	prog_maschine.ressource_eingelagert("holz")
+	prog_maschine.raum_entstanden("probe_raum", 24, true, true)
+	prog_maschine.lagerzone_registriert()
+	# Das Rathaus vor dem Haus: Der Lehrplan verlangt es als Vorstufe, und
+	# der Vorarbeiter-Spawn bleibt im Probe-Umfeld stumm, weil keine
+	# Verdrahtung angemeldet ist.
+	var prog_rathaus := prog_manager.bauen_anfordern("rathaus", Vector2(1400, 400))
+	var prog_rathaus_ok := bool(prog_rathaus.get("ok", false))
+	for _t3: int in range(800):
+		prog_manager._auf_tick(0, 0.0)
+	var prog_rathaus_fertig := prog_fertig_meldungen.has("rathaus")
+	# Haus bauen; die Kachelkante ist 512 breit, das Haus braucht deshalb
+	# eine eigene Kachel neben dem Lagerfeuer.
 	var prog_haus := prog_manager.bauen_anfordern("haus", Vector2(900, 400))
 	var prog_haus_ok := bool(prog_haus.get("ok", false))
 	for _t2: int in range(600):
@@ -899,11 +912,12 @@ func _init() -> void:
 	var prog_einwanderung_frei := str(prog_maschine.aktive_stufe().get("ziel_typ", "")) == "einwanderung"
 	var prog_rate := int(prog_maschine.aktive_stufe().get("einwanderer_je_tag", 0))
 	if not prog_start_ok or not prog_voraussetzung_ok or not prog_lagerfeuer_ok or not prog_lagerfeuer_fertig \
-			or not prog_haus_frei or not prog_haus_ok or not prog_haus_fertig or not prog_einwanderung_frei or prog_rate < 1:
-		print("FEHLER: Einstiegs-Kette bricht (start %s, voraussetzung %s, lagerfeuer %s/%s, haus frei %s, haus %s/%s, einwanderung %s, rate %d, ziel %s, feuer %d)" % [
+			or not prog_haus_frei or not prog_rathaus_ok or not prog_rathaus_fertig or not prog_haus_ok \
+			or not prog_haus_fertig or not prog_einwanderung_frei or prog_rate < 1:
+		print("FEHLER: Einstiegs-Kette bricht (start %s, voraussetzung %s, lagerfeuer %s/%s, haus frei %s, rathaus %s/%s, haus %s/%s, einwanderung %s, rate %d, ziel %s, feuer %d)" % [
 			str(prog_start_ok), str(prog_voraussetzung_ok), str(prog_lagerfeuer_ok), str(prog_lagerfeuer_fertig),
-			str(prog_haus_frei), str(prog_haus_ok), str(prog_haus_fertig), str(prog_einwanderung_frei),
-			prog_rate, prog_ziel_zeile_start, prog_lagerfeuer_indizes.size()])
+			str(prog_haus_frei), str(prog_rathaus_ok), str(prog_rathaus_fertig), str(prog_haus_ok), str(prog_haus_fertig),
+			str(prog_einwanderung_frei), prog_rate, prog_ziel_zeile_start, prog_lagerfeuer_indizes.size()])
 		fehler += 1
 	else:
 		print("OK: Einstiegs-Kette laeuft (Lagerfeuer gesetzt, Haus freigeschaltet und gebaut, Einwanderung %d je Tag)" % prog_rate)
@@ -971,6 +985,10 @@ func _init() -> void:
 	var kan_lager := Lager_Manager.new()
 	kan_lager.lager_anlegen("kleines_lager", Vector2(40, 40))
 	kan_manager.lager_setzen(kan_lager)
+	# Der bewusste Schalter: Die Kolonie traegt die Verzweiflungstat erst,
+	# wenn der Grundsatz geaendert wird. Der Probe-Umfeld nimmt dieselbe
+	# Tuer wie das Grundsatz-Fenster, sonst bleibt das Moral-Tor stumm zu.
+	kan_manager.moral_grundsatz_setzen("kannibalismus_erlaubt", true)
 	var kan_mods := Pop_MoodModifikatorRegistry.new()
 	var kan_maschinen: Array[Pop_MoodMaschine] = []
 	for kan_i: int in 3:

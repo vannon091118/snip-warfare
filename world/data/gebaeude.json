@@ -266,7 +266,7 @@
     "arbeitskraft": "",
     "gesperrt_ab_stufe": 5,
     "belegt_kachel": true,
-    "voraussetzungen": [],
+    "voraussetzungen": ["lagerfeuer"],
     "lager_typ": "kleines_lager",
     "einwanderer_lieferant": true,
     "produktion": {
