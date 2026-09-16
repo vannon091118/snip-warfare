@@ -71,7 +71,7 @@ _Quelle: `python tools/index_generieren.py` — die vier Indizes werden aus dem 
 | Daten | [`INDEX_DATEN.md`](INDEX_DATEN.md) | JSON-Pools mit Besitzer und Verbrauchern |
 | Letzte Aenderung | [`INDEX_LETZTE_AENDERUNG.md`](INDEX_LETZTE_AENDERUNG.md) | Delta des letzten Index-Laufs |
 
-_Stand: V0.02 — 336 Klassen mit `class_name` im Projekt, davon 300 in den 14 Domaenen-Ordnern und 36 ohne Domaenen-Ordner, 68 Signale, 35 Array-Elementtypen und 35 JSON-Pools._
+_Stand: V0.02 — 343 Klassen mit `class_name` im Projekt, davon 307 in den 14 Domaenen-Ordnern und 36 ohne Domaenen-Ordner, 68 Signale, 35 Array-Elementtypen und 35 JSON-Pools._
 
 ## 5. Klasseninventar (auto-generiert)
 
@@ -126,7 +126,7 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_GeneratorRegistry` | `world/logic/kategorie_generator/generator_registry.gd` |
 | `Welt_GeneratorVerteilung` | `world/logic/kategorie_generator/generator_verteilung.gd` |
 
-### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (54)
+### world/welt — Prefix `Welt_` — `world/logic/kategorie_welt/` (61)
 
 | Klasse | Datei |
 | --- | --- |
@@ -157,6 +157,13 @@ _Quelle: `python tools/index_generieren.py` — scannt `class_name` je Domaene._
 | `Welt_MakroGenerator` | `world/logic/kategorie_welt/welt_makro_generator.gd` |
 | `Welt_MapFabrik` | `world/logic/kategorie_welt/welt_map_fabrik.gd` |
 | `Welt_Model` | `world/logic/kategorie_welt/welt_model.gd` |
+| `Welt_ModellBasis` | `world/logic/kategorie_welt/welt_modell_basis.gd` |
+| `Welt_ModellBiom` | `world/logic/kategorie_welt/welt_modell_biom.gd` |
+| `Welt_ModellLeben` | `world/logic/kategorie_welt/welt_modell_leben.gd` |
+| `Welt_ModellMigration` | `world/logic/kategorie_welt/welt_modell_migration.gd` |
+| `Welt_ModellObjekte` | `world/logic/kategorie_welt/welt_modell_objekte.gd` |
+| `Welt_ModellRegionen` | `world/logic/kategorie_welt/welt_modell_regionen.gd` |
+| `Welt_ModellSpeicher` | `world/logic/kategorie_welt/welt_modell_speicher.gd` |
 | `Welt_NetzwerkPlaner` | `world/logic/kategorie_welt/welt_netzwerk_planer.gd` |
 | `Welt_ObjektDarsteller` | `world/logic/kategorie_welt/welt_objekt_darsteller.gd` |
 | `Welt_ObjektGitter` | `world/logic/kategorie_welt/welt_objekt_gitter.gd` |

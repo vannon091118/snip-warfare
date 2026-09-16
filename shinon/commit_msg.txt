@@ -1,8 +1,7 @@
-1. Der Kommandant verlangte die Ursachen der zwei roten Proben in der Welt-Prüfung und ihre Heilung.
-2. Die Suche fand zwei Wurzeln und obendrauf einen versteckten Bruch, der das Grundsatz-Fenster im Spiel stumm geschaltet hatte.
-3. In world/data/gebaeude.json kehrte die Voraussetzung lagerfeuer beim Haus zurueck, denn der historische Eintrag sprach von ihr und ein spaeterer Zug hatte sie aus dem Pool gewischt, sodass das Haus auf die Lagerfeuer-Kachel stieg und die Kette kippte.
-4. In tools/lauf_pruefung_welt.gd lernte das Probe-Umfeld den gewachsenen Lehrplan kennen: Zwischenstufen als Maschinen-Ereignisse, das Rathaus als echter Bau vor dem Haus, und die Kolonie traegt die Verzweiflungstat erst, wenn der Schalter bewusst umgelegt wird.
-5. In game/logic/kategorie_einheit/einheit_verdrahtung.gd zeigte sich der versteckte Bruch: Der Ruf hies grundsatz_setzen, die Moral-Instanz nennt ihre Tuer grundsaetz_setzen, und jetzt landet der Schaltergriff wirklich bei den Daten.
-6. Der Lauf meldet ALLE PRUEFUNGEN GRUEN, der Kannibale jagt mit Sprechblase, und die Einstiegs-Kette laeuft vom Lagerfeuer ueber Holz, Raum, Lagerzone und Rathaus bis zur Einwanderung.
-7. Die pytest-Geschwister fuer Einstieg und Moral stehen mit 25 Proben auf Gruen, und der volle Preflight traegt ein PREFLIGHT OK.
-8. Offen bleibt der sichtbare Spielbeweis, dass das Grundsatz-Fenster den Schalter nun wirklich umlegt, und der Rueckmerge der Modell-Kette aus dem refactor-Zweig.
+1. Der Bestand fuehrte die Modell-Kette aus dem refactor-Zweig mit dem Heilungs-Zug der zwei roten Proben zusammen, denn beide Zuege gehoeren in dieselbe Welt.
+2. Aus dem Zweig kamen world/logic/kategorie_welt/welt_modell_basis.gd, welt_modell_objekte.gd, welt_modell_leben.gd, welt_modell_regionen.gd, welt_modell_biom.gd, welt_modell_migration.gd und welt_modell_speicher.gd als Kette unter der Fassade world/logic/kategorie_welt/welt_model.gd.
+3. Ebenfalls aus dem Zweig zogen INDEX.md, INDEX_DATEN.md, INDEX_LETZTE_AENDERUNG.md, README.md, ROADMAP.md und die .gitignore mit dem Klassenspiegel und dem Ledger-Platz in den Bestand.
+4. Aus dem Hauptzug traten die Heilungen an: world/data/gebaeude.json trug die Haus-Voraussetzung zurueck, tools/lauf_pruefung_welt.gd lernte den gewachsenen Lehrplan samt bewusstem Schalter, und game/logic/kategorie_einheit/einheit_verdrahtung.gd schloss den versteckten Bruch zur Moral-Tuer.
+5. shinon/commit_msg.txt trug als einzige Konfliktstelle beide Geschichten und wurde zu dieser gemeinsamen Erzaehlung geschliffen.
+6. Die Welt-Pruefung laeuft mit beiden Zuegen auf ALLE PRUEFUNGEN GRUEN, die Kette und die Heilung stossen sich nicht.
+7. Offen bleibt der sichtbare Spielbeweis des Grundsatz-Fensters und die Pflege der fremden Arbeitsreste aus dem Quartaene-Fund.

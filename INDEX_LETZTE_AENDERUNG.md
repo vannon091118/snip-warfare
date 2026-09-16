@@ -6,7 +6,10 @@ Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 ## 1. Letzte Aenderung
 
-1. Keine Aenderung seit dem letzten Lauf.
+1. Klassen: 344 -> 343.
+2. Dateien: 380 -> 379.
+3. Domaene world/welt: 62 -> 61 Klassen.
+4. Domaene world/welt: 62 -> 61 GDScript-Dateien.
 
 ## 2. Stand (maschinell, Grundlage des naechsten Vergleichs)
 
@@ -14,8 +17,8 @@ Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 
 | Kennzahl | Wert |
 | --- | --- |
-| klassen | 336 |
-| dateien | 372 |
+| klassen | 343 |
+| dateien | 379 |
 | signale | 68 |
 | array_typen | 35 |
 | pools | 35 |
@@ -36,7 +39,7 @@ Stand: V0.02 — der untere Block ist das Gedaechtnis des naechsten Vergleichs, 
 | world/objekt | 44 | 44 | 850d6524e744 |
 | world/orchestrator | 11 | 11 | 683626f6950f |
 | world/tier | 21 | 21 | cfebd1d0bcd0 |
-| world/welt | 54 | 54 | 299918dbcfbe |
+| world/welt | 61 | 61 | e156deba76ab |
 
 <!-- STAND:ENDE -->
 
