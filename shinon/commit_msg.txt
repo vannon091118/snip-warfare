@@ -1,7 +1,25 @@
-1. Der Bestand fuehrte die Modell-Kette aus dem refactor-Zweig mit dem Heilungs-Zug der zwei roten Proben zusammen, denn beide Zuege gehoeren in dieselbe Welt.
-2. Aus dem Zweig kamen world/logic/kategorie_welt/welt_modell_basis.gd, welt_modell_objekte.gd, welt_modell_leben.gd, welt_modell_regionen.gd, welt_modell_biom.gd, welt_modell_migration.gd und welt_modell_speicher.gd als Kette unter der Fassade world/logic/kategorie_welt/welt_model.gd.
-3. Ebenfalls aus dem Zweig zogen INDEX.md, INDEX_DATEN.md, INDEX_LETZTE_AENDERUNG.md, README.md, ROADMAP.md und die .gitignore mit dem Klassenspiegel und dem Ledger-Platz in den Bestand.
-4. Aus dem Hauptzug traten die Heilungen an: world/data/gebaeude.json trug die Haus-Voraussetzung zurueck, tools/lauf_pruefung_welt.gd lernte den gewachsenen Lehrplan samt bewusstem Schalter, und game/logic/kategorie_einheit/einheit_verdrahtung.gd schloss den versteckten Bruch zur Moral-Tuer.
-5. shinon/commit_msg.txt trug als einzige Konfliktstelle beide Geschichten und wurde zu dieser gemeinsamen Erzaehlung geschliffen.
-6. Die Welt-Pruefung laeuft mit beiden Zuegen auf ALLE PRUEFUNGEN GRUEN, die Kette und die Heilung stossen sich nicht.
-7. Offen bleibt der sichtbare Spielbeweis des Grundsatz-Fensters und die Pflege der fremden Arbeitsreste aus dem Quartaene-Fund.
+1. Die Aufgabe verlangte, das Grundsatz-Fenster im laufenden Spiel zu verifizieren: das Fenster öffnen, den Kannibalismus-Schalter umlegen und beobachten, dass die Einheiten die Tat tragen.
+
+2. Der Bestand hatte das Moral-Tor zuletzt nur indirekt geheilt, und eine grüne Probe aus der Werkstatt ist nach der Verfassung noch kein Freibrief für das laufende Spiel.
+
+3. Die neue Sonde tools/lauf_sonde_grundsatz.gd lädt die echte Welt-Szene samt aller Autoloads und folgt dem Weg des Spielers statt an den Daten zu rütteln.
+
+4. Der Leisten-Knopf öffnet das echte Fenster, sein about_to_popup baut die Schalter aus dem Manager-Stand, und die Sonde liest den ungeschminkten Zustand bevor sie fährt.
+
+5. In der ersten Phase bleibt der Schalter zu, zwei hungrige Einheiten wandern am Rand des Blattes, und der Job der Verzweiflung darf nicht erscheinen; die Kette blieb stumm wie versprochen.
+
+6. Dann legt die Sonde den Schalter über das Toggled-Ereignis des CheckButton um, und die Manager-Tür meldet sofort die neue Wahrheit der Kolonie.
+
+7. Dabei kam die Entdeckung ans Licht, dass zwei hungrige Kolonisten der Autonomie stoppellos dem Baum-Pool hinterherarbeiten und darum nie idle werden, was die Kannibalen-Kette laut Vertrag aber braucht.
+
+8. Die Sonde zieht deshalb zuerst die Aufträge über die Abbruch-Tür zurück, dieselbe Tür, die ein Spieler auch drückt, und erst danach treten die Einheiten die Tat an.
+
+9. Der Schlussbeweis trägt: Einheit 0 trägt den Job kannibale, die Stimmung steht auf Stufe 3, und die Blase der Verzweiflung hat ihre Zuhörer gefunden.
+
+10. Der Blick in den Job-Pool zeigte die 60-Pixel-Faust der Opfer-Wahl, und die Sonde dokumentierte, wie die Einheiten darüber hinaus driften, wenn niemand sie hält; die Halteleine der Sonde setzt den Nachbarn wieder heran, statt die Welt zu verbiegen.
+
+11. Der Warnungs-Scan und der Godot-Lauf stehen grün, die zwei Phasen der Sonde laufen reproduzierbar durch, und keine andere Probe wurde angefasst.
+
+12. Was noch fehlt, ist der Blick des Spielers im hoffentlich bald gezeichneten Fenster des echten Bildschirms, denn jede Sonde bleibt ein Stellvertreter mit schlechtem Charakter.
+
+13. Wer das Grundsatz-Fenster später umbaut, hebt die Sonde aus der Schublade, legt den Schalter um und hört zu, ob die Kolonie noch gehorcht.
